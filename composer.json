@@ -8,7 +8,6 @@
             "email": "bassalobre.vinicius@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "spatie/laravel-permission": "^3.3",
         "vinkla/hashids": "^7.0"
