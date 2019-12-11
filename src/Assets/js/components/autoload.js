@@ -4,3 +4,4 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
 
 require("./libs/charts")
 require("./libs/vmask")
+require('summernote')

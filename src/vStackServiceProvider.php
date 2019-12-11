@@ -16,5 +16,8 @@ class vStackServiceProvider extends ServiceProvider
             createFilter::class,
             createMetric::class,
         ]);
+        $this->publishes([
+            __DIR__.'/config' => config_path(),
+        ]);
     }
 }

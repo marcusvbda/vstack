@@ -128,6 +128,11 @@ class Resource
         return [];
     }
 
+    public function customMetricOptions()
+    {
+        return [];
+    }
+
     public function search()
     {
         return [];

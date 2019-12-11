@@ -34,7 +34,7 @@
                                     <div class="col-md-10 col-sm-12">
                                         <v-input :label="`<b>Título</b>`" v-model='frm.title' />
                                     </div>
-                                    <div class="col-md-10 col-sm-12" v-if="['custom-content'].includes(frm.type)">
+                                    <div class="col-md-10 col-sm-12" v-if="['custom-content','group-chart'].includes(frm.type)">
                                         <v-input :label="`<b>SubTítulo</b>`" v-model='frm.subtitle' />
                                     </div>
                                 </div>
@@ -58,6 +58,11 @@
                                     <template v-if="frm.type=='trend-counter'">
                                         <div class="col-md-10 col-sm-12">
                                             <v-select :label="`<b>Intervalo de Atualização</b>`" v-model='frm.update_interval' :optionlist="update_interval_list" withoutBlank />
+                                        </div>
+                                    </template>
+                                    <template v-if="['group-chart','trend-chart'].includes(frm.type)">
+                                        <div class="col-md-10 col-sm-12">
+                                            <v-select :label="`<b>Agrupamento</b>`" v-model='frm.group_by' :optionlist="custommetricoptions[frm.type]" withoutBlank />
                                         </div>
                                     </template>
                                 </div>
@@ -88,7 +93,7 @@
 </template>
 <script>
 export default {
-    props : ["card","resourceroute"],
+    props : ["card","resourceroute","custommetricoptions","calculate_route"],
     data() {
         return {
             wizard_step : this.card ? (this.card.type=="custom-content" ? 4 : 4) : 0,
@@ -102,12 +107,7 @@ export default {
                 {id:1500,name:"25 Minutos"},
                 {id:1800,name:"30 Minutos"},
             ],
-            type_list : [
-                {id:"custom-content",name:"Conteúdo Customizado"},
-                {id:"trend-counter",name:"Média de Entradas e Tendência"},
-                // {id:"group-chart",name:"Gráfico De Agrupamento"},
-                // {id:"trend-chart",name:"Grafico de Area"},
-            ],
+            type_list : [],
             width_list : [
                 {id:4,name:"1/3"},
                 {id:8,name:"2/3"},
@@ -121,13 +121,21 @@ export default {
                 subtitle : this.card ? this.card.subtitle : "Sub Titulo aqui ...",
                 content : this.card ? this.card.content : "Conteúdo aqui ...",
                 update_interval : this.card ? Number(this.card.update_interval) : 60,
+                group_by : this.card ? this.card.group_by : ""
             }
         }
+    },
+    mounted() {
+        this.type_list.push({id:"custom-content",name:"Conteúdo Customizado"})
+        this.type_list.push({id:"trend-counter",name:"Média de Entradas e Tendência"})
+        if(this.custommetricoptions["group-chart"]) this.type_list.push({id:"group-chart",name:"Gráfico De Agrupamento"})
+        if(this.custommetricoptions["trend-chart"]) this.type_list.push({id:"trend-chart",name:"Grafico de Área"})
     },
     computed : {
         canSubmit() {
             if(this.frm.type=='custom-content') return this.wizard_step>=2
             if(this.frm.type=='trend-counter') return (this.wizard_step>=2 && this.frm.update_interval)
+            if(['group-chart','trend-chart'].includes(this.frm.type)) return (this.wizard_step>=2 && this.frm.update_interval && this.frm.group_by)
         }
     },
     watch : {

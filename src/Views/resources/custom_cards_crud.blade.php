@@ -24,7 +24,9 @@
 
 <resource-metric-crud 
     @if(@$card) :card="{{json_encode($card)}}" @endif
-    resourceroute="{{$resource->route()}}">
+    resourceroute="{{$resource->route()}}"
+    :custommetricoptions="{{json_encode($resource->customMetricOptions())}}"
+    >
 </resource-metric-crud> 
 
 @endsection

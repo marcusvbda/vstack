@@ -4,7 +4,6 @@
             <div class="col-sm-10" v-bind:class="{'col-sm-10' : label,'col-sm-12':!label}">
                 <div class="input-group v-select"  v-bind:class="{'is-invalid' : errors}">
                     <el-select :disabled="disabled" :size="(size ? size : 'large')" class="w-100" clearable v-model="value" filterable :placeholder="placeholder" v-loading="loading"
-                    
                     >
                         <el-option v-if="withoutBlank==undefined" label="" value=""></el-option>
                         <el-option v-for="(item,i) in options" :key="i" :label="item.name" :value="item.id"></el-option>

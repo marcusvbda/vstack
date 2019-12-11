@@ -6,11 +6,15 @@ composer require marcusvbda/vstack
 //adicione no providers config\app.php
 marcusvbda\vstack\vStackServiceProvider::class
 
+//crie um template templates.admin
+
 //adicione no app.scss
 @import "../../../vendor/marcusvbda/vstack/src/Assets/scss/autoload.scss";
 
 //adicione no app.js
 require('../../../vendor/marcusvbda/vstack/src/Assets/js/components/autoload')
+
+php artisan vendor:publish
 ```
 
 para criar um novo resource, você precisa executar o comando especificando o do resource, model e tabela, respectivamente

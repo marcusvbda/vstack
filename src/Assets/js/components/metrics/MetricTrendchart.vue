@@ -16,7 +16,7 @@
             </template>
         </div>
         <div class="d-flex flex-column justify-content-between p-1" v-loading="loading" >
-            <area-chart :discrete="true" :data="value" height="120px" ></area-chart>
+            <area-chart :discrete="true" :data="value" height="120px" />
         </div>
     </div>
 </template>

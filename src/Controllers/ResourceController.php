@@ -304,9 +304,7 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canCustomizeMetrics()) abort(403);
         $card = CustomResourceCard::where("resource_id",$resource->id)->where("id",$code)->firstOrFail();
-        $data = [
-            "page_type" => "Edição"
-        ];
+        $data = ["page_type" => "Edição"];
         return view("vStack::resources.custom_cards_crud", compact("resource","card","data"));
     }
 
@@ -315,10 +313,44 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canCustomizeMetrics()) abort(403);
         $card = CustomResourceCard::where("resource_id",$resource->id)->where("id",$code)->firstOrFail();
-        if($card->type == "trend-counter") return $this->customTrendCounterCalculate($resource,$request["range"]);
+        if($card->type == "trend-counter") return $this->customTrendCounterCalculate($resource,$card,$request["range"]);
+        if($card->type == "group-chart") return $this->customGroupChartCalculate($resource,$card);
+        if($card->type == "trend-chart") return $this->customTrendChartCalculate($resource,$card,$request["range"]);
     }
 
-    private function customTrendCounterCalculate($resource,$range)
+    private function customTrendChartCalculate($resource,$card,$range)
+    {
+        $startDate = Carbon::create($range[0])->format("Y-m-d 00:00:00");
+        $endDate   = Carbon::create($range[1])->format("Y-m-d 00:00:00");
+        return  $resource->model->whereRaw(DB::raw("DATE(".$card->group_by.") >='$startDate'" . " and " ."DATE(".$card->group_by.") <='$endDate'" ))
+                    ->select(DB::raw('DATE_FORMAT('.$card->group_by.',"%d/%m/%Y") as formated_date, count(*) as qty'))
+                    ->groupBy("formated_date")
+                    ->pluck('qty','formated_date');
+    }
+
+    private function customGroupChartCalculate($resource,$card)
+    {
+        if(!strpos($card->group_by,"->")) 
+        {
+            $results = [];
+            foreach($resource->model->groupBy($card->group_by)->select($card->group_by)->get() as $legend)
+                $results[(is_bool($legend->{$card->group_by}) ? ($legend->{$card->group_by} ? "Sim  " : "Não") : $legend->{$card->group_by})] =  $resource->model->where($card->group_by,$legend->{$card->group_by})->count();
+            return $results;
+        } else {
+            $indexes = explode("->",$card->group_by);
+            $results = [];
+            $options = $resource->customMetricOptions();
+            $options=$options["group-chart"];
+            $options = array_filter($options,function($x) use($card){
+                if($x["id"] == $card->group_by ) return $x;
+            });
+            foreach($resource->model->get() as $row)
+                $results[$row->{$indexes[0]}->{$indexes[1]}] = $resource->model->where($options[0]["key"],$row->{$indexes[0]}->id)->count();
+            return $results;
+        }
+    }
+
+    private function customTrendCounterCalculate($resource,$card,$range)
     {
         $total = $resource->model->count();
         if($total<=0) return ["value"=>0,"average"=>0];
@@ -351,9 +383,7 @@ class ResourceController extends Controller
     {
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canCustomizeMetrics()) abort(403);
-        $data = [
-            "page_type" => "Cadastro"
-        ];
+        $data = ["page_type" => "Cadastro"];
         return view("vStack::resources.custom_cards_crud", compact("resource","data"));
     }
 
@@ -366,12 +396,19 @@ class ResourceController extends Controller
         $data["resource_id"] = $resource->id;
         if($data["type"]=="custom-content") 
         {
+            unset($data["group_by"]);
             unset($data["update_interval"]);
             $card->fill($data);
         }
         if($data["type"]=="trend-counter") 
         {
+            unset($data["group_by"]);
             unset($data["subtitle"]);
+            unset($data["content"]);
+            $card->fill($data);
+        }
+        if( in_array($data["type"],["group-chart","trend-chart"]))
+        {
             unset($data["content"]);
             $card->fill($data);
         }

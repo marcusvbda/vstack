@@ -5,8 +5,8 @@
                 <div class="w-100 h-100">
                     <div class="d-flex flex-row justify-content-between align-items-center mb-2">
                         <b v-html="metric.title"></b>
-                        <b v-html="metric.subtitle" v-if="['custom-content'].includes(metric.type)"></b>
-                        <template v-if="['trend-counter'].includes(metric.type)">
+                        <b v-html="metric.subtitle" v-if="['custom-content','group-chart'].includes(metric.type)"></b>
+                        <template v-if="['trend-counter','trend-chart'].includes(metric.type)">
                             <el-date-picker size='mini' 
                                 v-model='filter.range' type='daterange'
                                 format="dd/MM/yyyy"
@@ -18,14 +18,27 @@
                     </div>
                 </div>
             </div>
-            <v-runtime-template v-if="['custom-content'].includes(metric.type)" :template="`<span>${metric.content}</span>`" />
-            <template v-if="['trend-counter'].includes(metric.type)">
+
+            <v-runtime-template v-if="metric.type=='custom-content'" :template="`<span>${metric.content}</span>`" />
+            <template v-if="metric.type=='trend-counter'">
                 <div class="d-flex flex-column justify-content-between" ref="content" style="display:none;">
                     <h2 v-loading="loading">{{value ? value.toFixed(2).replace(/[.,]00$/, "") : 0}}</h2>
                     <div class="mt-3">
                         <span v-html="trend"></span>
                     </div>
                 </div>
+            </template>
+            <template v-if="metric.type=='group-chart'">
+                <div class='d-flex flex-row justify-content-between align-items-center h-100' >
+                    <div v-html="legend" style="font-size:11px;"></div>
+                    <div>
+                        <pie-chart :discrete="true" :data="data" :legend='false' :donut='true' 
+                        :colors="colors" height='100px' width='100px' />
+                    </div>
+                </div>
+            </template>
+            <template v-if="metric.type=='trend-chart'">
+                <area-chart :discrete="true" :data="data"  height="120px" />
             </template>
         </div>
     </div>
@@ -38,7 +51,6 @@ export default {
         return {
             loaded : false,
             data : [],
-            loading : false,
             filter :{},
             options : [],
             compare : 0,
@@ -46,7 +58,7 @@ export default {
         }
     },
     async created() {
-        if(['trend-counter'].includes(this.metric.type)) {
+        if(['trend-counter','group-chart','trend-chart'].includes(this.metric.type)) {
             this.initDateInterval()
             this.updateData()
             setInterval(_ => {
@@ -60,7 +72,30 @@ export default {
             if(Number(percent)==0) return "<div class='d-flex align-items-center'><h5>Sem Alteração</h5></div>"
             if(Number(this.value)<Number(this.compare)) return `<div class='d-flex align-items-center'><h5>${percent}%<span class='el-icon-bottom-left text-danger ml-2'></span></h5></div>`
             return `<div class='d-flex align-items-center'><h5>${percent}%<span class='el-icon-top-right text-success ml-2'></span></h5></div>`
-        }
+        },
+        legend() {
+            let colors = this.colors
+            let data = this.data
+            let text = "<div class='d-flex flex-column'>"
+            let keys = Object.keys(data)
+            for(let i in keys)
+            {
+                text += `<div class="d-flex align-items-center">
+                            <div class="mr-2" style="background-color:${colors[i]};height: 12px;width: 25px;margin-top: 2px;"></div>
+                            <div>${keys[i]} : ${data[keys[i]]}</div>
+                        </div>`
+            }
+            text+="</div>"
+            return text
+        },
+        colors() {
+            let colors = []
+            let keys = Object.keys(this.data)
+            for (let i in keys) {
+                colors.push("#"+this.intToRGB(this.hashCode(keys[i])))
+            }
+            return colors
+        },
     },
     watch : {
         filter: {
@@ -75,6 +110,15 @@ export default {
         "v-runtime-template" : VRuntimeTemplate
     },
     methods : {
+        hashCode(str) { 
+            var hash = 0
+            for (var i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash)
+            return hash
+        },
+        intToRGB(i){
+            var c = (i & 0x00FFFFFF).toString(16).toUpperCase()
+            return "00000".substring(0, 6 - c.length) + c
+        },
         getTrendPercent() {
             let compare = Number(this.compare)
             let value = compare-Number(this.value)
@@ -92,6 +136,7 @@ export default {
             if(!this.filter.range) return
             this.loading = true
             this.$http.post(this.calculate_route,this.filter).then( res => {
+                this.data = res.data ? res.data : []
                 this.value = res.data.value ? res.data.value : 0
                 this.compare = res.data.compare ? res.data.compare : 0
                 this.loading = false
