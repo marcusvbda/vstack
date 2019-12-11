@@ -1,6 +1,8 @@
 ## Commands
 Instalação
 ```
+//instale
+composer require marcusvbda/vstack
 //adicione no providers config\app.php
 marcusvbda\vstack\vStackServiceProvider::class
 
