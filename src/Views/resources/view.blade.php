@@ -1,6 +1,6 @@
 @extends("templates.admin")
 @section('title',$resource->label())
-@section('content')
+@section('breadcrumb')
 <div class="row">
     <div class="col-12">
         <nav aria-label="breadcrumb">
@@ -12,14 +12,13 @@
                 </ol>
             </nav>
         </nav>
-        <div class="d-flex flex-row justify-content-between mb-3">
-            
-        </div>
-        <resource-view :data="{{json_encode($data)}}">
-            <template slot="title">
-                <h4>{!! @$resource->icon() !!} {{$data["page_type"]}} de {{$resource->singularLabel()}}</h4>
-            </template>
-        </resource-view>
     </div>
 </div>
+@endsection
+@section('content')
+    <resource-view :data="{{json_encode($data)}}">
+        <template slot="title">
+            <h4>@if( @$resource->icon() ) <span class="{{$resource->icon()}} mr-2"></span> @endif {{$data["page_type"]}} de {{$resource->singularLabel()}}</h4>
+        </template>
+    </resource-view>
 @endsection

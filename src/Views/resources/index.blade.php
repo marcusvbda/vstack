@@ -1,6 +1,6 @@
 @extends("templates.admin")
 @section('title',$resource->label())
-@section('content')
+@section('breadcrumb')
 <div class="row">
     <div class="col-12">
         <nav aria-label="breadcrumb">
@@ -13,7 +13,8 @@
         </nav>
     </div>
 </div>
-
+@endsection
+@section('content')
 @include("vStack::resources.partials._metrics")
 
 <div class="row mb-3 mt-2">
@@ -90,7 +91,9 @@
     <div class="d-flex flex-column row align-items-center justify-items-center">
         <div class="col-md-6 col-sm-12 text-center">
             <h4 class="text-center mt-5">
-                <h1 style="opacity: .3;font-size: 250px;">{!!$resource->icon()!!}</h1>
+                @if($resource->icon())
+                    <h1 style="opacity: .3;font-size: 250px;"><span class="{{$resource->icon()}}"></span></h1>
+                @endif
                 <div>{!! $resource->nothingStoredText() !!}</div>
                 <div>{!! $resource->nothingStoredSubText() !!}</div>
             </h4>

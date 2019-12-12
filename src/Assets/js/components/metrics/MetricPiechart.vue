@@ -1,11 +1,11 @@
 <template>
     <div class="h-100 d-flex align-items-center" >
         <div class="w-100 h-100"  ref="content" style="display:none;">
-            <div class='d-flex flex-row justify-content-between align-items-center mb-2'>
+            <div class='d-flex flex-row justify-content-between align-items-center mb-4'>
                 <slot name='label'></slot>
                 <slot name='sublabel'></slot>
             </div>
-            <div class='d-flex flex-row justify-content-between align-items-center h-100' v-loading="loading" >
+            <div class='d-flex flex-row justify-content-between align-items-center' v-loading="loading" >
                 <div v-html="legend" style="font-size:11px;"></div>
                 <div>
                     <pie-chart :discrete="true" :data="data" :legend='false' :donut='true' 

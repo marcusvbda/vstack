@@ -1,6 +1,6 @@
 @extends("templates.admin")
 @section('title',$data["resource"]["label"])
-@section('content')
+@section('breadcrumb')
 <div class="row">
     <div class="col-12">
         <nav aria-label="breadcrumb">
@@ -14,5 +14,7 @@
         </nav>
     </div>
 </div>
+@endsection
+@section('content')
 <resource-import :data="{{json_encode($data)}}"></resource-import>
 @endsection

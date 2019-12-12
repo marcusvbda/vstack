@@ -1,6 +1,6 @@
 @extends("templates.admin")
 @section('title',$resource->label())
-@section('content')
+@section('breadcrumb')
 <div class="row">
     <div class="col-12">
         <nav aria-label="breadcrumb">
@@ -14,10 +14,12 @@
         </nav>
     </div>
 </div>
+@endsection
+@section('content')
 <div class="row mt-2">
     <div class="col-12">
         <div class="d-flex flex-row justify-content-between mb-3">
-            <h4>{!! @$resource->icon() !!} {{$data["page_type"]}} de {{$resource->singularLabel()}}</h4>
+            <h4>@if( @$resource->icon() ) <span class="{{$resource->icon()}} mr-2"></span> @endif {{$data["page_type"]}} de {{$resource->singularLabel()}}</h4>
         </div>
     </div>
 </div>

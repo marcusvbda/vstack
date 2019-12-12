@@ -28,7 +28,12 @@ class Resource
 
     public function menu()
     {
-        return "<span class='el-icon-menu mr-2'></span> Recursos";
+        return "Recursos";
+    }
+
+    public function menuIcon()
+    {
+        return "el-icon-menu";
     }
 
     public function globallySearchable()
@@ -58,7 +63,7 @@ class Resource
 
     public function indexLabel()
     {
-        return $this->icon() . " Listagem de " . $this->label();
+        return "<span class='".$this->icon()." mr-2'></span>"." Listagem de " . $this->label();
     }
 
     public function storeButtonlabel()

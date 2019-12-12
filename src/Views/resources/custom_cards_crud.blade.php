@@ -1,6 +1,6 @@
 @extends("templates.admin")
 @section('title',"Cards Customizados")
-@section('content')
+@section('breadcrumb')
 <div class="row">
     <div class="col-12">
         <nav aria-label="breadcrumb">
@@ -15,7 +15,8 @@
         </nav>
     </div>
 </div>
-
+@endsection
+@section('content')
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center">
         <h4 class="mb-1"><b class="el-icon-data-line mr-2"></b>{{$data["page_type"]}} de Cards Customizados</h4> 

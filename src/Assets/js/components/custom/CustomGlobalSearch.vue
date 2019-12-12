@@ -1,9 +1,6 @@
 <template>
-    <div class="navbar-nav mb-0 globalsearch w-100" >
-        <el-autocomplete v-model="filter" :fetch-suggestions="querySearchAsync" 
-            placeholder="Pesquisar ..." class="w-100"
-            @select="handleSelect"
-        >
+    <div class="navbar-nav mb-0 globalsearch ml-auto" >
+        <el-autocomplete size="mini" v-model="filter" :fetch-suggestions="querySearchAsync" placeholder="Pesquisar ..." @select="handleSelect">
             <i class="el-icon-search el-input__icon" slot="suffix"></i>
             <template slot-scope="{ item }">
                     <div class="value">{{ item.resource }}</div>
@@ -45,10 +42,7 @@ export default {
 </script>
 <style scoped lang="scss">
     .globalsearch {
-        // margin-left:112px;
-        width: 300px;
-        padding-left : 200px;
-        padding-right : 200px;
+        padding-right : 50px;
     }
     .el-scrollbar {
         .el-autocomplete-suggestion__list {
