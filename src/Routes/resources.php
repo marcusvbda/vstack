@@ -1,6 +1,7 @@
 <?php
 Route::group(['prefix' => "admin"], function () {
     Route::group(['middleware' => ['web', 'auth']], function () {
+        Route::post('upload', '\marcusvbda\vstack\Controllers\ResourceController@upload')->name("resource.upload");
         Route::post('store', '\marcusvbda\vstack\Controllers\ResourceController@store')->name("resource.store");
         Route::get('{resource}', '\marcusvbda\vstack\Controllers\ResourceController@index')->name("resource.index");
         Route::get('{resource}/create', '\marcusvbda\vstack\Controllers\ResourceController@create')->name("resource.create");

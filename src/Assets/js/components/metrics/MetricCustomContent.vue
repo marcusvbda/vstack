@@ -1,6 +1,6 @@
 <template>
     <div class="h-100" v-loading="loading">
-        <div class='d-flex flex-row justify-content-between align-items-center mb-2'>
+        <div class='d-flex flex-row justify-content-between align-items-center flex-wrap mb-2'>
             <slot name='label'></slot>
             <slot name='sublabel'></slot>
         </div>

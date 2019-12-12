@@ -84,8 +84,8 @@
             </div>
             <div class="row mt-4">
                 <div class="col-12 d-flex justify-content-end align-items-center">
-                    <a :href="`${resourceroute}/custom-cards`" class="text-danger mr-4"><b>Cancelar</b></a>
-                    <button class="btn btn-primary" @click="confirm" :disabled="!canSubmit">{{ card ? "Alterar" : "Cadastrar"}}</button>
+                    <a :href="`${resourceroute}/custom-cards`" class="text-danger mr-4 d-none d-lg-block"><b>Cancelar</b></a>
+                    <button class="btn btn-sm-block btn-primary" @click="confirm" :disabled="!canSubmit">{{ card ? "Alterar" : "Cadastrar"}}</button>
                 </div>
             </div>
         </template>

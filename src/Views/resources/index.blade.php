@@ -20,24 +20,22 @@
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center">
         <h4 class="mb-1">{!! @$resource->indexLabel() !!}</h4>
-        <div class="d-flex flex-row">
+        <div class="d-flex flex-row  flex-wrap align-items-center">
             @if($resource->canCreate())
-                <div class="ml-4">
-                    @if($resource->model->count()>0)
-                        <a class="btn btn-primary btn-sm-block btn-sm cursor-pointer px-3 pr-4" href="{{route('resource.create',['resource'=>$resource->id])}}">
-                            {!! $resource->storeButtonLabel() !!}
-                        </a>
-                    @endif
-                </div>
+                @if($resource->model->count()>0)
+                    <a class="btn btn-primary btn-sm btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1" href="{{route('resource.create',['resource'=>$resource->id])}}">
+                        {!! $resource->storeButtonLabel() !!}
+                    </a>
+                @endif
                 @if($resource->canImport())
-                    <a class="btn btn-outline-secondary btn-sm-block btn-sm cursor-pointer pr-3 ml-2" href="{{route('resource.import',['resource'=>$resource->id])}}">
+                    <a class="ml-2 link" href="{{route('resource.import',['resource'=>$resource->id])}}">
                         {!! $resource->importButtonlabel() !!}
                     </a>
                 @endif
             @endif
             @if($resource->canView() && $resource->canExport())
                 @if($resource->model->count()>0)
-                    <a class="btn btn-outline-secondary btn-sm-block btn-sm cursor-pointer pr-3 ml-2" target="_BLANK" href="{{route('resource.export',array_merge(request()->all(),['resource'=>$resource->id]))}}">
+                    <a class="ml-3 link" target="_BLANK" href="{{route('resource.export',array_merge(request()->all(),['resource'=>$resource->id]))}}">
                         {!! $resource->exportButtonlabel() !!}
                     </a>
                 @endif

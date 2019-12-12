@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class='d-flex flex-row justify-content-between align-items-start'>
+        <div class='d-flex flex-row justify-content-between align-items-start  flex-wrap'>
             <div class="mr-auto"><slot></slot></div>
             <div v-if="ranges=='date-interval'">
                 <el-date-picker size='mini' 

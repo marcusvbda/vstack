@@ -462,4 +462,9 @@ class ResourceController extends Controller
         if(!$metric) abort(404);
         return $metric->calculate($request);
     }
+
+    public function upload(Request $request)
+    {
+        return ["path"=>asset(str_replace("public","storage",$request->file('file')->store('public')))];
+    }
 }

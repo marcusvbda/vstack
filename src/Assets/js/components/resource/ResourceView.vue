@@ -1,12 +1,10 @@
 <template>
     <div>
         <div class="row mb-3">
-            <div class="col-md-12 d-flex justify-content-between align-items-center">
+            <div class="col-md-12 d-flex justify-content-between align-items-center flex-wrap">
                 <div><slot name="title"></slot></div>
-                <div>
-                    <button @click.prevent="destroy" v-if="data.can_delete" class="btn btn-danger btn-lg btn-sm-block mr-3"><span class="el-icon-delete text-white"></span></button>
-                    <a v-if="data.can_update" :href="data.update_route" class="btn btn-primary btn-lg btn-sm-block"><span class="el-icon-edit text-white"></span></a>
-                </div>
+                <button @click.prevent="destroy" v-if="data.can_delete" class="ml-auto btn btn-danger btn-lg btn-sm-block mb-1"><span class="el-icon-delete text-white"></span></button>
+                <a v-if="data.can_update" :href="data.update_route" class="btn btn-primary btn-lg btn-sm-block mb-1"><span class="el-icon-edit text-white"></span></a>
             </div>
         </div>
         <div class="row mb-4" v-for="(card, i) in data.fields">

@@ -18,7 +18,7 @@
 @endsection
 @section('content')
 <div class="row mb-3 mt-2">
-    <div class="col-12 d-flex flex-row align-items-center">
+    <div class="col-12 d-flex flex-row align-items-center flex-wrap">
         <h4 class="mb-1"><b class="el-icon-data-line mr-2"></b>{{$data["page_type"]}} de Cards Customizados</h4> 
     </div>
 </div>

@@ -1,9 +1,9 @@
 <template>
     <div :class="`col-md-${metric.width} col-sm-12 mb-3`" style="color: #7c858e;">
-        <div class="card d-flex flex-column justify-content-between p-3 h-100 h-100" >
+        <div class="card d-flex flex-column justify-content-between p-3 h-100 h-100  flex-wrap" >
             <div class="d-flex align-items-center" v-if="metric.title || metric.subtitle">
                 <div class="w-100 h-100">
-                    <div class="d-flex flex-row justify-content-between align-items-center mb-2">
+                    <div class="d-flex flex-row justify-content-between align-items-center flex-wrap mb-2">
                         <b v-html="metric.title"></b>
                         <b v-html="metric.subtitle" v-if="['custom-content','group-chart'].includes(metric.type)"></b>
                         <template v-if="['trend-counter','trend-chart'].includes(metric.type)">
@@ -21,7 +21,7 @@
 
             <v-runtime-template v-if="metric.type=='custom-content'" :template="`<span>${metric.content}</span>`" />
             <template v-if="metric.type=='trend-counter'">
-                <div class="d-flex flex-column justify-content-between" ref="content" style="display:none;">
+                <div class="d-flex flex-column justify-content-between  flex-wrap" ref="content" style="display:none;">
                     <h2 v-loading="loading">{{value ? value.toFixed(2).replace(/[.,]00$/, "") : 0}}</h2>
                     <div class="mt-3">
                         <span v-html="trend"></span>
@@ -29,7 +29,7 @@
                 </div>
             </template>
             <template v-if="metric.type=='group-chart'">
-                <div class='d-flex flex-row justify-content-between align-items-center h-100' >
+                <div class='d-flex flex-row justify-content-between flex-wrap align-items-center h-100' >
                     <div v-html="legend" style="font-size:11px;"></div>
                     <div>
                         <pie-chart :discrete="true" :data="data" :legend='false' :donut='true' 

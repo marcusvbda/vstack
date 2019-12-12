@@ -1,10 +1,11 @@
 <template>
+    
     <div>
         <div class="form-group row mb-3">
             <label class="col-sm-2 col-form-label" v-if="label"><span v-html="label ? label : ''"></span></label>
             <div class="col-sm-10" v-bind:class="{'col-sm-10' : label,'col-sm-12':!label}">
                 <div v-loading="loading" class="w-100" v-bind:class="{'summernote-is-invalid' : errors}">
-                    <textarea ref="textarea" style="display:none;" v-model="text" :name="name"></textarea>
+                    <textarea ref="textarea" style="display:none" v-model="text" :name="name"></textarea>
                     <div class="invalid-feedback" v-if="errors">
                         <ul class="pl-3 mb-0">
                             <li v-for="(e,i) in errors">{{e}}</li>
@@ -38,7 +39,7 @@ export default {
             type: String,
             default: 'text'
         },
-        routeuploadimage:
+        uploadroute:
         {
             type: String,
             default: ''
@@ -96,8 +97,12 @@ export default {
                 minHeight: this.minHeight,
                 maxHeight: this.maxHeight,
                 focus: this.focus,
-                codemirror: { 
-                    theme: 'monokai'
+                prettifyHtml: true,
+                codemirror: {
+                    theme: 'default',
+                    mode: "text/html",
+                    lineNumbers: true,
+                    tabMode: 'indent'
                 },
                 callbacks: {
                     onInit: () => {
@@ -121,28 +126,28 @@ export default {
                     onPaste: (e) => {
                         this.$emit('onPaste', e)
                     },
-                    // onImageUpload: (files) => {
-                    //     this.$emit('onImageUpload', files)
-                    // },
+                    onImageUpload: (files) => {
+                        this.$emit('onImageUpload', files)
+                    },
                     onChange: (contents) => {
                         this.$emit('onChange', contents)
                         this.$emit('input', contents)
                     },
-                    // onImageUpload: (image) => {
-                    //     this.loading = true
-                    //     this.uploadImage(image[0])
-                    // }
+                    onImageUpload: (image) => {
+                        this.loading = true
+                        this.uploadImage(image[0])
+                    }
                 }
             }
 		}
 	},
     async created() {
         $( document ).ready( _ => {
-            var params = Object.assign({}, this.options);
+            var params = Object.assign({}, this.options)
             if (this.disabled) {
-                $(this.$refs.textarea).summernote('disable');
+                $(this.$refs.textarea).summernote('disable')
             }
-            // $(".note-group-image-url").remove();
+            // $(".note-group-image-url").remove()
             $(this.$refs.textarea).summernote(this.options)
             this.run('code',this.$attrs.value)
         })
@@ -151,30 +156,30 @@ export default {
         $(this.$refs.textarea).summernote('destroy')
     },
     methods: {
-        // uploadImage:function(image)
-        // {
-        //     let data = new FormData();
-        //     data.append("file", image);
-        //     let self = this;
-        //     $.ajax({
-        //         url: self.routeuploadimage,
-        //         cache: false,
-        //         contentType: false,
-        //         processData: false,
-        //         data: data,
-        //         type: "POST",
-        //         success: function(response) 
-        //         {
-        //             self.loading = false
-        //             var image = $('<img>').attr('src', response.data.raw_url);
-        //             $(self.$refs.textarea).summernote("insertNode", image[0]);
-        //         },
-        //         error: function(data) {
-        //             console.log(data);
-        //             self.loading = false
-        //         }
-        //     });
-        // },
+        uploadImage:function(image)
+        {
+            let data = new FormData()
+            data.append("file", image)
+            let self = this
+            $.ajax({
+                url: self.uploadroute,
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: data,
+                type: "POST",
+                success: function(response) 
+                {
+                    self.loading = false
+                    var image = $('<img>').attr('src', response.path)
+                    $(self.$refs.textarea).summernote("insertNode", image[0])
+                },
+                error: function(data) {
+                    console.log(data)
+                    self.loading = false
+                }
+            })
+        },
         run: function (code, value) {
             if (typeof value === undefined) {
                 return $(this.$refs.textarea).summernote(code,"")
