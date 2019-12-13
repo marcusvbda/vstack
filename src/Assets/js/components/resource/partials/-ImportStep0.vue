@@ -28,12 +28,26 @@
                     </template>
                 </div>
             </div>
-            <div class="row mt-4" v-if="config.show_advanced">
-                <div class="col-md-5 col-sm-12">Delimitador do CSV</div>
-                <div class="col-md-2 col-sm-12">
-                    <v-input v-model="config.delimiter"  placeholder="Digite aqui o delimitador do CSV ..." />
+            <template v-if="config.show_advanced">
+                <div class="row mt-4">
+                    <div class="col-md-5 col-sm-12">Delimitador do CSV</div>
+                    <div class="col-md-2 col-sm-12">
+                        <v-input v-model="config.delimiter" placeholder="Digite aqui o delimitador do CSV ..." />
+                    </div>
                 </div>
-            </div>
+                <div class="row mt-4">
+                    <div class="col-md-5 col-sm-12">
+                        Habilitar Atualização<br>
+                        <small>O processo encontrará registros com o mesmo <b>ID</b> e efetuará a atualização, registros com <b>ID</b>s inexistentes serão ignorados</small>
+                    </div>
+                    <div class="col-md-2 col-sm-12">
+                        <el-switch v-model='config.update'                
+                            active-text='Sim'            
+                            inactive-text='Não'>       
+                        </el-switch> 
+                    </div>
+                </div>
+            </template>
         </div>
         <div class="card-footer bg-white">
             <div class="row">

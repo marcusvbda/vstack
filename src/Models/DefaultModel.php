@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Http\Traits\hasCode;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use marcusvbda\vstack\Traits\CascadeOrRestrictSoftdeletes;
+use marcusvbda\vstack\Models\Scopes\TenantScope;
+use marcusvbda\vstack\Models\Observers\TenantObserver;
 
 class DefaultModel extends Model
 {
@@ -13,4 +15,19 @@ class DefaultModel extends Model
     public $guarded = ["created_at"];
     public $cascadeDeletes = [];
     public $restrictDeletes = [];
+
+    public static function boot()
+    {
+        parent::boot();
+        if(self::hasTenant()) 
+        {
+            static::observe(new TenantObserver());
+            static::addGlobalScope(new TenantScope());
+        }
+    }
+
+    public static function hasTenant()
+    {
+        return true;
+    }
 }

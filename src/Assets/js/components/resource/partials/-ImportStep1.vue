@@ -20,13 +20,15 @@
                         </thead>
                         <tbody>
                             <tr v-for="column in config.data.csv_header">
-                                <td class="px-5">{{column}}</td>
-                                <td class="px-5">
-                                    <el-select class="w-100" clearable v-model="config.fieldlist[column]" filterable placeholder="Seleciona para onde este campo será importado">
-                                        <el-option label="Não Importar" value="_IGNORE_"></el-option>
-                                        <el-option v-for="(item,i) in config.data.columns" :key="i" :label="item" :value="item"></el-option>
-                                    </el-select>
-                                </td>
+                                <template>
+                                    <td class="px-5">{{column}}</td>
+                                    <td class="px-5">
+                                        <el-select class="w-100" clearable v-model="config.fieldlist[column]" filterable placeholder="Seleciona para onde este campo será importado">
+                                            <el-option label="Não Importar" value="_IGNORE_"></el-option>
+                                            <el-option v-for="(item,i) in headerOptions" :key="i" :label="item" :value="item" ></el-option>
+                                        </el-select>
+                                    </td>
+                                </template>
                             </tr>
                         </tbody>
                     </table>
@@ -50,6 +52,12 @@ export default {
             this.loading = true
             this.config.step+=2
         },
+    },
+    computed : {
+        headerOptions() {
+            if(!this.config.update) return this.config.data.columns.filter(x=>x!="id")
+            return this.config.data.columns
+        }
     },
     mounted() {
         this.config.fieldlist = {}

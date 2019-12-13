@@ -29,6 +29,7 @@ export default {
             config : {
                 show_advanced : false,
                 delimiter : ",",
+                update : false,
                 step : 0,
                 data : {
                     columns : this.data.resource.columns,

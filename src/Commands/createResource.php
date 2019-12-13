@@ -57,6 +57,10 @@ class ' . $model . ' extends DefaultModel
     protected $table = "' . $table . '";
     // public $cascadeDeletes = [];
     // public $restrictDeletes = [];
+    // public static function hasTenant() //default true
+    // {
+    //     return true;
+    // }
 }';
         $this->makeDir($dir);
         file_put_contents($model_path, $content);

@@ -64,7 +64,7 @@ class ResourceController extends Controller
     {
         $columns = array_filter($resource->getTableColumns(),function($x)
         {
-            if(!in_array($x,["id","created_at","deleted_at","updated_at","email_verified_at","confirmation_token","recovery_token","password","tenant_id"])) return $x;
+            if(!in_array($x,["created_at","deleted_at","updated_at","email_verified_at","confirmation_token","recovery_token","password","tenant_id"])) return $x;
         });
         return [
             "resource" => [
@@ -119,20 +119,40 @@ class ResourceController extends Controller
                 if( $_data) $data[] = $_data;
             }
             $fieldlist = $config->fieldlist;
-            $_news = [];
-            foreach($data as $row)
+            if($config->update)
             {
-                $new = [];
-                foreach($fieldlist as $key=>$value) if($value!="_IGNORE_") $new[$value] = $row[$key];
-                $new["created_at"] = date('Y-m-d H:i:s');
-                $new["tenant_id"]  = $user->tenant_id;
-                $_news[] = $new;
+                try {
+                    foreach($data as $row)
+                    {
+                        $item = $resource->model->find($row["id"]);
+                        if($item) 
+                        {
+                            foreach($fieldlist as $key=>$value) if($value!="_IGNORE_") $item->{$value} = $row[$key];
+                            $item->save();
+                        }
+                    }
+                    Messages::notify("success", "CSV de ".$resource->label()." importado com sucesso !!", $user->id);
+                } catch(\Exception $e) {
+                    Messages::notify("error", "<p>Erro ao importar CSV de ".$resource->label()."</p><p>".$e->getMessage()."</p>", $user->id);
+                } 
             }
-            try {
-                $resource->model->insert($_news);
-                Messages::notify("success", "CSV de ".$resource->label()." importado com sucesso !!", $user->id);
-            } catch(\Exception $e) {
-                Messages::notify("error", "<p>Erro ao importar CSV de ".$resource->label()."</p><p>".$e->getMessage()."</p>", $user->id);
+            else 
+            {
+                $_news = [];
+                foreach($data as $row)
+                {
+                    $new = [];
+                    foreach($fieldlist as $key=>$value) if($value!="_IGNORE_") $new[$value] = $row[$key];
+                    $new["created_at"] = date('Y-m-d H:i:s');
+                    $new["tenant_id"]  = $user->tenant_id;
+                    $_news[] = $new;
+                }
+                try {
+                    $resource->model->insert($_news);
+                    Messages::notify("success", "CSV de ".$resource->label()." importado com sucesso !!", $user->id);
+                } catch(\Exception $e) {
+                    Messages::notify("error", "<p>Erro ao importar CSV de ".$resource->label()."</p><p>".$e->getMessage()."</p>", $user->id);
+                } 
             } 
         })->onQueue("resource-import");
     }
@@ -228,6 +248,10 @@ class ResourceController extends Controller
                         $value = app()->make($model)->findOrFail($content->{$field->options["field"]})->name;
                         $_card["inputs"][$field->options["label"]] = $value;
                         break;
+                    case "belongsToMany":
+                        $value = implode(",",$content->{$field->options["field"]}->pluck("name")->toArray());
+                        $_card["inputs"][$field->options["label"]] = $value;
+                        break;
                     default:
                         $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
                         break;
@@ -251,10 +275,16 @@ class ResourceController extends Controller
 
     private function makeCrudDataFields($content, $cards)
     {
-        if (!$content) return $cards;
         foreach ($cards  as $card) {
             foreach ($card->inputs  as $input) {
-                $input->options["value"] = @$content->{$input->options["field"]};
+                switch ($input->options["type"]) {
+                    case "belongsToMany":
+                        $input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("id")->toArray() : null;
+                        break;
+                    default:
+                        $input->options["value"] = @$content->{$input->options["field"]};
+                        break;
+                }
             }
         }
         return $cards;
@@ -269,7 +299,6 @@ class ResourceController extends Controller
         if (!@$data["id"]) if (!$resource->canCreate()) abort(403);
         $this->validate($request, $resource->getValidationRule());
         $target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
-
         $data = $request->except(["resource_id", "id"]);
         $target->fill($data);
         $target->save();
