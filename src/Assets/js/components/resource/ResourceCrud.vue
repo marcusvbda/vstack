@@ -49,7 +49,6 @@ export default {
             for(let i in fields) {
                 let field_name = fields[i].options.field
                 let field_value = fields[i].options.value ? fields[i].options.value : fields[i].options.default
-                console.log(field_name,field_value)
                 this.$set(this.form, field_name, field_value)
             }
             this.$set(this.form, "resource_id", this.data.resource_id)

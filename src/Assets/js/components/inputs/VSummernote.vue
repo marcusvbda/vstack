@@ -39,11 +39,6 @@ export default {
             type: String,
             default: 'text'
         },
-        uploadroute:
-        {
-            type: String,
-            default: ''
-        },
         placeholder: {
             type: String,
             default: ''
@@ -162,7 +157,7 @@ export default {
             data.append("file", image)
             let self = this
             $.ajax({
-                url: self.uploadroute,
+                url: laravel.general.default_upload_route ? laravel.general.default_upload_route : "",
                 cache: false,
                 contentType: false,
                 processData: false,
