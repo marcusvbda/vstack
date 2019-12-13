@@ -1,10 +1,9 @@
 <?php
-
 class ResourcesHelpers
 {
     static function all()
     {
-        $path = app_path('Http\Resources\\');
+        $path = app_path("Http/Resources/");
         $data = [];
         foreach (glob($path . "*.php") as $filename) {
             if (basename($filename) != "Resource.php") {
@@ -15,14 +14,12 @@ class ResourcesHelpers
         }
         return $data;
     }
-
     static function make($filename)
     {
         $name = str_replace(".php", "", basename($filename));
-        $class = "App\Http\Resources\\" . $name;
+        $class = "App\\Http\\Resources\\" . $name;
         return App::make($class);
     }
-
     static function find($name)
     {
         $groups = self::all();
@@ -35,7 +32,6 @@ class ResourcesHelpers
         if (!$_resource) abort(404);
         return $_resource;
     }
-
     static function sortLink($route, $query, $field, $type)
     {
         $str_query = "";
@@ -45,10 +41,8 @@ class ResourcesHelpers
         $str_query = substr($str_query, 0, -1);
         return $route . "?" . $str_query;
     }
-
     static function hasFilter($query, $filters = [])
     {
-
         $keys = array_keys($query);
         $qty = 0;
         foreach ($keys as $key) {
@@ -61,7 +55,6 @@ class ResourcesHelpers
         }
         return $qty;
     }
-
     static function findFilter($key, $filters)
     {
         foreach ($filters as $f) {
