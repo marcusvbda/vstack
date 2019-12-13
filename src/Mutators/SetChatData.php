@@ -5,7 +5,7 @@ namespace marcusvbda\vstack\Mutators;
 use Illuminate\Support\Arr;
 
 class SetChatData extends BaseMutator{
-    protected $needsAuth = true;
+    protected $needsAuth = false;
     public function process($content){
         $content["chat"] = [
             "pusher_key"     => config("broadcasting.connections.pusher.key"),
