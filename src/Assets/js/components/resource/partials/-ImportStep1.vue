@@ -24,7 +24,7 @@
                                     <td class="px-5">{{column}}</td>
                                     <td class="px-5">
                                         <el-select class="w-100" clearable v-model="config.fieldlist[column]" filterable placeholder="Seleciona para onde este campo será importado">
-                                            <el-option label="Não Importar" value="_IGNORE_"></el-option>
+                                            <el-option label="Ignorar" value="_IGNORE_"></el-option>
                                             <el-option v-for="(item,i) in headerOptions" :key="i" :label="item" :value="item" ></el-option>
                                         </el-select>
                                     </td>
@@ -47,12 +47,6 @@
 <script>
 export default {
     props:["data","frm","config"],
-    methods :{
-        next() {
-            this.loading = true
-            this.config.step+=2
-        },
-    },
     computed : {
         headerOptions() {
             if(!this.config.update) return this.config.data.columns.filter(x=>x!="id")
@@ -61,6 +55,24 @@ export default {
     },
     mounted() {
         this.config.fieldlist = {}
+        this.relateColumns()
+    },
+    methods : {
+        relateColumns() {
+            let columns = this.config.data.columns
+            let headers = this.config.data.csv_header
+            for(let i in headers)
+            {
+                if(columns[i] == headers[i]) {
+                    console.log(columns[i], headers[i])
+                    this.config.fieldlist[columns[i]] = headers[i]
+                }
+            }
+        },
+        next() {
+            this.loading = true
+            this.config.step+=2
+        },
     }
 }
 </script>
