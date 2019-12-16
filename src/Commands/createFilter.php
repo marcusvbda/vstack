@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 class createFilter extends Command
 {
-    protected $signature = 'vstack:make-filter {resource} {name} {type} {index} {label}';
+    protected $signature = 'vstack:make-filter {resource} {name} {type}';
     public function __construct()
     {
         parent::__construct();
@@ -16,16 +16,14 @@ class createFilter extends Command
         $data = $this->arguments();
         $resource = $data["resource"];
         $type = $data["type"];
-        $index = $data["index"];
-        $label = $data["label"];
         $name = $data["name"];
         $totalSteps = 1;
         $bar = $this->output->createProgressBar($totalSteps);
-        $this->createFilter($bar, $resource, $type, $index,$label,$name);
+        $this->createFilter($bar,$resource,$type,$name);
         $bar->finish();
     }
 
-    private function createFilter($bar, $resource, $type, $index,$label,$name)
+    private function createFilter($bar,$resource,$type,$name)
     {
         $bar->start();
         $dir = app_path("\\Http\\Filters\\".$resource);
@@ -38,11 +36,24 @@ use  marcusvbda\vstack\Filter;
 class ' . $name . ' extends Filter
 {
     public $component   = "'.$type.'";
-    public $label       = "'.$label.'";
-    public $index       = "'.$index.'";
+    public $label       = "'.$name.'";
     public $placeholder = "";
+    public $index = "'.strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)).'";';
 
-    public function calculate($query, $value)
+
+    if($type=="select-filter")
+    {
+        $content .='
+
+    public function __construct()
+    {
+        $this->options[] = (Object) ["value"=>1,"label"=>"lorem ipsum"];
+        parent::__construct();
+    }';
+    }
+    $content .='
+    
+    public function apply($query, $value)
     {
         //filter logic here...
         return $query;

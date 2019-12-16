@@ -37,21 +37,38 @@ use Illuminate\Http\Request;
 class ' . $name . ' extends Metric
 {
     public $type   = "'.$type.'";';
-    if(in_array($type,["group-graph","simple-counter","trend-graph","custom-content","bar-chart"])) {
+    if(in_array($type,["group-chart","trend-chart","bar-chart"])) {
         $content .='
     public function calculate(Request $request)
     {
-        //return data or html content here...
+        //return data here...
         return ["lorem ipsum" => 12,"ipsum lorem" => 55];
     }
-    
-    //time to update content
-    public function updateTime()
-    {
-        return 60; // seconds
-    }
+
     ';
     }
+    if(in_array($type,["custom-content"])) {
+        $content .='
+    public function calculate(Request $request)
+    {
+        //return content here
+        return "<b>Custom Content here ...</b>";
+    }
+
+    ';
+    }
+
+    if(in_array($type,["trend-counter"])) {
+        $content .='
+    public function calculate(Request $request)
+    {
+        //return data here...
+        return ["value" => 12,"compare" => 10];
+    }
+
+    ';
+    }
+
     if(in_array($type,["simple-counter","trend-graph","bar-chart"])) {
         $content .='
     public function ranges()

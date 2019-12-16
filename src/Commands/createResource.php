@@ -35,7 +35,7 @@ namespace App\Http\Resources;
 use marcusvbda\vstack\Resource;
 class ' . $resource . ' extends Resource
 {
-    public $model = "App\Http\Models\\' . $model . '";
+    public $model = \App\Http\Models\\' . $model . '::class;
 }';
         $this->makeDir($dir);
         file_put_contents($resource_path, $content);

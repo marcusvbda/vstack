@@ -5,6 +5,7 @@ namespace marcusvbda\vstack;
 class Filter
 {
     public $view;
+    public $options = [];
     public function __construct()
     {
         $this->makeView();
@@ -105,4 +106,6 @@ class Filter
                             start-placeholder='$start_placeholder'>
                         </el-date-picker>";
     }
+
+    
 }
