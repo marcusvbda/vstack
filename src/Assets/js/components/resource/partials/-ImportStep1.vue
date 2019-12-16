@@ -49,8 +49,8 @@ export default {
     props:["data","frm","config"],
     computed : {
         headerOptions() {
-            if(!this.config.update) return this.config.data.columns.filter(x=>x!="id")
-            return this.config.data.columns
+            if(!this.config.update && this.config.data.columns.filter) return this.config.data.columns.filter(x=>x!="id")
+            return ["id" ].concat(this.config.data.columns)
         }
     },
     mounted() {
@@ -59,14 +59,12 @@ export default {
     },
     methods : {
         relateColumns() {
-            let columns = this.config.data.columns
+            let columns = this.headerOptions
             let headers = this.config.data.csv_header
             for(let i in headers)
             {
-                if(columns[i] == headers[i]) {
-                    console.log(columns[i], headers[i])
-                    this.config.fieldlist[columns[i]] = headers[i]
-                }
+                let index = columns.indexOf(headers[i])
+                if(index > -1) this.config.fieldlist[columns[index]] = headers[i]
             }
         },
         next() {

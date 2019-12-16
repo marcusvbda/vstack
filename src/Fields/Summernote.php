@@ -21,9 +21,11 @@ class Summernote extends Field
         $type           = $this->options["type"];
         $placeholder    = $this->options["placeholder"];
         $disabled       = @$this->options["disabled"] ? "true" : "false";
+        $uploadroute    = @$this->options["upload_route"] ? $this->options["upload_route"] : Config("vstack.default_upload_route");
         $height         = @$this->options["height"] ? $this->options["height"] : 150;
         if (!@$this->options["hide"])
             $view = "<v-summernote class='mb-3'  
+                        uploadroute='$uploadroute'
                         :disabled='$disabled'                                                                  
                         label='$label'                                                                     
                         type='$type'           

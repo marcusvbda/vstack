@@ -63,6 +63,10 @@ export default {
             type: Array,
             default: null
         },
+        uploadroute : {
+            type: String,
+            default: 'text'
+        },
         toolbar :{
             type: Array,
             default: () =>  [
@@ -157,7 +161,7 @@ export default {
             data.append("file", image)
             let self = this
             $.ajax({
-                url: laravel.general.default_upload_route ? laravel.general.default_upload_route : "",
+                url: this.uploadroute,
                 cache: false,
                 contentType: false,
                 processData: false,

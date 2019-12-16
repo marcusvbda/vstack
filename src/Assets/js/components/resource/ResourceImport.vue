@@ -28,7 +28,7 @@ export default {
             },
             config : {
                 show_advanced : false,
-                delimiter : ",",
+                delimiter : laravel.vstack.default_import_csv_separator ? laravel.vstack.default_import_csv_separator : ",",
                 update : false,
                 step : 0,
                 data : {

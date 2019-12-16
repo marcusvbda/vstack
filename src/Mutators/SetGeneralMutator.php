@@ -10,7 +10,6 @@ class SetGeneralMutator extends BaseMutator{
         $content["general"] = [
             "csrf_token" =>  csrf_token(),
             "root_url"   => url(''),
-            "default_upload_route"   => Config("vstack.fields.summernote.default_upload_route")
         ];
         return $content;
     }

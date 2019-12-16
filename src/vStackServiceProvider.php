@@ -18,6 +18,7 @@ class vStackServiceProvider extends ServiceProvider
         ]);
         $this->publishes([
             __DIR__.'/config' => config_path(),
+            __DIR__.'/migrations' => database_path("/migrations"),
         ]);
     }
 }

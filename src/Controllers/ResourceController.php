@@ -62,10 +62,12 @@ class ResourceController extends Controller
 
     private function makeImportData($resource)
     {
-        $columns = array_filter($resource->getTableColumns(),function($x)
+        $columns = [];
+        foreach($resource->getTableColumns() as $col)
         {
-            if(!in_array($x,["created_at","deleted_at","updated_at","email_verified_at","confirmation_token","recovery_token","password","tenant_id"])) return $x;
-        });
+            if(!in_array($col,["id","created_at","deleted_at","updated_at","email_verified_at","confirmation_token","recovery_token","password","tenant_id"])) $columns[] = $col;
+        }
+        
         return [
             "resource" => [
                 "label"          => $resource->label(),
@@ -163,10 +165,11 @@ class ResourceController extends Controller
         if (!$resource->canExport()) abort(403);
         $data = $this->getData($resource,$request);
         $data = $data->get();
-        $columns = array_filter($resource->getTableColumns(),function($x)
+        $columns = [];
+        foreach($resource->getTableColumns() as $col)
         {
-            if(!in_array($x,["confirmation_token","recovery_token","password","deleted_at","tenant_id"])) return $x;
-        });
+            if(!in_array($col,["confirmation_token","recovery_token","password","deleted_at","tenant_id"])) $columns[] = $col;
+        }
         $filename = uniqid().".csv";
         $file = fopen($filename, 'w+');
         fputcsv($file, $columns, ",",'"');

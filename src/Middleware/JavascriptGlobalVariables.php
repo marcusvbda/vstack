@@ -6,7 +6,8 @@ use Closure;
 use marcusvbda\vstack\Mutators\{
     SetChatData,
     SetUserData,
-    SetGeneralMutator
+    SetGeneralMutator,
+    SetVstackMutator
 };
 
 class SendJSVarsToView{
@@ -16,6 +17,7 @@ class SendJSVarsToView{
         SetUserData::class,
         SetChatData::class,
         SetGeneralMutator::class,
+        SetVstackMutator::class
     ];
 
     private $globals = [];
