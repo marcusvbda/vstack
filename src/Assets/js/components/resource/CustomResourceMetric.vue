@@ -6,7 +6,7 @@
                     <div class="d-flex flex-row justify-content-between align-items-center flex-wrap mb-2">
                         <b v-html="metric.title"></b>
                         <b v-html="metric.subtitle" v-if="['custom-content','group-chart'].includes(metric.type)"></b>
-                        <template v-if="['trend-counter','trend-chart'].includes(metric.type)">
+                        <template v-if="['trend-counter','trend-chart','bar-chart'].includes(metric.type)">
                             <el-date-picker size='mini' 
                                 v-model='filter.range' type='daterange'
                                 format="dd/MM/yyyy"
@@ -40,6 +40,9 @@
             <template v-if="metric.type=='trend-chart'">
                 <area-chart :discrete="true" :data="data"  height="120px" />
             </template>
+            <template v-if="metric.type=='bar-chart'">
+                <column-chart :discrete="true" :data="data"  height="120px" />
+            </template>
         </div>
     </div>
 </template>
@@ -58,7 +61,7 @@ export default {
         }
     },
     async created() {
-        if(['trend-counter','group-chart','trend-chart'].includes(this.metric.type)) {
+        if(['trend-counter','group-chart','trend-chart','bar-chart'].includes(this.metric.type)) {
             this.initDateInterval()
             this.updateData()
             setInterval(_ => {

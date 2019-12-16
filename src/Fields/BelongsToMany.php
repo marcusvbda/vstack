@@ -10,7 +10,6 @@ class BelongsToMany extends Field
     {
         $this->options = $op;
         $this->options["type"] = "belongsToMany";
-        $this->options["multiple"] = true;
         parent::processFieldOptions();
     }
 
@@ -23,8 +22,9 @@ class BelongsToMany extends Field
         $disabled    = @$this->options["disabled"] ? "true" : "false";
         $route_list  = route("resource.inputs.option_list");
         $placeholder = $this->options["placeholder"];
+        $required = $this->options["required"] ? "true": "false";
         if (!@$this->options["hide"])
-            $view = "<v-select multiple v-if='form.id' withoutBlank v-model='form.$field' list_model='$model' label='$label' :disabled='$disabled'                 
+            $view = "<v-select multiple :required='$required' v-model='form.$field' list_model='$model' label='$label' :disabled='$disabled'                 
                         placeholder='$placeholder' route_list='$route_list' :errors='errors.$field ? errors.$field : false'   
                     />";
         return $this->view = $view;

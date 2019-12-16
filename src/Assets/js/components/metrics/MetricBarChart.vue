@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div class='d-flex flex-row justify-content-between align-items-start  flex-wrap'>
+    <div ref="content" style="display:none;">
+        <div class='d-flex flex-row justify-content-between align-items-start pt-3 px-3 pb-1 flex-wrap'>
             <div class="mr-auto"><slot></slot></div>
             <div v-if="ranges=='date-interval'">
                 <el-date-picker size='mini' 
@@ -15,11 +15,8 @@
                 <div v-if="options.length>0"><v-select size="mini" v-model='filter.range' :optionlist="options" required /></div>
             </template>
         </div>
-        <div class="d-flex flex-column justify-content-between" ref="content" style="display:none;">
-            <h2 v-loading="loading">{{value ? value.toFixed(2).replace(/[.,]00$/, "") : 0}}</h2>
-            <div class="mt-3">
-                <span v-html="trend"></span>
-            </div>
+        <div class="d-flex flex-column justify-content-between p-1" v-loading="loading" >
+            <column-chart :discrete="true" :data="value" height="120px" />
         </div>
     </div>
 </template>
@@ -31,10 +28,9 @@ export default {
             loaded : false,
             data : [],
             loading : false,
-            filter :{},
+            filter : {},
             options : [],
-            compare : 0,
-            value : null
+            value : {}
         }
     },
     async created() {
@@ -52,14 +48,6 @@ export default {
             this.updateData()
         },this.time*1000)
     },
-    computed : {
-        trend() {
-            let percent = this.getTrendPercent()
-            if(Number(percent)==0) return "<div class='d-flex align-items-center'><h5>Sem Alteração</h5></div>"
-            if(Number(this.value)<Number(this.compare)) return `<div class='d-flex align-items-center'><h5>${percent}%<span class='el-icon-bottom-left text-danger ml-2'></span></h5></div>`
-            return `<div class='d-flex align-items-center'><h5>${percent}%<span class='el-icon-top-right text-success ml-2'></span></h5></div>`
-        }
-    },
     watch : {
         filter: {
             handler(val) {
@@ -75,20 +63,12 @@ export default {
             let startDate = new Date(new Date().setDate(endDate.getDate()-15))
             this.$set(this.filter,"range",[startDate.toISOString().slice(0, 10),endDate.toISOString().slice(0, 10)])
         },
-        getTrendPercent() {
-            let compare = Number(this.compare)
-            let value = compare-Number(this.value)
-            if(value<=0) return (value*-1).toFixed(2).replace(/[.,]00$/, "")
-            let result = ((value*100)/compare)
-            if(result<0) result*=-1
-            return result.toFixed(2).replace(/[.,]00$/, "")
-        },
         updateData() {
             if(!this.filter.range) return
             this.loading = true
             this.$http.post(this.route,this.filter).then( res => {
-                this.value = res.data.value ? res.data.value : 0
-                this.compare = res.data.compare ? res.data.compare : 0
+                let data = res.data ? res.data : {}
+                this.value = data
                 this.loading = false
                 $(this.$refs.content).show()
                 this.loaded = true

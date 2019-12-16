@@ -37,7 +37,7 @@ use Illuminate\Http\Request;
 class ' . $name . ' extends Metric
 {
     public $type   = "'.$type.'";';
-    if(in_array($type,["group-graph","simple-counter","trend-graph","custom-content"])) {
+    if(in_array($type,["group-graph","simple-counter","trend-graph","custom-content","bar-chart"])) {
         $content .='
     public function calculate(Request $request)
     {
@@ -52,7 +52,7 @@ class ' . $name . ' extends Metric
     }
     ';
     }
-    if(in_array($type,["simple-counter","trend-graph"])) {
+    if(in_array($type,["simple-counter","trend-graph","bar-chart"])) {
         $content .='
     public function ranges()
     {

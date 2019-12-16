@@ -303,10 +303,40 @@ class ResourceController extends Controller
         $this->validate($request, $resource->getValidationRule());
         $target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
         $data = $request->except(["resource_id", "id"]);
-        $target->fill($data);
+        $data = $this->processStoreData($resource,$data);
+        $target->fill($data["data"]);
         $target->save();
+        $this->storeBelongsToMany($target,$data["belongsToMany"]);
         Messages::send("success", "Registro salvo com sucesso !!");
         return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
+    }
+
+    private function storeBelongsToMany($target,$relations)
+    {
+        $target->refresh();
+        foreach($relations as $key=>$value) $target->{$key}()->sync($value);
+    }
+
+    private function processStoreData($resource,$data)
+    {
+        $result = $this->getBelongsToManyFields($resource,$data);
+        return $result;
+    }
+    private function getBelongsToManyFields($resource,$data)
+    {
+        $fields = [];
+        foreach($resource->fields() as $cards)
+        {
+            foreach($cards->inputs as $field)
+            {
+                if($field->options["type"] == "belongsToMany") 
+                {
+                    $fields[$field->options["field"]] = $data[$field->options["field"]];
+                    unset($data[$field->options["field"]]);
+                }
+            }
+        }
+        return ["belongsToMany"=>$fields,"data"=>$data];
     }
 
     public function customCard($resource)
@@ -348,6 +378,17 @@ class ResourceController extends Controller
         if($card->type == "trend-counter") return $this->customTrendCounterCalculate($resource,$card,$request["range"]);
         if($card->type == "group-chart") return $this->customGroupChartCalculate($resource,$card);
         if($card->type == "trend-chart") return $this->customTrendChartCalculate($resource,$card,$request["range"]);
+        if($card->type == "bar-chart") return $this->customBarChartCalculate($resource,$card,$request["range"]);
+    }
+
+    private function customBarChartCalculate($resource,$card,$range)
+    {
+        $startDate = Carbon::create($range[0])->format("Y-m-d 00:00:00");
+        $endDate   = Carbon::create($range[1])->format("Y-m-d 00:00:00");
+        return  $resource->model->whereRaw(DB::raw("DATE(".$card->group_by.") >='$startDate'" . " and " ."DATE(".$card->group_by.") <='$endDate'" ))
+                    ->select(DB::raw('DATE_FORMAT('.$card->group_by.',"%d/%m/%Y") as formated_date, count(*) as qty'))
+                    ->groupBy("formated_date")
+                    ->pluck('qty','formated_date');
     }
 
     private function customTrendChartCalculate($resource,$card,$range)
@@ -439,8 +480,9 @@ class ResourceController extends Controller
             unset($data["content"]);
             $card->fill($data);
         }
-        if( in_array($data["type"],["group-chart","trend-chart"]))
+        if( in_array($data["type"],["group-chart","trend-chart","bar-chart"]))
         {
+            if( in_array($data["type"],["trend-chart","bar-chart"])) unset($data["subtitle"]);
             unset($data["content"]);
             $card->fill($data);
         }

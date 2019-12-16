@@ -8,7 +8,7 @@
             <div class='d-flex flex-row justify-content-between align-items-center' v-loading="loading" >
                 <div v-html="legend" style="font-size:11px;"></div>
                 <div>
-                    <pie-chart :discrete="true" :data="data" :legend='false' :donut='true' 
+                    <pie-chart :discrete="true" :data="data" :legend='false'
                     :colors="colors" height='100px' width='100px' />
                 </div>
             </div>

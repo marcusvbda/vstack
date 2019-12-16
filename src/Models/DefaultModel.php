@@ -19,7 +19,7 @@ class DefaultModel extends Model
     public static function boot()
     {
         parent::boot();
-        if(self::hasTenant()) 
+        if(static::hasTenant()) 
         {
             static::observe(new TenantObserver());
             static::addGlobalScope(new TenantScope());

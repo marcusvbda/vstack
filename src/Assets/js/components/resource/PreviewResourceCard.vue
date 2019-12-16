@@ -50,6 +50,9 @@
             <template v-if="metric.type=='trend-chart'">
                 <area-chart :discrete="true" :data="{'lorem' : 10, 'ipsum' :5}"  height="120px" />
             </template>
+            <template v-if="metric.type=='bar-chart'">
+                <column-chart :discrete="true" :data="{'lorem' : 10, 'ipsum' :5}"  height="120px" />
+            </template>
         </div>
         <small class="float-right">Pré-Visualização Ilustrativa</small>
     </div>

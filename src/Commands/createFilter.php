@@ -42,7 +42,7 @@ class ' . $name . ' extends Filter
     public $index       = "'.$index.'";
     public $placeholder = "";
 
-    public function apply($query, $value)
+    public function calculate($query, $value)
     {
         //filter logic here...
         return $query;

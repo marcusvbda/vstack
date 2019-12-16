@@ -29,7 +29,7 @@
                                 </div>
                                 <div class="row d-flex justify-content-center">
                                     <div class="col-md-10 col-sm-12" >
-                                        <v-select :label="`<b>Tamanho</b>`" v-model='frm.width' :optionlist="width_list" withoutBlank />
+                                        <v-select :label="`<b>Tamanho</b>`" v-model='frm.width' :optionlist="width_list" required />
                                     </div>
                                     <div class="col-md-10 col-sm-12">
                                         <v-input :label="`<b>Título</b>`" v-model='frm.title' />
@@ -57,12 +57,12 @@
                                     </div>
                                     <template v-if="frm.type=='trend-counter'">
                                         <div class="col-md-10 col-sm-12">
-                                            <v-select :label="`<b>Intervalo de Atualização</b>`" v-model='frm.update_interval' :optionlist="update_interval_list" withoutBlank />
+                                            <v-select :label="`<b>Intervalo de Atualização</b>`" v-model='frm.update_interval' :optionlist="update_interval_list" required />
                                         </div>
                                     </template>
-                                    <template v-if="['group-chart','trend-chart'].includes(frm.type)">
+                                    <template v-if="['group-chart','trend-chart','bar-chart'].includes(frm.type)">
                                         <div class="col-md-10 col-sm-12">
-                                            <v-select :label="`<b>Agrupamento</b>`" v-model='frm.group_by' :optionlist="custommetricoptions[frm.type]" withoutBlank />
+                                            <v-select :label="`<b>Agrupamento</b>`" v-model='frm.group_by' :optionlist="custommetricoptions[frm.type]" required />
                                         </div>
                                     </template>
                                 </div>
@@ -129,13 +129,14 @@ export default {
         this.type_list.push({id:"custom-content",name:"Conteúdo Customizado"})
         this.type_list.push({id:"trend-counter",name:"Média de Entradas e Tendência"})
         if(this.custommetricoptions["group-chart"]) this.type_list.push({id:"group-chart",name:"Gráfico De Agrupamento"})
+        if(this.custommetricoptions["bar-chart"]) this.type_list.push({id:"bar-chart",name:"Grafico de Barras"})
         if(this.custommetricoptions["trend-chart"]) this.type_list.push({id:"trend-chart",name:"Grafico de Área"})
     },
     computed : {
         canSubmit() {
             if(this.frm.type=='custom-content') return this.wizard_step>=2
             if(this.frm.type=='trend-counter') return (this.wizard_step>=2 && this.frm.update_interval)
-            if(['group-chart','trend-chart'].includes(this.frm.type)) return (this.wizard_step>=2 && this.frm.update_interval && this.frm.group_by)
+            if(['group-chart','trend-chart','bar-chart'].includes(this.frm.type)) return (this.wizard_step>=2 && this.frm.update_interval && this.frm.group_by)
         }
     },
     watch : {

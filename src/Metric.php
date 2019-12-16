@@ -51,7 +51,7 @@ class Metric
                         </div>
                     </div>";
         }
-        if(in_array($this->type,["trend-chart"]))
+        if(in_array($this->type,["trend-chart","bar-chart"]))
         {
             return  "<div class='".$this->width()." mb-3'>
                         <div class='card d-flex flex-column justify-content-between p-0 h-100 h-100'>
@@ -88,10 +88,18 @@ class Metric
             case 'trend-chart':
                 return $this->trendChartContent();
                 break;
+            case 'bar-chart':
+                return $this->barChartContent();
+                break;
             default:
                 return $this->type;
                 break;
         }
+    }
+
+    private function barChartContent()
+    {
+        return "<metric-bar-chart :ranges='ranges' :time='time' :route='calculate_route'>".$this->label()."</metric-bar-chart>";
     }
 
     private function groupChartContent()
