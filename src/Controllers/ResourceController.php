@@ -320,6 +320,7 @@ class ResourceController extends Controller
         $target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
         $data = $request->except(["resource_id", "id"]);
         $data = $this->processStoreData($resource,$data);
+        // dd($data);
         $target->fill($data["data"]);
         $target->save();
         $this->storeBelongsToMany($target,$data["belongsToMany"]);
@@ -335,9 +336,12 @@ class ResourceController extends Controller
         foreach($relations as $key=>$values) 
         {
             $target->{$key}()->delete();
-            foreach($values as $value) 
+            if($values)
             {
-                $target->{$key}()->create(["value"=>$value]);
+                foreach($values as $value) 
+                {
+                    $target->{$key}()->create(["value"=>$value]);
+                }
             }
         }
     }
@@ -348,9 +352,12 @@ class ResourceController extends Controller
         foreach($relations as $key=>$values) 
         {
             $target->{$key}()->delete();
-            foreach($values as $value) 
+            if($values) 
             {
-                $target->{$key}()->create(["value"=>$value]);
+                foreach($values as $value) 
+                {
+                    $target->{$key}()->create(["value"=>$value]);
+                }
             }
         }
     }

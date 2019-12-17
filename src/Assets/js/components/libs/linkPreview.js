@@ -8,7 +8,6 @@ $(function () {
 
     // implemented as a jQuery plugin
     $.fn.miniPreview = function (options) {
-        console.log("entrou")
         return this.each(function () {
             var $this = $(this);
             var miniPreview = $this.data(PREFIX);

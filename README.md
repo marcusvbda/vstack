@@ -46,205 +46,57 @@ exemplo de um resource COMPLETO
 ```
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Models;
 
-use marcusvbda\vstack\Resource;
-use App\Http\Filters\Cars\{
-    CarsFilterByName, 
-    CarsFilterByDate, 
-    CarsFilterByRangeDate
-};
-use marcusvbda\vstack\Fields\{
-    Text, 
-    TextArea, 
-    Check, 
-    BelongsTo, 
-    // BelongsToMany, 
-    Summernote,
-    MorphsMany,
-    Upload,
-};
-use marcusvbda\vstack\Fields\Card;
-use App\Http\Metrics\Cars\{
-    CarsMetricCustom,
-    CarsMetricPerBrand,
-    CarsMetricCountPerDay,
-    CarsMetricTrendPerDay,
-    CarsMetricBarChart
-};
+use marcusvbda\vstack\Models\DefaultModel;
 
-use Auth;
-
-class Cars extends Resource
+class Car extends DefaultModel
 {
-    public $model = \App\Http\Models\Car::class;
-
-    public function singularLabel()
-    {
-        return "Carro";
-    }
-
-    public function label()
-    {
-        return "Carros";
-    }
-
-    public function globallySearchable()
-    {
-        return true;
-    }
-
-    public function icon()
-    {
-        return "el-icon-s-help";
-    }
-
-    public function menu()
-    {
-        return "Automotores";
-    }
+    protected $table = "cars";
+    public $cascadeDeletes = ["images"];
     
-    public function menuIcon()
+    // public $restrictDeletes = [];
+    // public static function hasTenant() //default true
+    // {
+    //     return true;
+    // }
+
+    public $appends = ["f_created_at", "f_active", "last_update"];
+
+    protected  $casts = [
+        "active" => "boolean"
+    ];
+
+    public function getFActiveAttribute()
     {
-        return "el-icon-s-promotion";
+        return $this->active ? '<span class="badge badge-primary">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>';
     }
 
-    public function table()
+    public function getLastUpdateAttribute()
     {
-        return [
-            "name"                  => ["label" => "Nome", "size" => "30%"],
-            "brand->name"           => ["label" => "Marca", "sortable" => true, "sortable_index" => "brand_id"],
-            "f_active"              => ["label" => "Ativo", "sortable" => true, "sortable_index" => "active"],
-            "f_created_at"          => ["label" => "Data de Criação", "sortable_index" => "created_at"],
-            "last_update"           => ["label" => "Ultima atualização", "sortable" => false],
-        ];
+        if (!$this->created_at) return;
+        return $this->created_at->diffForHumans();
     }
 
-    public function lenses()
+    public function getFCreatedAtAttribute()
     {
-        return [
-            "Apenas Ativos" => ["field" => "active", "value" => true],
-            "Apenas Inativos" => ["field" => "active", "value" => false],
-        ];
+        if (!$this->created_at) return;
+        return @$this->created_at->format("d/m/Y - H:i:s");
     }
 
-    public function fields()
+    public function brand()
     {
-        return [
-            new Card("<span class='el-icon-s-order mr-2'></span>Section Card 1",[
-                new Text([
-                    "label" => "Nome", 
-                    "field" => "name", 
-                    "required" => true,
-                    "placeholder" => "Digite o nome aqui ...", 
-                    "rules" => "required|max:255"
-                ]),
-                new TextArea([
-                    "label" => "Descrição Simples", 
-                    "field" => "simple_description",
-                    "placeholder" => "Digite o texto aqui ...",
-                ]),
-                new Summernote([
-                    "label" => "Descrição Completa", 
-                    "field" => "description",
-                    "placeholder" => "Digite o texto aqui ...",
-                ]),
-            ]),
-            new Card("Section Card 2",[
-                new Check([
-                    "label" => "Ativo", 
-                    "field" => "active"
-                ])
-            ]),
-            new Card("Section Card 3",[
-                new BelongsTo([
-                    "label" => "Marca", "field" => "brand_id",
-                    "placeholder" => "Selecione a marca",
-                    "model" => \App\Http\Models\Brand::class,
-                    "rules" => "required",
-                ]),
-                // new BelongsToMany([
-                //     "label" => "Cores Disponíveis" , 
-                //     "model" => \App\Http\Models\Color::class,
-                //     "field" => "colors",
-                //     "placeholder" => "Selecione as cores disponíveis",
-                //     "rules" => "required",
-                // ]),
-                new MorphsMany([
-                    "label" => "Cores Disponíveis" , 
-                    "field" => "colors",
-                    "placeholder" => "Selecione as cores disponíveis",
-                ]),
-            ]),
-            new Card("Section Card 4",[
-                new Upload([
-                    "label" => "Imagens", 
-                    "field" => "images",
-                    "preview"  => true, //default false
-                    "multiple" => true,
-                    // "limit" => 4, //default 5
-                    "accept" => "image/*",
-                    // "list_type" => "picture-card"//(picture,picture-card) //default picture-card
-                ]),
-            ])
-        ];
+        return $this->belongsTo(Brand::class);
     }
 
-    public function filters()
+    public function colors()
     {
-        return [
-            new CarsFilterByName,
-            new CarsFilterByDate,
-            new CarsFilterByRangeDate
-        ];
+        return $this->morphMany(Color::class,"model");
     }
 
-    public function search()
+    public function images()
     {
-        return ["name"];
-    }
-
-    public function metrics()
-    {
-        return [
-            new CarsMetricCustom,
-            new CarsMetricTrendPerDay,
-            new CarsMetricPerBrand,
-            new CarsMetricCountPerDay,
-            new CarsMetricBarChart
-        ];
-    }
-
-    //parametros para custom metric card
-    public function customMetricOptions()
-    {
-        return [
-            "group-chart" => [
-                ["name" => "Marca","id"=>"brand->name","key"=>"brand_id"],
-                ["name" => "Atividade","id"=>"active"]
-            ],
-            "trend-chart" => [
-                ["name"=>"Data de Criação","id"=>"created_at"],
-                ["name"=>"Data de Alteração","id"=>"updated_at"]
-            ],
-            "bar-chart" => [
-                ["name"=>"Data de Criação","id"=>"created_at"],
-                ["name"=>"Data de Alteração","id"=>"updated_at"]
-            ]
-        ];
-    }
-
-    // public function canViewList() //default true
-    // public function canView()  //default true
-    // public function canCreate() //default true
-    // public function canExport() //default true
-    // public function canImport() //default true
-    // public function canUpdate() //default true
-    // public function canDelete() //default true
-
-    public function canCustomizeMetrics() //default false
-    {
-        return true;
+        return $this->morphMany(Image::class,"model");
     }
 }
 ```

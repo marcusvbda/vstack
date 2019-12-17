@@ -18,11 +18,12 @@ class MorphsMany extends Field
         $view = "";
         $field       = @$this->options["field"];
         $label       = $this->options["label"];
+        $unique      = @$this->options["unique"] ? $this->options["unique"] : "true";
         $disabled    = @$this->options["disabled"] ? "true" : "false";
         $placeholder = $this->options["placeholder"];
         $required = $this->options["required"] ? "true": "false";
         if (!@$this->options["hide"])
-            $view = "<v-select multiple :allowcreate='true' :required='$required' v-model='form.$field' label='$label' :disabled='$disabled'                 
+            $view = "<v-tags multiple :allowcreate='true' :required='$required' v-model='form.$field' label='$label' :disabled='$disabled' :unique='$unique'                    
                         placeholder='$placeholder' :errors='errors.$field ? errors.$field : false'   
                     />";
         return $this->view = $view;

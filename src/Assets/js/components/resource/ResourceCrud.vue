@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <form class="needs-validation m-0" novalidate v-on:submit.prevent="submit" >
+            <form class="needs-validation m-0" novalidate v-on:submit.prevent="submit" @keypress.13.prevent >
                 <template v-for="(card,i) in data.fields">
                     <v-runtime-template :key="i" :template="card.view" />
                 </template>
