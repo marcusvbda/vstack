@@ -59,8 +59,10 @@ use marcusvbda\vstack\Fields\{
     TextArea, 
     Check, 
     BelongsTo, 
-    BelongsToMany, 
-    Summernote
+    // BelongsToMany, 
+    Summernote,
+    MorphsMany,
+    Upload,
 };
 use marcusvbda\vstack\Fields\Card;
 use App\Http\Metrics\Cars\{
@@ -161,12 +163,28 @@ class Cars extends Resource
                     "model" => \App\Http\Models\Brand::class,
                     "rules" => "required",
                 ]),
-                new BelongsToMany([
+                // new BelongsToMany([
+                //     "label" => "Cores Disponíveis" , 
+                //     "model" => \App\Http\Models\Color::class,
+                //     "field" => "colors",
+                //     "placeholder" => "Selecione as cores disponíveis",
+                //     "rules" => "required",
+                // ]),
+                new MorphsMany([
                     "label" => "Cores Disponíveis" , 
-                    "model" => \App\Http\Models\Color::class,
                     "field" => "colors",
                     "placeholder" => "Selecione as cores disponíveis",
-                    "rules" => "required",
+                ]),
+            ]),
+            new Card("Section Card 4",[
+                new Upload([
+                    "label" => "Imagens", 
+                    "field" => "images",
+                    "preview"  => true, //default false
+                    "multiple" => true,
+                    // "limit" => 4, //default 5
+                    "accept" => "image/*",
+                    // "list_type" => "picture-card"//(picture,picture-card) //default picture-card
                 ]),
             ])
         ];

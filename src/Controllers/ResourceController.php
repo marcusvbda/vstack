@@ -252,8 +252,18 @@ class ResourceController extends Controller
                         $_card["inputs"][$field->options["label"]] = $value;
                         break;
                     case "belongsToMany":
-                        $value = implode(",",$content->{$field->options["field"]}->pluck("name")->toArray());
+                        $value = implode(",",$content->{$field->options["field"]}->pluck("value")->toArray());
                         $_card["inputs"][$field->options["label"]] = $value;
+                        break;
+                    case "morphsMany":
+                        $value = implode(",",$content->{$field->options["field"]}->pluck("value")->toArray());
+                        $_card["inputs"][$field->options["label"]] = $value;
+                        break;
+                    case "upload":
+                        $array = $content ? @$content->{$field->options["field"]}->pluck("value")->toArray() : [];
+                        foreach($array as $row) {
+                            @$_card["inputs"][$field->options["label"]] .= "<p class='my-0'><a class='link preview' target='_BLANK' href='".$row."'>".$row."</a></p>";
+                        }
                         break;
                     default:
                         $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
@@ -284,6 +294,12 @@ class ResourceController extends Controller
                     case "belongsToMany":
                         $input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("id")->toArray() : null;
                         break;
+                    case "morphsMany":
+                        $input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("value")->toArray() : null;
+                        break;
+                    case "upload":
+                        $input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("value")->toArray() : null;
+                        break;
                     default:
                         $input->options["value"] = @$content->{$input->options["field"]};
                         break;
@@ -307,21 +323,91 @@ class ResourceController extends Controller
         $target->fill($data["data"]);
         $target->save();
         $this->storeBelongsToMany($target,$data["belongsToMany"]);
+        $this->storeMorphsMany($target,$data["morphsMany"]);
+        $this->storeUploads($target,$data["upload"]);
         Messages::send("success", "Registro salvo com sucesso !!");
         return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
+    }
+
+    private function storeUploads($target,$relations)
+    {
+        $target->refresh();
+        foreach($relations as $key=>$values) 
+        {
+            $target->{$key}()->delete();
+            foreach($values as $value) 
+            {
+                $target->{$key}()->create(["value"=>$value]);
+            }
+        }
+    }
+
+    private function storeMorphsMany($target,$relations)
+    {
+        $target->refresh();
+        foreach($relations as $key=>$values) 
+        {
+            $target->{$key}()->delete();
+            foreach($values as $value) 
+            {
+                $target->{$key}()->create(["value"=>$value]);
+            }
+        }
     }
 
     private function storeBelongsToMany($target,$relations)
     {
         $target->refresh();
-        foreach($relations as $key=>$value) $target->{$key}()->sync($value);
+        foreach($relations as $key=>$value) 
+        {
+            $target->{$key}()->sync($value);
+        }
     }
 
     private function processStoreData($resource,$data)
     {
         $result = $this->getBelongsToManyFields($resource,$data);
+        $result = $this->getMorphsManyFields($resource,$result);
+        $result = $this->getUploadsFields($resource,$result);
         return $result;
     }
+
+    private function getUploadsFields($resource,$result)
+    {
+        $fields = [];
+        foreach($resource->fields() as $cards)
+        {
+            foreach($cards->inputs as $field)
+            {
+                if($field->options["type"] == "upload") 
+                {
+                    @$fields[$field->options["field"]] = $result["data"][$field->options["field"]];
+                    unset($result["data"][$field->options["field"]]);
+                }
+            }
+        }
+        $result["upload"] = $fields;
+        return $result;
+    }
+
+    private function getMorphsManyFields($resource,$result)
+    {
+        $fields = [];
+        foreach($resource->fields() as $cards)
+        {
+            foreach($cards->inputs as $field)
+            {
+                if($field->options["type"] == "morphsMany") 
+                {
+                    @$fields[$field->options["field"]] = $result["data"][$field->options["field"]];
+                    unset($result["data"][$field->options["field"]]);
+                }
+            }
+        }
+        $result["morphsMany"] = $fields;
+        return $result;
+    }
+
     private function getBelongsToManyFields($resource,$data)
     {
         $fields = [];

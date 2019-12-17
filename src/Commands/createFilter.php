@@ -37,18 +37,9 @@ class ' . $name . ' extends Filter
 {
     public $component   = "'.$type.'";
     public $label       = "'.$name.'";
+    public $placeholder = "";
     public $index = "'.strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)).'";';
 
-
-    if($type=="rangedate-filter")
-    {
-        $content .='
-    public $start_placeholder = "";
-    public $end_placeholder = "";';
-    }else{
-        $content .='
-    public $placeholder = "";';
-    }
 
     if($type=="select-filter")
     {

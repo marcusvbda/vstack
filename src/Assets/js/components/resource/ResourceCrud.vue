@@ -63,7 +63,6 @@ export default {
                 let loading = this.$loading()
                 this.$http.post(this.data.store_route,this.form).then( res => {
                     let data = res.data
-                    console.log(this.form.colors)
                     if(data.message) this.$message({showClose: true, message : data.message.text,type: data.message.type})
                     if(data.success) return window.location.href=data.route
                     loading.close()
