@@ -260,7 +260,12 @@ class ResourceController extends Controller
                         $_card["inputs"][$field->options["label"]] = $value;
                         break;
                     case "upload":
-                        $array = $content ? @$content->{$field->options["field"]}->pluck("value")->toArray() : [];
+                        if(!@$content->casts[$field->options["field"]]) 
+                            $array = $content ? @$content->{$field->options["field"]}->pluck("value")->toArray() : [];
+                        else 
+                           $array = @$content->{$field->options["field"]}? @$content->{$field->options["field"]} : null;
+                        
+                        $array = $array ? $array : []; 
                         foreach($array as $row) {
                             @$_card["inputs"][$field->options["label"]] .= "<p class='my-0'><a class='link preview' target='_BLANK' href='".$row."'>".$row."</a></p>";
                         }
@@ -298,7 +303,11 @@ class ResourceController extends Controller
                         $input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("value")->toArray() : null;
                         break;
                     case "upload":
-                        $input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("value")->toArray() : null;
+                        if(!@$content->casts[$input->options["field"]])
+                            $input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("value")->toArray() : null;
+                        else {
+                            $input->options["value"] = @$content->{$input->options["field"]}? @$content->{$input->options["field"]} : null;
+                        }
                         break;
                     default:
                         $input->options["value"] = @$content->{$input->options["field"]};
@@ -345,7 +354,7 @@ class ResourceController extends Controller
                     }
                 }
             } else {
-                $target->{$key} = implode(",",$values);
+                $target->{$key} = $values;
                 $target->save();
             }
         }
