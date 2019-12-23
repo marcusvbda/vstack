@@ -335,13 +335,18 @@ class ResourceController extends Controller
         $target->refresh();
         foreach($relations as $key=>$values) 
         {
-            $target->{$key}()->delete();
-            if($values)
-            {
-                foreach($values as $value) 
+            if(@$target->{$key}) {
+                $target->{$key}()->delete();
+                if($values)
                 {
-                    $target->{$key}()->create(["value"=>$value]);
+                    foreach($values as $value) 
+                    {
+                        $target->{$key}()->create(["value"=>$value]);
+                    }
                 }
+            } else {
+                $target->{$key} = implode(",",$values);
+                $target->save();
             }
         }
     }
