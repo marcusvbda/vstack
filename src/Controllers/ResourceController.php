@@ -275,7 +275,6 @@ class ResourceController extends Controller
                         break;
                     case "resource-field":
                         $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $field->options["resource"])));
-                        // dd($field->getView());
                         $_card["inputs"]["IGNORE__".$_resource->label()] = $field->getView();
                         break;
                     default:
@@ -664,7 +663,6 @@ class ResourceController extends Controller
     public function fieldData($resource,Request $request)
     {
         $resource = ResourcesHelpers::find($resource);
-        $redirect_back = $request["redirect_back"];
         $params = $request->except(["redirect_back"]);
         $query = $resource->model->where("id",">",0);
         foreach($params as $key=>$value) $query = $query->where($key,$value);

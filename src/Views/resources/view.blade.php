@@ -8,7 +8,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{route('admin.home')}}" class="link">Dashboard</a></li>
                     @if(@$_GET["params"]["redirect_back"])
-                        <li class="breadcrumb-item"><a href="{{$_GET["params"]["redirect_back"]}}" class="link">{{$_GET["params"]["redirect_back"]}}</a></li>
+                        <li class="breadcrumb-item"><a href="{{$_GET["params"]["redirect_back"]}}" class="link">{{ substr($_GET["params"]["redirect_back"],strpos($_GET["params"]["redirect_back"],"admin"),strlen($_GET["params"]["redirect_back"]))  }}</a></li>
                     @else
                         @if($resource->canViewList())
                             <li class="breadcrumb-item"><a href="{{$resource->route()}}" class="link">{{$resource->label()}}</a></li>
