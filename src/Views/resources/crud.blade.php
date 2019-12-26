@@ -2,14 +2,21 @@
 @section('title',$resource->label())
 <?php 
 $has_summernote = false;
-foreach($resource->fields() as $cards)
+$cards = $data["fields"];
+for($i=0;$i<count($cards);$i++)
 {
-    foreach($cards->inputs as $field)
+    $card = $cards[$i];
+    for($y=0;$y<count($card->inputs);$y++)
     {
+        $field = $card->inputs[$y];
         if($field->options["type"]=="summernote")
         {
             $has_summernote = true;
             break;
+        }
+        if($field->options["type"]=="resource-field")
+        {
+            if($data["page_type"]!="Edição") unset($data["fields"][$i]);
         }
     }
 }
@@ -26,7 +33,13 @@ foreach($resource->fields() as $cards)
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{route('admin.home')}}" class="link">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{$resource->route()}}" class="link">{{$resource->label()}}</a></li>
+                    @if(@$_GET["params"]["redirect_back"])
+                        <li class="breadcrumb-item"><a href="{{$_GET["params"]["redirect_back"]}}" class="link">{{$_GET["params"]["redirect_back"]}}</a></li>
+                    @else
+                        @if($resource->canViewList())
+                            <li class="breadcrumb-item"><a href="{{$resource->route()}}" class="link">{{$resource->label()}}</a></li>
+                        @endif
+                    @endif
                     <li class="breadcrumb-item active" aria-current="page">{{$data["page_type"]}} de {{$resource->singularLabel()}}</li>
                 </ol>
             </nav>
@@ -43,5 +56,5 @@ foreach($resource->fields() as $cards)
         </div>
     </div>
 </div>
-<resource-crud :data="{{json_encode($data)}}"></resource-crud>
+<resource-crud :params="{{json_encode($params)}}" :data="{{json_encode($data)}}"></resource-crud>
 @endsection

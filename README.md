@@ -59,6 +59,7 @@ use marcusvbda\vstack\Fields\{
     TextArea, 
     Check, 
     BelongsTo, 
+    // ResourceField,
     // BelongsToMany, 
     Summernote,
     MorphsMany,
@@ -169,6 +170,10 @@ class Cars extends Resource
                 //     "field" => "colors",
                 //     "placeholder" => "Selecione as cores disponíveis",
                 //     "rules" => "required",
+                // ]),
+                // new ResourceField([
+                //     "resource" => "nomeDoResource" ,
+                //      "params"   => ["param_id"=>"id"]
                 // ]),
                 new MorphsMany([
                     "label"  => "Cores Disponíveis" , 

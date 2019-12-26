@@ -19,9 +19,10 @@
 <script>
 import VRuntimeTemplate from "v-runtime-template"
 export default {
-    props:["data"],
+    props:["data","params"],
     data() {
         return {
+            resourceData : {},
             form : {},
             errors : {},
         }
@@ -39,6 +40,12 @@ export default {
     },
     methods : {
         initForm() {
+            this.initFields()
+            this.loadParams()
+            this.$set(this.form, "resource_id", this.data.resource_id)
+            if(this.data.id) this.$set(this.form, "id", this.data.id)
+        },
+        initFields() {
             let fields = []
             for(let i in this.data.fields){
                 let card = this.data.fields[i]
@@ -49,10 +56,12 @@ export default {
             for(let i in fields) {
                 let field_name = fields[i].options.field
                 let field_value = fields[i].options.value ? fields[i].options.value : fields[i].options.default
-                this.$set(this.form, field_name, field_value)
+                this.$set(fields[i].options.type=="resource-field" ? this.resourceData : this.form, field_name, field_value)
             }
-            this.$set(this.form, "resource_id", this.data.resource_id)
-            if(this.data.id) this.$set(this.form, "id", this.data.id)
+        },
+        loadParams() {
+            let paramKeys = Object.keys(this.params)
+            for(let i in paramKeys) if(paramKeys[i]!="redirect_back")  this.$set(this.form, paramKeys[i],this.params[paramKeys[i]])
         },
         submit() {
             this.$confirm(`Confirma ${this.data.page_type} ?`, "Confirmação", {
@@ -61,10 +70,11 @@ export default {
                type: 'warning'
             }).then(() => {
                 let loading = this.$loading()
+                this.form["redirect_back"] = this.params.redirect_back ? this.params.redirect_back : null
                 this.$http.post(this.data.store_route,this.form).then( res => {
                     let data = res.data
                     if(data.message) this.$message({showClose: true, message : data.message.text,type: data.message.type})
-                    if(data.success) return window.location.href=data.route
+                    if(data.success) return window.location.href = this.params.redirect_back==undefined ? data.route : this.params.redirect_back
                     loading.close()
                 }).catch( er => {
                     let errors = er.response.data.errors

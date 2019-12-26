@@ -145,7 +145,7 @@ class Resource
 
     public function route()
     {
-        return route("resource.index", ["resource" => strtolower((new \ReflectionClass($this))->getShortName())]);
+        return route("resource.index", ["resource" => strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', (new \ReflectionClass($this))->getShortName()))]);
     }
 
     private function makeId()

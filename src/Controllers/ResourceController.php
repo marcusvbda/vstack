@@ -23,12 +23,13 @@ class ResourceController extends Controller
         return view("vStack::resources.index", compact("resource", "data"));
     }
 
-    private function getData($resource, Request $request)
+    private function getData($resource, Request $request,$query = null)
     {
         $data      = $request->all();
         $orderBy   = @$data["order_by"] ? $data["order_by"] : "id";
         $orderType = @$data["order_type"] ? $data["order_type"] : "desc";
-        $query     = $resource->model->orderBy($orderBy, $orderType);
+        $query     = $query ? $query : $resource->model->where("id",">",0);
+        $query     = $query->orderBy($orderBy, $orderType);
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
         foreach ($resource->search() as $search) {
             $query = $query->where($search, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
@@ -43,13 +44,14 @@ class ResourceController extends Controller
         return $query;
     }
 
-    public function create($resource)
+    public function create($resource,Request $request)
     {
+        $params = @$request["params"] ? $request["params"] : [];
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canCreate()) abort(403);
         $data = $this->makeCrudData($resource);
         $data["page_type"] = "Cadastro";
-        return view("vStack::resources.crud", compact("resource", "data"));
+        return view("vStack::resources.crud", compact("resource", "data", "params"));
     }
 
     public function import($resource)
@@ -184,14 +186,15 @@ class ResourceController extends Controller
     } 
 
 
-    public function edit($resource, $code)
+    public function edit($resource, $code,Request $request)
     {
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canUpdate()) abort(403);
         $content = $resource->model->findOrFail($code);
         $data = $this->makeCrudData($resource, $content);
         $data["page_type"] = "Edição";
-        return view("vStack::resources.crud", compact("resource", "data"));
+        $params = @$request["params"] ? $request["params"] : [];
+        return view("vStack::resources.crud", compact("resource", "data","params"));
     }
 
     public function destroy($resource, $code)
@@ -270,6 +273,11 @@ class ResourceController extends Controller
                             @$_card["inputs"][$field->options["label"]] .= "<p class='my-0'><a class='link preview' target='_BLANK' href='".$row."'>".$row."</a></p>";
                         }
                         break;
+                    case "resource-field":
+                        $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $field->options["resource"])));
+                        // dd($field->getView());
+                        $_card["inputs"]["IGNORE__".$_resource->label()] = $field->getView();
+                        break;
                     default:
                         $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
                         break;
@@ -309,6 +317,11 @@ class ResourceController extends Controller
                             $input->options["value"] = @$content->{$input->options["field"]}? @$content->{$input->options["field"]} : null;
                         }
                         break;
+                    case "resource-field":
+                        $params = [];
+                        foreach($input->options["params"] as $key=>$value) $params[$key] = @$content->{$value} ? $content->{$value} : $value;
+                        $input->options["value"] = $params;
+                        break;
                     default:
                         $input->options["value"] = @$content->{$input->options["field"]};
                         break;
@@ -327,9 +340,8 @@ class ResourceController extends Controller
         if (!@$data["id"]) if (!$resource->canCreate()) abort(403);
         $this->validate($request, $resource->getValidationRule());
         $target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
-        $data = $request->except(["resource_id", "id"]);
+        $data = $request->except(["resource_id", "id","redirect_back"]);
         $data = $this->processStoreData($resource,$data);
-        // dd($data);
         $target->fill($data["data"]);
         $target->save();
         $this->storeBelongsToMany($target,$data["belongsToMany"]);
@@ -344,7 +356,7 @@ class ResourceController extends Controller
         $target->refresh();
         foreach($relations as $key=>$values) 
         {
-            if(@$target->{$key}) {
+            if(is_callable($target->{$key})) {
                 $target->{$key}()->delete();
                 if($values)
                 {
@@ -647,5 +659,19 @@ class ResourceController extends Controller
     public function upload(Request $request)
     {
         return ["path"=>asset(str_replace("public","storage",$request->file('file')->store('public')))];
+    }
+
+    public function fieldData($resource,Request $request)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        $redirect_back = $request["redirect_back"];
+        $params = $request->except(["redirect_back"]);
+        $query = $resource->model->where("id",">",0);
+        foreach($params as $key=>$value) $query = $query->where($key,$value);
+        $data = $this->getData($resource, $request,$query);
+        $data = $data->get();
+        $params = $request->all();
+        $view = view("vStack::resources.field.index", compact("resource","data","params"))->render();
+        return response()->json($view);
     }
 }
