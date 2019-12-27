@@ -10,7 +10,7 @@
                     @if(@$_GET["params"]["redirect_back"])
                         <li class="breadcrumb-item">
                             <a href="{{asset('/admin/'.$_GET["params"]["redirect_back"]) }}" class="link">
-                                {{ $_GET["params"]["redirect_back"]  }}
+                                Página Anterior
                             </a>
                         </li>
                     @else
