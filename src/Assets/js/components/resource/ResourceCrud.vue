@@ -39,6 +39,9 @@ export default {
         this.initForm()
     },
     methods : {
+        getRedirectRoute() {
+            return `${laravel.general.root_url}/admin/${this.params.redirect_back}`
+        },
         initForm() {
             this.initFields()
             this.loadParams()
@@ -74,7 +77,7 @@ export default {
                 this.$http.post(this.data.store_route,this.form).then( res => {
                     let data = res.data
                     if(data.message) this.$message({showClose: true, message : data.message.text,type: data.message.type})
-                    if(data.success) return window.location.href = this.params.redirect_back==undefined ? data.route : this.params.redirect_back
+                    if(data.success) return window.location.href = this.params.redirect_back==undefined ? data.route : this.getRedirectRoute()
                     loading.close()
                 }).catch( er => {
                     let errors = er.response.data.errors

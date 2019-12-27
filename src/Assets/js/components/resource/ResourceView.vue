@@ -48,6 +48,9 @@ export default {
         "v-runtime-template" : VRuntimeTemplate
     },
     methods : {
+        getRedirectRoute() {
+            return `${laravel.general.root_url}/admin/${this.data.params.redirect_back}`
+        },
         getRoute(route) {
             let query = this.data.params ? `?params%5Bredirect_back%5D=${this.data.params.redirect_back}` : "";
             return this.data[route]+query
@@ -61,7 +64,7 @@ export default {
                 this.loading = this.$loading()
                 this.$http.delete(this.data.route_destroy,{}).then( res => {
                     res = res.data
-                    return window.location.href=this.data.params ? this.data.params.redirect_back : res.route
+                    return window.location.href=this.data.params ? this.getRedirectRoute() : res.route
                 }).catch( er => {
                     this.loading.close()
                     this.$message({

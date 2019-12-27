@@ -17,12 +17,16 @@ export default {
         this.loadView()
     },
     methods : {
+        getRedirectUrl() {
+            let url = window.location.href
+            return url.substring(url.indexOf("/admin/"),url.length).replace("/admin/","")
+        },
         loadView() {
             this.resourceName = this.resource.charAt(0).toLowerCase()+this.resource.slice(1)
             this.resourceName = this.resourceName.replace( /([A-Z])/g, " $1" ).split(' ').join('-').toLowerCase()
             this.resourceRoute = laravel.vstack.resource_field_route.replace("%%resource%%",this.resourceName)
             let params = this.params
-            params["redirect_back"] = window.location.href
+            params["redirect_back"] = this.getRedirectUrl()
             this.$http.post(this.resourceRoute,params).then(res=>{
                 this.html = res.data
             })
