@@ -39,9 +39,6 @@ export default {
     data() {
         return {
             loading : false,
-            resourceData : {
-                CourseModules: {}
-            },
         }
     },
     components : {

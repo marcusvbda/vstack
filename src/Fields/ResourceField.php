@@ -22,7 +22,7 @@ class ResourceField extends Field
         if (!@$this->options["hide"])
             $view = "<resource-field     
                         resource='$resource' 
-                        :params='resourceData.$resource'
+                        :params='resourceData.$resource' end_params
                     />";
         return $this->view = $view;
     }

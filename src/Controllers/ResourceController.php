@@ -275,7 +275,11 @@ class ResourceController extends Controller
                         break;
                     case "resource-field":
                         $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $field->options["resource"])));
-                        $_card["inputs"]["IGNORE__".$_resource->label()] = $field->getView();
+                        foreach($field->options["params"] as $key=>$value) $params[$key] = @$content->{$value} ? $content->{$value} : $value;
+                        $view = $field->getView();
+                        $target = substr($view,strpos($view,":params='"),strpos($view,"' end_params"));
+                        $view = str_replace($target,":params='".json_encode($params)."' />",$view);
+                        $_card["inputs"]["IGNORE__".$_resource->label()] = $view;
                         break;
                     default:
                         $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};

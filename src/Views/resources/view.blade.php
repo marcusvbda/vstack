@@ -26,8 +26,8 @@
 </div>
 @endsection
 @section('content')
-    <?php $data["params"] = @$_GET["params"]; ?>
-    <resource-view :data="{{json_encode($data)}}" >
+    <?php $params = @$_GET["params"] ? $_GET["params"] : []; ?>
+    <resource-view :data="{{json_encode($data)}}" :params="{{json_encode($params)}}">
         <template slot="title">
             <h4>@if( @$resource->icon() ) <span class="{{$resource->icon()}} mr-2"></span> @endif {{$data["page_type"]}} de {{$resource->singularLabel()}}</h4>
         </template>
