@@ -46,10 +46,10 @@ export default {
     },
     methods : {
         getRedirectRoute() {
-            return `${laravel.general.root_url}/admin/${this.data.params.redirect_back}`
+            return `${laravel.general.root_url}/admin/${this.params.redirect_back}`
         },
         getRoute(route) {
-            let query = this.data.params ? `?params%5Bredirect_back%5D=${this.data.params.redirect_back}` : "";
+            let query = this.params ? `?params%5Bredirect_back%5D=${window.location.href.replace(laravel.general.root_url+"/admin/","")}` : ""
             return this.data[route]+query
         },
         destroy() {

@@ -217,7 +217,8 @@ class ResourceController extends Controller
         $content = $resource->model->findOrFail($code);
         $data = $this->makeViewData($content->code, $resource, $content);
         $data["page_type"] = "Visualização";
-        return view("vStack::resources.view", compact("resource", "data"));
+        $params = @$request["params"] ? $request["params"] : [];
+        return view("vStack::resources.view", compact("resource", "data","params"));
     }
 
     private function makeViewData($code, $resource, $content = null)
@@ -272,6 +273,9 @@ class ResourceController extends Controller
                         foreach($array as $row) {
                             @$_card["inputs"][$field->options["label"]] .= "<p class='my-0'><a class='link preview' target='_BLANK' href='".$row."'>".$row."</a></p>";
                         }
+                        break;
+                    case "url":
+                        $_card["inputs"][$field->options["label"]] = "<a class='link preview' target='_BLANK' href='".@$content->{$field->options["field"]}."'>".@$content->{$field->options["field"]}."</a>";
                         break;
                     case "resource-field":
                         $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $field->options["resource"])));
