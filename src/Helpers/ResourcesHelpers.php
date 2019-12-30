@@ -14,6 +14,21 @@ class ResourcesHelpers
         }
         return $data;
     }
+
+    static function _all()
+    {
+        $path = app_path("Http/Resources/");
+        $data = [];
+        foreach (glob($path . "*.php") as $filename) {
+            if (basename($filename) != "Resource.php") {
+                $name = str_replace(".php", "", basename($filename));
+                $resource = self::make($filename, $name);
+                @$data[$resource->menu()][] = $resource;
+            }
+        }
+        return $data;
+    }
+
     static function make($filename)
     {
         $name = str_replace(".php", "", basename($filename));
@@ -22,7 +37,7 @@ class ResourcesHelpers
     }
     static function find($name)
     {
-        $groups = self::all();
+        $groups = self::_all();
         $_resource = null;
         foreach ($groups as $resources) {
             foreach ($resources as $resource) {

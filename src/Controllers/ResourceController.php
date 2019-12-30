@@ -252,7 +252,7 @@ class ResourceController extends Controller
                         break;
                     case "belongsTo":
                         $model = $field->options["model"];
-                        $value = app()->make($model)->findOrFail($content->{$field->options["field"]})->name;
+                        $value = app()->make($model)->find($content->{$field->options["field"]})->name;
                         $_card["inputs"][$field->options["label"]] = $value;
                         break;
                     case "belongsToMany":
