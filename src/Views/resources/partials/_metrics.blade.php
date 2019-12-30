@@ -1,7 +1,7 @@
 @if($resource->canCustomizeMetrics())
 <div class="row">
     <div class="col-12 d-flex justify-content-end">
-        <a href="{{$resource->route().'/custom-cards'}}" class="float-right mb-1">{!! $resource->customMetricsButtonText() !!}</a>
+        <a href="{{$resource->route().'/custom-cards'}}" class="link float-right mb-1">{!! $resource->customMetricsButtonText() !!}</a>
     </div>
 </div>
 @endif
