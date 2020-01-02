@@ -27,24 +27,44 @@ for($i=0;$i<count($cards);$i++)
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
 @endif
 @section('breadcrumb')
+<?php 
+    $routes = [];
+    $current = $data['page_type']." de ".$resource->singularLabel();
+    $current_route = $resource->route()."/".@$content->code;
+    Session::push("breadcrumb",[$current=>$current_route]);
+    $bc = Session::get("breadcrumb");
+    Session::forget('breadcrumb');
+    $indexes = [];
+    foreach($bc as $row)
+    {
+        foreach($row as $key=>$value)
+        {
+            if(!in_array($key,$indexes))
+            {
+                $indexes[] = $key;
+                Session::push("breadcrumb",[$key=>$value]);
+                $routes[] = $value;
+            }
+            if($key==$current) {
+                break 2;
+            };
+        }
+    }
+    $bc = Session::get("breadcrumb");
+?>
 <div class="row">
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{asset('admin')}}" class="link">Dashboard</a></li>
-                    @if(@$_GET["params"]["redirect_back"])
-                        <li class="breadcrumb-item">
-                            <a href="{{asset('/admin/'.$_GET["params"]["redirect_back"]) }}" class="link">
-                                Página Anterior
-                            </a>
-                        </li>
-                    @else
-                        @if($resource->canViewList())
-                            <li class="breadcrumb-item"><a href="{{$resource->route()}}" class="link">{{$resource->label()}}</a></li>
-                        @endif
-                    @endif
-                    <li class="breadcrumb-item active" aria-current="page">{{$data["page_type"]}} de {{$resource->singularLabel()}}</li>
+                    <?php $bc = Session::get('breadcrumb');?>
+                    @foreach($bc as $rows)
+                        @foreach($rows as $key=>$value)
+                            <li class="breadcrumb-item">
+                                <a  href="{{$value}}" class="link">{{$key}}</a>
+                            </li>
+                        @endforeach
+                    @endforeach
                 </ol>
             </nav>
         </nav>
@@ -52,7 +72,6 @@ for($i=0;$i<count($cards);$i++)
 </div>
 @endsection
 @section('content')
-
 <div class="row mt-2">
     <div class="col-12">
         <div class="d-flex flex-row justify-content-between mb-3">
@@ -60,5 +79,10 @@ for($i=0;$i<count($cards);$i++)
         </div>
     </div>
 </div>
-<resource-crud :params="{{json_encode($params)}}" :data="{{json_encode($data)}}"></resource-crud>
+<resource-crud 
+    :data="{{json_encode($data)}}"  
+    :params="{{json_encode($params)}}"  
+    redirect="{{$current_route}}" 
+    :breadcrumb="{{json_encode($routes)}}" >
+</resource-crud>
 @endsection

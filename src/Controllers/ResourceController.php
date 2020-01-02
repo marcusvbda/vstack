@@ -51,7 +51,7 @@ class ResourceController extends Controller
         if (!$resource->canCreate()) abort(403);
         $data = $this->makeCrudData($resource);
         $data["page_type"] = "Cadastro";
-        return view("vStack::resources.crud", compact("resource", "data", "params"));
+        return view("vStack::resources.crud", compact("resource", "data", "params","content"));
     }
 
     public function import($resource)
@@ -194,7 +194,7 @@ class ResourceController extends Controller
         $data = $this->makeCrudData($resource, $content);
         $data["page_type"] = "Edição";
         $params = @$request["params"] ? $request["params"] : [];
-        return view("vStack::resources.crud", compact("resource", "data","params"));
+        return view("vStack::resources.crud", compact("resource", "data","params","content"));
     }
 
     public function destroy($resource, $code)
@@ -218,7 +218,7 @@ class ResourceController extends Controller
         $data = $this->makeViewData($content->code, $resource, $content);
         $data["page_type"] = "Visualização";
         $params = @$request["params"] ? $request["params"] : [];
-        return view("vStack::resources.view", compact("resource", "data","params"));
+        return view("vStack::resources.view", compact("resource", "data","params","content"));
     }
 
     private function makeViewData($code, $resource, $content = null)
@@ -228,6 +228,7 @@ class ResourceController extends Controller
             "fields"        => $this->makeViewDataFields($content, $resource->fields()),
             "can_update"    => $resource->canUpdate(),
             "can_delete"    => $resource->canDelete(),
+            "route"         => $route . "/" . $code,
             "update_route"  => $route . "/" . $code . "/edit",
             "route_destroy" => $route . "/" . $code . "/destroy",
         ];

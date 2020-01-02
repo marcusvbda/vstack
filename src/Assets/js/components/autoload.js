@@ -5,5 +5,6 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
 require("./libs/charts")
 require("./libs/cookies")
 require("./libs/vmask")
+require("./libs/hash")
 require("./libs/linkPreview")
 require('summernote')

@@ -19,7 +19,7 @@
 <script>
 import VRuntimeTemplate from "v-runtime-template"
 export default {
-    props:["data","params"],
+    props:["data","redirect","params","breadcrumb"],
     data() {
         return {
             resourceData : {},
@@ -39,8 +39,16 @@ export default {
         this.initForm()
     },
     methods : {
-        getRedirectRoute() {
-            return `${laravel.general.root_url}/admin/${this.params.redirect_back}`
+        getRedirect() {
+            try {
+                let keys = Object.keys(this.breadcrumb)
+                let key = keys[keys.length-2]
+                return this.breadcrumb[key]
+            }catch{
+                let keys = Object.keys(this.breadcrumb)
+                let key = keys[0]
+                return this.breadcrumb[key]
+            }
         },
         initForm() {
             this.initFields()
@@ -73,11 +81,10 @@ export default {
                type: 'warning'
             }).then(() => {
                 let loading = this.$loading()
-                this.form["redirect_back"] = this.params.redirect_back ? this.params.redirect_back : null
                 this.$http.post(this.data.store_route,this.form).then( res => {
                     let data = res.data
                     if(data.message) this.$message({showClose: true, message : data.message.text,type: data.message.type})
-                    if(data.success) return window.location.href = this.params.redirect_back==undefined ? data.route : this.getRedirectRoute()
+                    if(data.success) return window.location.href=this.getRedirect()
                     loading.close()
                 }).catch( er => {
                     let errors = er.response.data.errors

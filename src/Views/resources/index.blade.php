@@ -1,22 +1,33 @@
 @extends("templates.admin")
 @section('title',$resource->label())
 @section('breadcrumb')
+<?php 
+    Session::forget('breadcrumb');
+    Session::push('breadcrumb',["Dashboard" => asset('admin')]);
+    Session::push('breadcrumb',[$resource->label() => @$resource->route()]);
+?>
 <div class="row">
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{asset('admin')}}" class="link">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{$resource->label()}}</li>
+                    <?php $bc = Session::get('breadcrumb');?>
+                    @foreach($bc as $rows)
+                        @foreach($rows as $key=>$value)
+                            <li class="breadcrumb-item">
+                                <a  href="{{$value}}" class="link">{{$key}}</a>
+                            </li>
+                        @endforeach
+                    @endforeach
                 </ol>
             </nav>
         </nav>
     </div>
 </div>
+
 @endsection
 @section('content')
 @include("vStack::resources.partials._metrics")
-
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center">
         <h4 class="mb-1">{!! @$resource->indexLabel() !!}</h4>
@@ -43,7 +54,6 @@
         </div>
     </div>
 </div>
-
 @if($resource->model->count()>0)
     @include("vStack::resources.partials._filter")
     <div class="row d-flex align-items-end mb-2">
@@ -67,7 +77,6 @@
             @endif
         </div>
     </div>
-
     <div class="row">
         <div class="col-12">
             @if($data->total()>0)

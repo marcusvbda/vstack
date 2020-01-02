@@ -15,7 +15,7 @@ class ResourcesHelpers
         return $data;
     }
 
-    static function  _all()
+    static function _all()
     {
         $path = app_path("Http/Resources/");
         $data = [];
@@ -77,4 +77,5 @@ class ResourcesHelpers
         };
         return false;
     }
+
 }

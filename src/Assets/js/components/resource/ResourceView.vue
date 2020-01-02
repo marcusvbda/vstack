@@ -19,7 +19,7 @@
                                         <tr v-for="(field, i) in card.inputs">
                                             <td style="width:25%;" v-if="i.indexOf('IGNORE__')<0"><span v-html="i"></span></td>
                                             <td>
-                                                <v-runtime-template :params="params" :key="i" :template="`<span>${field===null ? '' : field}</span>`" />
+                                                <v-runtime-template :key="i" :template="`<span>${field===null ? '' : field}</span>`" />
                                             </td>
                                         </tr>
                                     </tbody>
@@ -35,7 +35,7 @@
 <script>
 import VRuntimeTemplate from "v-runtime-template"
 export default {
-    props:["data","params"],
+    props:["data","breadcrumb"],
     data() {
         return {
             loading : false,
@@ -45,12 +45,19 @@ export default {
         "v-runtime-template" : VRuntimeTemplate
     },
     methods : {
-        getRedirectRoute() {
-            return `${laravel.general.root_url}/admin/${this.params.redirect_back}`
-        },
         getRoute(route) {
-            let query = this.params ? `?params%5Bredirect_back%5D=${window.location.href.replace(laravel.general.root_url+"/admin/","")}` : ""
-            return this.data[route]+query
+            return this.data[route]
+        },
+        getDestroyRedirect() {
+            try {
+                let keys = Object.keys(this.breadcrumb)
+                let key = keys[keys.length-2]
+                return this.breadcrumb[key]
+            }catch{
+                let keys = Object.keys(this.breadcrumb)
+                let key = keys[0]
+                return this.breadcrumb[key]
+            }
         },
         destroy() {
             this.$confirm(`Confirma Exclusão ?`, "Confirmação", {
@@ -61,7 +68,7 @@ export default {
                 this.loading = this.$loading()
                 this.$http.delete(this.data.route_destroy,{}).then( res => {
                     res = res.data
-                    return window.location.href=this.data.params ? this.getRedirectRoute() : res.route
+                    return window.location.href = this.getDestroyRedirect()
                 }).catch( er => {
                     this.loading.close()
                     this.$message({

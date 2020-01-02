@@ -5,7 +5,7 @@
 </template>
 <script>
 export default {
-    props : ["resource","params"],
+    props : ["resource","params","breadcrumb"],
     data() {
         return {
             resourceRoute : null,
@@ -26,7 +26,7 @@ export default {
             this.resourceName = this.resourceName.replace( /([A-Z])/g, " $1" ).split(' ').join('-').toLowerCase()
             this.resourceRoute = laravel.vstack.resource_field_route.replace("%%resource%%",this.resourceName)
             let params = this.params
-            params.redirect_back = this.getRedirectUrl()
+            params.breadcrumb = this.breadcrumb
             this.$http.post(this.resourceRoute,params).then(res=>{
                 this.html = res.data
             })

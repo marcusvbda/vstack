@@ -4,7 +4,8 @@
         <div class="d-flex flex-row  flex-wrap align-items-center">
             @if($resource->canCreate())
                 @if($resource->model->count()>0)
-                    <a class="btn btn-primary btn-sm btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1" href="{{route('resource.create',['resource'=>$resource->id,'params'=>$params])}}">
+                    <a class="btn btn-primary btn-sm btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1" 
+                        href="{{route('resource.create',['resource'=>$resource->id,'params'=>$params])}}">
                         {!! $resource->storeButtonLabel() !!}
                     </a>
                 @endif
