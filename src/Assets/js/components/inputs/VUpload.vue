@@ -54,7 +54,7 @@
     },
     watch : {
         fileList(val) {
-            return this.$emit("input",val)
+            return this.$emit("input",val.map(x=>x.url ? x.url : x))
         }
     },
     methods: {
