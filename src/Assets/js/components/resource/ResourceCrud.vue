@@ -66,7 +66,10 @@ export default {
             }
             for(let i in fields) {
                 let field_name = fields[i].options.field
-                let field_value = !["null",""].includes(String(fields[i].options.value)) ? (Array.isArray(fields[i].options.value) ? fields[i].options.value : String(fields[i].options.value)) : fields[i].options.default
+                let field_value = String(fields[i].options.value)
+                if(["true","false"].includes(field_value)) field_value = field_value=="true"
+                if(["null",""].includes(field_value)) field_value = null
+                if(fields[i].options.type=="upload") field_value = Array.isArray(field_value) ? field_value : (field_value ? [field_value] : [])
                 this.$set(fields[i].options.type=="resource-field" ? this.resourceData : this.form, field_name, field_value)
             }
         },
