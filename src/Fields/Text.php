@@ -9,7 +9,6 @@ class Text extends Field
     public function __construct($op = [])
     {
         $this->options = $op;
-        $this->options["type"] = "text";
         parent::processFieldOptions();
     }
 

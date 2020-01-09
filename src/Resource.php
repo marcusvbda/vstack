@@ -106,7 +106,7 @@ class Resource
         $fields = [];
         $columns = array_filter($this->getTableColumns(),function($x)
         {
-            if(!in_array($x,["id","confirmation_token","recovery_token","password","deleted_at","updated_at","created_at","tenant_id","remember_token"])) return $x;
+            if(!in_array($x,["id","confirmation_token","recovery_token","password","deleted_at","updated_at","created_at","remember_token"])) return $x;
         });
         foreach($columns as $column)
         {

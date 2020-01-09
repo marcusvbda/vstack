@@ -244,51 +244,57 @@ class ResourceController extends Controller
                 "inputs" => []
             ];
             foreach ($card->inputs  as $field) {
-                switch ($field->options["type"]) {
-                    case "text":
-                        $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
-                        break;
-                    case "check":
-                        $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]} ? '<span class="badge badge-success">Sim</span>' : '<span class="badge badge-danger">Não</span>';
-                        break;
-                    case "belongsTo":
-                        $model = $field->options["model"];
-                        $value = app()->make($model)->find($content->{$field->options["field"]})->name;
-                        $_card["inputs"][$field->options["label"]] = $value;
-                        break;
-                    case "belongsToMany":
-                        $value = implode(",",$content->{$field->options["field"]}->pluck("value")->toArray());
-                        $_card["inputs"][$field->options["label"]] = $value;
-                        break;
-                    case "morphsMany":
-                        $value = implode(",",$content->{$field->options["field"]}->pluck("value")->toArray());
-                        $_card["inputs"][$field->options["label"]] = $value;
-                        break;
-                    case "upload":
-                        if(!@$content->casts[$field->options["field"]]) 
-                            $array = $content ? @$content->{$field->options["field"]}->pluck("value")->toArray() : [];
-                        else 
-                           $array = @$content->{$field->options["field"]}? @$content->{$field->options["field"]} : null;
-                        
-                        $array = $array ? $array : []; 
-                        foreach($array as $row) {
-                            @$_card["inputs"][$field->options["label"]] .= "<p class='my-0'><a class='link preview' target='_BLANK' href='".$row."'>".$row."</a></p>";
-                        }
-                        break;
-                    case "url":
-                        $_card["inputs"][$field->options["label"]] = "<a class='link preview' target='_BLANK' href='".@$content->{$field->options["field"]}."'>".@$content->{$field->options["field"]}."</a>";
-                        break;
-                    case "resource-field":
-                        $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $field->options["resource"])));
-                        foreach($field->options["params"] as $key=>$value) $params[$key] = @$content->{$value} ? $content->{$value} : $value;
-                        $view = $field->getView();
-                        $target = substr($view,strpos($view,":params='"),strpos($view,"' end_params"));
-                        $view = str_replace($target,":params='".json_encode($params)."' />",$view);
-                        $_card["inputs"]["IGNORE__".$_resource->label()] = $view;
-                        break;
-                    default:
-                        $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
-                        break;
+                if(!in_array($field->options["field"],["password","password_confirmation"]))
+                {
+                    switch ($field->options["type"]) {
+                        case "text":
+                            $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
+                            break;
+                        case "check":
+                            $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]} ? '<span class="badge badge-success">Sim</span>' : '<span class="badge badge-danger">Não</span>';
+                            break;
+                        case "belongsTo":
+                            if(@$field->options["model"])
+                            {
+                                $model = $field->options["model"];
+                                $value = app()->make($model)->find($content->{$field->options["field"]})->name;
+                                $_card["inputs"][$field->options["label"]] = $value;
+                            } else $_card["inputs"][$field->options["label"]] = $content->{$field->options["field"]};
+                            break;
+                        case "belongsToMany":
+                            $value = implode(",",$content->{$field->options["field"]}->pluck("value")->toArray());
+                            $_card["inputs"][$field->options["label"]] = $value;
+                            break;
+                        case "morphsMany":
+                            $value = implode(",",$content->{$field->options["field"]}->pluck("value")->toArray());
+                            $_card["inputs"][$field->options["label"]] = $value;
+                            break;
+                        case "upload":
+                            if(!@$content->casts[$field->options["field"]]) 
+                                $array = $content ? @$content->{$field->options["field"]}->pluck("value")->toArray() : [];
+                            else 
+                            $array = @$content->{$field->options["field"]}? @$content->{$field->options["field"]} : null;
+                            
+                            $array = $array ? $array : []; 
+                            foreach($array as $row) {
+                                @$_card["inputs"][$field->options["label"]] .= "<p class='my-0'><a class='link preview' target='_BLANK' href='".$row."'>".$row."</a></p>";
+                            }
+                            break;
+                        case "url":
+                            $_card["inputs"][$field->options["label"]] = "<a class='link preview' target='_BLANK' href='".@$content->{$field->options["field"]}."'>".@$content->{$field->options["field"]}."</a>";
+                            break;
+                        case "resource-field":
+                            $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $field->options["resource"])));
+                            foreach($field->options["params"] as $key=>$value) $params[$key] = @$content->{$value} ? $content->{$value} : $value;
+                            $view = $field->getView();
+                            $target = substr($view,strpos($view,":params='"),strpos($view,"' end_params"));
+                            $view = str_replace($target,":params='".json_encode($params)."' />",$view);
+                            $_card["inputs"]["IGNORE__".$_resource->label()] = $view;
+                            break;
+                        default:
+                            $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
+                            break;
+                    }
                 }
             }
             $data[] = $_card;
@@ -301,7 +307,7 @@ class ResourceController extends Controller
         return [
             "id"          => @$content->id,
             "fields"      => $this->makeCrudDataFields($content, $resource->fields()),
-            "store_route" => route('resource.store'),
+            "store_route" => route('resource.store',["resource" => $resource->id]),
             "list_route"  => route('resource.index', ["resource" => $resource->id]),
             "resource_id" => $resource->id
         ];
@@ -327,11 +333,17 @@ class ResourceController extends Controller
                         break;
                     case "resource-field":
                         $params = [];
+                        $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $input->options["resource"])));
                         foreach($input->options["params"] as $key=>$value) $params[$key] = @$content->{$value} ? $content->{$value} : $value;
-                        $input->options["value"] = $params;
+                        $view = $input->getView();
+                        $oldView = $view;
+                        $target = substr($view,strpos($view,":params='"),strpos($view,"' end_params"));
+                        $view = str_replace($target,":params='".json_encode($params)."' />",$view);
+                        $input->view = $view;
+                        $card->view = str_replace($oldView,$view,$card->view);
                         break;
                     default:
-                        $input->options["value"] = @$content->{$input->options["field"]};
+                        $input->options["value"] = ($input->options["field"] =="password") ? null : @$content->{$input->options["field"]};
                         break;
                 }
             }

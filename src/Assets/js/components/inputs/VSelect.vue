@@ -6,7 +6,7 @@
                     <el-select :allow-create="allowcreate" :disabled="disabled" :multiple="multiple" :size="(size ? size : 'large')" class="w-100" clearable v-model="value" filterable :placeholder="placeholder" v-loading="loading"
                     >
                         <el-option v-if="required==undefined" label="" value=""></el-option>
-                        <el-option v-for="(item,i) in options" :key="i" :label="item.name" :value="item.id"></el-option>
+                        <el-option v-for="(item,i) in options" :key="i" :label="item.name" :value="String(item.id)"></el-option>
                     </el-select>
                     <div class="invalid-feedback" v-if="errors">
                         <ul class="pl-3 mb-0">
@@ -20,7 +20,7 @@
 </template>
 <script>
 export default {
-    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate"],
+    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate","option_list"],
     data() {
         return {
             loading : true,
@@ -30,11 +30,19 @@ export default {
       }
     },
     async created() {
-        this.initOptions( _ => {
+        if(this.list_model)
+        {
+            this.initOptions( _ => {
+                this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
+                this.loading = false
+                this.started = true
+            })
+        } else {
+            for(let i in this.option_list) this.options.push({id:this.option_list[i],value:this.option_list[i]})
             this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
             this.loading = false
             this.started = true
-        })
+        }
     },
     watch : {
         value(val){
