@@ -276,6 +276,7 @@ class ResourceController extends Controller
                             $array = @$content->{$field->options["field"]}? @$content->{$field->options["field"]} : null;
                             
                             $array = $array ? $array : []; 
+                            if(!is_array($array)) $array = [$array];
                             foreach($array as $row) {
                                 @$_card["inputs"][$field->options["label"]] .= "<p class='my-0'><a class='link preview' target='_BLANK' href='".$row."'>".$row."</a></p>";
                             }
@@ -328,7 +329,11 @@ class ResourceController extends Controller
                         if(!@$content->casts[$input->options["field"]])
                             $input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("value")->toArray() : null;
                         else {
-                            $input->options["value"] = @$content->{$input->options["field"]}? @$content->{$input->options["field"]} : null;
+                            $view = $input->getView();
+                            $oldView = $view;
+                            $value = @$content->{$input->options["field"]};
+                            if(!is_array($value)) $value = [$value];
+                            $input->options["value"] = $value ? $value : null;
                         }
                         break;
                     case "resource-field":
