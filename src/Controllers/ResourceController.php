@@ -67,7 +67,7 @@ class ResourceController extends Controller
         $columns = [];
         foreach($resource->getTableColumns() as $col)
         {
-            if(!in_array($col,["id","created_at","deleted_at","updated_at","email_verified_at","confirmation_token","recovery_token","password","tenant_id"])) $columns[] = $col;
+            if(!in_array($col,["id","created_at","deleted_at","updated_at","email_verified_at","confirmation_token","password","recovery_token","remember_token","provider"])) $columns[] = $col;
         }
         
         return [
