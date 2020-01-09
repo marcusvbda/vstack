@@ -66,7 +66,7 @@ export default {
             }
             for(let i in fields) {
                 let field_name = fields[i].options.field
-                let field_value = fields[i].options.value ? fields[i].options.value : fields[i].options.default
+                let field_value = !["null",""].includes(String(fields[i].options.value)) ? fields[i].options.value : fields[i].options.default
                 this.$set(fields[i].options.type=="resource-field" ? this.resourceData : this.form, field_name, field_value)
             }
         },
