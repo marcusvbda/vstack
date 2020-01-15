@@ -67,7 +67,7 @@ class ResourceController extends Controller
         $columns = [];
         foreach($resource->getTableColumns() as $col)
         {
-            if(!in_array($col,["id","created_at","deleted_at","updated_at","email_verified_at","confirmation_token","password","recovery_token","remember_token","provider"])) $columns[] = $col;
+            if(!in_array($col,["id","created_at","deleted_at","updated_at","email_verified_at","confirmation_token","recovery_token","password","tenant_id"])) $columns[] = $col;
         }
         
         return [
@@ -178,7 +178,10 @@ class ResourceController extends Controller
         foreach($data as $row) {
             $_new = [];
             $row = $row->toArray();
-            foreach($columns as $col) $_new[$col]=$row[$col]; 
+            foreach($columns as $col) {
+                if(is_array($row[$col]) || is_object($row[$col]))   $row[$col] =  json_encode($row[$col]); 
+                $_new[$col] =  $row[$col];
+            }
             fputcsv($file, $_new, ",",'"');
         }
         fclose($file);
