@@ -3,14 +3,16 @@
         <thead>
             <tr>
                 <?php
+                    $show_btns = true;
                     $order_type = @$_GET["order_type"]=="desc" ? "asc" : "desc";
                     $order_by = @$_GET["order_by"];
                     $table = $resource->table();
                 ?>
                 @foreach($table as $key=>$value)
                     <?php
-                        $size = isset($value['size']) ? $value['size'] : 'auto';
+                        $size = !$show_btns ? (isset($value['size']) ? $value['size'] : 'auto') : '390px';
                         $sortable_index = isset($value['sortable_index']) ? $value['sortable_index'] : $key;
+                        $show_btns = false;
                     ?>
                     <th width="{{$size}}">
                         @if(@$value["sortable"]!==false)
@@ -34,7 +36,7 @@
                 <tr>
                     <?php $show_btns = true; ?>
                     @foreach($table as $key=>$value)
-                        <td>
+                        <td @if($show_btns) width="{{$size}}" @endif>
                             <div class="d-flex flex-column">
                                 <?php 
                                     $indexes = explode("->",$key);
