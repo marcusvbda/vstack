@@ -22,12 +22,13 @@ class Check extends Field
         $active_text    = @$this->options["active_text"] ? $this->options["active_text"] : "";
         $inactive_text  = @$this->options["inactive_text"] ? $this->options["inactive_text"] : "";
         $disabled       = @$this->options["disabled"] ? "true" : "false";
+        $description    = @$this->options["description"];
         if (!@$this->options["hide"])
-            $view = "<div class='form-group d-flex align-items-center row mb-3'>
+            $view = "<div class='form-group d-flex align-items-center justify-content-center row mb-3'>
                         <label class='col-sm-2 col-form-label'>$label</label>
                         <div class='col-sm-10 pl-0'>                                                   
                             <el-switch             
-                                :disabled='$disabled'                            
+                                :disabled='$disabled'                               
                                 class='ml-3'                          
                                 v-model='form.$field'                 
                                 active-color='$active_color'          
@@ -35,6 +36,7 @@ class Check extends Field
                                 active-text='$active_text'            
                                 inactive-text='$inactive_text'>       
                             </el-switch> 
+                            ".(!$description ? "" : "<br><small style='color:gray;' class='pl-3'>$description</small>")."
                         </div>                             
                     </div>";
         return $this->view = $view;

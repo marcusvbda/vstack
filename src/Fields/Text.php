@@ -23,6 +23,7 @@ class Text extends Field
         $mask           = json_encode($this->options["mask"]);
         $placeholder    = $this->options["placeholder"];
         $disabled       = @$this->options["disabled"] ? "true" : "false";
+        $description    = $this->options["description"];
         if (!@$this->options["hide"])
             $view = "<v-input class='mb-3'  
                         :disabled='$disabled'                                                                  
@@ -31,6 +32,7 @@ class Text extends Field
                         append='$append'                                                               
                         append='$append' 
                         :mask='$mask'                                                              
+                        description='$description'                                                              
                         type='$type'                                                                     
                         v-model='form.$field'                                                            
                         placeholder='$placeholder'                                                       

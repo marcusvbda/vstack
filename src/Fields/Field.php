@@ -24,5 +24,6 @@ class Field
         @$this->options["prepend"]              = $this->options["prepend"] ? $this->options["prepend"] : null;
         @$this->options["rules"]                = $this->options["rules"] ? $this->options["rules"] : '';
         @$this->options["mask"]                 = $this->options["mask"] ? $this->options["mask"] : '';
+        @$this->options["description"]          = $this->options["description"] ? $this->options["description"] : '';
     }
 }

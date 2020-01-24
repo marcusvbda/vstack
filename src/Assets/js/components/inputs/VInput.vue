@@ -11,6 +11,7 @@
                     </div>
                     <the-mask :disabled="disabled" class="form-control" v-if="mask" :mask="mask" v-model="val" v-bind:class="{'is-invalid' : errors}" :placeholder="placeholder ? placeholder : ''" name="email" :type="type ? type : 'text'" />
                     <input :disabled="disabled" class="form-control" v-else v-model="val" v-bind:class="{'is-invalid' : errors}" :placeholder="placeholder ? placeholder : ''" name="email" :type="type ? type : 'text'">
+
                     <div class="input-group-append" v-if="append">
                         <span class="input-group-text">
                             <span v-html="append ? append : ''"></span>
@@ -22,13 +23,14 @@
                         </ul>
                     </div>
                 </div>
+                <small v-if="description"><span v-html="description"></span></small>
             </div>
         </div>
     </div>
 </template>
 <script>
 export default {
-    props:["label","type","placeholder","errors","prepend","append","disabled","mask"],
+    props:["label","type","placeholder","errors","prepend","append","disabled","mask","description"],
     data() {
         return {
             val : null
