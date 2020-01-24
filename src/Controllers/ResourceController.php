@@ -654,7 +654,11 @@ class ResourceController extends Controller
             if ($resource->globallySearchable() && $resource->canView()) {
                 $search_indexes = $resource->search();
                 $query = $resource->model->where("id", ">", 0);
-                foreach ($search_indexes as $si) $query = $query->where($si, "like", "%" . $filter . "%");
+                $query = $query->where(function($q) use($search_indexes,$filter)
+                {
+                    foreach($search_indexes as $index) $q = $q->where($index,"like","%$filter%");
+                    return $q;
+                });
                 $label = $resource->singularLabel();
                 foreach ($query->get() as $row) {
                     $data[] = [
