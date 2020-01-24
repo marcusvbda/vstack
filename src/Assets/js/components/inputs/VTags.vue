@@ -1,35 +1,41 @@
 <template>
     <div class="form-group row mb-3">
             <label class="col-sm-2 col-form-label" v-if="label"><span v-html="label ? label : ''"></span></label>
-            <div class="col-sm-10 d-flex align-items-center" v-bind:class="{'col-sm-10' : label,'col-sm-12':!label}">
-                <el-tag
-                    class="mr-2"
-                    :key="tag"
-                    v-for="tag in dynamicTags"
-                    closable
-                    :disable-transitions="false"
-                    @keydown="$event.keyCode === 13 ? $event.preventDefault() : false"
-                    @close="handleClose(tag)">
-                    {{tag}}
-                </el-tag>
-                <el-input
-                    class="input-new-tag ml-0"
-                    v-if="inputVisible"
-                    v-model="inputValue"
-                    ref="saveTagInput"
-                    size="medium"
-                    @keyup.enter.native="handleInputConfirm"
-                    @blur="handleInputConfirm"
-                >
-                </el-input>
-                <button type="button" v-else class=" ml-0 btn btn-primary btn-sm button-new-tag" size="small" @click="showInput">+ Adicionar</button>
+            <div class="col-sm-10 d-flex flex-column" v-bind:class="{'col-sm-10' : label,'col-sm-12':!label}">
+                <div class="d-flex flex-row align-items-center">
+                    <el-tag
+                        class="mr-2"
+                        :key="tag"
+                        v-for="tag in dynamicTags"
+                        :closable="disabled!=true ? true : false"
+                        :disable-transitions="false"
+                        @keydown="$event.keyCode === 13 ? $event.preventDefault() : false"
+                        @close="handleClose(tag)">
+                        {{tag}}
+                    </el-tag>
+                    <template v-if="disabled!=true">
+                        <el-input
+                            style="width: 300px;"
+                            class="input-new-tag ml-0"
+                            v-if="inputVisible"
+                            v-model="inputValue"
+                            ref="saveTagInput"
+                            size="medium"
+                            @keyup.enter.native="handleInputConfirm"
+                            @blur="handleInputConfirm"
+                        >
+                        </el-input>
+                        <button type="button"  style="width: 300px;" v-else class=" ml-0 btn btn-primary btn-sm button-new-tag" size="small" @click="showInput">+ Adicionar</button>
+                    </template>
+                </div>
+                <small style="color: gray;" v-if="description"><span v-html="description"></span></small>
             </div>
         </div>
     </div>
 </template>
 <script>
   export default {
-    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate","unique"],
+    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate","unique","description"],
     data() {
         return {
             dynamicTags: [],
