@@ -170,7 +170,7 @@ class ResourceController extends Controller
         $columns = [];
         foreach($resource->getTableColumns() as $col)
         {
-            if(!in_array($col,["confirmation_token","recovery_token","password","deleted_at","tenant_id"])) $columns[] = $col;
+            if(!in_array($col,["confirmation_token","recovery_token","password","deleted_at","tenant_id","email_verified_at","provider","remember_token"])) $columns[] = $col;
         }
         $filename = uniqid().".csv";
         $file = fopen($filename, 'w+');
