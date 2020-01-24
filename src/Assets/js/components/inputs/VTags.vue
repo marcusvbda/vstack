@@ -28,7 +28,7 @@
                         <button type="button"  style="width: 300px;" v-else class=" ml-0 btn btn-primary btn-sm button-new-tag" size="small" @click="showInput">+ Adicionar</button>
                     </template>
                 </div>
-                <small style="color: gray;" v-if="description"><span v-html="description"></span></small>
+                <small style="color: gray;" class="mt-1" v-if="description"><span v-html="description"></span></small>
             </div>
         </div>
     </div>
