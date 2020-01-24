@@ -67,6 +67,7 @@
         },
 
         handleInputConfirm() {
+            if(!this.inputVisible) return
             if(this.unique) {
                 if(this.dynamicTags.find(x=>x == this.inputValue)) return this.$message({ showClose: true, message: `${this.inputValue} já existe`, type: "error" })
             }
