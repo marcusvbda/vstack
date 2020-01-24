@@ -23,7 +23,7 @@
                         </ul>
                     </div>
                 </div>
-                <small v-if="description" class="mt-1"><span v-html="description"></span></small>
+                <small v-if="description" class="mt-1" style="color: gray;"><span v-html="description"></span></small>
             </div>
         </div>
     </div>
