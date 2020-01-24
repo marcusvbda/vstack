@@ -71,12 +71,12 @@
             if(this.unique) {
                 if(this.dynamicTags.find(x=>x == this.inputValue)) return this.$message({ showClose: true, message: `${this.inputValue} já existe`, type: "error" })
             }
-            if(this.extraValidator) {
-                let valid = this.extraValidator.handle( this.inputValue)
-                if(!valid) return this.$message({ showClose: true, message: this.extraValidator.message, type: "error" })
-            }
             let inputValue = this.inputValue;
             if (inputValue) {
+                if(this.extraValidator) {
+                    let valid = this.extraValidator.handle( inputValue)
+                    if(!valid) return this.$message({ showClose: true, message: this.extraValidator.message, type: "error" })
+                }
                 this.dynamicTags.push(inputValue);
             }
             this.inputVisible = false;
