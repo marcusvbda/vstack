@@ -31,9 +31,12 @@ class ResourceController extends Controller
         $query     = $query ? $query : $resource->model->where("id",">",0);
         $query     = $query->orderBy($orderBy, $orderType);
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
-        foreach ($resource->search() as $search) {
-            $query = $query->where($search, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
-        }
+        $search = $resource->search();
+        $query = $query->where(function($q) use($search,$data)
+        {
+            foreach($search as $s) $q = $q->OrWhere($s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
+            return $q;
+        });
         foreach ($resource->lenses() as $len) {
             $field = $len["field"];
             if (isset($data[$field])) {
@@ -656,7 +659,7 @@ class ResourceController extends Controller
                 $query = $resource->model->where("id", ">", 0);
                 $query = $query->where(function($q) use($search_indexes,$filter)
                 {
-                    foreach($search_indexes as $index) $q = $q->where($index,"like","%$filter%");
+                    foreach($search_indexes as $index) $q = $q->OrWhere($index,"like","%$filter%");
                     return $q;
                 });
                 $label = $resource->singularLabel();
