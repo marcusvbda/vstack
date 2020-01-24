@@ -28,14 +28,14 @@
                         <button type="button"  style="width: 300px;" v-else class=" ml-0 btn btn-primary btn-sm button-new-tag" size="small" @click="showInput">+ Adicionar</button>
                     </template>
                 </div>
-                <small style="color: gray;" class="mt-1" v-if="description"><span v-html="description"></span></small>
+                <small style="color: gray;" v-if="description"><span v-html="description"></span></small>
             </div>
         </div>
     </div>
 </template>
 <script>
   export default {
-    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate","unique","description"],
+    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate","unique","description","extraValidator"],
     data() {
         return {
             dynamicTags: [],
@@ -69,6 +69,9 @@
         handleInputConfirm() {
             if(this.unique) {
                 if(this.dynamicTags.find(x=>x == this.inputValue)) return this.$message({ showClose: true, message: `${this.inputValue} já existe`, type: "error" })
+            }
+            if(this.extraValidator) {
+                if(!this.extraValidator.handle( this.inputValue)) return this.$message({ showClose: true, message: this.extraValidator.message, type: "error" })
             }
             let inputValue = this.inputValue;
             if (inputValue) {
