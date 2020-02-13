@@ -11,7 +11,6 @@ class NotificationsController extends Controller
 {
     public function get(User $user)
     {
-        // 
         $notifications = $user->notifications;
         $user->notifications()->delete();
         return ["success" => true, "notifications" => $notifications];
