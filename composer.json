@@ -2,14 +2,13 @@
     "name": "marcusvbda/vstack",
     "license": "MIT",
     "description": "",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "authors": [
         {
             "name": "Marcus Vinicius Bassalobre de Assis",
             "email": "bassalobre.vinicius@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "spatie/laravel-permission": "^3.3",
         "vinkla/hashids": "^7.0"
