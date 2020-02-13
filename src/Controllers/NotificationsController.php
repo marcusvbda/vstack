@@ -1,4 +1,5 @@
 <?php
+
 namespace marcusvbda\vstack\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -12,13 +13,13 @@ class NotificationsController extends Controller
     {
         $notifications = $user->notifications;
         $user->notifications()->delete();
-        return ["success"=>true,"notifications"=>$notifications];
+        return ["success" => true, "notifications" => $notifications];
     }
 
-    public function destroy(User $user,$id)
+    public function destroy(User $user, $id)
     {
-        $notification = $user->notifications()->where("id",$id)->firstOrFail();
+        $notification = $user->notifications()->where("id", $id)->firstOrFail();
         $notification->delete();
-        return ["success"=>true];
+        return ["success" => true];
     }
 }
