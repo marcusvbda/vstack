@@ -11,6 +11,7 @@ use marcusvbda\vstack\Models\CustomResourceCard;
 use Auth;
 use DB;
 use Carbon\Carbon;
+use Storage;
 
 class ResourceController extends Controller
 {
@@ -206,7 +207,7 @@ class ResourceController extends Controller
         return ["success" => false,  "route" => $resource->route()];
     }
 
-    public function view(Request $request, $resource, $code)
+    public function view($resource, $code)
     {
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canView()) abort(403);
@@ -256,7 +257,7 @@ class ResourceController extends Controller
                             } else $_card["inputs"][$field->options["label"]] = $content->{$field->options["field"]};
                             break;
                         case "belongsToMany":
-                            $value = implode(",", $content->{$field->options["field"]}->pluck(@$field->options["pluck_value"] ? $field->options["pluck_value"] : "value")->toArray());
+                            $value = implode(",", $content->{$field->options["field"]}->pluck("value")->toArray());
                             $_card["inputs"][$field->options["label"]] = $value;
                             break;
                         case "morphsMany":
@@ -658,6 +659,15 @@ class ResourceController extends Controller
 
     public function upload(Request $request)
     {
+        if (is_string($request['file'])) {
+            $url = $request['file'];
+            $name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
+            Storage::put(
+                "public/$name",
+                file_get_contents($url)
+            );
+            return ["path" => asset("storage/$name")];
+        }
         return ["path" => asset(str_replace("public", "storage", $request->file('file')->store('public')))];
     }
 
