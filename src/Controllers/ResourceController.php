@@ -206,7 +206,7 @@ class ResourceController extends Controller
         return ["success" => false,  "route" => $resource->route()];
     }
 
-    public function view($resource, $code)
+    public function view(Request $request, $resource, $code)
     {
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canView()) abort(403);
@@ -256,7 +256,7 @@ class ResourceController extends Controller
                             } else $_card["inputs"][$field->options["label"]] = $content->{$field->options["field"]};
                             break;
                         case "belongsToMany":
-                            $value = implode(",", $content->{$field->options["field"]}->pluck("value")->toArray());
+                            $value = implode(",", $content->{$field->options["field"]}->pluck(@$field->options["pluck_value"] ? $field->options["pluck_value"] : "value")->toArray());
                             $_card["inputs"][$field->options["label"]] = $value;
                             break;
                         case "morphsMany":

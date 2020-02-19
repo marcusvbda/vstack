@@ -6,11 +6,11 @@
                     <el-select :allow-create="allowcreate" :disabled="disabled" :multiple="multiple" :size="(size ? size : 'large')" class="w-100" clearable v-model="value" filterable :placeholder="placeholder" v-loading="loading"
                     >
                         <el-option v-if="required==undefined" label="" value=""></el-option>
-                        <el-option v-for="(item,i) in options" :key="i" :label="item.name" :value="String(item.id)"></el-option>
+                        <el-option v-for="(item,i) in options" :key="i" :label="item.name" :value="Number.isInteger(item.id) ? item.id : String(item.id)"></el-option>
                     </el-select>
                     <div class="invalid-feedback" v-if="errors">
                         <ul class="pl-3 mb-0">
-                            <li v-for="(e,i) in errors">{{e}}</li>
+                            <li v-for="(e,i) in errors" :key="i">{{e}}</li>
                         </ul>
                     </div>
                 </div>

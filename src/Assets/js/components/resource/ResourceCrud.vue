@@ -1,15 +1,27 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <form class="needs-validation m-0" novalidate v-on:submit.prevent="submit" @keypress.13.prevent >
+            <form
+                class="needs-validation m-0"
+                novalidate
+                v-on:submit.prevent="submit"
+                @keypress.13.prevent
+            >
                 <template v-for="(card,i) in data.fields">
                     <v-runtime-template :key="i" :template="card.view" />
                 </template>
-                    
+
                 <div class="row">
-                    <div class="col-12 d-flex justify-content-end d-flex align-items-center flex-wrap">
-                        <a :href="data.list_route" class="mr-5 text-danger link d-none d-lg-block"><b>Cancelar</b></a>
-                        <button class="btn btn-primary btn-sm-block" type="sumit">{{pageType=='CREATE' ? 'Cadastrar' : 'Alterar'}}</button>
+                    <div
+                        class="col-12 d-flex justify-content-end d-flex align-items-center flex-wrap"
+                    >
+                        <a :href="data.list_route" class="mr-5 text-danger link d-none d-lg-block">
+                            <b>Cancelar</b>
+                        </a>
+                        <button
+                            class="btn btn-primary btn-sm-block"
+                            type="sumit"
+                        >{{pageType=='CREATE' ? 'Cadastrar' : 'Alterar'}}</button>
                     </div>
                 </div>
             </form>
@@ -19,18 +31,18 @@
 <script>
 import VRuntimeTemplate from "v-runtime-template"
 export default {
-    props:["data","redirect","params","breadcrumb"],
+    props: ["data", "redirect", "params", "breadcrumb"],
     data() {
         return {
-            resourceData : {},
-            form : {},
-            errors : {},
+            resourceData: {},
+            form: {},
+            errors: {},
         }
     },
-    components : {
-        "v-runtime-template" : VRuntimeTemplate
+    components: {
+        "v-runtime-template": VRuntimeTemplate
     },
-    computed : {
+    computed: {
         pageType() {
             return this.data.id ? "EDIT" : "CREATE"
         }
@@ -38,13 +50,13 @@ export default {
     async created() {
         this.initForm()
     },
-    methods : {
+    methods: {
         getRedirect() {
             try {
                 let keys = Object.keys(this.breadcrumb)
-                let key = keys[keys.length-2]
+                let key = keys[keys.length - 2]
                 return this.breadcrumb[key]
-            }catch{
+            } catch{
                 let keys = Object.keys(this.breadcrumb)
                 let key = keys[0]
                 return this.breadcrumb[key]
@@ -54,45 +66,45 @@ export default {
             this.initFields()
             this.loadParams()
             this.$set(this.form, "resource_id", this.data.resource_id)
-            if(this.data.id) this.$set(this.form, "id", this.data.id)
+            if (this.data.id) this.$set(this.form, "id", this.data.id)
         },
         initFields() {
             let fields = []
-            for(let i in this.data.fields){
+            for (let i in this.data.fields) {
                 let card = this.data.fields[i]
-                for(let y in card.inputs){
+                for (let y in card.inputs) {
                     fields.push(card.inputs[y])
                 }
             }
-            for(let i in fields) {
+            for (let i in fields) {
                 let field_name = fields[i].options.field
-                let field_value = !["null",""].includes(String(fields[i].options.value)) ? (Array.isArray(fields[i].options.value) ? fields[i].options.value : String(fields[i].options.value)) : fields[i].options.default
-                if(fields[i].options.type=="check") field_value = (String(field_value)=="true")
-                this.$set(fields[i].options.type=="resource-field" ? this.resourceData : this.form, field_name, field_value)
+                let field_value = !["null", ""].includes(String(fields[i].options.value)) ? (Array.isArray(fields[i].options.value) ? fields[i].options.value : String(fields[i].options.value)) : fields[i].options.default
+                if (fields[i].options.type == "check") field_value = (String(field_value) == "true")
+                this.$set(fields[i].options.type == "resource-field" ? this.resourceData : this.form, field_name, field_value)
             }
         },
         loadParams() {
             let paramKeys = Object.keys(this.params)
-            for(let i in paramKeys) if(paramKeys[i]!="redirect_back")  this.$set(this.form, paramKeys[i],this.params[paramKeys[i]])
+            for (let i in paramKeys) if (paramKeys[i] != "redirect_back") this.$set(this.form, paramKeys[i], this.params[paramKeys[i]])
         },
         submit() {
             this.$confirm(`Confirma ${this.data.page_type} ?`, "Confirmação", {
-               confirmButtonText: "Sim",
-               cancelButtonText: "Não",
-               type: 'warning'
+                confirmButtonText: "Sim",
+                cancelButtonText: "Não",
+                type: 'warning'
             }).then(() => {
                 let loading = this.$loading()
-                this.$http.post(this.data.store_route,this.form).then( res => {
+                this.$http.post(this.data.store_route, this.form).then(res => {
                     let data = res.data
-                    if(data.message) this.$message({showClose: true, message : data.message.text,type: data.message.type})
-                    if(data.success) return window.location.href=this.getRedirect()
+                    if (data.message) this.$message({ showClose: true, message: data.message.text, type: data.message.type })
+                    if (data.success) return window.location.href = this.getRedirect()
                     loading.close()
-                }).catch( er => {
+                }).catch(er => {
                     let errors = er.response.data.errors
                     this.errors = errors
                     loading.close()
                 })
-            }).catch( () => false)
+            }).catch(() => false)
         }
     }
 }
