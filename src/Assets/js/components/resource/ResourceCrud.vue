@@ -7,10 +7,31 @@
                 v-on:submit.prevent="submit"
                 @keypress.13.prevent
             >
-                <template v-for="(card,i) in data.fields">
-                    <v-runtime-template :key="i" :template="card.view" />
-                </template>
-
+                <div class="row">
+                    <div class="col-md-2 pr-0 d-none d-md-block" v-if="showPills">
+                        <ul
+                            class="nav nav-pills nav-fill flex-column"
+                            :style="{top: 10,position: 'sticky'}"
+                        >
+                            <li class="nav-item mb-2" v-for="(card,i) in namedCards" :key="i">
+                                <a
+                                    class="nav-link active"
+                                    :href="`#${card.label}`"
+                                    v-html="card.label"
+                                ></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-bind:class="{'col-md-10 col-sm-12' : showPills,'col-12' : !showPills}">
+                        <template v-for="(card,i) in data.fields">
+                            <v-runtime-template
+                                :key="i"
+                                :template="card.view"
+                                :id="`${card.label}`"
+                            />
+                        </template>
+                    </div>
+                </div>
                 <div class="row">
                     <div
                         class="col-12 d-flex justify-content-end d-flex align-items-center flex-wrap"
@@ -43,8 +64,14 @@ export default {
         "v-runtime-template": VRuntimeTemplate
     },
     computed: {
+        showPills() {
+            return this.namedCards.length > 1
+        },
         pageType() {
             return this.data.id ? "EDIT" : "CREATE"
+        },
+        namedCards() {
+            return this.data.fields.filter(x => x.label)
         }
     },
     async created() {
