@@ -16,6 +16,7 @@
                         class="form-control"
                         v-if="mask"
                         :mask="mask"
+                        :masked="true"
                         v-model="val"
                         v-bind:class="{'is-invalid' : errors}"
                         :placeholder="placeholder ? placeholder : ''"

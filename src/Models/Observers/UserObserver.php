@@ -1,6 +1,7 @@
 <?php
 
 namespace marcusvbda\vstack\Models\Observers;
+
 use App\User;
 use Auth;
 

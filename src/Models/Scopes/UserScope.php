@@ -12,7 +12,7 @@ class UserScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         if (Auth::check()) {
-            @$builder->where($model->table.'.'.'user_id', Auth::user()->id);
+            @$builder->where($model->table . '.' . 'user_id', Auth::user()->id);
         }
     }
 }
