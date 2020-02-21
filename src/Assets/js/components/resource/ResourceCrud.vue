@@ -105,7 +105,7 @@ export default {
             }
             for (let i in fields) {
                 let field_name = fields[i].options.field
-                let field_value = !["null", ""].includes(String(fields[i].options.value)) ? (Array.isArray(fields[i].options.value) ? fields[i].options.value : String(fields[i].options.value)) : fields[i].options.default
+                let field_value = !["null", ""].includes(String(fields[i].options.value)) ? (Array.isArray(fields[i].options.value) ? fields[i].options.value.map(x => String(x)) : String(fields[i].options.value)) : fields[i].options.default
                 if (fields[i].options.type == "check") field_value = (String(field_value) == "true")
                 this.$set(fields[i].options.type == "resource-field" ? this.resourceData : this.form, field_name, field_value)
             }
