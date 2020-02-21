@@ -30,20 +30,8 @@ export default {
             value: this.multiple ? [] : null
       }
     },
-    async created() {
-        if(this.list_model)
-        {
-            this.initOptions( _ => {
-                this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
-                this.loading = false
-                this.started = true
-            })
-        } else {
-            for(let i in this.option_list) this.options.push({id:this.option_list[i],value:this.option_list[i]})
-            this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
-            this.loading = false
-            this.started = true
-        }
+    created() {
+        this.initialize()
     },
     watch : {
         value(val){
@@ -53,6 +41,21 @@ export default {
         }
     },
     methods : {
+        initialize() {
+            if(this.list_model)
+            {
+                this.initOptions( _ => {
+                    this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
+                    this.loading = false
+                    this.started = true
+                })
+            } else {
+                for(let i in this.option_list) this.options.push({id:this.option_list[i],value:this.option_list[i]})
+                this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
+                this.loading = false
+                this.started = true
+            }
+        },
         initOptions(callback){
             if(this.optionlist||(!this.list_model)) {
                 this.options = this.optionlist ? this.optionlist : []
@@ -63,7 +66,8 @@ export default {
                 this.options = res.data
                 callback()
             }).catch(er => {
-                this.loading - false
+                this.loading = false
+                this.initialize()
                 console.log(er)
             })
         }

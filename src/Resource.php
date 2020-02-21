@@ -3,7 +3,7 @@
 namespace marcusvbda\vstack;
 
 use App;
-use marcusvbda\vstack\Fields\{Card,Text};
+use marcusvbda\vstack\Fields\{Card, Text};
 
 class Resource
 {
@@ -63,7 +63,7 @@ class Resource
 
     public function indexLabel()
     {
-        return "<span class='".$this->icon()." mr-2'></span>"." Listagem de " . $this->label();
+        return "<span class='" . $this->icon() . " mr-2'></span>" . " Listagem de " . $this->label();
     }
 
     public function storeButtonlabel()
@@ -96,7 +96,7 @@ class Resource
         return "<h4>Nada cadastrado ainda...<h4>";
     }
 
-    public function nothingStoredSubText() 
+    public function nothingStoredSubText()
     {
         return "<span>Clique no botão abaixo para adicionar o primeiro registro ...</span>";
     }
@@ -104,21 +104,19 @@ class Resource
     public function fields()
     {
         $fields = [];
-        $columns = array_filter($this->getTableColumns(),function($x)
-        {
-            if(!in_array($x,["id","confirmation_token","recovery_token","password","deleted_at","updated_at","created_at","remember_token"])) return $x;
+        $columns = array_filter($this->getTableColumns(), function ($x) {
+            if (!in_array($x, ["id", "confirmation_token", "recovery_token", "password", "deleted_at", "updated_at", "created_at", "remember_token"])) return $x;
         });
-        foreach($columns as $column)
-        {
+        foreach ($columns as $column) {
             $fields[] = new Text([
                 "label" => $column, "field" => $column, "required" => true,
                 "placeholder" => "", "rules" => "required|max:255"
             ]);
         }
-        return [new Card("Informações",$fields)];
+        return [new Card("Informações", $fields)];
     }
 
-    public function getTableColumns() 
+    public function getTableColumns()
     {
         return $this->model->getConnection()->getSchemaBuilder()->getColumnListing($this->model->getTable());
     }
@@ -198,7 +196,7 @@ class Resource
     {
         return "Editar Cards Customizados";
     }
-    
+
     public function getValidationRule()
     {
         $validation_rules = [];

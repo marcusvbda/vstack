@@ -1,14 +1,19 @@
 <template>
-    
     <div>
         <div class="form-group row mb-3">
-            <label class="col-sm-2 col-form-label" v-if="label"><span v-html="label ? label : ''"></span></label>
+            <label class="col-sm-2 col-form-label" v-if="label">
+                <span v-html="label ? label : ''"></span>
+            </label>
             <div class="col-sm-10" v-bind:class="{'col-sm-10' : label,'col-sm-12':!label}">
-                <div v-loading="loading" class="w-100" v-bind:class="{'summernote-is-invalid' : errors}">
+                <div
+                    v-loading="loading"
+                    class="w-100"
+                    v-bind:class="{'summernote-is-invalid' : errors}"
+                >
                     <textarea ref="textarea" style="display:none" v-model="text" :name="name"></textarea>
                     <div class="invalid-feedback" v-if="errors">
                         <ul class="pl-3 mb-0">
-                            <li v-for="(e,i) in errors">{{e}}</li>
+                            <li v-for="(e,i) in errors" :key="i">{{e}}</li>
                         </ul>
                     </div>
                 </div>
@@ -19,7 +24,7 @@
 <script>
 export default {
     props: {
-        disabled :
+        disabled:
         {
             type: Boolean,
             default: false
@@ -59,35 +64,35 @@ export default {
             type: Boolean,
             default: true
         },
-        errors :{
+        errors: {
             type: Array,
             default: null
         },
-        uploadroute : {
+        uploadroute: {
             type: String,
             default: 'text'
         },
-        toolbar :{
+        toolbar: {
             type: Array,
-            default: () =>  [
+            default: () => [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
                 ['font', ['strikethrough', 'superscript', 'subscript']],
                 ['para', ['ul', 'ol', 'paragraph']],
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
                 ['insert', ['link', 'picture']],
-                ['misc', ['codeview','fullscreen']],
+                ['misc', ['codeview', 'fullscreen']],
                 ['height', ['height']]
             ]
         }
     },
     data() {
-		return {
-			text : null,
-            initialized : false,
-            loading : false,
-            options : {
-                lang : "pt-BR",
+        return {
+            text: null,
+            initialized: false,
+            loading: false,
+            options: {
+                lang: "pt-BR",
                 placeholder: this.placeholder,
                 popover: {},
                 toolbar: this.toolbar,
@@ -138,25 +143,23 @@ export default {
                     }
                 }
             }
-		}
-	},
+        }
+    },
     async created() {
-        $( document ).ready( _ => {
+        $(document).ready(_ => {
             var params = Object.assign({}, this.options)
             if (this.disabled) {
                 $(this.$refs.textarea).summernote('disable')
             }
-            // $(".note-group-image-url").remove()
             $(this.$refs.textarea).summernote(this.options)
-            this.run('code',this.$attrs.value)
+            this.run('code', this.$attrs.value)
         })
     },
     beforeDestroy: function () {
         $(this.$refs.textarea).summernote('destroy')
     },
     methods: {
-        uploadImage:function(image)
-        {
+        uploadImage: function (image) {
             let data = new FormData()
             data.append("file", image)
             let self = this
@@ -167,13 +170,12 @@ export default {
                 processData: false,
                 data: data,
                 type: "POST",
-                success: function(response) 
-                {
+                success: function (response) {
                     self.loading = false
                     var image = $('<img>').attr('src', response.path)
                     $(self.$refs.textarea).summernote("insertNode", image[0])
                 },
-                error: function(data) {
+                error: function (data) {
                     console.log(data)
                     self.loading = false
                 }
@@ -181,9 +183,9 @@ export default {
         },
         run: function (code, value) {
             if (typeof value === undefined) {
-                return $(this.$refs.textarea).summernote(code,"")
+                return $(this.$refs.textarea).summernote(code, "")
             } else {
-                
+
                 return $(this.$refs.textarea).summernote(code, value)
             }
         }
@@ -204,7 +206,7 @@ export default {
         }
     }
     .invalid-feedback {
-        display : block;
+        display: block;
     }
 }
 </style>

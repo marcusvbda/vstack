@@ -611,8 +611,12 @@ class ResourceController extends Controller
 
     public function option_list(Request $request)
     {
-        $model = app()->make($request["model"]);
-        return ["success" => true, "data" => $model->select("id", "name")->get()];
+        try {
+            $model = app()->make($request["model"]);
+            return ["success" => true, "data" => $model->select("id", "name")->get()];
+        } catch (\Exception $e) {
+            return ["success" => false, "data" => []];
+        }
     }
 
     public function globalSearch(Request $request)

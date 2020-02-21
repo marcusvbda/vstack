@@ -9,7 +9,7 @@ class ResourcesHelpers
             if (basename($filename) != "Resource.php") {
                 $name = str_replace(".php", "", basename($filename));
                 $resource = self::make($filename, $name);
-                if($resource->canViewList()) @$data[$resource->menu()][] = $resource;
+                if ($resource->canViewList()) @$data[$resource->menu()][] = $resource;
             }
         }
         return $data;
@@ -77,5 +77,4 @@ class ResourcesHelpers
         };
         return false;
     }
-
 }
