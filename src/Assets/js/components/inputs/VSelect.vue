@@ -13,6 +13,7 @@
                             <li v-for="(e,i) in errors" :key="i">{{e}}</li>
                         </ul>
                     </div>
+                    <small v-if="description" class="mt-1" style="color: gray;"><span v-html="description"></span></small>
                 </div>
             </div>
         </div>
@@ -20,7 +21,7 @@
 </template>
 <script>
 export default {
-    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate","option_list"],
+    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate","option_list","description"],
     data() {
         return {
             loading : true,

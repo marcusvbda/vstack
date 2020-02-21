@@ -23,9 +23,11 @@ class BelongsTo extends Field
         $route_list  = route("resource.inputs.option_list");
         $placeholder = $model ? $this->options["placeholder"] : null;
         $options     = @$this->options["options"] ? json_encode($this->options["options"]) : "[]";
+        $description = $this->options["description"];
+
         if (!@$this->options["hide"])
-            $view = "<v-select v-model='form.$field' list_model='$model' label='$label' :disabled='$disabled'                 
-                        placeholder='$placeholder' route_list='$route_list' :option_list='$options' :errors='errors.$field ? errors.$field : false'    
+            $view = "<v-select v-model='form.$field' list_model='$model' label='$label' :disabled='$disabled'   description='$description'               
+                        placeholder='$placeholder' route_list='$route_list' :option_list='$options' :errors='errors.$field ? errors.$field : false'     
                     />";
         return $this->view = $view;
     }
