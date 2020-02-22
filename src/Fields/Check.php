@@ -36,7 +36,7 @@ class Check extends Field
                                 active-text='$active_text'            
                                 inactive-text='$inactive_text'>       
                             </el-switch> 
-                            ".(!$description ? "" : "<br><small style='color:gray;' class='mt-1 pl-3'>$description</small>")."
+                            " . (!$description ? "" : "<br><small style='color:gray;' class='mt-1 pl-3'>$description</small>") . "
                         </div>                             
                     </div>";
         return $this->view = $view;

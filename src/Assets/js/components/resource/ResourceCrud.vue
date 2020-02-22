@@ -74,7 +74,8 @@ export default {
             return this.data.fields.filter(x => x.label)
         }
     },
-    async created() {
+    created() {
+        console.log(this.data)
         this.initForm()
     },
     methods: {
