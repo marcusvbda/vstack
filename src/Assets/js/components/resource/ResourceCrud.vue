@@ -15,7 +15,7 @@
                         >
                             <li class="nav-item mb-2" v-for="(card,i) in namedCards" :key="i">
                                 <a
-                                    class="nav-link active"
+                                    class="nav-link btn-primary"
                                     :href="`#${card.label}`"
                                     v-html="card.label"
                                 ></a>
@@ -75,7 +75,6 @@ export default {
         }
     },
     created() {
-        console.log(this.data)
         this.initForm()
     },
     methods: {

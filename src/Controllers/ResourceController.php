@@ -217,7 +217,7 @@ class ResourceController extends Controller
         return view("vStack::resources.view", compact("resource", "data", "params", "content"));
     }
 
-    private function makeViewData($code, $resource, $content = null)
+    public function makeViewData($code, $resource, $content = null)
     {
         $route = $resource->route();
         return [
