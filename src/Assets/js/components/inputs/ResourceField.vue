@@ -28,9 +28,6 @@ export default {
             let params = this.params
             this.$http.post(this.resourceRoute, params).then(res => {
                 this.html = res.data
-            }).catch(er => {
-                console.log(er)
-                this.loadView()
             })
         }
     }
