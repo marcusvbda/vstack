@@ -332,7 +332,6 @@ class ResourceController extends Controller
                         break;
                     case "resource-field":
                         $params = [];
-                        $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $input->options["resource"])));
                         foreach ($input->options["params"] as $key => $value) $params[$key] = @$content->{$value} ? $content->{$value} : $value;
                         $view = $input->getView();
                         $oldView = $view;
@@ -613,7 +612,7 @@ class ResourceController extends Controller
     {
         try {
             $model = app()->make($request["model"]);
-            return ["success" => true, "data" => $model->select("id", "name")->get()];
+            return ["success" => true, "data" => $model->get()];
         } catch (\Exception $e) {
             return ["success" => false, "data" => []];
         }
