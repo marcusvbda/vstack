@@ -57,7 +57,7 @@
                                         >
                                             <div>
                                                 <button
-                                                    v-if="rendered_data.can_delete"
+                                                    v-if="rendered_data.can_delete && form.id"
                                                     @click="destroy"
                                                     class="btn btn-outline-danger btn-sm-block"
                                                     type="button"
