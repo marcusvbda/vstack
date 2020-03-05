@@ -700,12 +700,14 @@ class ResourceController extends Controller
         $query = $resource->model->where("id", ">", 0);
         foreach ($params as $key => $value) $query = $query->where($key, $value);
         $data = $this->getData($resource, $request, $query);
-        $data = $data->with($resource->model->getRelations())->get();
+        $data = $data->with($resource->model->relations)->get();
         $params = $request->all();
         $crud_data = $this->fieldDataProcessCrudData($resource, $params);
         $rendered_data = [
             "resource_id" => $resource->id,
             "index_label" => @$resource->indexLabel(),
+            "label" => $resource->label(),
+            "singular_label" => $resource->singularLabel(),
             "can_create"  => $resource->canCreate(),
             "can_update"  => $resource->canUpdate(),
             "can_delete"  => $resource->canDelete(),
@@ -739,6 +741,9 @@ class ResourceController extends Controller
                     $field->options["disabled"] = true;
                 }
                 $field->getView();
+                if ($field->options["type"] == "resource-field") {
+                    $field->view  = str_replace("/>", "v-if='form.id' />", $field->view);
+                }
                 $fields[] = $field;
             }
         }

@@ -7,6 +7,7 @@
                     <template v-if="rendered_data.can_create">
                         <template v-if="rendered_data.model_count>0">
                             <button
+                                type="button"
                                 class="btn btn-primary btn-sm btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1"
                                 @click="openModal('create')"
                                 v-html="rendered_data.store_button_label"
@@ -23,6 +24,7 @@
                         :rendered_data="rendered_data"
                         @onEdit="openModal('edit')"
                         :form="form"
+                        :resourceData="resourceData"
                     />
                 </div>
             </div>
@@ -44,6 +46,7 @@
                     </h4>
                     <template v-if="rendered_data.can_create">
                         <button
+                            type="button"
                             class="btn btn-primary btn-sm-block cursor-pointer mb-3 mt-3"
                             @click="openModal('create')"
                             v-html="rendered_data.store_button_label"
@@ -59,6 +62,7 @@
             :errors="errors"
             @onSubmit="loadView"
             @onDestroy="loadView"
+            :resourceData="resourceData"
         />
     </div>
 </template>
@@ -67,8 +71,10 @@ export default {
     props: ["resource", "params", "breadcrumb"],
     data() {
         return {
+            attempts: 0,
             resourceRoute: null,
             resourceName: null,
+            resourceData: {},
             form: {
                 id: null,
                 resource_id: null
@@ -90,6 +96,7 @@ export default {
             return url.substring(url.indexOf("/admin/"), url.length).replace("/admin/", "")
         },
         loadView() {
+            this.attempts++
             this.resourceName = this.resource.charAt(0).toLowerCase() + this.resource.slice(1)
             this.resourceName = this.resourceName.replace(/([A-Z])/g, " $1").split(' ').join('-').toLowerCase()
             this.resourceRoute = laravel.vstack.resource_field_route.replace("%%resource%%", this.resourceName)
@@ -99,6 +106,7 @@ export default {
                 this.loadParameters()
             }).catch(er => {
                 console.log(er)
+                if (this.attempts > 5) return console.log("timeout")
                 this.loadView()
             })
         },
@@ -113,6 +121,7 @@ export default {
                 if (!param_indexes.includes(this.rendered_data.crud_fields[i].options.field))
                     this.$set(this.form, this.rendered_data.crud_fields[i].options.field, this.rendered_data.crud_fields[i].options.default)
             }
+            this.$set(this.form, "id", undefined)
         },
         openModal(type) {
             switch (type) {

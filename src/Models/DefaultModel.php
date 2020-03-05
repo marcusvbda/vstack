@@ -15,6 +15,7 @@ class DefaultModel extends Model
     public $guarded = ["created_at"];
     public $cascadeDeletes = [];
     public $restrictDeletes = [];
+    public $relations = [];
 
     public static function boot()
     {
@@ -28,10 +29,5 @@ class DefaultModel extends Model
     public static function hasTenant()
     {
         return true;
-    }
-
-    public function getRelations()
-    {
-        return [];
     }
 }

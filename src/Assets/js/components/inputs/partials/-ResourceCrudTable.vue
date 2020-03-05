@@ -38,7 +38,7 @@
 </template>
 <script>
 export default {
-    props: ["rendered_data", "form"],
+    props: ["rendered_data", "form", "resourceData"],
     methods: {
         getTableValue(data, index, value, x) {
             if (typeof value == "object") value = index
@@ -53,9 +53,28 @@ export default {
             return text
         },
         edit(data) {
-            for (let i in this.rendered_data.crud_fields) {
-                let field = this.rendered_data.crud_fields[i].options.field
-                this.$set(this.form, field, String(data[field]))
+            let fields = this.rendered_data.crud_fields
+            for (let i in fields) {
+                let field_name = this.rendered_data.crud_fields[i].options.field
+                let field_value = data[field_name]
+                field_value = !["null", ""].includes(field_value) ? (Array.isArray(field_value) ? field_value : String(field_value)) : fields[i].options.default
+                if (fields[i].options.type == "check") field_value = (String(field_value) == "true")
+                if (!["password", "password_confirmation"].includes(field_name)) {
+                    if (fields[i].options.type == "upload") {
+                        if (typeof field_value == "string") field_value = Array(field_value)
+                        this.$set(fields[i].options.type == "resource-field" ? this.resourceData : this.form, field_name, field_value)
+                    } else {
+                        if (fields[i].options.type == "resource-field") {
+                            let _params = Object.assign({}, fields[i].options.params)
+                            for (let i in _params) {
+                                _params[i] = data[_params[i]]
+                            }
+                            this.$set(this.resourceData, field_name, _params)
+                        } else {
+                            this.$set(this.form, field_name, field_value)
+                        }
+                    }
+                }
             }
             this.$set(this.form, 'id', data.id)
             this.$emit("onEdit")

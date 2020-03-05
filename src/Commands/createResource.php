@@ -57,13 +57,10 @@ class ' . $model . ' extends DefaultModel
     protected $table = "' . $table . '";
     // public $cascadeDeletes = [];
     // public $restrictDeletes = [];
+    // public $relations = []; //add relations that you want to load in resource field (ajax)
     // public static function hasTenant() //default true
     // {
     //     return true;
-    // }
-    // public function getRelations() //add relations that you want to load in resource field (ajax)
-    // {
-    //     return [];
     // }
 }';
         $this->makeDir($dir);

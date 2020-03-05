@@ -9,17 +9,16 @@
         data-keyboard="false"
         data-backdrop="static"
     >
-        <div
-            class="modal-dialog modal-xl"
-            style="max-height: 90%;overflow-y: auto;overflow-x: hidden;"
-        >
+        <div class="modal-dialog modal-xl" style="max-height: 90%;overflow-y: auto;">
             <div class="modal-content">
                 <div class="card h-100 w-100">
-                    <div class="card-header">
-                        <div class="d-flex flex-row justify-content-between align-items-center">
+                    <div class="card-header modal-header">
+                        <div
+                            class="d-flex flex-row justify-content-between align-items-center w-100"
+                        >
                             <template
                                 v-if="rendered_data.can_update"
-                            >{{ form.id ? "Edição" : "Cadastro"}}</template>
+                            >{{ form.id >0 ? `Edição de ${rendered_data.singular_label}` : `Cadastro de ${rendered_data.label}`}}</template>
                             <template v-else>Visualização</template>
                             <a href="#" @click.prevent="close">
                                 <span class="el-icon-close"></span>
@@ -94,7 +93,7 @@
 import VRuntimeTemplate from "v-runtime-template"
 
 export default {
-    props: ["rendered_data", "form", "errors"],
+    props: ["rendered_data", "form", "errors", "resourceData"],
     data() {
         return {
             showing: false,
@@ -110,7 +109,7 @@ export default {
             this.showing = false
         },
         show() {
-            $(this.$refs.resourcemodal).modal('show')
+            $(this.$refs.resourcemodal).modal('show').draggable({ handle: ".modal-header" })
             this.$emit('onShow')
             this.showing = true
         },
@@ -162,3 +161,11 @@ export default {
     }
 }
 </script>
+<style lang="scss" scoped>
+.modal {
+    &.ui-draggable {
+        overflow-x: unset;
+        overflow-y: unset;
+    }
+}
+</style>

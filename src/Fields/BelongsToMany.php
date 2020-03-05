@@ -24,9 +24,10 @@ class BelongsToMany extends Field
         $placeholder = $this->options["placeholder"];
         $required = $this->options["required"] ? "true" : "false";
         $description = $this->options["description"];
+        $visible        = $this->options["visible"] ? 'true' : 'false';
 
         if (!@$this->options["hide"])
-            $view = "<v-select multiple :required='$required' v-model='form.$field' list_model='$model' label='$label' :disabled='$disabled'  description='$description'                   
+            $view = "<v-select multiple v-show='$visible' :required='$required' v-model='form.$field' list_model='$model' label='$label' :disabled='$disabled'  description='$description'                   
                         placeholder='$placeholder' route_list='$route_list' :errors='errors.$field ? errors.$field : false'   
                     />";
         return $this->view = $view;
