@@ -15,7 +15,7 @@
                         >
                             <li class="nav-item mb-2" v-for="(card,i) in namedCards" :key="i">
                                 <a
-                                    class="nav-link btn-primary"
+                                    class="nav-link active"
                                     :href="`#${card.label}`"
                                     v-html="card.label"
                                 ></a>
@@ -74,7 +74,7 @@ export default {
             return this.data.fields.filter(x => x.label)
         }
     },
-    created() {
+    async created() {
         this.initForm()
     },
     methods: {

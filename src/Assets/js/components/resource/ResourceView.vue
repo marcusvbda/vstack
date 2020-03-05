@@ -29,11 +29,7 @@
                     :style="{top: 10,position: 'sticky'}"
                 >
                     <li class="nav-item mb-2" v-for="(card,i) in namedCards" :key="i">
-                        <a
-                            class="nav-link btn-primary"
-                            :href="`#${card.label}`"
-                            v-html="card.label"
-                        ></a>
+                        <a class="nav-link active" :href="`#${card.label}`" v-html="card.label"></a>
                     </li>
                 </ul>
             </div>

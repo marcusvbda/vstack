@@ -206,6 +206,15 @@ class ResourceController extends Controller
         return ["success" => false,  "route" => $resource->route()];
     }
 
+    public function destroyField($resource, $code)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!$resource->canDelete()) abort(403);
+        $content = $resource->model->findOrFail($code);
+        if ($content->delete()) return ["success" => true];
+        return ["success" => false];
+    }
+
     public function view(Request $request, $resource, $code)
     {
         $resource = ResourcesHelpers::find($resource);
@@ -217,7 +226,7 @@ class ResourceController extends Controller
         return view("vStack::resources.view", compact("resource", "data", "params", "content"));
     }
 
-    public function makeViewData($code, $resource, $content = null)
+    private function makeViewData($code, $resource, $content = null)
     {
         $route = $resource->route();
         return [
@@ -367,6 +376,25 @@ class ResourceController extends Controller
         $this->storeMorphsMany($target, $data["morphsMany"]);
         $this->storeUploads($target, $data["upload"]);
         Messages::send("success", "Registro salvo com sucesso !!");
+        return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
+    }
+
+    public function storeField(Request $request)
+    {
+        $data = $request->all();
+        if (!@$data["resource_id"]) abort(404);
+        $resource = ResourcesHelpers::find($data["resource_id"]);
+        if (@$data["id"]) if (!$resource->canUpdate()) abort(403);
+        if (!@$data["id"]) if (!$resource->canCreate()) abort(403);
+        $this->validate($request, $resource->getValidationRule());
+        $target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
+        $data = $request->except(["resource_id", "id", "redirect_back"]);
+        $data = $this->processStoreData($resource, $data);
+        $target->fill($data["data"]);
+        $target->save();
+        $this->storeBelongsToMany($target, $data["belongsToMany"]);
+        $this->storeMorphsMany($target, $data["morphsMany"]);
+        $this->storeUploads($target, $data["upload"]);
         return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
     }
 
@@ -613,7 +641,7 @@ class ResourceController extends Controller
     {
         try {
             $model = app()->make($request["model"]);
-            return ["success" => true, "data" => $model->get()];
+            return ["success" => true, "data" => $model->select("id", "name")->get()];
         } catch (\Exception $e) {
             return ["success" => false, "data" => []];
         }
@@ -672,9 +700,48 @@ class ResourceController extends Controller
         $query = $resource->model->where("id", ">", 0);
         foreach ($params as $key => $value) $query = $query->where($key, $value);
         $data = $this->getData($resource, $request, $query);
-        $data = $data->get();
+        $data = $data->with($resource->model->getRelations())->get();
         $params = $request->all();
-        $view = view("vStack::resources.field.index", compact("resource", "data", "params"))->render();
-        return response()->json($view);
+        $crud_data = $this->fieldDataProcessCrudData($resource, $params);
+        $rendered_data = [
+            "resource_id" => $resource->id,
+            "index_label" => @$resource->indexLabel(),
+            "can_create"  => $resource->canCreate(),
+            "can_update"  => $resource->canUpdate(),
+            "can_delete"  => $resource->canDelete(),
+            "model_count" => $resource->model->count(),
+            "store_button_label" => $resource->storeButtonLabel(),
+            "no_results_found_text" => $resource->noResultsFoundText(),
+            "data" => $data,
+            "data_count" => $data->count(),
+            "icon" => $resource->icon(),
+            "nothing_stored_text" => $resource->nothingStoredText(),
+            "nothing_stored_subtext" => $resource->nothingStoredSubText(),
+            "crud_fields" =>  $crud_data,
+            "params" => $params,
+            "store_route" => route('resource.field.store', ["resource" => $resource->id]),
+            "table" => $resource->table(),
+            "destroy_route" => route("resource.field.destroy", ["resource" => $resource->id, "id" => "_replace_area_"])
+        ];
+        return response()->json($rendered_data);
+    }
+
+    private function fieldDataProcessCrudData($resource, $params)
+    {
+        $fields = [];
+        $crud_data = $this->makeCrudData($resource);
+        for ($i = 0; $i < count($crud_data["fields"]); $i++) {
+            for ($y = 0; $y < count($crud_data["fields"][$i]->inputs); $y++) {
+                $field = $crud_data["fields"][$i]->inputs[$y];
+                if (@$params[$crud_data["fields"][$i]->inputs[$y]->options['field']] != null) {
+                    $field->options["value"] = $params[$crud_data["fields"][$i]->inputs[$y]->options['field']];
+                    $field->options["visible"] = false;
+                    $field->options["disabled"] = true;
+                }
+                $field->getView();
+                $fields[] = $field;
+            }
+        }
+        return $fields;
     }
 }

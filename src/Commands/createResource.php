@@ -61,6 +61,10 @@ class ' . $model . ' extends DefaultModel
     // {
     //     return true;
     // }
+    // public function getRelations() //add relations that you want to load in resource field (ajax)
+    // {
+    //     return [];
+    // }
 }';
         $this->makeDir($dir);
         file_put_contents($model_path, $content);

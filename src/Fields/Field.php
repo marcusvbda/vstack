@@ -10,7 +10,7 @@ class Field
     public function processFieldOptions()
     {
         @$this->options["type"]                 = $this->options["type"] ? $this->options["type"] : "text";
-        @$this->options["label"]                = ($this->options["label"] ? $this->options["label"] : "") . " " . (@$this->options["required"] ? "*" : "");
+        @$this->options["label"]                = $this->options["label"] ? $this->options["label"] : "";
         @$this->options["field"]                = $this->options["field"] ? $this->options["field"] : "field";
         @$this->options["required"]             = $this->options["required"] ? $this->options["required"] : false;
         @$this->options["placeholder"]          = $this->options["placeholder"] ? $this->options["placeholder"] : "";
@@ -25,5 +25,6 @@ class Field
         @$this->options["rules"]                = $this->options["rules"] ? $this->options["rules"] : '';
         @$this->options["mask"]                 = $this->options["mask"] ? $this->options["mask"] : '';
         @$this->options["description"]          = $this->options["description"] ? $this->options["description"] : '';
+        @$this->options["visible"]              = $this->options["visible"] != null ? $this->options["visible"] : true;
     }
 }

@@ -19,8 +19,7 @@ class DefaultModel extends Model
     public static function boot()
     {
         parent::boot();
-        if(static::hasTenant()) 
-        {
+        if (static::hasTenant()) {
             static::observe(new TenantObserver());
             static::addGlobalScope(new TenantScope());
         }
@@ -29,5 +28,10 @@ class DefaultModel extends Model
     public static function hasTenant()
     {
         return true;
+    }
+
+    public function getRelations()
+    {
+        return [];
     }
 }

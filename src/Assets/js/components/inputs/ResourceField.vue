@@ -1,6 +1,65 @@
 <template>
     <div>
-        <div v-html="html"></div>
+        <div class="row mb-3 mt-2">
+            <div class="col-12 d-flex flex-row align-items-center">
+                <h4 class="mb-1" v-html="rendered_data.index_label" />
+                <div class="d-flex flex-row flex-wrap align-items-center">
+                    <template v-if="rendered_data.can_create">
+                        <template v-if="rendered_data.model_count>0">
+                            <button
+                                class="btn btn-primary btn-sm btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1"
+                                @click="openModal('create')"
+                                v-html="rendered_data.store_button_label"
+                            ></button>
+                        </template>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <template v-if="rendered_data.model_count>0">
+            <div class="row">
+                <div class="col-12">
+                    <crud-table
+                        :rendered_data="rendered_data"
+                        @onEdit="openModal('edit')"
+                        :form="form"
+                    />
+                </div>
+            </div>
+        </template>
+        <template v-else>
+            <div class="d-flex flex-column row align-items-center justify-items-center">
+                <div class="col-md-6 col-sm-12 text-center">
+                    <h4 class="text-center mt-5">
+                        <template v-if="rendered_data.icon">
+                            <h1 style="opacity: .3;font-size: 250px;">
+                                <span :class="rendered_data.icon"></span>
+                            </h1>
+                        </template>
+                        <div v-html="rendered_data.nothing_stored_text"></div>
+                        <small
+                            style="font-size: 15px;"
+                            v-html="rendered_data.nothing_stored_subtext"
+                        ></small>
+                    </h4>
+                    <template v-if="rendered_data.can_create">
+                        <button
+                            class="btn btn-primary btn-sm-block cursor-pointer mb-3 mt-3"
+                            @click="openModal('create')"
+                            v-html="rendered_data.store_button_label"
+                        ></button>
+                    </template>
+                </div>
+            </div>
+        </template>
+        <crud-modal
+            ref="modal"
+            :rendered_data="rendered_data"
+            :form="form"
+            :errors="errors"
+            @onSubmit="loadView"
+            @onDestroy="loadView"
+        />
     </div>
 </template>
 <script>
@@ -10,8 +69,17 @@ export default {
         return {
             resourceRoute: null,
             resourceName: null,
-            html: null,
+            form: {
+                id: null,
+                resource_id: null
+            },
+            errors: {},
+            rendered_data: {},
         }
+    },
+    components: {
+        "crud-modal": require("./partials/-ResourceFieldModal.vue").default,
+        "crud-table": require("./partials/-ResourceCrudTable.vue").default,
     },
     async created() {
         this.loadView()
@@ -27,8 +95,38 @@ export default {
             this.resourceRoute = laravel.vstack.resource_field_route.replace("%%resource%%", this.resourceName)
             let params = this.params
             this.$http.post(this.resourceRoute, params).then(res => {
-                this.html = res.data
+                this.rendered_data = res.data
+                this.loadParameters()
+            }).catch(er => {
+                console.log(er)
+                this.loadView()
             })
+        },
+        loadParameters() {
+            for (let i in this.rendered_data.params) {
+                this.$set(this.form, i, this.rendered_data.params[i])
+            }
+        },
+        cleanForm() {
+            let param_indexes = Object.keys(this.rendered_data.params)
+            for (let i in this.rendered_data.crud_fields) {
+                if (!param_indexes.includes(this.rendered_data.crud_fields[i].options.field))
+                    this.$set(this.form, this.rendered_data.crud_fields[i].options.field, this.rendered_data.crud_fields[i].options.default)
+            }
+        },
+        openModal(type) {
+            switch (type) {
+                case "create":
+                    this.cleanForm()
+                    this.$refs.modal.show()
+                    break
+                case "edit":
+                    this.$refs.modal.show()
+                    break
+                default:
+                    return console.log("404 page not exist")
+                    break
+            }
         }
     }
 }

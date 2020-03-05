@@ -16,6 +16,7 @@ class NotificationsController extends Controller
         return ["success" => true, "notifications" => $notifications];
     }
 
+
     public function destroy(User $user, $id)
     {
         $notification = $user->notifications()->where("id", $id)->firstOrFail();
