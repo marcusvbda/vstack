@@ -61,7 +61,9 @@ export default {
                 if (fields[i].options.type == "check") field_value = (String(field_value) == "true")
                 if (!["password", "password_confirmation"].includes(field_name)) {
                     if (fields[i].options.type == "upload") {
-                        if (typeof field_value == "string") field_value = Array(field_value)
+                        if (field_value == "null") field_value = null
+                        else if (typeof field_value == "string") field_value = Array(field_value)
+
                         this.$set(fields[i].options.type == "resource-field" ? this.resourceData : this.form, field_name, field_value)
                     } else {
                         if (fields[i].options.type == "resource-field") {
