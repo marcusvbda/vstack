@@ -42,6 +42,7 @@ export default {
     methods: {
         getTableValue(data, index, value, x) {
             if (typeof value == "object") value = index
+            index = String(index)
             if (index.indexOf("->") < 0) return data[value]
             let indexes = index.split("->")
             let _val = data
