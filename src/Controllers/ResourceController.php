@@ -700,7 +700,7 @@ class ResourceController extends Controller
         $query = $resource->model->where("id", ">", 0);
         foreach ($params as $key => $value) $query = $query->where($key, $value);
         $data = $this->getData($resource, $request, $query);
-        $data = $data->with($resource->model->relations)->get();
+        $data = $data->get();
         $params = $request->all();
         $crud_data = $this->fieldDataProcessCrudData($resource, $params);
         $rendered_data = [

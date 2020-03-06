@@ -15,8 +15,6 @@ class DefaultModel extends Model
     public $guarded = ["created_at"];
     public $cascadeDeletes = [];
     public $restrictDeletes = [];
-    public $relations = [];
-
     public static function boot()
     {
         parent::boot();
