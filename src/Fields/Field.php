@@ -26,5 +26,29 @@ class Field
         @$this->options["mask"]                 = $this->options["mask"] ? $this->options["mask"] : '';
         @$this->options["description"]          = $this->options["description"] ? $this->options["description"] : '';
         @$this->options["visible"]              = $this->options["visible"] != null ? $this->options["visible"] : true;
+        $this->checkRequired();
+    }
+
+    private function checkRequired()
+    {
+        $rules = $rules = explode("|", $this->options['rules']);
+        if ($this->options["required"] || $this->hasRequiredRule($rules)) {
+            if ($this->options["required"]) $this->addRequireRule($rules);
+            else $this->options["required"] = true;
+            $this->options["label"] = $this->options["label"] . "*";
+        }
+    }
+
+    private function addRequireRule($rules)
+    {
+        if (!$this->hasRequiredRule($rules)) {
+            $rules[] = "required";
+            $this->options['rules'] = implode("|", $rules);
+        }
+    }
+
+    private function hasRequiredRule($rules)
+    {
+        return array_search("required", $rules) !== false;
     }
 }
