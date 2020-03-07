@@ -260,7 +260,7 @@ class ResourceController extends Controller
                         case "belongsTo":
                             if (@$field->options["model"]) {
                                 $model = $field->options["model"];
-                                $value = app()->make($model)->find($content->{$field->options["field"]})->name;
+                                $value = @app()->make($model)->find($content->{$field->options["field"]})->name;
                                 $_card["inputs"][$field->options["label"]] = $value;
                             } else $_card["inputs"][$field->options["label"]] = $content->{$field->options["field"]};
                             break;
