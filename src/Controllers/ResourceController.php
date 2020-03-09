@@ -295,6 +295,16 @@ class ResourceController extends Controller
                             $view = str_replace($target, ":params='" . json_encode($params) . "' />", $view);
                             $_card["inputs"]["IGNORE__" . $_resource->label()] = $view;
                             break;
+                        case "custom":
+                            $custom_params = "";
+                            foreach ($field->options['params'] as $custom_key => $custom_value) {
+                                eval("\$custom_value = \"$custom_value\";");
+                                $custom_params .= ":$custom_key='$custom_value' ";
+                            }
+                            $custom_oldView = $field->view;
+                            $custom_view = str_replace(" />", " $custom_params  />", $custom_oldView);
+                            $_card["inputs"]["IGNORE__" . uniqid()] = $custom_view;
+                            break;
                         default:
                             $_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
                             break;
@@ -347,6 +357,16 @@ class ResourceController extends Controller
                         $target = substr($view, strpos($view, ":params='"), strpos($view, "' end_params"));
                         $view = str_replace($target, ":params='" . json_encode($params) . "' />", $view);
                         $input->view = $view;
+                        $card->view = str_replace($oldView, $view, $card->view);
+                        break;
+                    case "custom":
+                        $params = "";
+                        foreach ($input->options['params'] as $key => $value) {
+                            eval("\$value = \"$value\";");
+                            $params .= ":$key='$value' ";
+                        }
+                        $oldView = $input->view;
+                        $view = str_replace(" />", " $params  />", $oldView);
                         $card->view = str_replace($oldView, $view, $card->view);
                         break;
                     default:

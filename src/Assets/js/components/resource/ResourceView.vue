@@ -87,18 +87,22 @@
                                                             v-for="(field, i) in card.inputs"
                                                             :key="i"
                                                         >
-                                                            <td
-                                                                style="width:25%;"
-                                                                v-if="i.indexOf('IGNORE__')<0"
+                                                            <template
+                                                                v-if="!['custom'].includes(field.type)"
                                                             >
-                                                                <span v-html="i"></span>
-                                                            </td>
-                                                            <td>
-                                                                <v-runtime-template
-                                                                    :key="i"
-                                                                    :template="`<span>${field===null ? '' : field}</span>`"
-                                                                />
-                                                            </td>
+                                                                <td
+                                                                    style="width:25%;"
+                                                                    v-if="i.indexOf('IGNORE__')<0"
+                                                                >
+                                                                    <span v-html="i"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <v-runtime-template
+                                                                        :key="i"
+                                                                        :template="`<span>${field===null ? '' : field}</span>`"
+                                                                    />
+                                                                </td>
+                                                            </template>
                                                         </tr>
                                                     </tbody>
                                                 </table>
