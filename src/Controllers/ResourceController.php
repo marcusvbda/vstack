@@ -640,7 +640,7 @@ class ResourceController extends Controller
     {
         try {
             $model = app()->make($request["model"]);
-            return ["success" => true, "data" => $model->select("id", "name")->get()];
+            return ["success" => true, "data" => $model->get()];
         } catch (\Exception $e) {
             return ["success" => false, "data" => []];
         }
