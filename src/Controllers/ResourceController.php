@@ -226,7 +226,7 @@ class ResourceController extends Controller
         return view("vStack::resources.view", compact("resource", "data", "params", "content"));
     }
 
-    private function makeViewData($code, $resource, $content = null)
+    public function makeViewData($code, $resource, $content = null)
     {
         $route = $resource->route();
         return [
@@ -341,7 +341,6 @@ class ResourceController extends Controller
                         break;
                     case "resource-field":
                         $params = [];
-                        $_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $input->options["resource"])));
                         foreach ($input->options["params"] as $key => $value) $params[$key] = @$content->{$value} ? $content->{$value} : $value;
                         $view = $input->getView();
                         $oldView = $view;
