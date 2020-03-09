@@ -31,7 +31,7 @@ class Field
 
     private function checkRequired()
     {
-        $rules = $rules = explode("|", $this->options['rules']);
+        $rules = !is_array($this->options['rules']) ? explode("|", $this->options['rules']) : $this->options['rules'];
         if ($this->options["required"] || $this->hasRequiredRule($rules)) {
             if ($this->options["required"]) $this->addRequireRule($rules);
             else $this->options["required"] = true;
@@ -43,7 +43,7 @@ class Field
     {
         if (!$this->hasRequiredRule($rules)) {
             $rules[] = "required";
-            $this->options['rules'] = implode("|", $rules);
+            $this->options['rules'] = $rules;
         }
     }
 
