@@ -360,14 +360,16 @@ class ResourceController extends Controller
                         $card->view = str_replace($oldView, $view, $card->view);
                         break;
                     case "custom":
-                        $params = "";
-                        foreach ($input->options['params'] as $key => $value) {
-                            eval("\$value = \"$value\";");
-                            $params .= ":$key='$value' ";
-                        }
-                        $oldView = $input->view;
-                        $view = str_replace(" />", " $params  />", $oldView);
-                        $card->view = str_replace($oldView, $view, $card->view);
+                        if (@$content) {
+                            $params = "";
+                            foreach ($input->options['params'] as $key => $value) {
+                                eval("\$value = \"$value\";");
+                                $params .= ":$key='$value' ";
+                            }
+                            $oldView = $input->view;
+                            $view = str_replace(" />", " $params  />", $oldView);
+                            $card->view = str_replace($oldView, $view, $card->view);
+                        } else  $card->view = "";
                         break;
                     default:
                         $input->options["value"] = ($input->options["field"] == "password") ? null : @$content->{$input->options["field"]};
