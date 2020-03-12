@@ -463,6 +463,7 @@ class ResourceController extends Controller
         $result = $this->getBelongsToManyFields($resource, $data);
         $result = $this->getMorphsManyFields($resource, $result);
         $result = $this->getUploadsFields($resource, $result);
+        unset($result["data"][""]);
         return $result;
     }
 

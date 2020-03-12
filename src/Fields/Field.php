@@ -11,7 +11,7 @@ class Field
     {
         @$this->options["type"]                 = $this->options["type"] ? $this->options["type"] : "text";
         @$this->options["label"]                = $this->options["label"] ? $this->options["label"] : "";
-        @$this->options["field"]                = $this->options["field"] ? $this->options["field"] : "field";
+        @$this->options["field"]                = $this->options["field"] ? $this->options["field"] : "";
         @$this->options["required"]             = $this->options["required"] ? $this->options["required"] : false;
         @$this->options["placeholder"]          = $this->options["placeholder"] ? $this->options["placeholder"] : "";
         @$this->options["minlength"]            = $this->options["minlength"] ? $this->options["minlength"] : 0;
