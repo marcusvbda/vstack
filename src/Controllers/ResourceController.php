@@ -5,7 +5,7 @@ namespace marcusvbda\vstack\Controllers;
 use App\Http\Controllers\Controller;
 use ResourcesHelpers;
 use Illuminate\Http\Request;
-use Response;
+use Storage;
 use marcusvbda\vstack\Services\Messages;
 use marcusvbda\vstack\Models\CustomResourceCard;
 use Auth;
@@ -711,6 +711,15 @@ class ResourceController extends Controller
 
     public function upload(Request $request)
     {
+        if (is_string($request['file'])) {
+            $url = $request['file'];
+            $name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
+            Storage::put(
+                "public/$name",
+                file_get_contents($url)
+            );
+            return ["path" => asset("storage/$name")];
+        }
         return ["path" => asset(str_replace("public", "storage", $request->file('file')->store('public')))];
     }
 
