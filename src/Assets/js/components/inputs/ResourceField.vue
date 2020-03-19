@@ -116,12 +116,39 @@ export default {
             }
         },
         cleanForm() {
-            let param_indexes = Object.keys(this.rendered_data.params)
+            let fields = []
             for (let i in this.rendered_data.crud_fields) {
-                if (!param_indexes.includes(this.rendered_data.crud_fields[i].options.field))
-                    this.$set(this.form, this.rendered_data.crud_fields[i].options.field, this.rendered_data.crud_fields[i].options.default)
+                let field_name = this.rendered_data.crud_fields[i].options.field
+                let field_value = this.processFieldValue(field_name, this.rendered_data.crud_fields[i].options)
+                this.$set(this.rendered_data.crud_fields[i].options.type == "resource-field" ? this.resourceData : this.form, field_name, field_value)
             }
-            this.$set(this.form, "id", undefined)
+        },
+        processFieldValue(name, options) {
+            let value = null
+            if (!["null", ""].includes(String(options.value))) {
+                value = this.processFieldPerType(options.type, String(options.value))
+            } else {
+                value = this.processFieldPerType(options.type, options.default)
+            }
+            return value
+        },
+        processFieldPerType(type, value) {
+            switch (type) {
+                case "tags":
+                    if (Array.isArray(value)) return value.map(x => String(x))
+                    return value ? value.split(",") : []
+                    break
+                case "check":
+                    return String(value) == "true"
+                    break
+                case "upload":
+                    return value ? (Array.isArray(value) ? value.map(x => String(x)) : [value]) : []
+                    break
+                default:
+                    return value
+                    break
+            }
+            return value
         },
         openModal(type) {
             switch (type) {

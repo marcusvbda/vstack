@@ -9,6 +9,7 @@ class Tags extends Field
     public function __construct($op = [])
     {
         $this->options = $op;
+        $this->options["type"] = "tags";
         parent::processFieldOptions();
     }
 

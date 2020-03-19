@@ -105,10 +105,36 @@ export default {
             }
             for (let i in fields) {
                 let field_name = fields[i].options.field
-                let field_value = !["null", ""].includes(String(fields[i].options.value)) ? (Array.isArray(fields[i].options.value) ? fields[i].options.value.map(x => String(x)) : String(fields[i].options.value)) : fields[i].options.default
-                if (fields[i].options.type == "check") field_value = (String(field_value) == "true")
+                let field_value = this.processFieldValue(field_name, fields[i].options)
                 this.$set(fields[i].options.type == "resource-field" ? this.resourceData : this.form, field_name, field_value)
             }
+        },
+        processFieldValue(name, options) {
+            let value = null
+            if (!["null", ""].includes(String(options.value))) {
+                value = this.processFieldPerType(options.type, String(options.value))
+            } else {
+                value = this.processFieldPerType(options.type, options.default)
+            }
+            return value
+        },
+        processFieldPerType(type, value) {
+            switch (type) {
+                case "tags":
+                    if (Array.isArray(value)) return value.map(x => String(x))
+                    return value ? value.split(",") : []
+                    break
+                case "check":
+                    return String(value) == "true"
+                    break
+                case "upload":
+                    return value ? (Array.isArray(value) ? value.map(x => String(x)) : [value]) : []
+                    break
+                default:
+                    return value
+                    break
+            }
+            return value
         },
         loadParams() {
             let paramKeys = Object.keys(this.params)
