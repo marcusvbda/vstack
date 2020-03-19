@@ -142,7 +142,7 @@ export default {
                     return String(value) == "true"
                     break
                 case "upload":
-                    return value ? (Array.isArray(value) ? value.map(x => String(x)) : [value]) : []
+                    return value ? (Array.isArray(value) ? value.map(x => String(x)) : value.split(",")) : []
                     break
                 default:
                     return value
