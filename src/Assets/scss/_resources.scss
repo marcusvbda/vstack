@@ -80,3 +80,18 @@
 html {
     scroll-behavior: smooth;
 }
+
+
+.row-responsive-table {
+    @media screen and (max-width: 750px) {
+        table { width:100%; }
+        
+        td {
+            display:block;
+            width:100%;
+        }
+        
+        tr { display:block; }
+        thead { display: none; }
+    }
+}

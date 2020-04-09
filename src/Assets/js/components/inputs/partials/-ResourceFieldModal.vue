@@ -37,14 +37,18 @@
                                 >
                                     <div class="row">
                                         <div class="col-12">
-                                            <template
-                                                v-for="(field,i) in rendered_data.crud_fields"
-                                            >
-                                                <v-runtime-template
-                                                    :key="i"
-                                                    :template="field.view"
-                                                />
-                                            </template>
+                                            <div class="row-responsive-table">
+                                                <table class="table table-striped">
+                                                    <template
+                                                        v-for="(field,i) in rendered_data.crud_fields"
+                                                    >
+                                                        <v-runtime-template
+                                                            :key="i"
+                                                            :template="field.view"
+                                                        />
+                                                    </template>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                     <hr />

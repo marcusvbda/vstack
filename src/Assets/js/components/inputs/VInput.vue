@@ -1,10 +1,8 @@
 <template>
-    <div>
-        <div class="form-group row mb-3">
-            <label class="col-sm-2 col-form-label" v-if="label">
-                <span v-html="label ? label : ''"></span>
-            </label>
-            <div class="col-sm-10" v-bind:class="{'col-sm-10' : label,'col-sm-12':!label}">
+    <tr>
+        <td v-if="label" v-html="label ? label : ''"></td>
+        <td>
+            <div class="d-flex flex-column">
                 <div class="input-group">
                     <div class="input-group-prepend" v-if="prepend">
                         <span class="input-group-text">
@@ -49,8 +47,8 @@
                     <span v-html="description"></span>
                 </small>
             </div>
-        </div>
-    </div>
+        </td>
+    </tr>
 </template>
 <script>
 export default {

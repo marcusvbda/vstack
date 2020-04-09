@@ -1,41 +1,42 @@
 <template>
-    <div>
-        <div class="form-group row mb-3">
-            <label class="col-sm-2 col-form-label" v-if="label"><span v-html="label ? label : ''"></span></label>
-            <div class="col-sm-10" v-bind:class="{'col-sm-10' : label,'col-sm-12':!label}">
-                <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :disabled="fileList.length>=limit"
-                    v-bind:class="{'disabled':fileList.length>=limit}"
-                    :action="uploadroute"
-                    :list-type="listtype"
-                    :file-list="fileList"
-                    :on-success="handleAvatarSuccess"
-                    :headers="header">
-                    <div slot="file" slot-scope="{file}">
-                        <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
-                        <div class="el-upload-list__item-actions">
-                            <span class="el-upload-list__item-preview"  v-if="preview!=undefined" @click="handlePictureCardPreview(file)">
-                                <i class="el-icon-zoom-in"></i>
-                            </span>
-                            <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                                <i class="el-icon-delete"></i>
-                            </span>
+    <tr>
+        <td v-if="label" v-html="label ? label : ''"></td>
+            <td>
+                <div class="d-flex flex-column">
+                    <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :disabled="fileList.length>=limit"
+                        v-bind:class="{'disabled':fileList.length>=limit}"
+                        :action="uploadroute"
+                        :list-type="listtype"
+                        :file-list="fileList"
+                        :on-success="handleAvatarSuccess"
+                        :headers="header">
+                        <div slot="file" slot-scope="{file}">
+                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
+                            <div class="el-upload-list__item-actions">
+                                <span class="el-upload-list__item-preview"  v-if="preview!=undefined" @click="handlePictureCardPreview(file)">
+                                    <i class="el-icon-zoom-in"></i>
+                                </span>
+                                <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
+                                    <i class="el-icon-delete"></i>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <template>
-                        <div class="d-flex align-items-center justify-content-center h-100" v-if="listtype=='picture-card'">
-                            <i class="el-icon-plus"></i>
-                        </div>
-                        <div v-if="['text','picture'].includes(listtype)" class="d-flex align-items-center justify-content-center h-100" >
-                            <button type="button" class="btn btn-primary btn-sm-block"><i class="el-icon-plus"></i> Selecione o arquivo</button>
-                        </div>
-                    </template>
-                </el-upload>
-                <el-dialog :visible.sync="dialogVisible" v-if="preview!=undefined">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                </el-dialog>
-            </div>
-        </div>
-    </div>
+                        <template>
+                            <div class="d-flex align-items-center justify-content-center h-100" v-if="listtype=='picture-card'">
+                                <i class="el-icon-plus"></i>
+                            </div>
+                            <div v-if="['text','picture'].includes(listtype)" class="d-flex align-items-center justify-content-center h-100" >
+                                <button type="button" class="btn btn-primary btn-sm-block"><i class="el-icon-plus"></i> Selecione o arquivo</button>
+                            </div>
+                        </template>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogVisible" v-if="preview!=undefined">
+                        <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
+                </div>
+            </td>
+        </td>
+    </tr>
 </template>
 <script>
     export default {

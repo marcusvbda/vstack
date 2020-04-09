@@ -24,21 +24,23 @@ class Check extends Field
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $description    = @$this->options["description"];
         if (!@$this->options["hide"])
-            $view = "<div class='form-group d-flex align-items-center justify-content-center row mb-3'>
-                        <label class='col-sm-2 col-form-label'>$label</label>
-                        <div class='col-sm-10 pl-0'>                                                   
-                            <el-switch             
-                                :disabled='$disabled'                               
-                                class='ml-3'                          
-                                v-model='form.$field'                 
-                                active-color='$active_color'          
-                                inactive-color='$inactive_color'      
-                                active-text='$active_text'            
-                                inactive-text='$inactive_text'>       
-                            </el-switch> 
-                            " . (!$description ? "" : "<br><small style='color:gray;' class='mt-1 pl-3'>$description</small>") . "
-                        </div>                             
-                    </div>";
+            $view = "<tr>
+                        <td>$label</td>
+                        <td>
+                            <div class='d-flex flex-column'>                                                   
+                                <el-switch             
+                                    :disabled='$disabled'                               
+                                    class='ml-3'                          
+                                    v-model='form.$field'                 
+                                    active-color='$active_color'          
+                                    inactive-color='$inactive_color'      
+                                    active-text='$active_text'            
+                                    inactive-text='$inactive_text'>       
+                                </el-switch> 
+                                " . (!$description ? "" : "<br><small style='color:gray;' class='mt-1 pl-3'>$description</small>") . "
+                            </div>                             
+                        </td>                             
+                    </tr>";
         return $this->view = $view;
     }
 }
