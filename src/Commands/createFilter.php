@@ -19,47 +19,60 @@ class createFilter extends Command
         $name = $data["name"];
         $totalSteps = 1;
         $bar = $this->output->createProgressBar($totalSteps);
-        $this->createFilter($bar,$resource,$type,$name);
+        $this->createFilter($bar, $resource, $type, $name);
         $bar->finish();
     }
 
-    private function createFilter($bar,$resource,$type,$name)
+    private function createFilter($bar, $resource, $type, $name)
     {
         $bar->start();
-        $dir = app_path("\\Http\\Filters\\".$resource);
+        $dir = app_path("/Http/Filters/" . $resource);
         $filter_path = $dir . "\\" . $name . ".php";
         $content =
             '<?php 
-namespace App\Http\Filters\\'.$resource.';
+namespace App\Http\Filters\\' . $resource . ';
 use  marcusvbda\vstack\Filter;
 
 class ' . $name . ' extends Filter
 {
-    public $component   = "'.$type.'";
-    public $label       = "'.$name.'";
+    ' . (($type != 'custom-filter') ? ('
+    public $component   = "' . $type . '";
+    public $label       = "' . $name . '";
     public $placeholder = "";
-    public $index = "'.strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)).'";';
+    public $index = "' . strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)) . '";') : 'public $component   = "' . $type . '";
+    public $label       = "' . $name . '";
+    public $index       = "' . strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)) . '";
+    ');
 
 
-    if($type=="select-filter")
-    {
-        $content .='
+        if ($type == "select-filter") {
+            $content .= '
 
     public function __construct()
     {
         $this->options[] = (Object) ["value"=>1,"label"=>"lorem ipsum"];
         parent::__construct();
     }';
-    }
-    $content .='
+        }
+
+        if ($type == "custom-filter") {
+            $content .= '
+
+    public function __construct()
+    {
+        $this->element = "<input class=\'form-control\' v-model=\'filter.".$this->index."\'  @change=\'makeNewRoute\' />";
+        parent::__construct();
+    }';
+        }
+        $content .= '
     
     public function apply($query, $value)
     {
         //filter logic here...
         return $query;
     }
-}'; 
-        $this->makeDir($dir);   
+}';
+        $this->makeDir($dir);
         file_put_contents($filter_path, $content);
         $bar->advance();
         echo "\ncreated filter $filter_path.php\n";

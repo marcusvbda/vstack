@@ -11,16 +11,15 @@ class NotificationsController extends Controller
 {
     public function get(User $user)
     {
-        $notifications = $user->notifications()->where("read_at", null)->get();
-        $user->notifications()->update(['read_at' => now()]);
+        $notifications = $user->notifications;
+        $user->notifications()->delete();
         return ["success" => true, "notifications" => $notifications];
     }
 
     public function destroy(User $user, $id)
     {
         $notification = $user->notifications()->where("id", $id)->firstOrFail();
-        $notification->read_at = now();
-        $notification->save();
+        $notification->delete();
         return ["success" => true];
     }
 }
