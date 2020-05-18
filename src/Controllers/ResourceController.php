@@ -11,6 +11,7 @@ use marcusvbda\vstack\Models\CustomResourceCard;
 use Auth;
 use DB;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class ResourceController extends Controller
 {
@@ -25,17 +26,23 @@ class ResourceController extends Controller
 
     private function getData($resource, Request $request, $query = null)
     {
+        $table = $resource->model->getTable() . ".";
         $data      = $request->all();
-        $orderBy   = @$data["order_by"] ? $data["order_by"] : "id";
-        $orderType = @$data["order_type"] ? $data["order_type"] : "desc";
-        $query     = $query ? $query : $resource->model->where("id", ">", 0);
-        $query     = $query->orderBy($orderBy, $orderType);
+
+        $orderBy   = $table . Arr::get($data, 'order_by', "id");
+        $orderType = Arr::get($data, 'order_type', "desc");
+
+        $query     = $query ? $query : $resource->model->where($table . "id", ">", 0);
+        $query->orderBy($orderBy, $orderType);
+
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
         $search = $resource->search();
-        $query = $query->where(function ($q) use ($search, $data) {
-            foreach ($search as $s) $q = $q->OrWhere($s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
+
+        $query = $query->where(function ($q) use ($search, $data, $table) {
+            foreach ($search as $s) $q = $q->OrWhere($table.$s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
             return $q;
         });
+        
         foreach ($resource->lenses() as $len) {
             $field = $len["field"];
             if (isset($data[$field])) {
