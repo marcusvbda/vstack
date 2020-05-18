@@ -19,26 +19,26 @@ class createMetric extends Command
         $name = $data["name"];
         $totalSteps = 1;
         $bar = $this->output->createProgressBar($totalSteps);
-        $this->createMetric($bar, $resource, $type,$name);
+        $this->createMetric($bar, $resource, $type, $name);
         $bar->finish();
     }
 
-    private function createMetric($bar, $resource, $type,$name)
+    private function createMetric($bar, $resource, $type, $name)
     {
         $bar->start();
-        $dir = app_path("\\Http\\Metrics\\".$resource);
-        $metric_path = $dir . "\\" . $name . ".php";
+        $dir = app_path("/Http/Metrics/" . $resource);
+        $metric_path = $dir . "/" . $name . ".php";
         $content =
             '<?php 
-namespace App\Http\Metrics\\'.$resource.';
+namespace App\Http\Metrics\\' . $resource . ';
 use  marcusvbda\vstack\Metric;
 use Illuminate\Http\Request;
 
 class ' . $name . ' extends Metric
 {
-    public $type   = "'.$type.'";';
-    if(in_array($type,["group-chart","trend-chart","bar-chart"])) {
-        $content .='
+    public $type   = "' . $type . '";';
+        if (in_array($type, ["group-chart", "trend-chart", "bar-chart"])) {
+            $content .= '
     public function calculate(Request $request)
     {
         //return data here...
@@ -46,9 +46,9 @@ class ' . $name . ' extends Metric
     }
 
     ';
-    }
-    if(in_array($type,["custom-content"])) {
-        $content .='
+        }
+        if (in_array($type, ["custom-content"])) {
+            $content .= '
     public function calculate(Request $request)
     {
         //return content here
@@ -56,10 +56,10 @@ class ' . $name . ' extends Metric
     }
 
     ';
-    }
+        }
 
-    if(in_array($type,["trend-counter"])) {
-        $content .='
+        if (in_array($type, ["trend-counter"])) {
+            $content .= '
     public function calculate(Request $request)
     {
         //return data here...
@@ -67,26 +67,26 @@ class ' . $name . ' extends Metric
     }
 
     ';
-    }
+        }
 
-    if(in_array($type,["simple-counter","trend-graph","bar-chart"])) {
-        $content .='
+        if (in_array($type, ["simple-counter", "trend-graph", "bar-chart"])) {
+            $content .= '
     public function ranges()
     {
         return "date-interval";
         //return [];
     }';
-    }
+        }
 
-        $content.='
+        $content .= '
 
     //required and unique
     public function uriKey()
     {
-        return "'.strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $name)).'";
+        return "' . strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $name)) . '";
     }
-}'; 
-        $this->makeDir($dir);   
+}';
+        $this->makeDir($dir);
         file_put_contents($metric_path, $content);
         $bar->advance();
         echo "\ncreated metric $metric_path.php\n";

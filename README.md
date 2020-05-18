@@ -29,7 +29,7 @@ para criar um filtro para o resource
 ```
 php artisan vstack:make-filter {resource} {name} {type}
 ```
-os tipos de filtro text-filter, select-filter, check-filter, date-filter, rangedate-filter
+os tipos de filtro text-filter, select-filter, check-filter, date-filter, rangedate-filter, custom-filter
 
 
 

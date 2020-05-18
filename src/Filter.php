@@ -29,8 +29,11 @@ class Filter
             case "rangedate-filter":
                 $this->makeViewRangeDateField();
                 break;
+            case "custom-filter":
+                $this->makeCustomField();
+                break;
             default:
-                dd($this);
+                dd($this->component);
                 break;
         }
     }
@@ -40,6 +43,11 @@ class Filter
         $value = @$data[$this->index] ? @$data[$this->index] : null;
         if ($value && @$value != "null" && @$value != "false") $query = $this->apply($query, $value);
         return $query;
+    }
+
+    private function makeCustomField()
+    {
+        $this->view =  @$this->element;
     }
 
     private function makeViewTextField()
@@ -106,6 +114,4 @@ class Filter
                             start-placeholder='$start_placeholder'>
                         </el-date-picker>";
     }
-
-    
 }

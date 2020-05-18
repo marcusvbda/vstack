@@ -27,8 +27,8 @@ class createResource extends Command
     private function createResource($bar, $resource, $table, $model)
     {
         $bar->start();
-        $dir = app_path("\\Http\\Resources");
-        $resource_path = $dir . "\\" . $resource . ".php";
+        $dir = app_path("/Http/Resources");
+        $resource_path = $dir . "/" . $resource . ".php";
         $content =
             '<?php
 namespace App\Http\Resources;
@@ -46,8 +46,8 @@ class ' . $resource . ' extends Resource
     private function createModel($bar, $table, $model)
     {
         $bar->start();
-        $dir = app_path("\\Http\\Models");
-        $model_path = $dir . "\\" . $model . ".php";
+        $dir = app_path("/Http/Models");
+        $model_path = $dir . "/" . $model . ".php";
         $content =
             '<?php
 namespace App\Http\Models;
