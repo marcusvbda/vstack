@@ -207,4 +207,39 @@ class Resource
         }
         return $validation_rules;
     }
+
+    public function beforeListSlot()
+    {
+        return false;
+    }
+
+    public function afterListSlot()
+    {
+        return false;
+    }
+
+    public function beforeEditSlot()
+    {
+        return false;
+    }
+
+    public function afterEditSlot()
+    {
+        return false;
+    }
+
+    public function beforeCreateSlot()
+    {
+        return false;
+    }
+
+    public function afterCreateSlot()
+    {
+        return false;
+    }
+
+    public function beforeViewSlot()
+    {
+        return false;
+    }
 }

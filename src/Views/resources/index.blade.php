@@ -28,6 +28,9 @@
 @endsection
 @section('content')
 @include("vStack::resources.partials._metrics")
+@if(@$resource->beforeListSlot())
+    {!! @$resource->beforeListSlot() !!}
+@endif
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center">
         <h4 class="mb-1">{!! @$resource->indexLabel() !!}</h4>
@@ -54,6 +57,7 @@
         </div>
     </div>
 </div>
+
 @if($resource->model->count()>0)
     @include("vStack::resources.partials._filter")
     <div class="row d-flex align-items-end mb-2">
@@ -112,4 +116,9 @@
         </div>
     </div>
 @endif    
+@if(@$resource->afterListSlot())
+    <div class="mt-3">
+        {!! @$resource->afterListSlot() !!}
+    </div>
+@endif
 @endsection

@@ -26,6 +26,7 @@
     }
     $bc = Session::get("breadcrumb");
 ?>
+
 <div class="row">
     <div class="col-12">
         <nav aria-label="breadcrumb">
@@ -46,6 +47,9 @@
 </div>
 @endsection
 @section('content')
+    @if(@$resource->beforeViewSlot())
+        {!! @$resource->beforeViewSlot() !!}
+    @endif
     <resource-view 
         :data="{{json_encode($data)}}" 
         redirect="{{$current_route}}" 
