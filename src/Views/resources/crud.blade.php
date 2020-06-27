@@ -72,6 +72,15 @@ for($i=0;$i<count($cards);$i++)
 </div>
 @endsection
 @section('content')
+@if(@!$data->id)
+    @if(@$resource->beforeCreateSlot())
+        {!! @$resource->beforeCreateSlot() !!}
+    @endif
+@else 
+    @if(@$resource->beforeEditSlot())
+    {!! @$resource->beforeEditSlot() !!}
+    @endif
+@endif
 <div class="row mt-2">
     <div class="col-12">
         <div class="d-flex flex-row justify-content-between mb-3">
@@ -84,5 +93,20 @@ for($i=0;$i<count($cards);$i++)
     :params="{{json_encode($params)}}"  
     redirect="{{$current_route}}" 
     :breadcrumb="{{json_encode($routes)}}" >
+    @if(@!$data->id)
+        @if(@$resource->afterCreateSlot())
+            <template slot="aftercreate">
+                {!! @$resource->afterCreateSlot() !!}
+            </template>
+        @endif
+    @else
+        @if(@$resource->afterEditSlot())
+            <template slot="afteredit">
+                {!! @$resource->afterEditSlot() !!}
+            </template>
+        @endif
+    @endif
 </resource-crud>
+
+
 @endsection

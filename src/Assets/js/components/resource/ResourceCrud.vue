@@ -32,6 +32,8 @@
                         </template>
                     </div>
                 </div>
+                <slot name="aftercreate" v-if="pageType=='CREATE'"></slot>
+                <slot name="afteredit" v-if="pageType!='CREATE'"></slot>
                 <div class="row">
                     <div
                         class="col-12 d-flex justify-content-end d-flex align-items-center flex-wrap"
