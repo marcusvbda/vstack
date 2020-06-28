@@ -1,0 +1,15 @@
+<?php 
+namespace DummyNamespace;
+use  marcusvbda\vstack\Metric;
+use Illuminate\Http\Request;
+
+class DummyClass extends Metric
+{
+    public $type   = "DummyMetricType";
+
+    //required and unique
+    public function uriKey()
+    {
+        return "DummySnakeCase";
+    }
+}
