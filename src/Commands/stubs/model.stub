@@ -1,0 +1,17 @@
+<?php
+
+namespace DummyNamespace;
+
+use marcusvbda\vstack\Models\DefaultModel;
+
+class DummyClass extends DefaultModel
+{
+    protected $table = "DummyModelTable";
+    // public $cascadeDeletes = [];
+    // public $restrictDeletes = [];
+    // public $relations = []; //add relations that you want to load in resource field (ajax)
+    // public static function hasTenant() //default true
+    // {
+    //     return true;
+    // }
+}
