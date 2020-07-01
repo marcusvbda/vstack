@@ -5,7 +5,7 @@
     v-model='{{"filter.$index"}}' 
     @change='makeNewRoute' 
     type='date'
-    :format='dd/MM/yyyy'
-    value-format='yyyy-MM-dd'
+    :format="'dd/MM/yyyy'"
+    value-format="'yyyy-MM-dd'"
     placeholder='{{$placeholder}}'>
 </el-date-picker>

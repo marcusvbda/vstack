@@ -5,8 +5,8 @@
     v-model='{{"filter.$index"}}' 
     @change='makeNewRoute' 
     type='daterange'
-    :format='dd/MM/yyyy'
-    value-format='yyyy-MM-dd'
+    :format="'dd/MM/yyyy'"
+    value-format="'yyyy-MM-dd'"
     end-placeholder='{{$end_placeholder}}'
     start-placeholder='{{$start_placeholder}}'>
 </el-date-picker>
