@@ -15,7 +15,7 @@ class Summernote extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"]) return $this->view = "";
         $label          = $this->options["label"];
         $field          = $this->options["field"];
         $type           = $this->options["type"];
@@ -23,17 +23,15 @@ class Summernote extends Field
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $uploadroute    = @$this->options["upload_route"] ? $this->options["upload_route"] : Config("vstack.default_upload_route");
         $height         = @$this->options["height"] ? $this->options["height"] : 150;
-        if (!@$this->options["hide"])
-            $view = "<v-summernote class='mb-3'  
-                        uploadroute='$uploadroute'
-                        :disabled='$disabled'                                                                  
-                        label='$label'                                                                     
-                        type='$type'           
-                        :height='$height'                                                        
-                        v-model='form.$field'                                                            
-                        placeholder='$placeholder'                                                       
-                        :errors='errors.$field ? errors.$field : null'                                  
-                    />";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.field.summernote", compact(
+            "uploadroute",
+            "disabled",
+            "label",
+            "type",
+            "field",
+            "height",
+            "placeholder"
+        ))->render();
     }
 }

@@ -15,7 +15,8 @@ class BelongsToMany extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"]) return $this->view = "";
+
         $model       = $this->options["model"];
         $field       = @$this->options["field"];
         $label       = $this->options["label"];
@@ -26,10 +27,17 @@ class BelongsToMany extends Field
         $description = $this->options["description"];
         $visible        = $this->options["visible"] ? 'true' : 'false';
 
-        if (!@$this->options["hide"])
-            $view = "<v-select multiple v-show='$visible' :required='$required' v-model='form.$field' list_model='$model' label='$label' :disabled='$disabled'  description='$description'                   
-                        placeholder='$placeholder' route_list='$route_list' :errors='errors.$field ? errors.$field : false'   
-                    />";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.field.belongstomany", compact(
+            "visible",
+            "required",
+            "field",
+            "label",
+            "model",
+            "disabled",
+            "description",
+            "placeholder",
+            "route_list"
+        ))->render();
     }
 }

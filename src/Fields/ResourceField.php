@@ -15,15 +15,10 @@ class ResourceField extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"]) return $this->view = "";
         $resource = @$this->options["resource"] ? $this->options["resource"] : "";
         $this->options["field"] = $resource;
-        $params = json_encode(@$this->options["params"] ? $this->options["params"] : []);
-        if (!@$this->options["hide"])
-            $view = "<resource-field     
-                        resource='$resource' 
-                        :params='resourceData.$resource' end_params
-                    />";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.field.resource_field", compact("resource"))->render();
     }
 }

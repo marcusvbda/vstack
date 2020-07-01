@@ -14,7 +14,8 @@ class Text extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"])  return $this->view = "";
+
         $label          = $this->options["label"];
         $append         = @$this->options["append"];
         $prepend        = @$this->options["prepend"];
@@ -25,21 +26,19 @@ class Text extends Field
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $description    = $this->options["description"];
         $visible        = $this->options["visible"] ? 'true' : 'false';
-        if (!@$this->options["hide"])
-            $view = "<v-input class='mb-3'  
-                        :disabled='$disabled'                                                                  
-                        label='$label'                                                                   
-                        prepend='$prepend'                                                               
-                        append='$append'                                                               
-                        append='$append' 
-                        :mask='$mask'                                                              
-                        description='$description'                                                              
-                        type='$type'                                                                     
-                        v-model='form.$field'                                                            
-                        placeholder='$placeholder'   
-                        v-show='$visible'                                                    
-                        :errors='errors.$field ? errors.$field : false'                          
-                    />";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.field.text", compact(
+            "disabled",
+            "label",
+            "prepend",
+            "append",
+            "mask",
+            "description",
+            "type",
+            "field",
+            "placeholder",
+            "visible",
+            "field"
+        ))->render();
     }
 }

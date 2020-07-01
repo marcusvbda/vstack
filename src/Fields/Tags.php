@@ -15,19 +15,17 @@ class Tags extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"]) return $this->view = "";
         $label          = $this->options["label"];
         $field          = $this->options["field"];
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $description    = $this->options["description"];
-        if (!@$this->options["hide"])
-            $view = "<v-tags class='mb-3'  
-                        :disabled='$disabled'                                                                  
-                        label='$label'                                                                 
-                        description='$description'                                                              
-                        v-model='form.$field'                                                            
-                        :errors='errors.$field ? errors.$field : false'                                  
-                    />";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.field.tags", compact(
+            "disabled",
+            "label",
+            "description",
+            "field"
+        ))->render();
     }
 }

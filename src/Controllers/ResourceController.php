@@ -45,11 +45,7 @@ class ResourceController extends Controller
         
         foreach ($resource->lenses() as $len) {
             $field = $len["field"];
-            if (!isset($data[$field])) continue;
-
-            if (@$len["query"]) {
-                call_user_func($len["query"], $query, $data[$field]);
-            } else {
+            if (isset($data[$field])) {
                 $value = $data[$field];
                 $query = $query->where($field, $value);
             }

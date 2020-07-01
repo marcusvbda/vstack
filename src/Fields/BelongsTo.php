@@ -15,7 +15,8 @@ class BelongsTo extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"]) return $this->view = "";
+
         $model       = @$this->options["model"] ? $this->options["model"] : null;
         $field       = @$this->options["field"];
         $label       = $this->options["label"];
@@ -26,10 +27,15 @@ class BelongsTo extends Field
         $description = $this->options["description"];
         $visible        = $this->options["visible"] ? 'true' : 'false';
 
-        if (!@$this->options["hide"])
-            $view = "<v-select v-model='form.$field' list_model='$model' label='$label' :disabled='$disabled'   description='$description'  v-show='$visible'             
-                        placeholder='$placeholder' route_list='$route_list' :option_list='$options' :errors='errors.$field ? errors.$field : false'     
-                    />";
-        return $this->view = $view;
+        return $this->view = view("vStack::resources.field.select", compact(
+            "field",
+            "model",
+            "label",
+            "disabled",
+            "description",
+            "visible",
+            "placeholder",
+            "route_list"
+        ))->render();
     }
 }

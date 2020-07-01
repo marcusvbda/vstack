@@ -1,0 +1,10 @@
+<v-summernote class='mb-3'  
+    uploadroute='{{$uploadroute}}'
+    :disabled='{{$disabled}}'                                                                  
+    label='{{$label}}'                                                                     
+    type='{{$type}}'           
+    :height='{{$height}}'                                                        
+    v-model='{{"form.$field"}}'                                                            
+    placeholder='{{$placeholder}}'                                                       
+    :errors='{{"errors.$field ? errors.$field : null"}}'                                  
+/>
