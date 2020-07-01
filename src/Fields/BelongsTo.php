@@ -27,7 +27,7 @@ class BelongsTo extends Field
         $description = $this->options["description"];
         $visible        = $this->options["visible"] ? 'true' : 'false';
 
-        return $this->view = view("vStack::resources.field.select", compact(
+        return $this->view = view("vStack::resources.field.belongsto", compact(
             "field",
             "model",
             "label",
@@ -35,7 +35,8 @@ class BelongsTo extends Field
             "description",
             "visible",
             "placeholder",
-            "route_list"
+            "route_list",
+            "options"
         ))->render();
     }
 }
