@@ -1,0 +1,20 @@
+<?php 
+namespace App\Http\Metrics\teste;
+use  marcusvbda\vstack\Metric;
+use Illuminate\Http\Request;
+
+class _NAME_ extends Metric
+{
+    public $type   = "_TYPE_";
+    public function calculate(Request $request)
+    {
+        //return content here
+        return "<b>Custom Content here ...</b>";
+    }
+
+    //required and unique
+    public function uriKey()
+    {
+        return "_INDEX_";
+    }
+}

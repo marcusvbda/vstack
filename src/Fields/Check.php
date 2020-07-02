@@ -14,7 +14,8 @@ class Check extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"]) return $this->view = "";
+
         $label          = $this->options["label"];
         $field          = $this->options["field"];
         $active_color   = @$this->options["active_color"] ? $this->options["active_color"] : "green";
@@ -23,24 +24,14 @@ class Check extends Field
         $inactive_text  = @$this->options["inactive_text"] ? $this->options["inactive_text"] : "";
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $description    = @$this->options["description"];
-        if (!@$this->options["hide"])
-            $view = "<tr>
-                        <td>$label</td>
-                        <td>
-                            <div class='d-flex flex-column'>                                                   
-                                <el-switch             
-                                    :disabled='$disabled'                               
-                                    class='ml-3'                          
-                                    v-model='form.$field'                 
-                                    active-color='$active_color'          
-                                    inactive-color='$inactive_color'      
-                                    active-text='$active_text'            
-                                    inactive-text='$inactive_text'>       
-                                </el-switch> 
-                                " . (!$description ? "" : "<br><small style='color:gray;' class='mt-1 pl-3'>$description</small>") . "
-                            </div>                             
-                        </td>                             
-                    </tr>";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.field.check", compact(
+            "label",
+            "description",
+            "disabled",
+            "field",
+            "active_color",
+            "inactive_color"
+        ))->render();
     }
 }

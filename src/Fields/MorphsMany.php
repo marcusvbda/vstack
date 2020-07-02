@@ -15,17 +15,21 @@ class MorphsMany extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"])  return $this->view = "";
         $field       = @$this->options["field"];
         $label       = $this->options["label"];
         $unique      = @$this->options["unique"] ? $this->options["unique"] : "true";
         $disabled    = @$this->options["disabled"] ? "true" : "false";
         $placeholder = $this->options["placeholder"];
         $required = $this->options["required"] ? "true" : "false";
-        if (!@$this->options["hide"])
-            $view = "<v-tags multiple :allowcreate='true' :required='$required' v-model='form.$field' label='$label' :disabled='$disabled' :unique='$unique'                    
-                        placeholder='$placeholder' :errors='errors.$field ? errors.$field : false'   
-                    />";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.morphsmany", compact(
+            "required",
+            "field",
+            "label",
+            "disabled",
+            "unique",
+            "placeholder"
+        ))->render();
     }
 }

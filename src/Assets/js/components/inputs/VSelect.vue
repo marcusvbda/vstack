@@ -47,7 +47,7 @@ export default {
             if(this.list_model)
             {
                 this.initOptions( _ => {
-                    this.value = this.$attrs.value ? this.$attrs.value.split(",") : (this.multiple ? [] : null)
+                    this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
                     this.loading = false
                     this.started = true
                 })

@@ -28,50 +28,23 @@ class createFilter extends Command
         $bar->start();
         $dir = app_path("/Http/Filters/" . $resource);
         $filter_path = $dir . "\\" . $name . ".php";
-        $content =
-            '<?php 
-namespace App\Http\Filters\\' . $resource . ';
-use  marcusvbda\vstack\Filter;
-
-class ' . $name . ' extends Filter
-{
-    ' . (($type != 'custom-filter') ? ('
-    public $component   = "' . $type . '";
-    public $label       = "' . $name . '";
-    public $placeholder = "";
-    public $index = "' . strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)) . '";') : 'public $component   = "' . $type . '";
-    public $label       = "' . $name . '";
-    public $index       = "' . strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name)) . '";
-    ');
-
-
-        if ($type == "select-filter") {
-            $content .= '
-
-    public function __construct()
-    {
-        $this->options[] = (Object) ["value"=>1,"label"=>"lorem ipsum"];
-        parent::__construct();
-    }';
+        $index = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name));
+        switch($type)
+        {
+            case 'custom-filter' :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/filter/_new_custom_filter_.example"));
+            break;
+            case 'select-filter' :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/filter/_new_select_filter_.example"));
+            break;
+            default :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/filter/_new_default_filter_.example"));
+            break;
         }
-
-        if ($type == "custom-filter") {
-            $content .= '
-
-    public function __construct()
-    {
-        $this->element = "<input class=\'form-control\' v-model=\'filter.".$this->index."\'  @change=\'makeNewRoute\' />";
-        parent::__construct();
-    }';
-        }
-        $content .= '
-    
-    public function apply($query, $value)
-    {
-        //filter logic here...
-        return $query;
-    }
-}';
+        $content = preg_replace('/\_FILTER_NAME_\b/', $name, $content);
+        $content = preg_replace('/\_TYPE_\b/', $type, $content);
+        $content = preg_replace('/\_LABEL_\b/', $name, $content);
+        $content = preg_replace('/\_INDEX_\b/', $index, $content);
         $this->makeDir($dir);
         file_put_contents($filter_path, $content);
         $bar->advance();

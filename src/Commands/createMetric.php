@@ -28,64 +28,33 @@ class createMetric extends Command
         $bar->start();
         $dir = app_path("/Http/Metrics/" . $resource);
         $metric_path = $dir . "/" . $name . ".php";
-        $content =
-            '<?php 
-namespace App\Http\Metrics\\' . $resource . ';
-use  marcusvbda\vstack\Metric;
-use Illuminate\Http\Request;
+        $index = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name));
 
-class ' . $name . ' extends Metric
-{
-    public $type   = "' . $type . '";';
-        if (in_array($type, ["group-chart", "trend-chart", "bar-chart"])) {
-            $content .= '
-    public function calculate(Request $request)
-    {
-        //return data here...
-        return ["lorem ipsum" => 12,"ipsum lorem" => 55];
-    }
-
-    ';
+        $content = "";
+        switch($type)
+        {
+            case 'custom-content' :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/metric/_new_custom_metric_.example"));
+            break;
+            case 'select-filter' :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/metric/_new_select_filter_.example"));
+            break;
+            case 'group-chart' :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/metric/_new_group_chart_metric_.example"));
+            break;
+            case 'tend-counter' :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/metric/_new_trend_counter_metric_.example"));
+            break;
+            case 'bar-chart' :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/metric/_new_bar_chart_metric_.example"));
+            break;
+            case 'trend-chart' :
+                $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/metric/_new_bar_chart_metric_.example"));
+            break;
         }
-        if (in_array($type, ["custom-content"])) {
-            $content .= '
-    public function calculate(Request $request)
-    {
-        //return content here
-        return "<b>Custom Content here ...</b>";
-    }
-
-    ';
-        }
-
-        if (in_array($type, ["trend-counter"])) {
-            $content .= '
-    public function calculate(Request $request)
-    {
-        //return data here...
-        return ["value" => 12,"compare" => 10];
-    }
-
-    ';
-        }
-
-        if (in_array($type, ["simple-counter", "trend-graph", "bar-chart"])) {
-            $content .= '
-    public function ranges()
-    {
-        return "date-interval";
-        //return [];
-    }';
-        }
-
-        $content .= '
-
-    //required and unique
-    public function uriKey()
-    {
-        return "' . strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $name)) . '";
-    }
-}';
+        $content = preg_replace('/\_NAME_\b/', $name, $content);
+        $content = preg_replace('/\_TYPE_\b/', $type, $content);
+        $content = preg_replace('/\_INDEX_\b/', $index, $content);
         $this->makeDir($dir);
         file_put_contents($metric_path, $content);
         $bar->advance();

@@ -15,23 +15,23 @@ class TextArea extends Field
 
     public function getView()
     {
-        $view = "";
+        if (@$this->options["hide"]) return $this->view = "";
+
         $label          = $this->options["label"];
         $field          = $this->options["field"];
         $type           = $this->options["type"];
         $placeholder    = $this->options["placeholder"];
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $rows           = @$this->options["rows"] ? $this->options["rows"] : 3;
-        if (!@$this->options["hide"])
-            $view = "<v-input-textarea class='mb-3'  
-                        :disabled='$disabled'                                                                  
-                        label='$label'                                                                     
-                        type='$type'           
-                        :rows='$rows'                                                          
-                        v-model='form.$field'                                                            
-                        placeholder='$placeholder'                                                       
-                        :errors='errors.$field ? errors.$field : false'                                  
-                    />";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.field.textarea", compact(
+            "disabled",
+            "label",
+            "type",
+            "rows",
+            "placeholder",
+            "visible",
+            "field"
+        ))->render();
     }
 }

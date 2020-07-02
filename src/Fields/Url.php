@@ -9,34 +9,31 @@ class Url extends Field
     public function __construct($op = [])
     {
         $this->options = $op;
-        $this->options["type"] = "url";
         parent::processFieldOptions();
     }
 
     public function getView()
     {
-        $view = "";
+        if (!@$this->options["hide"]) return $this->view = "";
+
         $label          = $this->options["label"];
         $append         = @$this->options["append"];
         $prepend        = @$this->options["prepend"];
-        $type           = $this->options["type"];
+        $type           = "url";
         $field          = $this->options["field"];
         $mask           = json_encode($this->options["mask"]);
         $placeholder    = $this->options["placeholder"];
         $disabled       = @$this->options["disabled"] ? "true" : "false";
-        if (!@$this->options["hide"])
-            $view = "<v-input class='mb-3'  
-                        :disabled='$disabled'                                                                  
-                        label='$label'                                                                   
-                        prepend='$prepend'                                                               
-                        append='$append'                                                               
-                        append='$append' 
-                        :mask='$mask'                                                              
-                        type='$type'                                                                     
-                        v-model='form.$field'                                                            
-                        placeholder='$placeholder'                                                       
-                        :errors='errors.$field ? errors.$field : false'                                  
-                    />";
-        return $this->view = $view;
+
+        return $this->view = view("vStack::resources.field.text", compact(
+            "disabled",
+            "label",
+            "prepend",
+            "append",
+            "mask",
+            "type",
+            "field",
+            "placeholder"
+        ))->render();
     }
 }

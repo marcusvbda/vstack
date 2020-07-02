@@ -1,12 +1,9 @@
 <?php
-
-namespace DummyNamespace;
-
+namespace App\Http\Models;
 use marcusvbda\vstack\Models\DefaultModel;
-
-class DummyClass extends DefaultModel
+class _MODEL_NAME extends DefaultModel
 {
-    protected $table = "DummyModelTable";
+    protected $table = "_TABLE_NAME__";
     // public $cascadeDeletes = [];
     // public $restrictDeletes = [];
     // public $relations = []; //add relations that you want to load in resource field (ajax)
