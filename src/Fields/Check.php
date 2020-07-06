@@ -30,6 +30,8 @@ class Check extends Field
             "description",
             "disabled",
             "field",
+            "active_text",
+            "inactive_text",
             "active_color",
             "inactive_color"
         ))->render();
