@@ -52,18 +52,16 @@ export default {
         makeNewRoute() {
             let str_query = ""
             let filter_keys = Object.keys(this.filter)
-            for (let i in filter_keys) this.data.query[filter_keys[i]] = this.filter[filter_keys[i]]
-            for (let i in this.data.query) {
-                if ((i != "page") && (i != "_")) {
-                    if (!["null", null].includes(this.data.query[i])) {
-                        str_query += `${i}=${this.data.query[i]}&`
+            filter_keys.forEach(key => this.data.query[key] = this.filter[key])
+            Object.keys(this.data.query).forEach(key => {
+                if ((key != "page") && (key != "_")) {
+                    if (!["null", null].includes(this.data.query[key])) {
+                        str_query += `${key}=${this.data.query[key]}&`
                     }
                 }
-            }
+            })
+            if (this.data.query["_"]) str_query += `${str_query ? "&" : ""}_=${this.data.query["_"] ? this.data.query["_"] : ""}`
             str_query = str_query.slice(0, -1)
-            if (this.data.query["_"]) {
-                str_query += `${str_query ? "&" : ""}_=${this.data.query["_"] ? this.data.query["_"] : ""}`
-            }
             window.location.href = `${this.data.route}?${str_query}`
         }
     },
