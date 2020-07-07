@@ -1,5 +1,5 @@
 <?php 
-namespace App\Http\Filters\custom;
+namespace App\Http\Filters\_RESOURCE_NAME_;
 use  marcusvbda\vstack\Filter;
 
 class _FILTER_NAME_ extends Filter

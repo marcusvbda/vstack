@@ -29,18 +29,18 @@ class createFilter extends Command
         $dir = app_path("/Http/Filters/" . $resource);
         $filter_path = $dir . "\\" . $name . ".php";
         $index = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name));
-        switch($type)
-        {
-            case 'custom-filter' :
+        switch ($type) {
+            case 'custom-filter':
                 $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/filter/_new_custom_filter_.example"));
-            break;
-            case 'select-filter' :
+                break;
+            case 'select-filter':
                 $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/filter/_new_select_filter_.example"));
-            break;
-            default :
+                break;
+            default:
                 $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/filter/_new_default_filter_.example"));
-            break;
+                break;
         }
+        $content = preg_replace('/\_RESOURCE_NAME_\b/', $name, $resource);
         $content = preg_replace('/\_FILTER_NAME_\b/', $name, $content);
         $content = preg_replace('/\_TYPE_\b/', $type, $content);
         $content = preg_replace('/\_LABEL_\b/', $name, $content);

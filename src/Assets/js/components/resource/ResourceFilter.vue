@@ -43,8 +43,10 @@ export default {
         initFormFilter() {
             let filter_keys = Object.keys(this.data.filters)
             for (let i in filter_keys) {
-                if (this.data.filters[filter_keys[i]].index)
-                    this.setFormValue(this.data.filters[filter_keys[i]].index, this.data.query[this.data.filters[filter_keys[i]].index] ? this.data.query[this.data.filters[filter_keys[i]].index] : '', this.data.filters[filter_keys[i]])
+                if (this.data.filters[filter_keys[i]]) {
+                    if (this.data.filters[filter_keys[i]].index)
+                        this.setFormValue(this.data.filters[filter_keys[i]].index, this.data.query[this.data.filters[filter_keys[i]].index] ? this.data.query[this.data.filters[filter_keys[i]].index] : '', this.data.filters[filter_keys[i]])
+                }
             }
         },
         makeNewRoute() {
