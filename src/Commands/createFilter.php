@@ -40,7 +40,7 @@ class createFilter extends Command
                 $content = file_get_contents(base_path("vendor/marcusvbda/vstack/src/Commands/examples/filter/_new_default_filter_.example"));
                 break;
         }
-        $content = preg_replace('/\_RESOURCE_NAME_\b/', $name, $resource);
+        $content = preg_replace('/\_RESOURCE_NAME_\b/', $resource, $content);
         $content = preg_replace('/\_FILTER_NAME_\b/', $name, $content);
         $content = preg_replace('/\_TYPE_\b/', $type, $content);
         $content = preg_replace('/\_LABEL_\b/', $name, $content);
