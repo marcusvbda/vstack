@@ -6,7 +6,7 @@
     @change='makeNewRoute' 
     type='daterange'
     :format="'dd/MM/yyyy'"
-    value-format="'yyyy-MM-dd'"
+    :value-format="'yyyy-MM-dd'"
     end-placeholder='{{$end_placeholder}}'
     start-placeholder='{{$start_placeholder}}'>
 </el-date-picker>
