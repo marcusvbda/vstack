@@ -53,12 +53,10 @@ class Filter
     private function makeViewTextField()
     {
         $index         = $this->index;
-        $mask          = @$this->mask;
         $placeholder   = @$this->placeholder ? $this->placeholder : "";
         $this->view =  view("vStack::resources.filter.text", compact(
             "index",
-            "placeholder",
-            "mask"
+            "placeholder"
         ))->render();
     }
 
