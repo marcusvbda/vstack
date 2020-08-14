@@ -28,6 +28,11 @@
                             <button type="button" v-else class=" ml-0 btn btn-primary btn-sm button-new-tag" size="small" @click="showInput">+ Adicionar</button>
                         </template>
                     </div>
+                    <div class="invalid-feedback" v-if="errors" :style="{ display: `${errors ? 'block' : 'none'}`}">
+                        <ul class="pl-3 mb-0">
+                            <li v-for="(e,i) in errors" :key="i">{{e}}</li>
+                        </ul>
+                    </div>
                     <small style="color: gray;" v-if="description"><span v-html="description"></span></small>
                 </div>
             </td>
