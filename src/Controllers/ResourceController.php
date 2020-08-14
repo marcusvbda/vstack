@@ -39,10 +39,10 @@ class ResourceController extends Controller
         $search = $resource->search();
 
         $query = $query->where(function ($q) use ($search, $data, $table) {
-            foreach ($search as $s) $q = $q->OrWhere($table.$s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
+            foreach ($search as $s) $q = $q->OrWhere($table . $s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
             return $q;
         });
-        
+
         foreach ($resource->lenses() as $len) {
             $field = $len["field"];
             if (isset($data[$field])) {
@@ -394,7 +394,8 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($data["resource_id"]);
         if (@$data["id"]) if (!$resource->canUpdate()) abort(403);
         if (!@$data["id"]) if (!$resource->canCreate()) abort(403);
-        $this->validate($request, $resource->getValidationRule());
+        $validation_custom_message =  $resource->getValidationRuleMessage();
+        $this->validate($request, $resource->getValidationRule(), @$validation_custom_message ? $validation_custom_message : []);
         $target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
         $data = $request->except(["resource_id", "id", "redirect_back"]);
         $data = $this->processStoreData($resource, $data);
