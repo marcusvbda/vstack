@@ -4,6 +4,7 @@
     class='w-100' 
     @change='makeNewRoute'
     filterable 
+    clearable
     placeholder='{{$placeholder}}'
     v-bind:class='{"withFilter" : {{"filter.$index"}} }'>
     @foreach ($options as $option) 
