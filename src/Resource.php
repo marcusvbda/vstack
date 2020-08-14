@@ -208,6 +208,21 @@ class Resource
         return $validation_rules;
     }
 
+    public function getValidationRuleMessage()
+    {
+        $validation_messages = [];
+        foreach ($this->fields() as $card) {
+            foreach ($card->inputs as $field) {
+                if (@$field->options["custom_message"]) {
+                    foreach (is_Array($field->options["custom_message"]) ? $field->options["custom_message"] : [] as $key => $value) {
+                        $validation_messages[@$field->options["field"] . "." . $key] = @$value;
+                    }
+                }
+            }
+        }
+        return $validation_messages;
+    }
+
     public function beforeListSlot()
     {
         return false;
