@@ -1,7 +1,7 @@
 <div class="card">
     <div class='card-header d-flex flex-row align-items-center justify-content-between'>
         <div>
-            <?php  $text = getTextRow(array_keys($table)[0],$row) ?>
+            <?php  $text = getTextRow($table_keys[0],$row) ?>
             @if($resource->canView())
                 <div><a href="{{$resource->route().'/'.$row->code}}" class="link"><b>{!! $text ? $text : '-' !!}</a></b></div>
             @else
