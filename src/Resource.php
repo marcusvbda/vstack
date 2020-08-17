@@ -23,7 +23,7 @@ class Resource
 
     public function resultsPerPage()
     {
-        return 10;
+        return 12;
     }
 
     public function menu()
@@ -54,6 +54,11 @@ class Resource
     public function table()
     {
         return ["name"];
+    }
+
+    public function listCardView()
+    {
+        return "vStack::resources.partials._list_cards";
     }
 
     public function filters()
@@ -175,6 +180,11 @@ class Resource
     public function canExport()
     {
         return true;
+    }
+
+    public function listType()
+    {
+        return ["table"];
     }
 
     public function canUpdate()

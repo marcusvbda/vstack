@@ -1,6 +1,6 @@
 <template>
     <div
-        class="d-flex flex-row row align-items-center mb-3 flex-wrap mb-4"
+        class="d-flex flex-row row align-items-center mb-3 flex-wrap mb-2"
         v-if="data.filters.length>0"
     >
         <template v-for="(filter,key) in data.filters">

@@ -61,11 +61,7 @@
 @if($resource->model->count()>0)
     @include("vStack::resources.partials._filter")
     <div class="row d-flex align-items-end mb-2">
-        <div class="col-md-9 col-sm-12">
-            @if($resource->lenses())
-                @include("vStack::resources.partials._lenses")
-            @endif
-        </div>
+        <div class="col-md-9 col-sm-12"></div>
         <div class="col-md-3 col-sm-12">
             <?php 
                 $globalFilterData = [
