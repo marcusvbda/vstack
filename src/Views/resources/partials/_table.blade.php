@@ -93,9 +93,9 @@ $table_keys = array_keys($table);
     <template slot="cards">
         <div class="p-4">
             @foreach($data->chunk(3) as $chunk)
-                <div class="row mb-3">
+                <div class="row">
                     @foreach($chunk as $row)
-                        <div class="col-lg-4 col-sm-12">
+                        <div class="col-lg-4 col-sm-12 mb-3">
                             <?php
                                 $crud_buttons['code'] = $row->code;
                                 $crud_buttons['route'] = $resource->route()."/".$row->code;
