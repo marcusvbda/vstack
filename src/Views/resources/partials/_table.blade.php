@@ -62,7 +62,7 @@ $table_keys = array_keys($table);
                     @foreach($data as $row)
                         <tr>
                             <?php $show_btns = true; ?>
-                            @foreach($table as $key=>$value)
+                            @foreach($table_keys as $key)
                                 <td @if($show_btns) width="{{$size}}" @endif>
                                     <div class="d-flex flex-column">
                                         <?php $text = getTextRow($key,$row);?>
