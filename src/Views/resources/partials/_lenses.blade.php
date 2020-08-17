@@ -1,4 +1,4 @@
-<div class="d-flex flex-row mb-1" style="font-size:14px;">
+<div class="d-flex flex-row my-1" style="font-size:14px;">
     <?php 
         $current_len = @$_GET["current_len"] ? @$_GET["current_len"] : "all";
         $lenses = $resource->lenses(); 
