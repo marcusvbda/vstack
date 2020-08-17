@@ -1,6 +1,9 @@
 <template>
     <div style="display:none;" ref="container" class="card select-table-style">
-        <div class="card-header p-1">
+        <div
+            class="card-header p-1"
+            v-if="list_type.includes('cards') && list_type.includes('table') && hasLenses"
+        >
             <div class="row d-flex align-items-center flex-wrap">
                 <div class="col">
                     <slot name="lenses" />
@@ -35,6 +38,11 @@ export default {
         return {
             type: this.list_type[0],
             initalized: false
+        }
+    },
+    computed: {
+        hasLenses() {
+            return this.$slots.lenses ? true : false
         }
     },
     created() {
