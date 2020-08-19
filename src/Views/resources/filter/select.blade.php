@@ -9,7 +9,7 @@
     v-bind:class='{"withFilter" : {{"filter.$index"}} }'>
     @foreach ($options as $option) 
         <el-option :value='{{strval($option->value)}}' label='{{$option->label}}'>
-            {!! $option->label !!}
+            {!! @$option->html !!}
         </el-option>
     @endforeach
 </el-select>
