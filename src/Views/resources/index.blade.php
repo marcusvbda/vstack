@@ -82,6 +82,9 @@
             @if($data->total()>0)
                 @include("vStack::resources.partials._table")
             @else 
+                @if($resource->lenses())
+                    @include("vStack::resources.partials._lenses")
+                @endif
                 <h4 class="text-center my-4">{{ $resource->noResultsFoundText() }}</h4>
             @endif
         </div>
