@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card w-100">
     <div class='card-header d-flex flex-row align-items-center justify-content-between'>
         <div>
             <?php  $text = getTextRow($table_keys[0],$row) ?>
