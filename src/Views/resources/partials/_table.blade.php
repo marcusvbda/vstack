@@ -95,7 +95,7 @@ $table_keys = array_keys($table);
             @foreach($data->chunk(3) as $chunk)
                 <div class="row">
                     @foreach($chunk as $row)
-                        <div class="col-lg-4 col-sm-12 mb-3">
+                        <div class="col-lg-4 col-sm-12 mb-3  d-flex align-items-stretch">
                             <?php
                                 $crud_buttons['code'] = $row->code;
                                 $crud_buttons['route'] = $resource->route()."/".$row->code;
