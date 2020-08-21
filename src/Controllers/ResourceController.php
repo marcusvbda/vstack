@@ -49,7 +49,7 @@ class ResourceController extends Controller
                 $query = $query->where($field, $value);
             }
         }
-        return $query;
+        return $query->orderBy($orderBy, $orderType);
     }
 
     public function create($resource, Request $request)
