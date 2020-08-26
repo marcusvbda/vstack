@@ -14,30 +14,28 @@
                 >
                     <div>
                         <span
-                            @click="type='cards'"
-                            :class="`${type=='cards' ? 'selected' : ''} el-icon-s-grid icon-select`"
+                            @click="selectType('cards')"
+                            :class="`${selected_list_type=='cards' ? 'selected' : ''} el-icon-s-grid icon-select`"
                         />
                         <span
-                            @click="type='table'"
-                            :class="`${type=='table' ? 'selected' : ''} el-icon-s-unfold mr-1 icon-select`"
+                            @click="selectType('table')"
+                            :class="`${selected_list_type=='table' ? 'selected' : ''} el-icon-s-unfold mr-1 icon-select`"
                         />
                     </div>
                 </div>
             </div>
         </div>
         <div class="card-body p-0">
-            <slot name="table" v-if="type=='table'" />
-            <slot name="cards" v-if="type=='cards'" />
+            <slot name="content" />
         </div>
     </div>
 </template>
 <script>
 export default {
-    props: ["id", "list_type"],
+    props: ["id", "list_type", "selected_list_type"],
     data() {
         return {
-            type: this.list_type[0],
-            initalized: false
+            initalized: false,
         }
     },
     computed: {
@@ -45,18 +43,21 @@ export default {
             return this.$slots.lenses ? true : false
         }
     },
-    created() {
-        if (this.list_type.length <= 1) return
-        const style = Cookies.get(`resource-table-style-${this.id}`)
-        this.type = style ? style : this.list_type[0]
-    },
     mounted() {
         this.$refs.container.style.display = 'block'
         this.initialized = true
     },
-    watch: {
-        type(val) {
-            if (this.initialized) Cookies.set(`resource-table-style-${this.id}`, val)
+    methods: {
+        selectType(type) {
+            if (this.selected_list_type == type) return
+            if (history.pushState) {
+                let searchParams = new URLSearchParams(window.location.search)
+                searchParams.set('list_type', type)
+                let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + searchParams.toString()
+                window.history.pushState({ path: newurl }, '', newurl)
+                window.location.reload()
+                this.$loading({ text: "Carregando Visualização..." })
+            }
         }
     }
 }
