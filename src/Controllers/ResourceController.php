@@ -21,6 +21,7 @@ class ResourceController extends Controller
         if (!$resource->canViewList()) abort(403);
         $data = $this->getData($resource, $request);
         $data = $data->paginate($resource->resultsPerPage());
+        if (@$request["list_type"]) session([$resource->id . "_list_type" => $request["list_type"]]);
         return view("vStack::resources.index", compact("resource", "data"));
     }
 
