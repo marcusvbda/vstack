@@ -15,7 +15,6 @@ class Check extends Field
     public function getView()
     {
         if (@$this->options["hide"]) return $this->view = "";
-
         $label          = $this->options["label"];
         $field          = $this->options["field"];
         $active_color   = @$this->options["active_color"] ? $this->options["active_color"] : "green";
@@ -30,6 +29,8 @@ class Check extends Field
             "description",
             "disabled",
             "field",
+            "active_text",
+            "inactive_text",
             "active_color",
             "inactive_color"
         ))->render();

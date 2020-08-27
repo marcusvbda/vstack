@@ -1,4 +1,10 @@
 <?php
+Route::group(['prefix' => "vstack"], function () {
+    Route::group(['middleware' => ['web', 'auth']], function () {
+        Route::post('{resource}/get-partial-content', '\marcusvbda\vstack\Controllers\VstackController@getPartialContent')->name("vstack.get_partials_content");
+    });
+});
+
 Route::group(['prefix' => "admin"], function () {
     Route::group(['middleware' => ['web', 'auth']], function () {
         Route::post('upload', '\marcusvbda\vstack\Controllers\ResourceController@upload')->name("resource.upload");

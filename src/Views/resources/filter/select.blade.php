@@ -4,9 +4,12 @@
     class='w-100' 
     @change='makeNewRoute'
     filterable 
+    clearable
     placeholder='{{$placeholder}}'
     v-bind:class='{"withFilter" : {{"filter.$index"}} }'>
     @foreach ($options as $option) 
-        <el-option value='{{$option->value}}' label='{{$option->label}}'/>
+        <el-option :value='{{strval($option->value)}}' label='{{$option->label}}'>
+            {!! @$option->html !!}
+        </el-option>
     @endforeach
 </el-select>

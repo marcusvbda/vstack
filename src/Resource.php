@@ -23,7 +23,7 @@ class Resource
 
     public function resultsPerPage()
     {
-        return 10;
+        return 12;
     }
 
     public function menu()
@@ -53,7 +53,12 @@ class Resource
 
     public function table()
     {
-        return ["name"];
+        return ["id" => ["label" => "#"]];
+    }
+
+    public function listCardView()
+    {
+        return "vStack::resources.partials._list_cards";
     }
 
     public function filters()
@@ -177,6 +182,11 @@ class Resource
         return true;
     }
 
+    public function listType()
+    {
+        return ["table"];
+    }
+
     public function canUpdate()
     {
         return true;
@@ -206,6 +216,21 @@ class Resource
             }
         }
         return $validation_rules;
+    }
+
+    public function getValidationRuleMessage()
+    {
+        $validation_messages = [];
+        foreach ($this->fields() as $card) {
+            foreach ($card->inputs as $field) {
+                if (@$field->options["custom_message"]) {
+                    foreach (is_Array($field->options["custom_message"]) ? $field->options["custom_message"] : [] as $key => $value) {
+                        $validation_messages[@$field->options["field"] . "." . $key] = @$value;
+                    }
+                }
+            }
+        }
+        return $validation_messages;
     }
 
     public function beforeListSlot()

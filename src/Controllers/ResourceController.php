@@ -21,28 +21,32 @@ class ResourceController extends Controller
         if (!$resource->canViewList()) abort(403);
         $data = $this->getData($resource, $request);
         $data = $data->paginate($resource->resultsPerPage());
+        if (@$request["list_type"]) session([$resource->id . "_list_type" => $request["list_type"]]);
         return view("vStack::resources.index", compact("resource", "data"));
     }
 
-    private function getData($resource, Request $request, $query = null)
+    protected function getData($resource, Request $request, $query = null)
     {
+        $raw_table = $resource->model->getTable();
         $table = $resource->model->getTable() . ".";
         $data      = $request->all();
 
         $orderBy   = $table . Arr::get($data, 'order_by', "id");
         $orderType = Arr::get($data, 'order_type', "desc");
 
-        $query     = $query ? $query : $resource->model->where($table . "id", ">", 0);
-        $query->orderBy($orderBy, $orderType);
+        $query = $query ? $query : DB::table($raw_table)
+            ->select($raw_table . ".id")
+            ->where($raw_table . ".tenant_id", Auth::user()->tenant_id)
+            ->where($raw_table . ".id", ">", 0);
 
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
         $search = $resource->search();
 
         $query = $query->where(function ($q) use ($search, $data, $table) {
-            foreach ($search as $s) $q = $q->OrWhere($table.$s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
+            foreach ($search as $s) $q = $q->OrWhere($table . $s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
             return $q;
         });
-        
+
         foreach ($resource->lenses() as $len) {
             $field = $len["field"];
             if (isset($data[$field])) {
@@ -50,7 +54,7 @@ class ResourceController extends Controller
                 $query = $query->where($field, $value);
             }
         }
-        return $query;
+        return $query->orderBy($orderBy, $orderType);
     }
 
     public function create($resource, Request $request)
@@ -71,7 +75,7 @@ class ResourceController extends Controller
         return view("vStack::resources.import", compact('data'));
     }
 
-    private function makeImportData($resource)
+    protected function makeImportData($resource)
     {
         $columns = [];
         foreach ($resource->getTableColumns() as $col) {
@@ -117,7 +121,7 @@ class ResourceController extends Controller
         return ["success" => true];
     }
 
-    private function importCSV($resource, $rows, $config)
+    protected function importCSV($resource, $rows, $config)
     {
         $user = Auth::user();
         dispatch(function () use ($user, $rows, $config, $resource) {
@@ -246,7 +250,7 @@ class ResourceController extends Controller
         ];
     }
 
-    private function makeViewDataFields($content, $fields)
+    protected function makeViewDataFields($content, $fields)
     {
         $data = [];
         if (!$content) return $fields;
@@ -323,7 +327,7 @@ class ResourceController extends Controller
         return $data;
     }
 
-    private function makeCrudData($resource, $content = null)
+    protected function makeCrudData($resource, $content = null)
     {
         return [
             "id"          => @$content->id,
@@ -334,7 +338,7 @@ class ResourceController extends Controller
         ];
     }
 
-    private function makeCrudDataFields($content, $cards)
+    protected function makeCrudDataFields($content, $cards)
     {
         foreach ($cards  as $card) {
             foreach ($card->inputs  as $input) {
@@ -394,7 +398,8 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($data["resource_id"]);
         if (@$data["id"]) if (!$resource->canUpdate()) abort(403);
         if (!@$data["id"]) if (!$resource->canCreate()) abort(403);
-        $this->validate($request, $resource->getValidationRule());
+        $validation_custom_message =  $resource->getValidationRuleMessage();
+        $this->validate($request, $resource->getValidationRule(), @$validation_custom_message ? $validation_custom_message : []);
         $target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
         $data = $request->except(["resource_id", "id", "redirect_back"]);
         $data = $this->processStoreData($resource, $data);
@@ -426,7 +431,7 @@ class ResourceController extends Controller
         return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
     }
 
-    private function storeUploads($target, $relations)
+    protected function storeUploads($target, $relations)
     {
         $target->refresh();
         foreach ($relations as $key => $values) {
@@ -444,7 +449,7 @@ class ResourceController extends Controller
         }
     }
 
-    private function storeMorphsMany($target, $relations)
+    protected function storeMorphsMany($target, $relations)
     {
         $target->refresh();
         foreach ($relations as $key => $values) {
@@ -457,7 +462,7 @@ class ResourceController extends Controller
         }
     }
 
-    private function storeBelongsToMany($target, $relations)
+    protected function storeBelongsToMany($target, $relations)
     {
         $target->refresh();
         foreach ($relations as $key => $value) {
@@ -465,7 +470,7 @@ class ResourceController extends Controller
         }
     }
 
-    private function processStoreData($resource, $data)
+    protected function processStoreData($resource, $data)
     {
         $result = $this->getBelongsToManyFields($resource, $data);
         $result = $this->getMorphsManyFields($resource, $result);
@@ -474,7 +479,7 @@ class ResourceController extends Controller
         return $result;
     }
 
-    private function getUploadsFields($resource, $result)
+    protected function getUploadsFields($resource, $result)
     {
         $fields = [];
         foreach ($resource->fields() as $cards) {
@@ -489,7 +494,7 @@ class ResourceController extends Controller
         return $result;
     }
 
-    private function getMorphsManyFields($resource, $result)
+    protected function getMorphsManyFields($resource, $result)
     {
         $fields = [];
         foreach ($resource->fields() as $cards) {
@@ -504,7 +509,7 @@ class ResourceController extends Controller
         return $result;
     }
 
-    private function getBelongsToManyFields($resource, $data)
+    protected function getBelongsToManyFields($resource, $data)
     {
         $fields = [];
         foreach ($resource->fields() as $cards) {
@@ -560,7 +565,7 @@ class ResourceController extends Controller
         if ($card->type == "bar-chart") return $this->customBarChartCalculate($resource, $card, $request["range"]);
     }
 
-    private function customBarChartCalculate($resource, $card, $range)
+    protected function customBarChartCalculate($resource, $card, $range)
     {
         $startDate = Carbon::create($range[0])->format("Y-m-d 00:00:00");
         $endDate   = Carbon::create($range[1])->format("Y-m-d 00:00:00");
@@ -570,7 +575,7 @@ class ResourceController extends Controller
             ->pluck('qty', 'formated_date');
     }
 
-    private function customTrendChartCalculate($resource, $card, $range)
+    protected function customTrendChartCalculate($resource, $card, $range)
     {
         $startDate = Carbon::create($range[0])->format("Y-m-d 00:00:00");
         $endDate   = Carbon::create($range[1])->format("Y-m-d 00:00:00");
@@ -580,7 +585,7 @@ class ResourceController extends Controller
             ->pluck('qty', 'formated_date');
     }
 
-    private function customGroupChartCalculate($resource, $card)
+    protected function customGroupChartCalculate($resource, $card)
     {
         if (!strpos($card->group_by, "->")) {
             $results = [];
@@ -601,7 +606,7 @@ class ResourceController extends Controller
         }
     }
 
-    private function customTrendCounterCalculate($resource, $card, $range)
+    protected function customTrendCounterCalculate($resource, $card, $range)
     {
         $total = $resource->model->count();
         if ($total <= 0) return ["value" => 0, "average" => 0];
@@ -766,7 +771,7 @@ class ResourceController extends Controller
         return response()->json($rendered_data);
     }
 
-    private function fieldDataProcessCrudData($resource, $params)
+    protected function fieldDataProcessCrudData($resource, $params)
     {
         $fields = [];
         $crud_data = $this->makeCrudData($resource);

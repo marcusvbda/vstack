@@ -50,8 +50,8 @@
         }
     },
     mounted() {
-        let value = this.$attrs.value
-        for(let i in value) this.fileList.push({url : value[i]})
+        let value = this.$attrs.value ? this.$attrs.value : []
+        value.filter( x => x).forEach(item => this.fileList.push({url : item}))
     },
     watch : {
         fileList(val) {
