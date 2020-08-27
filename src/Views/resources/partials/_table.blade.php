@@ -7,13 +7,6 @@ $crud_buttons = [
     "route"        => null
 ];
 
-function getTextRow($key,$row) {
-    $indexes = explode("->",$key);
-    $_val = $row;
-    foreach($indexes as $i) $_val = @$_val->{$i}; 
-    $text = @$_val ? $_val : @$row->{$value};
-    return $text;
-}
 $list_types = @$resource->listType() ? $resource->listType() : ["table"];
 $show_btns = true;
 $order_by = @$_GET["order_by"];
@@ -21,7 +14,6 @@ $order_type = @$_GET["order_type"]=="desc" ? "asc" : "desc";
 $list_type = @$_GET["list_type"] ? $_GET["list_type"] : $list_types[0];
 $table = $resource->table();
 $table_keys = array_keys($table);
-// dd("resource-table-style-".$resource->id,request()->cookie("resource-table-style-".$resource->id));
 ?>
 
 <select-table-style id="{{$resource->id}}" :list_type="{{json_encode($list_types)}}"
@@ -41,10 +33,10 @@ $table_keys = array_keys($table);
                     <tr>
                         @foreach($table as $key=>$value)
                         <?php
-                                    $size = !$show_btns ? (isset($value['size']) ? $value['size'] : 'auto') : '390px';
-                                    $sortable_index = isset($value['sortable_index']) ? $value['sortable_index'] : $key;
-                                    $show_btns = false;
-                                ?>
+                            $size = !$show_btns ? (isset($value['size']) ? $value['size'] : 'auto') : '390px';
+                            $sortable_index = isset($value['sortable_index']) ? $value['sortable_index'] : $key;
+                            $show_btns = false;
+                        ?>
                         <th width="{{$size}}">
                             @if(@$value["sortable"]!==false)
                             <a href="{{ResourcesHelpers::sortLink($resource->route(),request()->query(), $sortable_index,$order_type)}}"
@@ -67,26 +59,41 @@ $table_keys = array_keys($table);
                 <tbody>
                     @foreach($data as $row)
                     <tr>
-                        <?php $show_btns = true; ?>
+                        <?php 
+                            $show_btns = true; 
+                            $code = \Hashids::encode($row->id);
+                        ?>
                         @foreach($table_keys as $key)
                         <td @if($show_btns) width="{{$size}}" @endif>
                             <div class="d-flex flex-column">
-                                <?php $text = getTextRow($key,$row);?>
                                 @if($show_btns)
                                 @if($resource->canView())
-                                <div><a href="{{$resource->route().'/'.$row->code}}" class="link"><b>{!! $text ? $text :
-                                            '-' !!}</a></b></div>
+                                <div>
+                                    <a href="{{$resource->route().'/'.$code}}" class="link">
+                                        <b>
+                                            <get-resource-content :w="{{250}}" :h="{{30}}"
+                                                resource_id="{{$resource->id}}" row_id="{{$row->id}}"
+                                                table_key="{{$key}}" type="resourceTableContent">
+                                            </get-resource-content>
+                                        </b>
+                                    </a>
+                                </div>
                                 @else
-                                <div>{!! $text ? $text : '-' !!}</div>
+                                <get-resource-content :w="{{250}}" :h="{{30}}" resource_id="{{$resource->id}}"
+                                    row_id="{{$row->id}}" table_key="{{$key}}" type="resourceTableContent">
+                                </get-resource-content>
                                 @endif
                                 <?php
-                                                    $crud_buttons['code'] = $row->code;
-                                                    $crud_buttons['route'] = $resource->route()."/".$row->code;
-                                                ?>
-                                <resource-crud-buttons :data="{{json_encode($crud_buttons)}}" id="{{$row->id}}">
+                                    $crud_buttons['code'] = $code;
+                                    $crud_buttons['route'] = $resource->route()."/".$code;
+                                ?>
+                                <resource-crud-buttons :w="{{250}}" :h="{{30}}" :data="{{json_encode($crud_buttons)}}"
+                                    id="{{$row->id}}">
                                 </resource-crud-buttons>
                                 @else
-                                <div>{!! $text ? $text : '-' !!}</div>
+                                <get-resource-content :w="{{250}}" :h="{{20}}" resource_id="{{$resource->id}}"
+                                    row_id="{{$row->id}}" table_key="{{$key}}" type="resourceTableContent">
+                                </get-resource-content>
                                 @endif
                             </div>
                         </td>
@@ -104,9 +111,10 @@ $table_keys = array_keys($table);
                 @foreach($chunk as $row)
                 <div class="col-lg-4 col-sm-12 mb-3  d-flex align-items-stretch">
                     <?php
-                                            $crud_buttons['code'] = $row->code;
-                                            $crud_buttons['route'] = $resource->route()."/".$row->code;
-                                        ?>
+                        $code = \Hashids::encode($row->id);
+                        $crud_buttons['code'] = $code;
+                        $crud_buttons['route'] = $resource->route()."/".$code;
+                    ?>
                     @include($resource->listCardView())
                 </div>
                 @endforeach

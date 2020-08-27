@@ -53,7 +53,7 @@ class Resource
 
     public function table()
     {
-        return ["name"];
+        return ["id" => ["label" => "#"]];
     }
 
     public function listCardView()

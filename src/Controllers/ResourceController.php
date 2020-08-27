@@ -26,13 +26,17 @@ class ResourceController extends Controller
 
     protected function getData($resource, Request $request, $query = null)
     {
+        $raw_table = $resource->model->getTable();
         $table = $resource->model->getTable() . ".";
         $data      = $request->all();
 
         $orderBy   = $table . Arr::get($data, 'order_by', "id");
         $orderType = Arr::get($data, 'order_type', "desc");
 
-        $query     = $query ? $query : $resource->model->where($table . "id", ">", 0);
+        $query = $query ? $query : DB::table($raw_table)
+            ->select($raw_table . ".id")
+            ->where($raw_table . ".tenant_id", Auth::user()->tenant_id)
+            ->where($raw_table . ".id", ">", 0);
 
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
         $search = $resource->search();

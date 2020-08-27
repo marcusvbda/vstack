@@ -1,123 +1,103 @@
 @extends("templates.admin")
 @section('title',$resource->label())
 @section('breadcrumb')
-<?php 
-    Session::forget('breadcrumb');
-    Session::push('breadcrumb',["Dashboard" => asset('admin')]);
-    Session::push('breadcrumb',[$resource->label() => @$resource->route()]);
-?>
-<div class="row">
-    <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <?php $bc = Session::get('breadcrumb');?>
-                    @foreach($bc as $rows)
-                        @foreach($rows as $key=>$value)
-                            <li class="breadcrumb-item">
-                                <a  href="{{$value}}" class="link">{{$key}}</a>
-                            </li>
-                        @endforeach
-                    @endforeach
-                </ol>
-            </nav>
-        </nav>
-    </div>
-</div>
-
+@include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
 @include("vStack::resources.partials._metrics")
+
 @if(@$resource->beforeListSlot())
-    {!! @$resource->beforeListSlot() !!}
+{!! @$resource->beforeListSlot() !!}
 @endif
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center">
         <h4 class="mb-1">{!! @$resource->indexLabel() !!}</h4>
         <div class="d-flex flex-row  flex-wrap align-items-center">
             @if($resource->canCreate())
-                @if($resource->model->count()>0)
-                    <a class="btn btn-primary btn-sm btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1" href="{{route('resource.create',['resource'=>$resource->id])}}">
-                        {!! $resource->storeButtonLabel() !!}
-                    </a>
-                @endif
-                @if($resource->canImport())
-                    <a class="ml-2 link" href="{{route('resource.import',['resource'=>$resource->id])}}">
-                        {!! $resource->importButtonlabel() !!}
-                    </a>
-                @endif
+            @if($resource->model->count()>0)
+            <a class="btn btn-primary btn-sm btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1"
+                href="{{route('resource.create',['resource'=>$resource->id])}}">
+                {!! $resource->storeButtonLabel() !!}
+            </a>
+            @endif
+            @if($resource->canImport())
+            <a class="ml-2 link" href="{{route('resource.import',['resource'=>$resource->id])}}">
+                {!! $resource->importButtonlabel() !!}
+            </a>
+            @endif
             @endif
             @if($resource->canView() && $resource->canExport())
-                @if($resource->model->count()>0)
-                    <a class="ml-3 link" target="_BLANK" href="{{route('resource.export',array_merge(request()->all(),['resource'=>$resource->id]))}}">
-                        {!! $resource->exportButtonlabel() !!}
-                    </a>
-                @endif
+            @if($resource->model->count()>0)
+            <a class="ml-3 link" target="_BLANK"
+                href="{{route('resource.export',array_merge(request()->all(),['resource'=>$resource->id]))}}">
+                {!! $resource->exportButtonlabel() !!}
+            </a>
+            @endif
             @endif
         </div>
     </div>
 </div>
-
 @if($resource->model->count()>0)
-    @include("vStack::resources.partials._filter")
-    <div class="row d-flex align-items-end mb-2">
-        <div class="col-md-9 col-sm-12"></div>
-        <div class="col-md-3 col-sm-12">
-            <?php 
+@include("vStack::resources.partials._filter")
+<div class="row d-flex align-items-end mb-2">
+    <div class="col-md-9 col-sm-12"></div>
+    <div class="col-md-3 col-sm-12">
+        <?php 
                 $globalFilterData = [
                     "filter_route" => request()->url(),
                     "query" => request()->query(),
                     "value" => @$_GET["_"] ? $_GET["_"] : ""
                 ];
             ?>
-            @if($resource->model->count()>0)
-                @if($resource->search())
-                    <resource-filter-global :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
-                @endif
-            @endif
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            @if($data->total()>0)
-                @include("vStack::resources.partials._table")
-            @else 
-                @if($resource->lenses())
-                    @include("vStack::resources.partials._lenses")
-                @endif
-                <h4 class="text-center my-4">{{ $resource->noResultsFoundText() }}</h4>
-            @endif
-        </div>
-    </div>
-    <div class="row mt-3 d-flex align-items-center">
-        @if($data->total()>0)
-            <div class="col-md-6 col-sm-12">{!! $resource->resultsFoundLabel() !!} {{ $data->total() }}</div>
-            <div class="col-md-6 col-sm-12 d-flex justify-content-end">
-                {{$data->appends(request()->query())->links()}}
-            </div>
+        @if($resource->model->count()>0)
+        @if($resource->search())
+        <resource-filter-global :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
+        @endif
         @endif
     </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        @if($data->total()>0)
+        @include("vStack::resources.partials._table")
+        @else
+        @if($resource->lenses())
+        @include("vStack::resources.partials._lenses")
+        @endif
+        <h4 class="text-center my-4">{{ $resource->noResultsFoundText() }}</h4>
+        @endif
+    </div>
+</div>
+<div class="row mt-3 d-flex align-items-center">
+    @if($data->total()>0)
+    <div class="col-md-6 col-sm-12">{!! $resource->resultsFoundLabel() !!} {{ $data->total() }}</div>
+    <div class="col-md-6 col-sm-12 d-flex justify-content-end">
+        {{$data->appends(request()->query())->links()}}
+    </div>
+    @endif
+</div>
 @else
-    <div class="d-flex flex-column row align-items-center justify-items-center">
-        <div class="col-md-6 col-sm-12 text-center">
-            <h4 class="text-center mt-5">
-                @if($resource->icon())
-                    <h1 style="opacity: .3;font-size: 250px;"><span class="{{$resource->icon()}}"></span></h1>
-                @endif
-                <div>{!! $resource->nothingStoredText() !!}</div>
-                <div>{!! $resource->nothingStoredSubText() !!}</div>
-            </h4>
-            @if($resource->canCreate())
-                <a class="btn btn-primary btn-sm-block cursor-pointer mb-3 mt-3" href="{{route('resource.create',['resource'=>$resource->id])}}">
-                    {!! $resource->storeButtonLabel() !!}
-                </a>
+<div class="d-flex flex-column row align-items-center justify-items-center">
+    <div class="col-md-6 col-sm-12 text-center">
+        <h4 class="text-center mt-5">
+            @if($resource->icon())
+            <h1 style="opacity: .3;font-size: 250px;"><span class="{{$resource->icon()}}"></span></h1>
             @endif
-        </div>
+            <div>{!! $resource->nothingStoredText() !!}</div>
+            <div>{!! $resource->nothingStoredSubText() !!}</div>
+        </h4>
+        @if($resource->canCreate())
+        <a class="btn btn-primary btn-sm-block cursor-pointer mb-3 mt-3"
+            href="{{route('resource.create',['resource'=>$resource->id])}}">
+            {!! $resource->storeButtonLabel() !!}
+        </a>
+        @endif
     </div>
-@endif    
+</div>
+@endif
 @if(@$resource->afterListSlot())
-    <div class="mt-3">
-        {!! @$resource->afterListSlot() !!}
-    </div>
+<div class="mt-3">
+    {!! @$resource->afterListSlot() !!}
+</div>
 @endif
 @endsection
