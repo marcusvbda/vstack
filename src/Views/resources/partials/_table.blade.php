@@ -61,10 +61,9 @@ $table_keys = array_keys($table);
                     <?php 
                         $code = \Hashids::encode($row->id);
                     ?>
-                    <tr is="get-resource-content" :cols={{count($table_keys)}} :w="{{250}}" :h="{{30}}"
-                        row_code="{{$code}}" resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}"
-                        row_id="{{$row->id}}" type="resourceTableContent"
-                        :can_view="{{json_encode($resource->canView())}}"
+                    <tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}"
+                        resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
+                        type="resourceTableContent" :can_view="{{json_encode($resource->canView())}}"
                         :can_delete="{{json_encode($resource->canDelete())}}"
                         :can_update="{{json_encode($resource->canUpdate())}}">
                     </tr>
