@@ -12,6 +12,8 @@ $show_btns = true;
 $order_by = @$_GET["order_by"];
 $order_type = @$_GET["order_type"]=="desc" ? "asc" : "desc";
 $list_type = @$_GET["list_type"] ? $_GET["list_type"] : $list_types[0];
+$session_list_type = @session()->get($resource->id . "_list_type");
+if(in_array($session_list_type,$list_types)) $list_type = $session_list_type;
 $table = $resource->table();
 $table_keys = array_keys($table);
 ?>
