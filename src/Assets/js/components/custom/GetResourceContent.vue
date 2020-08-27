@@ -1,30 +1,62 @@
 <template>
-    <div>
-        <div
-            v-if="loading"
-            class="shimmer"
-            :style="{
-                width : w ? w : '100%',
-                height : h ? h : '100%'
-            }"
-        />
-        <template v-else>
-            <div v-html="content" />
+    <tr>
+        <template v-for="(item,i) in cols">
+            <td :key="i" v-if="loading">
+                <div
+                    class="shimmer"
+                    :style="{
+                            width : w ? w : '100%',
+                            height : h ? h : '100%'
+                        }"
+                />
+            </td>
         </template>
-    </div>
+        <template v-for="(key,i) in Object.keys(content)">
+            <td :key="i" v-if="!loading">
+                <div class="d-flex flex-column">
+                    <template v-if="i ==0">
+                        <b>
+                            <a
+                                :href="`{${resource_route}/${row_code}`"
+                                class="link"
+                                v-html="content[key]"
+                            />
+                        </b>
+                    </template>
+                    <template v-else>
+                        <div v-html="content[key]" />
+                    </template>
+
+                    <resource-crud-buttons
+                        v-if="i==0"
+                        :data="{
+                        code : row_code,
+                        route : `${resource_route}/${row_code}`,
+                        can_view : can_view,
+                        can_update : can_update,
+                        can_delete : can_delete
+                    }"
+                        :id="row_id"
+                    />
+                </div>
+            </td>
+        </template>
+    </tr>
 </template>
 <script>
 export default {
-    props: ["type", "row_id", "type", "table_key", "resource_id", "h", "w"],
+    props: ["type", "can_update", "can_delete", "can_view", "row_code", "resource_route", "cols", "row_id", "type", "resource_id", "h", "w"],
     data() {
         return {
             loading: true,
-            content: "",
+            content: {},
             attempts: 0
         }
     },
     created() {
-        this.getContent()
+        setTimeout(() => {
+            this.getContent()
+        }, 2000)
     },
     methods: {
         getContent() {
@@ -56,7 +88,6 @@ export default {
             this.attempts++
             this.$http.post(`/vstack/${this.resource_id}/get-partial-content`, {
                 row_id: this.row_id,
-                table_key: this.table_key,
                 type: this.type
             }).then(resp => {
                 resp = resp.data

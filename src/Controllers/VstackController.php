@@ -16,7 +16,11 @@ class VstackController extends Controller
 
     protected function resourceTableContent($resource, $request)
     {
-        $result = $resource->model->findOrFail($request["row_id"]);
-        return $result->{$request["table_key"]};
+        $row = $resource->model->findOrFail($request["row_id"]);
+        $content = [];
+        foreach ($resource->table() as $key => $value) {
+            $content[$key] = @$row->{$key} ? $row->{$key} : " - ";
+        }
+        return $content;
     }
 }

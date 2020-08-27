@@ -5,7 +5,6 @@
 @endsection
 @section('content')
 @include("vStack::resources.partials._metrics")
-
 @if(@$resource->beforeListSlot())
 {!! @$resource->beforeListSlot() !!}
 @endif
@@ -37,22 +36,23 @@
         </div>
     </div>
 </div>
-@if($resource->model->count()>0)
+<?php 
+    $model_count = $resource->model->count();
+?>
+@if($model_count>0)
 @include("vStack::resources.partials._filter")
 <div class="row d-flex align-items-end mb-2">
     <div class="col-md-9 col-sm-12"></div>
     <div class="col-md-3 col-sm-12">
         <?php 
-                $globalFilterData = [
-                    "filter_route" => request()->url(),
-                    "query" => request()->query(),
-                    "value" => @$_GET["_"] ? $_GET["_"] : ""
-                ];
-            ?>
-        @if($resource->model->count()>0)
+                    $globalFilterData = [
+                        "filter_route" => request()->url(),
+                        "query" => request()->query(),
+                        "value" => @$_GET["_"] ? $_GET["_"] : ""
+                    ];
+                ?>
         @if($resource->search())
         <resource-filter-global :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
-        @endif
         @endif
     </div>
 </div>

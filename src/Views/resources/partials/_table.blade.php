@@ -58,47 +58,15 @@ $table_keys = array_keys($table);
                 </thead>
                 <tbody>
                     @foreach($data as $row)
-                    <tr>
-                        <?php 
-                            $show_btns = true; 
-                            $code = \Hashids::encode($row->id);
-                        ?>
-                        @foreach($table_keys as $key)
-                        <td @if($show_btns) width="{{$size}}" @endif>
-                            <div class="d-flex flex-column">
-                                @if($show_btns)
-                                @if($resource->canView())
-                                <div>
-                                    <a href="{{$resource->route().'/'.$code}}" class="link">
-                                        <b>
-                                            <get-resource-content :w="{{250}}" :h="{{30}}"
-                                                resource_id="{{$resource->id}}" row_id="{{$row->id}}"
-                                                table_key="{{$key}}" type="resourceTableContent">
-                                            </get-resource-content>
-                                        </b>
-                                    </a>
-                                </div>
-                                @else
-                                <get-resource-content :w="{{250}}" :h="{{30}}" resource_id="{{$resource->id}}"
-                                    row_id="{{$row->id}}" table_key="{{$key}}" type="resourceTableContent">
-                                </get-resource-content>
-                                @endif
-                                <?php
-                                    $crud_buttons['code'] = $code;
-                                    $crud_buttons['route'] = $resource->route()."/".$code;
-                                ?>
-                                <resource-crud-buttons :w="{{250}}" :h="{{30}}" :data="{{json_encode($crud_buttons)}}"
-                                    id="{{$row->id}}">
-                                </resource-crud-buttons>
-                                @else
-                                <get-resource-content :w="{{250}}" :h="{{20}}" resource_id="{{$resource->id}}"
-                                    row_id="{{$row->id}}" table_key="{{$key}}" type="resourceTableContent">
-                                </get-resource-content>
-                                @endif
-                            </div>
-                        </td>
-                        <?php $show_btns = false; ?>
-                        @endforeach
+                    <?php 
+                        $code = \Hashids::encode($row->id);
+                    ?>
+                    <tr is="get-resource-content" :cols={{count($table_keys)}} :w="{{250}}" :h="{{30}}"
+                        row_code="{{$code}}" resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}"
+                        row_id="{{$row->id}}" type="resourceTableContent"
+                        :can_view="{{json_encode($resource->canView())}}"
+                        :can_delete="{{json_encode($resource->canDelete())}}"
+                        :can_update="{{json_encode($resource->canUpdate())}}">
                     </tr>
                     @endforeach
                 </tbody>
