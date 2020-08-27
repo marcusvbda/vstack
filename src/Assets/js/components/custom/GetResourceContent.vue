@@ -6,7 +6,7 @@
                     <div
                         class="shimmer"
                         :style="{
-                            width : w ? w : '100%',
+                            width : '100%',
                             height : (Math.random() * (45 - 10) + 20)
                         }"
                     />
@@ -48,7 +48,7 @@
 </template>
 <script>
 export default {
-    props: ["type", "can_update", "can_delete", "can_view", "row_code", "resource_route", "cols", "row_id", "type", "resource_id", "h", "w"],
+    props: ["type", "can_update", "can_delete", "can_view", "row_code", "resource_route", "cols", "row_id", "type", "resource_id"],
     data() {
         return {
             loading: true,
@@ -57,9 +57,7 @@ export default {
         }
     },
     created() {
-        setTimeout(() => {
-            this.getContent()
-        }, 2000)
+        this.getContent()
     },
     methods: {
         getContent() {
