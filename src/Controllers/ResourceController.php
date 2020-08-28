@@ -21,6 +21,9 @@ class ResourceController extends Controller
         if (!$resource->canViewList()) abort(403);
         $data = $this->getData($resource, $request);
         $data = $data->paginate($resource->resultsPerPage());
+        $data->map(function ($query) {
+            $query->setAppends([]);
+        });
         if (@$request["list_type"]) session([$resource->id . "_list_type" => $request["list_type"]]);
         return view("vStack::resources.index", compact("resource", "data"));
     }
@@ -34,10 +37,8 @@ class ResourceController extends Controller
         $orderBy   = $table . Arr::get($data, 'order_by', "id");
         $orderType = Arr::get($data, 'order_type', "desc");
 
-        $query = $query ? $query : DB::table($raw_table)
-            ->select($raw_table . ".id")
-            ->where($raw_table . ".tenant_id", Auth::user()->tenant_id)
-            ->where($raw_table . ".id", ">", 0);
+        $query     = $query ? $query : $resource->model->select("id")->where($table . "id", ">", 0);
+        $query->orderBy($orderBy, $orderType);
 
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
         $search = $resource->search();
