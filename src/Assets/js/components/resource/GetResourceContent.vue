@@ -103,15 +103,3 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
-.shimmer {
-    background: linear-gradient(267deg, #e9ecef, #dcdcdc, #ffffff, #dcdcdc);
-    background-size: 400% 400%;
-    -webkit-animation: animationGradient 3s ease infinite;
-    -moz-animation: animationGradient 3s ease infinite;
-    animation: animationGradient 3s ease infinite;
-    background-color: #e5e5e5;
-    height: 100%;
-    width: 100%;
-}
-</style>
