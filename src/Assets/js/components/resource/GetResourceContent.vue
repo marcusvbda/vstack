@@ -27,7 +27,7 @@
                             </b>
                         </template>
                         <template v-else>
-                            <div v-html="content[key]" />
+                            <v-runtime-template :template="`<span>${content[key]}</span>`" />
                         </template>
                         <resource-crud-buttons
                             v-if="i==0"
@@ -47,7 +47,9 @@
     </tr>
 </template>
 <script>
+import VRuntimeTemplate from "v-runtime-template"
 export default {
+    components:{"v-runtime-template": VRuntimeTemplate},
     props: ["type", "can_update", "can_delete", "can_view", "row_code", "resource_route", "cols", "row_id", "type", "resource_id"],
     data() {
         return {
