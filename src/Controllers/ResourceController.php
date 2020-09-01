@@ -36,7 +36,7 @@ class ResourceController extends Controller
         $orderBy   = $table . Arr::get($data, 'order_by', "id");
         $orderType = Arr::get($data, 'order_type', "desc");
 
-        $query     = $query ? $query : $resource->model->select($resource->model->getTable() . ".id")->where($table . "id", ">", 0);
+        $query     = $query ? $query : $resource->model->select($table . "id")->where($table . "id", ">", 0);
         $query->orderBy($orderBy, $orderType);
 
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
