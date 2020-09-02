@@ -12,6 +12,10 @@ use Auth;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use marcusvbda\vstack\Exports\GlobalExporter;
+use marcusvbda\vstack\Imports\GlobalImporter;
+use Maatwebsite\Excel\HeadingRowImport;
+use Excel;
 
 class ResourceController extends Controller
 {
@@ -75,19 +79,35 @@ class ResourceController extends Controller
         return view("vStack::resources.import", compact('data'));
     }
 
-    protected function makeImportData($resource)
+    public function importSheetTemplate($resource)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!($resource->canImport() && $resource->canCreate())) abort(403);
+        $filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . ".xls";
+        $exporter = new GlobalExporter($this->getImporterCollumns($resource));
+        Excel::store($exporter, $filename, "local");
+        $full_path = storage_path("app/$filename");
+        return response()->download($full_path)->deleteFileAfterSend(true);
+    }
+
+    protected function getImporterCollumns($resource)
     {
         $columns = [];
         foreach ($resource->getTableColumns() as $col) {
-            if (!in_array($col, ["id", "created_at", "deleted_at", "updated_at", "email_verified_at", "confirmation_token", "recovery_token", "password", "tenant_id"])) $columns[] = $col;
+            if (!in_array($col, ["created_at", "deleted_at", "updated_at", "email_verified_at", "confirmation_token", "recovery_token", "password", "tenant_id"])) $columns[] = $col;
         }
+        return $columns;
+    }
 
+    protected function makeImportData($resource)
+    {
         return [
             "resource" => [
+                "resource_id"    => $resource->id,
                 "label"          => $resource->label(),
                 "singular_label" => $resource->singularLabel(),
                 "route"          => $resource->route(),
-                "columns"        => $columns
+                "columns"        => $this->getImporterCollumns($resource)
             ]
         ];
     }
@@ -97,12 +117,12 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($resource);
         if (!($resource->canImport() && $resource->canCreate())) abort(403);
         $file = $request->file("file");
-        $delimiter = $request["delimiter"];
         if (!$file) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
         if ($file->getSize() > 137072) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
-        $csvFile = file($file->getPathName());
-        if (!@$csvFile[0]) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
-        $header = str_getcsv($csvFile[0], $delimiter);
+        $data = Excel::toArray(new HeadingRowImport, $file);
+        $header = @$data[0][0];
+        if (!@$data[0][0])
+            return ["success" => false, "message" => ["type" => "error", "text" => "Cabeçalho da planilha nao encontrado"]];
         return ["success" => true, "data" => $header];
     }
 
@@ -114,10 +134,24 @@ class ResourceController extends Controller
         $file = $data["file"];
         if (!$file) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
         if ($file->getSize() > 137072) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
-        $csvFile = file($file->getPathName());
-        if (!@$csvFile[0]) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
-        $data["config"] = json_decode($data["config"]);
-        $this->importCSV($resource, $csvFile, $data["config"]);
+
+        $config = json_decode($data["config"]);
+        $fieldlist = $config->fieldlist;
+        $filename = Auth::user()->tenant_id . "_" . uniqid() . ".xls";
+        $filepath = $file->storeAs('local', $filename);
+        $user = Auth::user();
+        $tenant_id = array_search("tenant_id", $resource->getTableColumns()) === false ? null : $user->tenant_id;
+        dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
+            $file = storage_path("app/" . $filepath);
+            $importer = new GlobalImporter($resource, $fieldlist, $tenant_id, $file);
+            Excel::import($importer, $file);
+            foreach ($importer->getErrors() as $error) {
+                Messages::notify("error", "Erro ao importar planilha de " . $resource->label() . " na linha " . $error["line"] . $error['message'], $user->id);
+            }
+            $count = $importer->getRowCount();
+            if ($count > 0)
+                Messages::notify("success", "Foi importadodo " . $count . ($count > 1 ? $resource->label() : $resource->singularLabel()), $user->id);
+        })->onQueue("resource-import");
         return ["success" => true];
     }
 

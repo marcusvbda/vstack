@@ -15,6 +15,7 @@ Route::group(['prefix' => "admin"], function () {
         Route::post('{resource}/field/store', '\marcusvbda\vstack\Controllers\ResourceController@storeField')->name("resource.field.store");
         Route::get('{resource}/export', '\marcusvbda\vstack\Controllers\ResourceController@export')->name("resource.export");
         Route::get('{resource}/import', '\marcusvbda\vstack\Controllers\ResourceController@import')->name("resource.import");
+        Route::get('{resource}/import/sheet_template', '\marcusvbda\vstack\Controllers\ResourceController@importSheetTemplate')->name("resource.import.check_file");
         Route::post('{resource}/import/check_file', '\marcusvbda\vstack\Controllers\ResourceController@checkFileImport')->name("resource.import.check_file");
         Route::post('{resource}/import/submit', '\marcusvbda\vstack\Controllers\ResourceController@importSubmit')->name("resource.import.submit");
 

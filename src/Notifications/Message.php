@@ -13,7 +13,7 @@ class Message extends Notification
     use Queueable;
 
     public $message;
-    public function __construct($message,$type)
+    public function __construct($message, $type)
     {
         $this->message  = $message;
         $this->_type  = $type;
@@ -27,7 +27,7 @@ class Message extends Notification
      */
     public function via($notifiable)
     {
-        return ['database','broadcast'];
+        return ['broadcast'];
     }
 
     public function toBroadcast($notifiable)
