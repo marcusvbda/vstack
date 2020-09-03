@@ -162,6 +162,11 @@ class Resource
         $this->id = $aux[count($aux) - 1];
     }
 
+    public function maxRowsExportSync()
+    {
+        return 300;
+    }
+
     public function canViewList()
     {
         return true;
@@ -200,16 +205,6 @@ class Resource
     public function canDelete()
     {
         return true;
-    }
-
-    public function canCustomizeMetrics()
-    {
-        return false;
-    }
-
-    public function customMetricsButtonText()
-    {
-        return "Editar Cards Customizados";
     }
 
     public function getValidationRule()

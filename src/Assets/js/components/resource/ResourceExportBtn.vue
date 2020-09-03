@@ -3,7 +3,12 @@
         <a href="#" @click.prevent="openExportModal">
             <slot />
         </a>
-        <el-dialog :title="`Exportação de planilha de ${label}`" :visible.sync="visible" center append-to-body>
+        <el-dialog
+            :title="`Exportação de planilha de ${label}`"
+            :visible.sync="visible"
+            center
+            append-to-body
+        >
             <div class="row d-flex justify-content-center">
                 <div class="d-flex flex-row align-items-end">
                     <b>Selecione as colunas que deseja importar em sua planilha</b>
@@ -25,15 +30,15 @@
             <el-alert
                 class="mt-4"
                 show-icon
-                title="Esta importação terá mais de 100 resultados e por isso o arquivo será enviado ao seu email após a geração !!"
+                :title="`Esta importação terá mais de ${limit} resultados e por isso o arquivo será enviado ao seu email após a geração !!`"
                 type="warning"
                 :closable="false"
-                v-if="qty_results > 100"
+                v-if="qty_results > limit"
             />
             <span slot="footer" class="dialog-footer d-flex flex-row justify-content-end">
                 <el-button @click="visible = false">Cancelar</el-button>
                 <el-popconfirm
-                    title="Deseja gerar esta planilha ?"
+                    :title="`Deseja gerar esta planilha de ${id} ?`"
                     class="ml-4"
                     confirmButtonText="Sim"
                     cancelButtonText="Não"
@@ -47,7 +52,7 @@
 </template>
 <script>
 export default {
-    props: ["id", "export_columns", "label", "qty_results", "get_params"],
+    props: ["id", "export_columns", "label", "qty_results", "get_params", "limit"],
     data() {
         return {
             visible: false,
@@ -65,13 +70,13 @@ export default {
             this.visible = true
         },
         confirm() {
-            const loading = this.$loading({ text: "Gerando Planilha ..." })
+            const loading = this.$loading({ text: `Aguarde, Gerando Planilha de ${this.id} ...` })
             this.$http.post(`/admin/${this.id}/export`, {
                 'get_params': this.get_params,
                 'columns': this.columns
             }).then(resp => {
                 resp = resp.data
-                if (this.qty_results <= 100) window.open(resp.url)
+                if (resp.url) window.open(resp.url)
                 this.$message({ type: resp.message_type, message: resp.message })
                 this.visible = false
                 this.setColumns()

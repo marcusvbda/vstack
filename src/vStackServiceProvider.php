@@ -3,7 +3,7 @@
 namespace marcusvbda\vstack;
 
 use Illuminate\Support\ServiceProvider;
-use marcusvbda\vstack\Commands\{createResource,createFilter,createMetric};
+use marcusvbda\vstack\Commands\{createResource, createFilter, createMetric};
 
 class vStackServiceProvider extends ServiceProvider
 {
@@ -14,11 +14,10 @@ class vStackServiceProvider extends ServiceProvider
         $this->commands([
             createResource::class,
             createFilter::class,
-            createMetric::class,
         ]);
         $this->publishes([
-            __DIR__.'/config' => config_path(),
-            __DIR__.'/migrations' => database_path("/migrations"),
+            __DIR__ . '/config' => config_path(),
+            // __DIR__.'/migrations' => database_path("/migrations"),
         ]);
     }
 }

@@ -4,7 +4,6 @@
 @include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
-@include("vStack::resources.partials._metrics")
 @if(@$resource->beforeListSlot())
 {!! @$resource->beforeListSlot() !!}
 @endif
@@ -29,7 +28,7 @@
             @if($resource->model->count()>0)
             <resource-export-btn class="ml-2 link" id="{{$resource->id}}" label="{{$resource->label()}}"
                 :export_columns="{{json_encode($resource->export_columns())}}" :get_params="{{json_encode($_GET)}}"
-                :qty_results="{{json_encode($data->total())}}">
+                :qty_results="{{json_encode($data->total())}}" :limit="{{json_encode($resource->maxRowsExportSync())}}">
                 {!! $resource->exportButtonlabel() !!}
             </resource-export-btn>
             @endif

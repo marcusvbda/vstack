@@ -184,7 +184,7 @@ class ResourceController extends Controller
         $result = $this->getData($resource, $_request);
         $filename =    'Relatório de ' . $resource->id . '_' . Carbon::now()->format('Y_m_d_H_i_s') . '_' . $user->tenant->name . '.xls';
         $ids =  $result->pluck("id")->all();
-        if ($result->count() <= 100) {
+        if ($result->count() <= $resource->maxRowsExportSync()) {
             try {
                 $exporter = new GlobalExporter($resource, $data['columns'], $resource->model->whereIn("id", $ids)->get());
                 Excel::store($exporter, $filename, "local");
