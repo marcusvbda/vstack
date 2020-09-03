@@ -25,7 +25,7 @@
             <el-alert
                 class="mt-4"
                 show-icon
-                title="Esta importação terá mais de 100 resultado e por isso o resultado será enviado ao seu email após a geração !!"
+                title="Esta importação terá mais de 100 resultados e por isso o arquivo será enviado ao seu email após a geração !!"
                 type="warning"
                 :closable="false"
                 v-if="qty_results > 100"
