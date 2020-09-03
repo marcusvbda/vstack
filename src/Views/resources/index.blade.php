@@ -40,10 +40,12 @@
     $model_count = $resource->model->count();
 ?>
 @if($model_count>0)
+@if(!@$resource->groupFilters())
 @include("vStack::resources.partials._filter")
+@endif
 <div class="row d-flex align-items-end mb-2">
     <div class="col-md-9 col-sm-12"></div>
-    <div class="col-md-3 col-sm-12">
+    <div class="col-md-3 col-sm-12 d-flex justify-content-end align-items-center">
         <?php 
             $globalFilterData = [
                 "filter_route" => request()->url(),
@@ -51,8 +53,11 @@
                 "value" => @$_GET["_"] ? $_GET["_"] : ""
             ];
         ?>
+        @if(@$resource->groupFilters())
+        @include("vStack::resources.partials._filter_btn")
+        @endif
         @if($resource->search())
-        <resource-filter-global :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
+        <resource-filter-global class="ml-2" :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
         @endif
     </div>
 </div>

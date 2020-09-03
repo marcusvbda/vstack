@@ -207,6 +207,11 @@ class Resource
         return true;
     }
 
+    public function groupFilters()
+    {
+        return false;
+    }
+
     public function getValidationRule()
     {
         $validation_rules = [];
