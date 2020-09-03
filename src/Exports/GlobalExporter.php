@@ -40,7 +40,6 @@ class GlobalExporter implements FromCollection, WithHeadings, WithMapping
                 return $resource_columns[$key]["handle"]($row);
             }
         }, array_keys($this->columns))));
-        dd($result);
         return $result;
     }
 }
