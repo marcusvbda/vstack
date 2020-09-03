@@ -3,7 +3,7 @@
         <a href="#" @click.prevent="openExportModal">
             <slot />
         </a>
-        <el-dialog :title="`Importação de ${label}`" :visible.sync="visible" center append-to-body>
+        <el-dialog :title="`Exportação de planilha de ${label}`" :visible.sync="visible" center append-to-body>
             <div class="row d-flex justify-content-center">
                 <div class="d-flex flex-row align-items-end">
                     <b>Selecione as colunas que deseja importar em sua planilha</b>
