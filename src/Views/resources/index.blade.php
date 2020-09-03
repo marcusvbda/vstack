@@ -25,12 +25,13 @@
             </a>
             @endif
             @endif
-            @if($resource->canView() && $resource->canExport())
+            @if($resource->canExport())
             @if($resource->model->count()>0)
-            <a class="ml-3 link" target="_BLANK"
-                href="{{route('resource.export',array_merge(request()->all(),['resource'=>$resource->id]))}}">
+            <resource-export-btn class="ml-2 link" id="{{$resource->id}}" label="{{$resource->label()}}"
+                :export_columns="{{json_encode($resource->export_columns())}}" :get_params="{{json_encode($_GET)}}"
+                :qty_results="{{json_encode($data->total())}}">
                 {!! $resource->exportButtonlabel() !!}
-            </a>
+            </resource-export-btn>
             @endif
             @endif
         </div>
@@ -45,12 +46,12 @@
     <div class="col-md-9 col-sm-12"></div>
     <div class="col-md-3 col-sm-12">
         <?php 
-                    $globalFilterData = [
-                        "filter_route" => request()->url(),
-                        "query" => request()->query(),
-                        "value" => @$_GET["_"] ? $_GET["_"] : ""
-                    ];
-                ?>
+            $globalFilterData = [
+                "filter_route" => request()->url(),
+                "query" => request()->query(),
+                "value" => @$_GET["_"] ? $_GET["_"] : ""
+            ];
+        ?>
         @if($resource->search())
         <resource-filter-global :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
         @endif

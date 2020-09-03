@@ -12,11 +12,11 @@ use Auth;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use marcusvbda\vstack\Exports\GlobalExporter;
+use marcusvbda\vstack\Exports\{DefaultGlobalExporter, GlobalExporter};
 use marcusvbda\vstack\Imports\GlobalImporter;
 use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
-// use marcusvbda\vstack\Services\SendMail;
+use marcusvbda\vstack\Services\SendMail;
 
 class ResourceController extends Controller
 {
@@ -85,7 +85,7 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($resource);
         if (!($resource->canImport() && $resource->canCreate())) abort(403);
         $filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . ".xls";
-        $exporter = new GlobalExporter($this->getImporterCollumns($resource));
+        $exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
         Excel::store($exporter, $filename, "local");
         $full_path = storage_path("app/$filename");
         return response()->download($full_path)->deleteFileAfterSend(true);
@@ -170,6 +170,86 @@ class ResourceController extends Controller
         return ["success" => true];
     }
 
+    public function export($resource, Request $request)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!$resource->canExport()) abort(403);
+        $user = Auth::user();
+        $data = $request->all();
+        $_request = new Request();
+        $_request->setMethod('POST');
+        $params = [];
+        foreach ($data["get_params"] as $key => $value) $params[$key] = $value;
+        $_request->request->add($params);
+        $result = $this->getData($resource, $_request);
+        $filename =    'Relatório de ' . $resource->id . '_' . Carbon::now()->format('Y_m_d_H_i_s') . '_' . $user->tenant->name . '.xls';
+        $ids =  $result->pluck("id")->all();
+        if ($result->count() <= 100) {
+            try {
+                $exporter = new GlobalExporter($resource, $data['columns'], $resource->model->whereIn("id", $ids)->get());
+                Excel::store($exporter, $filename, "local");
+                $message = "Planilha de " . $resource->label() . " exportada com sucesso";
+                return ['success' => true, 'message_type' => 'success', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
+            } catch (\Exception $e) {
+                $message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
+                return ['success' => false, 'message_type' => 'error', 'message' => $message];
+            }
+        }
+        dispatch(function () use ($user, $resource, $data, $ids, $filename) {
+            try {
+                $exporter = new GlobalExporter($resource, $data['columns'], $resource->model->whereIn("id", $ids)->get());
+                Excel::store($exporter, $filename, "local");
+                $url = route('resource.export_download', ['resource' => $resource->id, 'file' => $filename]);
+                DB::table("notifications")->insert([
+                    "type" => 'App\Notifications\CustomerNotification',
+                    "notifiable_type" => 'App\User',
+                    "notifiable_id" => $user->id,
+                    "alert_type" => 'vstack_alert',
+                    "tenant_id" => $user->tenant_id,
+                    "created_at" => carbon::now(),
+                    "data" => json_encode([
+                        "message" => "Sua planilha de " . $resource->label() . " foi exportada com sucesso e o arquivo foi enviado para seu email, " . $user->email,
+                        "type" => 'success'
+                    ]),
+                ]);
+                $appName = config("app.name");
+                $user->save();
+                $user->refresh();
+                $html = "
+                <p>Olá {$user->name},</p>
+                <p>Aqui está sua planilha de " . $resource->label() . "</p>
+                <p>Clique <a href='{$url}' target='_BLANK'>aqui</a> abaixo para efetuar o download</p>
+                <p style='margin-top:30px'>Obrigado, {$appName}";
+                SendMail::to($user->email, "Planilha de " . $resource->label(), $html);
+            } catch (\Exception $e) {
+                $message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
+                DB::table("notifications")->insert([
+                    "type" => 'App\Notifications\CustomerNotification',
+                    "notifiable_type" => 'App\User',
+                    "notifiable_id" => $user->id,
+                    "alert_type" => 'vstack_alert',
+                    "tenant_id" => $user->tenant_id,
+                    "created_at" => carbon::now(),
+                    "data" => json_encode([
+                        "message" => $message,
+                        "type" => 'error'
+                    ]),
+                ]);
+                return ['success' => false, 'message' => $message];
+            }
+        })->onQueue("resource-import");
+        $message = "Sua Planinha de " . $resource->label() . " está sendo exportada, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email, isso pode levar alguns minutos.";
+        return ['success' => true, 'message_type' => 'info', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
+    }
+
+    public function exportDownload($resource, $file)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!$resource->canExport()) abort(403);
+        $full_path = storage_path("app/$file");
+        return response()->download($full_path)->deleteFileAfterSend(true);
+    }
+
     public function sheetImportRow($rows, $params, $importer)
     {
         extract($params);
@@ -209,33 +289,6 @@ class ResourceController extends Controller
             DB::rollback();
         }
     }
-
-    public function export($resource, Request $request)
-    {
-        $resource = ResourcesHelpers::find($resource);
-        if (!$resource->canExport()) abort(403);
-        $data = $this->getData($resource, $request);
-        $data = $data->get();
-        $columns = [];
-        foreach ($resource->getTableColumns() as $col) {
-            if (!in_array($col, ["confirmation_token", "recovery_token", "password", "deleted_at", "tenant_id", "email_verified_at", "provider", "remember_token"])) $columns[] = $col;
-        }
-        $filename = uniqid() . ".csv";
-        $file = fopen($filename, 'w+');
-        fputcsv($file, $columns, ",", '"');
-        foreach ($data as $row) {
-            $_new = [];
-            $row = $row->toArray();
-            foreach ($columns as $col) {
-                if (is_array($row[$col]) || is_object($row[$col]))   $row[$col] =  json_encode($row[$col]);
-                $_new[$col] =  $row[$col];
-            }
-            fputcsv($file, $_new, ",", '"');
-        }
-        fclose($file);
-        return response()->download($filename, $resource->label() . "_" . date("d-m-Y H:i:s") . '.csv', ['Content-Type' => 'text/csv'])->deleteFileAfterSend(true);
-    }
-
 
     public function edit($resource, $code, Request $request)
     {

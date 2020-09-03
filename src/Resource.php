@@ -78,12 +78,12 @@ class Resource
 
     public function importButtonlabel()
     {
-        return "<span class='el-icon-upload2 mr-2'></span>Importar";
+        return "<span class='el-icon-upload2 mr-2'></span>Importar Planilha de " . $this->label();
     }
 
     public function exportButtonlabel()
     {
-        return "<span class='el-icon-download mr-2'></span>Exportar";
+        return "<span class='el-icon-download mr-2'></span>Exportar Planilha de " . $this->label();
     }
 
     public function noResultsFoundText()
@@ -119,6 +119,11 @@ class Resource
             ]);
         }
         return [new Card("Informações", $fields)];
+    }
+
+    public function export_columns()
+    {
+        return ["id", "created_at"];
     }
 
     public function getTableColumns()

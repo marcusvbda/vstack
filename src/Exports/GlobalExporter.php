@@ -5,19 +5,19 @@ namespace marcusvbda\vstack\Exports;
 use Maatwebsite\Excel\Concerns\{
     FromCollection,
     WithHeadings,
+    WithMapping
 };
 
-
-class GlobalExporter implements FromCollection, WithHeadings
+class GlobalExporter implements FromCollection, WithHeadings, WithMapping
 {
-    public function __construct($headers, $data = [])
+    public function __construct($resource, $columns, $data = [])
     {
-        $this->letters = range('A', 'Z');
-        $this->headers = $headers;
+        ini_set('memory_limit', '-1');
+        set_time_limit(-1);
+        $this->columns = $columns;
         $this->data = $data;
-        $this->last_collumn = $this->letters[count($this->headings()) - 1];
+        $this->resource = $resource;
     }
-
 
     public function collection()
     {
@@ -26,6 +26,21 @@ class GlobalExporter implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return $this->headers;
+        return (array_filter(array_map(function ($key) {
+            if ($this->columns[$key]["enabled"]) return $this->columns[$key]["label"];
+        }, array_keys($this->columns))));
+    }
+
+    public function map($row): array
+    {
+        $resource_columns = $this->resource->export_columns();
+        $result = (array_filter(array_map(function ($key)  use ($row, $resource_columns) {
+            if ($this->columns[$key]["enabled"]) {
+                if (!@$resource_columns[$key]["handle"]) return $row->{$key};
+                return $resource_columns[$key]["handle"]($row);
+            }
+        }, array_keys($this->columns))));
+        dd($result);
+        return $result;
     }
 }

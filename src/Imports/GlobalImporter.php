@@ -11,6 +11,8 @@ class GlobalImporter implements ToCollection
 {
     public function __construct($filepath, $controller, $class, $params)
     {
+        ini_set('memory_limit', '-1');
+        set_time_limit(-1);
         $this->filepath = $filepath;
         $this->params = $params;
         $this->controller = $controller;
