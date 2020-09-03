@@ -36,7 +36,13 @@ class GlobalExporter implements FromCollection, WithHeadings, WithMapping
         $resource_columns = $this->resource->export_columns();
         $result = (array_filter(array_map(function ($key)  use ($row, $resource_columns) {
             if ($this->columns[$key]["enabled"]) {
-                if (!@$resource_columns[$key]["handle"]) return $row->{$key};
+                if (!@$resource_columns[$key]["handle"]) {
+                    if (strpos($key, "->") === false) return $row->{$key};
+                    $value = $row;
+                    $_runner = explode("->", $key);
+                    foreach ($_runner as $idx) $value = @$value->{$idx};
+                    return ($value ? $value : '  ');
+                }
                 return $resource_columns[$key]["handle"]($row);
             }
         }, array_keys($this->columns))));
