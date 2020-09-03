@@ -8,7 +8,7 @@
                     <h1 style="font-size: 150px;" class="text-info">
                         <span class="el-icon-info"></span>
                     </h1>
-                    <h4>Importação de Planilha em execução, você receberá um email com o arquivo quando o processo concluir concluir.</h4>
+                    <h4>Importação de Planilha em execução, você será notificado quando o processo for concluido.</h4>
                 </div>
             </div>
         </div>
