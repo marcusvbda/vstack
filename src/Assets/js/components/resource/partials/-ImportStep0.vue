@@ -26,7 +26,7 @@
                 <div class="col-md-5 col-sm-12">Escolha um arquivo XLS do seu computador</div>
                 <div class="col-md-6 col-sm-12">
                     <template v-if="!frm.file">
-                        <input accept=".xls" type="file" @change="fileChange" />
+                        <input accept=".xls, .xlsx" type="file" @change="fileChange" />
                         <div>
                             <small class="mt-2">Tamanho máximo: 128 MB</small>
                         </div>

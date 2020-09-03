@@ -5,10 +5,10 @@
                 <div class="col-12">
                     <h3
                         class="font-weight-light"
-                    >Mapear campos do CSV para produtos {{data.resource.label.toLowerCase()}}</h3>
+                    >Mapear campos da planilha para produtos {{data.resource.label.toLowerCase()}}</h3>
                     <div
                         class="mt-3"
-                    >Selecione os campos de seu arquivo CSV (a esquerda) e relacione-os com os campos que deverão ser importados em {{data.resource.label.toLowerCase()}} (a direita)</div>
+                    >Selecione os campos da sua planilha (a esquerda) e relacione-os com os campos que deverão ser importados em {{data.resource.label.toLowerCase()}} (a direita)</div>
                 </div>
             </div>
         </div>

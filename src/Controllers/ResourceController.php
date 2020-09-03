@@ -16,6 +16,7 @@ use marcusvbda\vstack\Exports\GlobalExporter;
 use marcusvbda\vstack\Imports\GlobalImporter;
 use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
+// use marcusvbda\vstack\Services\SendMail;
 
 class ResourceController extends Controller
 {
@@ -141,63 +142,72 @@ class ResourceController extends Controller
         $filepath = $file->storeAs('local', $filename);
         $user = Auth::user();
         $tenant_id = array_search("tenant_id", $resource->getTableColumns()) === false ? null : $user->tenant_id;
+
         dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
-            $file = storage_path("app/" . $filepath);
-            $importer = new GlobalImporter($resource, $fieldlist, $tenant_id, $file);
-            Excel::import($importer, $file);
-            foreach ($importer->getErrors() as $error) {
-                Messages::notify("error", "Erro ao importar planilha de " . $resource->label() . " na linha " . $error["line"] . $error['message'], $user->id);
+            $importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('resource', 'fieldlist', 'filepath', 'tenant_id'));
+            Excel::import($importer, $importer->getFile());
+            $result = $importer->getResult();
+            if (@$result["success"]) {
+                $message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
+            } else {
+                $message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
             }
-            $count = $importer->getRowCount();
-            if ($count > 0)
-                Messages::notify("success", "Foi importadodo " . $count . ($count > 1 ? $resource->label() : $resource->singularLabel()), $user->id);
+            DB::table("notifications")->insert([
+                "type" => 'App\Notifications\CustomerNotification',
+                "notifiable_type" => 'App\User',
+                "notifiable_id" => $user->id,
+                "alert_type" => 'vstack_alert',
+                "tenant_id" => $user->tenant_id,
+                "created_at" => carbon::now(),
+                "data" => json_encode([
+                    "message" => $message,
+                    "type" => @$result["success"] ? 'success' : 'error'
+                ]),
+            ]);
         })->onQueue("resource-import");
+
+
         return ["success" => true];
     }
 
-    protected function importCSV($resource, $rows, $config)
+    public function sheetImportRow($rows, $params, $importer)
     {
-        $user = Auth::user();
-        dispatch(function () use ($user, $rows, $config, $resource) {
-            $headers = $config->data->csv_header;
-            $data = [];
-            for ($i = 1; $i < count($rows); $i++) {
-                $_data = [];
-                $columns = str_getcsv($rows[$i], $config->delimiter);
-                for ($y = 0; $y < count($headers); $y++) $_data[$headers[$y]] = $columns[$y];
-                if ($_data) $data[] = $_data;
+        extract($params);
+        $qty = 0;
+        try {
+            DB::beginTransaction();
+            foreach ($rows as $key => $row_values) {
+                if ($key == 0) continue;
+                $row_values = $row_values->toArray();
+                $new = [];
+                foreach ($fieldlist as $field => $row_key) {
+                    if ($row_key == "_IGNORE_") continue;
+                    $value = @$row_values[array_search($row_key, $importer->headers)];
+                    if (!$value) continue;
+                    $new[$field] = $value;
+                }
+                $new_model = @$new["id"] ? $resource->model->findOrFail($new["id"]) : new $resource->model;
+                $new["tenant_id"] = $tenant_id;
+                $new_model->fill($new);
+                $new_model->save();
+                unset($new_model, $row_values, $new);
+                $qty++;
             }
-            $fieldlist = $config->fieldlist;
-            if ($config->update) {
-                try {
-                    foreach ($data as $row) {
-                        $item = $resource->model->find($row["id"]);
-                        if ($item) {
-                            foreach ($fieldlist as $key => $value) if ($value != "_IGNORE_") $item->{$value} = $row[$key];
-                            $item->save();
-                        }
-                    }
-                    Messages::notify("success", "CSV de " . $resource->label() . " importado com sucesso !!", $user->id);
-                } catch (\Exception $e) {
-                    Messages::notify("error", "<p>Erro ao importar CSV de " . $resource->label() . "</p><p>" . $e->getMessage() . "</p>", $user->id);
-                }
-            } else {
-                $_news = [];
-                foreach ($data as $row) {
-                    $new = [];
-                    foreach ($fieldlist as $key => $value) if ($value != "_IGNORE_") $new[$value] = $row[$key];
-                    $new["created_at"] = date('Y-m-d H:i:s');
-                    $new["tenant_id"]  = $user->tenant_id;
-                    $_news[] = $new;
-                }
-                try {
-                    $resource->model->insert($_news);
-                    Messages::notify("success", "CSV de " . $resource->label() . " importado com sucesso !!", $user->id);
-                } catch (\Exception $e) {
-                    Messages::notify("error", "<p>Erro ao importar CSV de " . $resource->label() . "</p><p>" . $e->getMessage() . "</p>", $user->id);
-                }
-            }
-        })->onQueue("resource-import");
+            DB::commit();
+            $importer->setResult([
+                'success' => true,
+                'qty' => $qty
+            ]);
+        } catch (\Exception $e) {
+            $importer->setResult([
+                'success' => false,
+                'error' => [
+                    "message" => $e->getMessage(),
+                    "line" => $key
+                ]
+            ]);
+            DB::rollback();
+        }
     }
 
     public function export($resource, Request $request)
