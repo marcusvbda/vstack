@@ -33,15 +33,6 @@ os tipos de filtro text-filter, select-filter, check-filter, date-filter, ranged
 
 
 
-para criar um resource card metric
-```
-php artisan vstack:make-metric {resource} {name} {type}
-```
-os tipos de metrics custom-content, group-chart, trend-counter, bar-chart, trend-chart
-
-
-
-
 exemplo de um resource COMPLETO
 ```
 <?php
@@ -66,13 +57,7 @@ use marcusvbda\vstack\Fields\{
     Upload,
 };
 use marcusvbda\vstack\Fields\Card;
-use App\Http\Metrics\Cars\{
-    CarsMetricCustom,
-    CarsMetricPerBrand,
-    CarsMetricCountPerDay,
-    CarsMetricTrendPerDay,
-    CarsMetricBarChart
-};
+
 
 use Auth;
 
@@ -210,35 +195,6 @@ class Cars extends Resource
         return ["name"];
     }
 
-    public function metrics()
-    {
-        return [
-            new CarsMetricCustom,
-            new CarsMetricTrendPerDay,
-            new CarsMetricPerBrand,
-            new CarsMetricCountPerDay,
-            new CarsMetricBarChart
-        ];
-    }
-
-    //parametros para custom metric card
-    public function customMetricOptions()
-    {
-        return [
-            "group-chart" => [
-                ["name" => "Marca","id"=>"brand->name","key"=>"brand_id"],
-                ["name" => "Atividade","id"=>"active"]
-            ],
-            "trend-chart" => [
-                ["name"=>"Data de Criação","id"=>"created_at"],
-                ["name"=>"Data de Alteração","id"=>"updated_at"]
-            ],
-            "bar-chart" => [
-                ["name"=>"Data de Criação","id"=>"created_at"],
-                ["name"=>"Data de Alteração","id"=>"updated_at"]
-            ]
-        ];
-    }
 
     // public function canViewList() //default true
     // public function canView()  //default true
@@ -247,11 +203,6 @@ class Cars extends Resource
     // public function canImport() //default true
     // public function canUpdate() //default true
     // public function canDelete() //default true
-
-    public function canCustomizeMetrics() //default false
-    {
-        return true;
-    }
 }
 ```
 
