@@ -209,7 +209,7 @@ class Resource
 
     public function groupFilters()
     {
-        return false;
+        return true;
     }
 
     public function getValidationRule()
