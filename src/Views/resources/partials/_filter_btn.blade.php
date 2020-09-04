@@ -8,4 +8,4 @@
         "filters"   => $filters
     ];
 ?>
-<resource-filter-btn :data="{{json_encode($data)}}"></resource-filter-btn>
+<resource-filter-btn :data="{{json_encode($data)}}" label="{{$resource->label()}}"></resource-filter-btn>

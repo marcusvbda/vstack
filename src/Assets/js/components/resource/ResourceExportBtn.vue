@@ -76,7 +76,7 @@ export default {
                 'columns': this.columns
             }).then(resp => {
                 resp = resp.data
-                if (resp.url) window.open(resp.url)
+                if (this.qty_results <= this.limit) window.open(resp.url)
                 this.$message({ type: resp.message_type, message: resp.message })
                 this.visible = false
                 this.setColumns()

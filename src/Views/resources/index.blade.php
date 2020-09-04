@@ -44,8 +44,7 @@
 @include("vStack::resources.partials._filter")
 @endif
 <div class="row d-flex align-items-end mb-2">
-    <div class="col-md-9 col-sm-12"></div>
-    <div class="col-md-3 col-sm-12 d-flex justify-content-end align-items-center">
+    <div class="col-12 d-flex justify-content-end align-items-center">
         <?php 
             $globalFilterData = [
                 "filter_route" => request()->url(),
@@ -53,6 +52,12 @@
                 "value" => @$_GET["_"] ? $_GET["_"] : ""
             ];
         ?>
+        @if($data->total()>0)
+        <div class="d-flex flex-row align-items-center justify-content-center">
+            {!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
+            <div class="ml-3">{{$data->appends(request()->query())->links()}}</div>
+        </div>
+        @endif
         @if(@$resource->groupFilters())
         @include("vStack::resources.partials._filter_btn")
         @endif
@@ -73,14 +78,7 @@
         @endif
     </div>
 </div>
-<div class="row mt-3 d-flex align-items-center">
-    @if($data->total()>0)
-    <div class="col-md-6 col-sm-12">{!! $resource->resultsFoundLabel() !!} {{ $data->total() }}</div>
-    <div class="col-md-6 col-sm-12 d-flex justify-content-end">
-        {{$data->appends(request()->query())->links()}}
-    </div>
-    @endif
-</div>
+
 @else
 <div class="d-flex flex-column row align-items-center justify-items-center">
     <div class="col-md-6 col-sm-12 text-center">
