@@ -244,7 +244,7 @@ class ResourceController extends Controller
             }
         })->onQueue("resource-import");
         $message = "Sua Planinha de " . $resource->label() . " está sendo exportada, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email, isso pode levar alguns minutos.";
-        return ['success' => true, 'message_type' => 'info', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
+        return ['success' => true, 'message_type' => 'info', 'message' => $message];
     }
 
     public function exportDownload($resource, $file)
