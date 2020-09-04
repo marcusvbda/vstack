@@ -189,9 +189,14 @@ class ResourceController extends Controller
         $result = $this->getData($resource, $_request);
         $filename =    'Relatório de ' . $resource->id . '_' . Carbon::now()->format('Y_m_d_H_i_s') . '_' . $user->tenant->name . '.xls';
         $ids =  $result->pluck("id")->all();
-        if ($result->count() <= $resource->maxRowsExportSync()) {
+        return $this->exportSheetOrDispatch($user, $result->count(), $ids, $resource, $data['columns'], $filename);
+    }
+
+    public function exportSheetOrDispatch($user, $count, $ids, $resource, $columns, $filename)
+    {
+        if ($count <= $resource->maxRowsExportSync()) {
             try {
-                $exporter = new GlobalExporter($resource, $data['columns'], $resource->model->whereIn("id", $ids)->get());
+                $exporter = new GlobalExporter($resource, $columns, $resource->model->whereIn("id", $ids)->get());
                 Excel::store($exporter, $filename, "local");
                 $message = "Planilha de " . $resource->label() . " exportada com sucesso";
                 return ['success' => true, 'message_type' => 'success', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
@@ -200,9 +205,9 @@ class ResourceController extends Controller
                 return ['success' => false, 'message_type' => 'error', 'message' => $message];
             }
         }
-        dispatch(function () use ($user, $resource, $data, $ids, $filename) {
+        dispatch(function () use ($user, $resource, $columns, $ids, $filename) {
             try {
-                $exporter = new GlobalExporter($resource, $data['columns'], $resource->model->whereIn("id", $ids)->get());
+                $exporter = new GlobalExporter($resource, $columns, $resource->model->whereIn("id", $ids)->get());
                 Excel::store($exporter, $filename, "local");
                 $url = route('resource.export_download', ['resource' => $resource->id, 'file' => $filename]);
                 DB::table("notifications")->insert([
