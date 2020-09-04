@@ -23,7 +23,12 @@ export default {
     computed: {
         selected_filters() {
             return this.resource_filters.map(rf => {
-                if (this.hasContent(this.get_params, rf.index)) return { label: rf.label, index: rf.index, content: this.get_params[rf.index] }
+                if (this.hasContent(this.get_params, rf.index)) {
+                    let content = rf.options.length <= 0 ? this.get_params[rf.index] : rf.options.find(x => x.value == this.get_params[rf.index]).label
+                    return {
+                        label: rf.label, index: rf.index, content: content
+                    }
+                }
             }).filter(x => x)
         }
     },
@@ -50,7 +55,7 @@ export default {
     .cut-text {
         text-overflow: ellipsis;
         overflow: hidden;
-        width: 150px;
+        max-width: 200px;
         white-space: nowrap;
     }
     &.filter-tag.el-tag.el-tag--mini.el-tag--dark {
