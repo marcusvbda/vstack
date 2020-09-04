@@ -46,7 +46,7 @@ export default {
     },
     computed: {
         qty_filters() {
-            const qty = Object.keys(this.filter).map(key => this.hasContent(key)).filter(x => x).length
+            const qty = Object.keys(this.filter).map(key => this.$root.$refs.tags_filter.hasContent(this.filter, key)).filter(x => x).length
             return qty || 0
         }
     },
@@ -57,13 +57,6 @@ export default {
         this.$refs.content.addEventListener('click', event => event.stopPropagation())
     },
     methods: {
-        hasContent(key) {
-            if (this.filter[key]) {
-                if (Array.isArray(this.filter[key])) { return this.filter[key].length > 1 ? true : null }
-                return true
-            }
-            return false
-        },
         setFormValue(index, value, filter) {
             if (filter.component == "text-filter") value = String(value)
             if (filter.component == "check-filter") value = value === "true"

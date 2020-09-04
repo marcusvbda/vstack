@@ -62,6 +62,7 @@ export default {
             })
             if (this.data.query["_"]) str_query += `${str_query ? "&" : ""}_=${this.data.query["_"] ? this.data.query["_"] : ""}`
             str_query = str_query.slice(0, -1)
+            this.$loading({ text: 'Atualizando Filtros...' })
             window.location.href = `${this.data.route}?${str_query}`
         }
     },

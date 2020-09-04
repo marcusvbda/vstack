@@ -38,13 +38,16 @@
 @endif
 <?php 
     $model_count = $resource->model->count();
+    $filters = $resource->filters();
 ?>
 @if($model_count>0)
 @if(!@$resource->groupFilters())
 @include("vStack::resources.partials._filter")
 @endif
 <div class="row d-flex align-items-end mb-2">
-    <div class="col-12 d-flex justify-content-end align-items-center">
+    <div class="col-12 d-flex align-items-end justify-content-between">
+        <resource-filter-tags ref="tags_filter" :resource_filters="{{json_encode($filters)}}"
+            :get_params="{{json_encode($_GET)}}"></resource-filter-tags>
         <?php 
             $globalFilterData = [
                 "filter_route" => request()->url(),
@@ -52,18 +55,20 @@
                 "value" => @$_GET["_"] ? $_GET["_"] : ""
             ];
         ?>
-        @if($data->total()>0)
-        <div class="d-flex flex-row align-items-center justify-content-center">
-            {!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
-            <div class="ml-3">{{$data->appends(request()->query())->links()}}</div>
+        <div class="d-flex flex-row align-items-center">
+            @if($data->total()>0)
+            <div class="d-flex flex-row align-items-center justify-content-center">
+                {!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
+                <div class="ml-3">{{$data->appends(request()->query())->links()}}</div>
+            </div>
+            @endif
+            @if(@$resource->groupFilters())
+            @include("vStack::resources.partials._filter_btn")
+            @endif
+            @if($resource->search())
+            <resource-filter-global class="ml-2" :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
+            @endif
         </div>
-        @endif
-        @if(@$resource->groupFilters())
-        @include("vStack::resources.partials._filter_btn")
-        @endif
-        @if($resource->search())
-        <resource-filter-global class="ml-2" :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
-        @endif
     </div>
 </div>
 <div class="row">

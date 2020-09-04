@@ -1,5 +1,4 @@
 <?php
-    $filters = $resource->filters();
     $data=[
         "perpage"   => @$_GET["per_page"] ? $_GET["per_page"] : 10,
         "hasFilter" => ResourcesHelpers::hasFilter(request()->query(),$filters),
