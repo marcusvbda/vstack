@@ -47,10 +47,15 @@ class ResourceController extends Controller
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
         $search = $resource->search();
 
-        $query = $query->where(function ($q) use ($search, $data, $table) {
-            foreach ($search as $s) $q = $q->OrWhere($table . $s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
-            return $q;
-        });
+        if (@$data["_"]) {
+            $query = $query->where(function ($q) use ($search, $data, $table) {
+                foreach ($search as $s) {
+                    if (is_callable($s)) $q = $s($q, @$data["_"]);
+                    else  $q = $q->OrWhere($table . $s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
+                }
+                return $q;
+            });
+        }
 
         foreach ($resource->lenses() as $len) {
             $field = $len["field"];
