@@ -33,7 +33,7 @@ class ResourceController extends Controller
         return view("vStack::resources.index", compact("resource", "data"));
     }
 
-    protected function getData($resource, Request $request, $query = null)
+    public function getData($resource, Request $request, $query = null)
     {
         $table = $resource->model->getTable() . ".";
         $data      = $request->all();
