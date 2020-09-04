@@ -4,9 +4,6 @@
 @include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
-@if(@$resource->beforeListSlot())
-{!! @$resource->beforeListSlot() !!}
-@endif
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center">
         <h4 class="mb-1">{!! @$resource->indexLabel() !!}</h4>
@@ -36,6 +33,9 @@
         </div>
     </div>
 </div>
+@if(@$resource->beforeListSlot())
+{!! @$resource->beforeListSlot() !!}
+@endif
 <?php 
     $model_count = $resource->model->count();
 ?>
