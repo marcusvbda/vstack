@@ -189,7 +189,7 @@ class ResourceController extends Controller
         $result = $this->getData($resource, $_request);
         $filename =    'Relatório de ' . $resource->id . '_' . Carbon::now()->format('Y_m_d_H_i_s') . '_' . $user->tenant->name . '.xls';
         $ids =  $result->pluck("id")->all();
-        return $this->exportSheetOrDispatch($user, $result->count(), $ids, $resource, $data['columns'], $filename);
+        return $this->exportSheetOrDispatch($user, count($ids), $ids, $resource, $data['columns'], $filename);
     }
 
     public function exportSheetOrDispatch($user, $count, $ids, $resource, $columns, $filename)
