@@ -76,11 +76,11 @@ export default {
                 'columns': this.columns
             }).then(resp => {
                 resp = resp.data
-                if (this.qty_results <= this.limit) window.open(resp.url)
                 this.$message({ type: resp.message_type, message: resp.message })
                 this.visible = false
                 this.setColumns()
                 loading.close()
+                if (resp.url) return window.open(resp.url, "_BLANK")
             })
         }
     }
