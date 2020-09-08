@@ -23,6 +23,7 @@
                         :key="i"
                         v-model="columns[i].enabled"
                         :label="columns[i].label"
+                        @change="saveColumnLocalStorage(i)"
                         border
                     />
                 </div>
@@ -63,8 +64,17 @@ export default {
         this.setColumns()
     },
     methods: {
+        saveColumnLocalStorage(key) {
+            localStorage.setItem(`${this.id}_export_column_option_${key}`, this.columns[key].enabled)
+        },
         setColumns() {
-            Object.keys(this.export_columns).map(key => this.$set(this.columns, key, { enabled: true, label: this.export_columns[key].label ? this.export_columns[key].label : this.export_columns[key] }))
+            Object.keys(this.export_columns).map(key => {
+                let storage_value = localStorage.getItem(`${this.id}_export_column_option_${key}`)
+                this.$set(this.columns, key, {
+                    enabled: storage_value ? storage_value : true,
+                    label: this.export_columns[key].label ? this.export_columns[key].label : this.export_columns[key]
+                })
+            })
         },
         openExportModal() {
             this.visible = true
