@@ -86,7 +86,7 @@ export default {
                 'columns': this.columns
             }).then(resp => {
                 resp = resp.data
-                this.$message({ type: resp.message_type, message: resp.message })
+                this.$message({ type: resp.message_type, message: resp.message, duration: 9999999999, showClose: true })
                 this.visible = false
                 this.setColumns()
                 loading.close()
