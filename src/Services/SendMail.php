@@ -3,7 +3,7 @@
 namespace marcusvbda\vstack\Services;
 
 use Mail;
-
+use Illuminate\Support\Facades\Storage;
 class SendMail
 {
 
@@ -13,7 +13,10 @@ class SendMail
             $message->to($to)
                 ->subject($subject)
                 ->setBody($html, 'text/html');
-            if(@$file)  $message->attach($file);
+            if(@$file)  {
+                $message->attach(storage_path("app/".$file));
+            }
         });
+        Storage::disk("local")->delete($file);
     }
 }
