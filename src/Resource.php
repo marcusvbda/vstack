@@ -212,6 +212,11 @@ class Resource
         return true;
     }
 
+    public function getExportNotificationView()
+    {
+        return "vStack::resources.mails.export_notification";
+    }
+
     public function getValidationRule()
     {
         $validation_rules = [];
