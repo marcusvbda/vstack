@@ -209,7 +209,6 @@ class ResourceController extends Controller
             try {
                 $exporter = new GlobalExporter($resource, $columns, $resource->model->whereIn("id", $ids)->get());
                 Excel::store($exporter, $filename, "local");
-                $url = route('resource.export_download', ['resource' => $resource->id, 'file' => $filename]);
                 DB::table("notifications")->insert([
                     "type" => 'App\Notifications\CustomerNotification',
                     "notifiable_type" => 'App\User',
@@ -222,15 +221,11 @@ class ResourceController extends Controller
                         "type" => 'success'
                     ]),
                 ]);
-                $appName = config("app.name");
+                
                 $user->save();
                 $user->refresh();
-                $html = "
-                <p>Olá {$user->name},</p>
-                <p>Aqui está sua planilha de " . $resource->label() . "</p>
-                <p>Clique <a href='{$url}' target='_BLANK'>aqui</a> abaixo para efetuar o download</p>
-                <p style='margin-top:30px'>Obrigado, {$appName}";
-                SendMail::to($user->email, "Planilha de " . $resource->label(), $html);
+                $html = view($resource->getExportNotificationView(),compact('user','resource', 'filename'))->render();
+                SendMail::to($user->email, "Planilha de " . $resource->label(), $html, $filename);
             } catch (\Exception $e) {
                 $message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
                 DB::table("notifications")->insert([
