@@ -54,7 +54,9 @@ export default {
         this.initFormFilter()
     },
     mounted() {
-        this.$refs.content.addEventListener('click', event => event.stopPropagation())
+        const el = this.$refs.content
+        if(!el) return
+        el.addEventListener('click', event => event.stopPropagation())
     },
     methods: {
         setFormValue(index, value, filter) {
