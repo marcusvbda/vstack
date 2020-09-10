@@ -60,19 +60,23 @@ export default {
             columns: {}
         }
     },
-    created() {
+    mounted() {
         this.setColumns()
     },
     methods: {
         saveColumnLocalStorage(key) {
-            localStorage.setItem(`${this.id}_export_column_option_${key}`, this.columns[key].enabled)
+            setTimeout(() => {
+                localStorage.setItem(`${this.id}_export_column_option_${key}`, this.columns[key].enabled)
+            },500)
         },
         setColumns() {
             Object.keys(this.export_columns).map(key => {
                 let storage_value = localStorage.getItem(`${this.id}_export_column_option_${key}`)
-                this.$set(this.columns, key, {
-                    enabled: storage_value ? storage_value : true,
-                    label: this.export_columns[key].label ? this.export_columns[key].label : this.export_columns[key]
+                this.$nextTick(() => {
+                    this.$set(this.columns, key, {
+                        enabled: storage_value ? storage_value == 'true' : true,
+                        label: this.export_columns[key].label ? this.export_columns[key].label : this.export_columns[key]
+                    })
                 })
             })
         },
