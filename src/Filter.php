@@ -54,9 +54,11 @@ class Filter
     {
         $index         = $this->index;
         $placeholder   = @$this->placeholder ? $this->placeholder : "";
+        $mask          = @$this->mask ? $this->mask : [];
         $this->view =  view("vStack::resources.filter.text", compact(
             "index",
-            "placeholder"
+            "placeholder",
+            "mask"
         ))->render();
     }
 
