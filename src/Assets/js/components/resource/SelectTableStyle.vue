@@ -2,7 +2,7 @@
     <div style="display:none;" ref="container" class="card select-table-style">
         <div
             class="card-header p-1"
-            v-if="list_type.includes('cards') && list_type.includes('table') && hasLenses"
+            v-if="(list_type.includes('cards') && list_type.includes('table')) || has_lenses"
         >
             <div class="row d-flex align-items-center flex-wrap">
                 <div class="col">
@@ -32,15 +32,10 @@
 </template>
 <script>
 export default {
-    props: ["id", "list_type", "selected_list_type"],
+    props: ["id", "list_type", "selected_list_type","has_lenses"],
     data() {
         return {
             initalized: false,
-        }
-    },
-    computed: {
-        hasLenses() {
-            return this.$slots.lenses ? true : false
         }
     },
     mounted() {
