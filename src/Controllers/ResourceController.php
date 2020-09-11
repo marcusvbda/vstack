@@ -929,7 +929,7 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($resource);
         if(!@$resource->useTags()) abort(403);
         $class_name = get_class($resource->model);
-        $tag = $this->getTag($class_name, @$request["name"]);
+        $tag = $this->getTag($class_name, @$request["name"],$resource);
         $relations = TagRelation::where("resource_tag_id", $tag->id)->where("relation_id",$id);
         if($relations->count() > 0) return $tag;
         $created = TagRelation::create([
@@ -939,14 +939,17 @@ class ResourceController extends Controller
         return Tag::find($created->resource_tag_id);
     }
 
-    protected function getTag($model_class,$name)
+    protected function getTag($model_class,$name,$resource)
     {
+        $colors = $resource->tagColors();
         $old_tag = Tag::where("model",$model_class)->where("name",$name)->first();
         if($old_tag) return $old_tag;
         return Tag::create([
             "model" => $model_class,
             "name" => $name,
-            "color" => sprintf('#%06X', mt_rand(0, 0xFFFFFF))
+            "color" => $colors[rand(0,count($colors)-1)]
         ]);
     }
+
+    
 }
