@@ -17,7 +17,7 @@ use marcusvbda\vstack\Imports\GlobalImporter;
 use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
 use marcusvbda\vstack\Services\SendMail;
-
+use marcusvbda\vstack\Models\{Tag,TagRelation};
 class ResourceController extends Controller
 {
     public function index($resource, Request $request)
@@ -893,5 +893,60 @@ class ResourceController extends Controller
             }
         }
         return $fields;
+    }
+
+    public function getTags($resource,$id)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!@$resource->useTags()) abort(403);
+        return DB::table('resource_tags_relation')
+            ->select('resource_tags.*')
+            ->join('resource_tags', 'resource_tags.id', 'resource_tags_relation.resource_tag_id')
+            ->where('resource_tags.tenant_id',Auth::user()->tenant_id)
+            ->where('resource_tags_relation.relation_id', $id)
+            ->where('resource_tags.model', get_class($resource->model))
+        ->get();
+    }
+
+    public function tagOptions($resource)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!@$resource->useTags()) abort(403);
+        return  Tag::where("model", get_class($resource->model))->get();
+    }
+
+    public function destroyTag($resource, $resource_id,$tag_id)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!@$resource->useTags()) abort(403);
+        TagRelation::where("resource_tag_id", $tag_id)->where("relation_id", $resource_id)->delete();
+        if(TagRelation::where("resource_tag_id", $tag_id)->count() <= 0 ) Tag::where("id",$tag_id)->delete();
+        return ["success" => true];
+    }
+
+    public function addTag($resource,$id,Request $request)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if(!@$resource->useTags()) abort(403);
+        $class_name = get_class($resource->model);
+        $tag = $this->getTag($class_name, @$request["name"]);
+        $relations = TagRelation::where("resource_tag_id", $tag->id)->where("relation_id",$id);
+        if($relations->count() > 0) return $tag;
+        $created = TagRelation::create([
+            "resource_tag_id" => $tag->id,
+            "relation_id" => $id
+        ]);
+        return Tag::find($created->resource_tag_id);
+    }
+
+    protected function getTag($model_class,$name)
+    {
+        $old_tag = Tag::where("model",$model_class)->where("name",$name)->first();
+        if($old_tag) return $old_tag;
+        return Tag::create([
+            "model" => $model_class,
+            "name" => $name,
+            "color" => sprintf('#%06X', mt_rand(0, 0xFFFFFF))
+        ]);
     }
 }

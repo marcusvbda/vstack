@@ -277,4 +277,10 @@ class Resource
     {
         return false;
     }
+
+    public function useTags()
+    {
+        return false;
+    }
+
 }

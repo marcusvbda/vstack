@@ -88,6 +88,9 @@ for($i=0;$i<count($cards);$i++)
         </div>
     </div>
 </div>
+@if($data["page_type"]=="Edição")
+<resource-tags-input resource='{{$resource->id}}' resource_code='{{@$content->code}}'></resource-tags-input>
+@endif
 <resource-crud 
     :data="{{json_encode($data)}}"  
     :params="{{json_encode($params)}}"  
