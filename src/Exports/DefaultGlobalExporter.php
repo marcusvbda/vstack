@@ -5,10 +5,11 @@ namespace marcusvbda\vstack\Exports;
 use Maatwebsite\Excel\Concerns\{
     FromCollection,
     WithHeadings,
+    ShouldAutoSize
 };
 
 
-class DefaultGlobalExporter implements FromCollection, WithHeadings
+class DefaultGlobalExporter implements FromCollection, WithHeadings, ShouldAutoSize
 {
     public function __construct($headers, $data = [])
     {
