@@ -936,7 +936,7 @@ class ResourceController extends Controller
             "resource_tag_id" => $tag->id,
             "relation_id" => $id
         ]);
-        return Tag::find($created->resource_tag_id);
+        return $created->tag;
     }
 
     protected function getTag($model_class,$name,$resource)
