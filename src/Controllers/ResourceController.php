@@ -224,7 +224,7 @@ class ResourceController extends Controller
                 
                 $user->save();
                 $user->refresh();
-                $html = view($resource->getExportNotificationView(),compact('user','resource', 'filename'))->render();
+                $html = view($resource->exportNotificationView(),compact('user','resource', 'filename'))->render();
                 SendMail::to($user->email, "Planilha de " . $resource->label(), $html, $filename);
             } catch (\Exception $e) {
                 $message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
