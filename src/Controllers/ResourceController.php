@@ -934,7 +934,8 @@ class ResourceController extends Controller
         if($relations->count() > 0) return $tag;
         $created = TagRelation::create([
             "resource_tag_id" => $tag->id,
-            "relation_id" => $id
+            "relation_id" => $id,
+            "model" => $class_name
         ]);
         return $created->tag;
     }
