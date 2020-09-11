@@ -13,4 +13,9 @@ class TagRelation extends Model
     {
         return true;
     }
+
+    public function tag()
+    {
+        return $this->belongsTo(Tag::class, 'resource_tag_id');
+    }
 }
