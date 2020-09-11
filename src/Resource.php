@@ -283,4 +283,22 @@ class Resource
         return false;
     }
 
+    public function tagColors()
+    {
+        return [
+            "red",
+            "blue",
+            "green",
+            "purple",
+            "brown",
+            "orange",
+            "pink",
+            "#f115e0",
+            "#7e15f1",
+            "#02bec7",
+            "#01a02a",
+            "#deec0d"
+        ];
+    }
+
 }
