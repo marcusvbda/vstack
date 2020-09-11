@@ -88,7 +88,7 @@ for($i=0;$i<count($cards);$i++)
         </div>
     </div>
 </div>
-@if($data["page_type"]=="Edição")
+@if(($data["page_type"]=="Edição") && $resource->useTags())
 <resource-tags-input resource='{{$resource->id}}' resource_code='{{@$content->code}}'></resource-tags-input>
 @endif
 <resource-crud 
