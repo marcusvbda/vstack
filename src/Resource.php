@@ -212,7 +212,7 @@ class Resource
         return true;
     }
 
-    public function getExportNotificationView()
+    public function exportNotificationView()
     {
         return "vStack::resources.mails.export_notification";
     }
