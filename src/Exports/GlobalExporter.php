@@ -5,10 +5,11 @@ namespace marcusvbda\vstack\Exports;
 use Maatwebsite\Excel\Concerns\{
     FromCollection,
     WithHeadings,
-    WithMapping
+    WithMapping,
+    ShouldAutoSize
 };
 
-class GlobalExporter implements FromCollection, WithHeadings, WithMapping
+class GlobalExporter implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
     public function __construct($resource, $columns, $data = [])
     {
@@ -24,6 +25,7 @@ class GlobalExporter implements FromCollection, WithHeadings, WithMapping
         return collect($this->data);
     }
 
+    
     public function headings(): array
     {
         return (array_filter(array_map(function ($key) {
