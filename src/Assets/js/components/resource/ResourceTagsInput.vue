@@ -6,14 +6,14 @@
                 :style="{'--color' : t.color}"
                 class="resource-tag"
                 size="mini"
-                closable
+                :closable='only_view == undefined'
                 v-for="(t,i) in tags"
                 :key="t.id"
                 color="transparent"
                 :hit="true"
                 @close="handleClose(t,i)"
             >{{t.name}}</el-tag>
-            <button class='ml-2 btn-new-tag' title="Nova Tag" @click="dialogVisible = true">
+            <button class='ml-2 btn-new-tag' title="Nova Tag" @click="dialogVisible = true" v-if='only_view == undefined'>
                 <span class='el-icon-price-tag' />
             </button>
             <el-dialog
@@ -59,7 +59,7 @@
 
 <script>
     export default {
-        props : ['resource','resource_code'],
+        props : ['resource','resource_code','only_view'],
         data() {
             return {
                 dialogVisible : false,
@@ -84,7 +84,7 @@
         },
         created() {
             this.getTags()
-            this.getOptions()
+            if(this.only_view == undefined) return this.getOptions()
         },
         methods : {
             addTag() {
