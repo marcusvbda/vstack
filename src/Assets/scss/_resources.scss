@@ -111,8 +111,39 @@ ul.pagination {
     }
 }
 
+
 .el-drawer__header {
     font-size: 30px;
     font-weight: 600;
     margin-bottom: 20px;
+}
+
+.el-drawer__body {
+    .row {
+        max-height: calc(100vh - 95px);
+        overflow-y: auto;
+        margin: 0;
+        .col-12 {
+            padding-right: 0;
+            padding-left : 0;
+        }
+    }
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 }
