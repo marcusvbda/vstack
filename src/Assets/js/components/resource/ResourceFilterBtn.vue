@@ -1,22 +1,34 @@
 <template>
-    <div class="dropdown ml-2" style="position:relative;" v-if="data.filters.length>0">
-        <span class="badge-number" v-if="qty_filters>0" v-html="qty_filters" />
+    <div
+        class="dropdown ml-2"
+        style="position: relative"
+        v-if="data.filters.length > 0"
+    >
+        <span
+            class="badge-number out"
+            v-if="qty_filters > 0"
+            v-html="qty_filters"
+        />
         <button
-            :class="`btn btn dropdown-toggle btn-secondary btn-sm`"
-            style="height: 33px;"
+            :class="`btn-secondary btn-sm`"
+            style="height: 33px"
             type="button"
             id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
+            @click.prevent="drawer = !drawer"
             v-html="`Filtrar ${label}`"
         />
-        <div class="dropdown-menu filter-content dropdown-menu-right" ref="content">
+        <el-drawer
+            :with-header="true"
+            title="Filtros"
+            :visible.sync="drawer"
+            :direction="direction"
+            before-close="rtl"
+        >
             <div class="row">
                 <div class="col-12">
-                    <table class="table table-striped table-sm mb-0">
+                    <table class="table mb-0">
                         <btn-body
-                            v-for="(f,key) in data.filters"
+                            v-for="(f, key) in data.filters"
                             :key="key"
                             :k="key"
                             :f="f"
@@ -27,7 +39,7 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </el-drawer>
     </div>
 </template>
 <script>
@@ -36,6 +48,7 @@ export default {
     props: ["data", "label"],
     data() {
         return {
+            drawer: false,
             filter: {},
             timeout: null
         }
@@ -55,7 +68,7 @@ export default {
     },
     mounted() {
         const el = this.$refs.content
-        if(!el) return
+        if (!el) return
         el.addEventListener('click', event => event.stopPropagation())
     },
     methods: {
@@ -87,13 +100,17 @@ export default {
     border-radius: 100%;
     position: absolute;
     z-index: 99;
-    top: -5px;
-    left: -5px;
+    top: 2px;
+    left: 2px;
     width: 15px;
     height: 15px !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    &.out {
+        top: -5px;
+        left: -5px;
+    }
 }
 .filter-content {
     width: 700;
@@ -117,6 +134,12 @@ export default {
         background-color: #343a40;
         color: white;
         transition: 0.4s;
+    }
+}
+.el-drawer__body {
+    &:focus,
+    &:active {
+        outline: none !important;
     }
 }
 </style>
