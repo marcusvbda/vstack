@@ -103,3 +103,16 @@ html {
 ul.pagination {
     margin-top : 16px;
 }
+
+* {
+    &:focus,
+    &:active {
+        outline: none !important;
+    }
+}
+
+.el-drawer__header {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
