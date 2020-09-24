@@ -21,8 +21,7 @@
             :with-header="true"
             title="Filtros"
             :visible.sync="drawer"
-            :direction="direction"
-            before-close="rtl"
+            direction="rtl"
         >
             <div class="row">
                 <div class="col-12">
