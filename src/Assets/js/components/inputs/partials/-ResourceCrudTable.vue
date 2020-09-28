@@ -16,8 +16,7 @@
                             <td
                                 :key="i"
                                 v-if="(!(x == 0 || value =='name'))"
-                                v-html="getTableValue(data,i,value,x)"
-                            ></td>
+                            ><v-runtime-template :template="getTableValue(data,i,value,x)"/></td>
                             <td :key="i" v-else>
                                 <a
                                     href="#"
@@ -37,13 +36,15 @@
     </div>
 </template>
 <script>
+import VRuntimeTemplate from "v-runtime-template"
 export default {
+    components:{VRuntimeTemplate},
     props: ["rendered_data", "form", "resourceData"],
     methods: {
         getTableValue(data, index, value, x) {
             if (typeof value == "object") value = index
             index = String(index)
-            if (index.indexOf("->") < 0) return data[value]
+            if (index.indexOf("->") < 0) return '<div>'+data[value]+'</div>'
             let indexes = index.split("->")
             let _val = data
             for (let i in indexes) {
@@ -51,7 +52,7 @@ export default {
             }
             let text = _val ? _val : data[index]
 
-            return text
+            return '<div>'+text+'</div>'
         },
         edit(data) {
             let fields = this.rendered_data.crud_fields
@@ -61,7 +62,7 @@ export default {
                 field_value = !["null", ""].includes(field_value) ? (Array.isArray(field_value) ? field_value : String(field_value)) : fields[i].options.default
                 if (fields[i].options.type == "check") field_value = (String(field_value) == "true")
                 if (!["password", "password_confirmation"].includes(field_name)) {
-                    if (fields[i].options.type == "upload") {
+                    if (fields[i].options.type === "upload") {
                         if (field_value == "null") field_value = null
                         else if (typeof field_value == "string") field_value = Array(field_value)
 
