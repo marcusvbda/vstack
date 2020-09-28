@@ -62,7 +62,7 @@ export default {
                 field_value = !["null", ""].includes(field_value) ? (Array.isArray(field_value) ? field_value : String(field_value)) : fields[i].options.default
                 if (fields[i].options.type == "check") field_value = (String(field_value) == "true")
                 if (!["password", "password_confirmation"].includes(field_name)) {
-                    if (fields[i].options.type == "upload") {
+                    if (fields[i].options.type === "upload") {
                         if (field_value == "null") field_value = null
                         else if (typeof field_value == "string") field_value = Array(field_value)
 
