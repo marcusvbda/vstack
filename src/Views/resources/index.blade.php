@@ -4,10 +4,6 @@
 @include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
-@include("vStack::resources.partials._metrics")
-@if(@$resource->beforeListSlot())
-{!! @$resource->beforeListSlot() !!}
-@endif
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center">
         <h4 class="mb-1">{!! @$resource->indexLabel() !!}</h4>
@@ -25,35 +21,54 @@
             </a>
             @endif
             @endif
-            @if($resource->canView() && $resource->canExport())
+            @if($resource->canExport())
             @if($resource->model->count()>0)
-            <a class="ml-3 link" target="_BLANK"
-                href="{{route('resource.export',array_merge(request()->all(),['resource'=>$resource->id]))}}">
+            <resource-export-btn class="ml-2 link" id="{{$resource->id}}" label="{{$resource->label()}}"
+                :export_columns="{{json_encode($resource->export_columns())}}" :get_params="{{json_encode($_GET)}}"
+                :qty_results="{{json_encode($data->total())}}" :limit="{{json_encode($resource->maxRowsExportSync())}}">
                 {!! $resource->exportButtonlabel() !!}
-            </a>
+            </resource-export-btn>
             @endif
             @endif
         </div>
     </div>
 </div>
+@if(@$resource->beforeListSlot())
+{!! @$resource->beforeListSlot() !!}
+@endif
 <?php 
     $model_count = $resource->model->count();
+    $filters = $resource->filters();
 ?>
 @if($model_count>0)
+@if(!@$resource->groupFilters())
 @include("vStack::resources.partials._filter")
+@endif
 <div class="row d-flex align-items-end mb-2">
-    <div class="col-md-9 col-sm-12"></div>
-    <div class="col-md-3 col-sm-12">
+    <div class="col-12 d-flex align-items-end justify-content-between">
+        <resource-filter-tags ref="tags_filter" :resource_filters="{{json_encode($filters)}}"
+            :get_params="{{json_encode($_GET)}}"></resource-filter-tags>
         <?php 
-                    $globalFilterData = [
-                        "filter_route" => request()->url(),
-                        "query" => request()->query(),
-                        "value" => @$_GET["_"] ? $_GET["_"] : ""
-                    ];
-                ?>
-        @if($resource->search())
-        <resource-filter-global :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
-        @endif
+            $globalFilterData = [
+                "filter_route" => request()->url(),
+                "query" => request()->query(),
+                "value" => @$_GET["_"] ? $_GET["_"] : ""
+            ];
+        ?>
+        <div class="d-flex flex-row align-items-center">
+            @if($data->total()>0)
+            <div class="d-flex flex-row align-items-center justify-content-center">
+                {!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
+                <div class="ml-3">{{$data->appends(request()->query())->links()}}</div>
+            </div>
+            @endif
+            @if(@$resource->groupFilters())
+            @include("vStack::resources.partials._filter_btn")
+            @endif
+            @if($resource->search())
+            <resource-filter-global class="ml-2" :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
+            @endif
+        </div>
     </div>
 </div>
 <div class="row">
@@ -68,14 +83,7 @@
         @endif
     </div>
 </div>
-<div class="row mt-3 d-flex align-items-center">
-    @if($data->total()>0)
-    <div class="col-md-6 col-sm-12">{!! $resource->resultsFoundLabel() !!} {{ $data->total() }}</div>
-    <div class="col-md-6 col-sm-12 d-flex justify-content-end">
-        {{$data->appends(request()->query())->links()}}
-    </div>
-    @endif
-</div>
+
 @else
 <div class="d-flex flex-column row align-items-center justify-items-center">
     <div class="col-md-6 col-sm-12 text-center">

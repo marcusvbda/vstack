@@ -3,17 +3,16 @@
 namespace marcusvbda\vstack\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Http\Traits\hasCode;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use marcusvbda\vstack\Traits\CascadeOrRestrictSoftdeletes;
 use marcusvbda\vstack\Models\Scopes\TenantScope;
 use marcusvbda\vstack\Models\Observers\TenantObserver;
+use marcusvbda\vstack\Traits\CascadeOrRestrictSoftdeletes;
 
-class DefaultModel extends Model
+class Tag extends Model
 {
-    use hasCode, SoftDeletes, CascadeOrRestrictSoftdeletes;
+    use CascadeOrRestrictSoftdeletes;
+    public $table = "resource_tags";
     public $guarded = ["created_at"];
-    public $cascadeDeletes = [];
+    public $cascadeDeletes = ['relation'];
     public $restrictDeletes = [];
     public static function boot()
     {
@@ -29,5 +28,8 @@ class DefaultModel extends Model
         return true;
     }
 
-    
+    public function relation()
+    {
+        return $this->hasMany(TagRelation::class, 'resource_tag_id');
+    }
 }

@@ -12,7 +12,12 @@ use Auth;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-
+use marcusvbda\vstack\Exports\{DefaultGlobalExporter, GlobalExporter};
+use marcusvbda\vstack\Imports\GlobalImporter;
+use Maatwebsite\Excel\HeadingRowImport;
+use Excel;
+use marcusvbda\vstack\Services\SendMail;
+use marcusvbda\vstack\Models\{Tag,TagRelation};
 class ResourceController extends Controller
 {
     public function index($resource, Request $request)
@@ -28,25 +33,29 @@ class ResourceController extends Controller
         return view("vStack::resources.index", compact("resource", "data"));
     }
 
-    protected function getData($resource, Request $request, $query = null)
+    public function getData($resource, Request $request, $query = null)
     {
-        $raw_table = $resource->model->getTable();
         $table = $resource->model->getTable() . ".";
         $data      = $request->all();
 
         $orderBy   = $table . Arr::get($data, 'order_by', "id");
         $orderType = Arr::get($data, 'order_type', "desc");
 
-        $query     = $query ? $query : $resource->model->select("id")->where($table . "id", ">", 0);
+        $query     = $query ? $query : $resource->model->select($table . "id")->where($table . "id", ">", 0);
         $query->orderBy($orderBy, $orderType);
 
         foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
         $search = $resource->search();
 
-        $query = $query->where(function ($q) use ($search, $data, $table) {
-            foreach ($search as $s) $q = $q->OrWhere($table . $s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
-            return $q;
-        });
+        if (@$data["_"]) {
+            $query = $query->where(function ($q) use ($search, $data, $table) {
+                foreach ($search as $s) {
+                    if (is_callable($s)) $q = $s($q, @$data["_"]);
+                    else  $q = $q->OrWhere($table . $s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
+                }
+                return $q;
+            });
+        }
 
         foreach ($resource->lenses() as $len) {
             $field = $len["field"];
@@ -76,19 +85,35 @@ class ResourceController extends Controller
         return view("vStack::resources.import", compact('data'));
     }
 
-    protected function makeImportData($resource)
+    public function importSheetTemplate($resource)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!($resource->canImport() && $resource->canCreate())) abort(403);
+        $filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . ".xls";
+        $exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
+        Excel::store($exporter, $filename, "local");
+        $full_path = storage_path("app/$filename");
+        return response()->download($full_path)->deleteFileAfterSend(true);
+    }
+
+    protected function getImporterCollumns($resource)
     {
         $columns = [];
         foreach ($resource->getTableColumns() as $col) {
-            if (!in_array($col, ["id", "created_at", "deleted_at", "updated_at", "email_verified_at", "confirmation_token", "recovery_token", "password", "tenant_id"])) $columns[] = $col;
+            if (!in_array($col, ["created_at", "deleted_at", "updated_at", "email_verified_at", "confirmation_token", "recovery_token", "password", "tenant_id"])) $columns[] = $col;
         }
+        return $columns;
+    }
 
+    protected function makeImportData($resource)
+    {
         return [
             "resource" => [
+                "resource_id"    => $resource->id,
                 "label"          => $resource->label(),
                 "singular_label" => $resource->singularLabel(),
                 "route"          => $resource->route(),
-                "columns"        => $columns
+                "columns"        => $this->getImporterCollumns($resource)
             ]
         ];
     }
@@ -98,12 +123,12 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($resource);
         if (!($resource->canImport() && $resource->canCreate())) abort(403);
         $file = $request->file("file");
-        $delimiter = $request["delimiter"];
         if (!$file) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
         if ($file->getSize() > 137072) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
-        $csvFile = file($file->getPathName());
-        if (!@$csvFile[0]) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
-        $header = str_getcsv($csvFile[0], $delimiter);
+        $data = Excel::toArray(new HeadingRowImport, $file);
+        $header = @$data[0][0];
+        if (!@$data[0][0])
+            return ["success" => false, "message" => ["type" => "error", "text" => "Cabeçalho da planilha nao encontrado"]];
         return ["success" => true, "data" => $header];
     }
 
@@ -115,84 +140,160 @@ class ResourceController extends Controller
         $file = $data["file"];
         if (!$file) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
         if ($file->getSize() > 137072) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
-        $csvFile = file($file->getPathName());
-        if (!@$csvFile[0]) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
-        $data["config"] = json_decode($data["config"]);
-        $this->importCSV($resource, $csvFile, $data["config"]);
-        return ["success" => true];
-    }
 
-    protected function importCSV($resource, $rows, $config)
-    {
+        $config = json_decode($data["config"]);
+        $fieldlist = $config->fieldlist;
+        $filename = Auth::user()->tenant_id . "_" . uniqid() . ".xls";
+        $filepath = $file->storeAs('local', $filename);
         $user = Auth::user();
-        dispatch(function () use ($user, $rows, $config, $resource) {
-            $headers = $config->data->csv_header;
-            $data = [];
-            for ($i = 1; $i < count($rows); $i++) {
-                $_data = [];
-                $columns = str_getcsv($rows[$i], $config->delimiter);
-                for ($y = 0; $y < count($headers); $y++) $_data[$headers[$y]] = $columns[$y];
-                if ($_data) $data[] = $_data;
-            }
-            $fieldlist = $config->fieldlist;
-            if ($config->update) {
-                try {
-                    foreach ($data as $row) {
-                        $item = $resource->model->find($row["id"]);
-                        if ($item) {
-                            foreach ($fieldlist as $key => $value) if ($value != "_IGNORE_") $item->{$value} = $row[$key];
-                            $item->save();
-                        }
-                    }
-                    Messages::notify("success", "CSV de " . $resource->label() . " importado com sucesso !!", $user->id);
-                } catch (\Exception $e) {
-                    Messages::notify("error", "<p>Erro ao importar CSV de " . $resource->label() . "</p><p>" . $e->getMessage() . "</p>", $user->id);
-                }
+        $tenant_id = array_search("tenant_id", $resource->getTableColumns()) === false ? null : $user->tenant_id;
+
+        dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
+            $importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('resource', 'fieldlist', 'filepath', 'tenant_id'));
+            Excel::import($importer, $importer->getFile());
+            $result = $importer->getResult();
+            if (@$result["success"]) {
+                $message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
             } else {
-                $_news = [];
-                foreach ($data as $row) {
-                    $new = [];
-                    foreach ($fieldlist as $key => $value) if ($value != "_IGNORE_") $new[$value] = $row[$key];
-                    $new["created_at"] = date('Y-m-d H:i:s');
-                    $new["tenant_id"]  = $user->tenant_id;
-                    $_news[] = $new;
-                }
-                try {
-                    $resource->model->insert($_news);
-                    Messages::notify("success", "CSV de " . $resource->label() . " importado com sucesso !!", $user->id);
-                } catch (\Exception $e) {
-                    Messages::notify("error", "<p>Erro ao importar CSV de " . $resource->label() . "</p><p>" . $e->getMessage() . "</p>", $user->id);
-                }
+                $message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
             }
+            DB::table("notifications")->insert([
+                "type" => 'App\Notifications\CustomerNotification',
+                "notifiable_type" => 'App\User',
+                "notifiable_id" => $user->id,
+                "alert_type" => 'vstack_alert',
+                "tenant_id" => $user->tenant_id,
+                "created_at" => carbon::now(),
+                "data" => json_encode([
+                    "message" => $message,
+                    "type" => @$result["success"] ? 'success' : 'error'
+                ]),
+            ]);
         })->onQueue("resource-import");
+
+
+        return ["success" => true];
     }
 
     public function export($resource, Request $request)
     {
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canExport()) abort(403);
-        $data = $this->getData($resource, $request);
-        $data = $data->get();
-        $columns = [];
-        foreach ($resource->getTableColumns() as $col) {
-            if (!in_array($col, ["confirmation_token", "recovery_token", "password", "deleted_at", "tenant_id", "email_verified_at", "provider", "remember_token"])) $columns[] = $col;
-        }
-        $filename = uniqid() . ".csv";
-        $file = fopen($filename, 'w+');
-        fputcsv($file, $columns, ",", '"');
-        foreach ($data as $row) {
-            $_new = [];
-            $row = $row->toArray();
-            foreach ($columns as $col) {
-                if (is_array($row[$col]) || is_object($row[$col]))   $row[$col] =  json_encode($row[$col]);
-                $_new[$col] =  $row[$col];
-            }
-            fputcsv($file, $_new, ",", '"');
-        }
-        fclose($file);
-        return response()->download($filename, $resource->label() . "_" . date("d-m-Y H:i:s") . '.csv', ['Content-Type' => 'text/csv'])->deleteFileAfterSend(true);
+        $user = Auth::user();
+        $data = $request->all();
+        $_request = new Request();
+        $_request->setMethod('POST');
+        $params = [];
+        foreach ($data["get_params"] as $key => $value) $params[$key] = $value;
+        $_request->request->add($params);
+        $result = $this->getData($resource, $_request);
+        $filename =    'Relatório de ' . $resource->id . '_' . Carbon::now()->format('Y_m_d_H_i_s') . '_' . $user->tenant->name . '.xls';
+        $ids =  $result->pluck("id")->all();
+        return $this->exportSheetOrDispatch($user, count($ids), $ids, $resource, $data['columns'], $filename);
     }
 
+    public function exportSheetOrDispatch($user, $count, $ids, $resource, $columns, $filename)
+    {
+        if ($count <= $resource->maxRowsExportSync()) {
+            try {
+                $exporter = new GlobalExporter($resource, $columns, $resource->model->whereIn("id", $ids)->get());
+                Excel::store($exporter, $filename, "local");
+                $message = "Planilha de " . $resource->label() . " exportada com sucesso";
+                return ['success' => true, 'message_type' => 'success', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
+            } catch (\Exception $e) {
+                $message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
+                return ['success' => false, 'message_type' => 'error', 'message' => $message];
+            }
+        }
+        dispatch(function () use ($user, $resource, $columns, $ids, $filename) {
+            try {
+                $exporter = new GlobalExporter($resource, $columns, $resource->model->whereIn("id", $ids)->get());
+                Excel::store($exporter, $filename, "local");
+                DB::table("notifications")->insert([
+                    "type" => 'App\Notifications\CustomerNotification',
+                    "notifiable_type" => 'App\User',
+                    "notifiable_id" => $user->id,
+                    "alert_type" => 'vstack_alert',
+                    "tenant_id" => $user->tenant_id,
+                    "created_at" => carbon::now(),
+                    "data" => json_encode([
+                        "message" => "Sua planilha de " . $resource->label() . " foi exportada com sucesso e o arquivo foi enviado para seu email, " . $user->email,
+                        "type" => 'success'
+                    ]),
+                ]);
+                
+                $user->save();
+                $user->refresh();
+                $html = view($resource->exportNotificationView(),compact('user','resource', 'filename'))->render();
+                SendMail::to($user->email, "Planilha de " . $resource->label(), $html, $filename);
+            } catch (\Exception $e) {
+                $message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
+                DB::table("notifications")->insert([
+                    "type" => 'App\Notifications\CustomerNotification',
+                    "notifiable_type" => 'App\User',
+                    "notifiable_id" => $user->id,
+                    "alert_type" => 'vstack_alert',
+                    "tenant_id" => $user->tenant_id,
+                    "created_at" => carbon::now(),
+                    "data" => json_encode([
+                        "message" => $message,
+                        "type" => 'error'
+                    ]),
+                ]);
+                return ['success' => false, 'message' => $message];
+            }
+        })->onQueue("resource-import");
+        $message = "Sua Planinha de " . $resource->label() . " está sendo exportada, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $user->email . "), isso pode levar alguns minutos.";
+        return ['success' => true, 'message_type' => 'info', 'message' => $message];
+    }
+
+    public function exportDownload($resource, $file)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!$resource->canExport()) abort(403);
+        $full_path = storage_path("app/$file");
+        return response()->download($full_path)->deleteFileAfterSend(true);
+    }
+
+    public function sheetImportRow($rows, $params, $importer)
+    {
+        extract($params);
+        $qty = 0;
+        try {
+            DB::beginTransaction();
+            foreach ($rows as $key => $row_values) {
+                if ($key == 0) continue;
+                $row_values = $row_values->toArray();
+                $new = [];
+                foreach ($fieldlist as $field => $row_key) {
+                    if ($row_key == "_IGNORE_") continue;
+                    $value = @$row_values[array_search($row_key, $importer->headers)];
+                    if (!$value) continue;
+                    $new[$field] = $value;
+                }
+                $new_model = @$new["id"] ? $resource->model->findOrFail($new["id"]) : new $resource->model;
+                $new["tenant_id"] = $tenant_id;
+                $new_model->fill($new);
+                $new_model->save();
+                unset($new_model, $row_values, $new);
+                $qty++;
+            }
+            DB::commit();
+            $importer->setResult([
+                'success' => true,
+                'qty' => $qty
+            ]);
+        } catch (\Exception $e) {
+            $importer->setResult([
+                'success' => false,
+                'error' => [
+                    "message" => $e->getMessage(),
+                    "line" => $key
+                ]
+            ]);
+            DB::rollback();
+        }
+    }
 
     public function edit($resource, $code, Request $request)
     {
@@ -793,4 +894,63 @@ class ResourceController extends Controller
         }
         return $fields;
     }
+
+    public function getTags($resource,$id)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!@$resource->useTags()) abort(403);
+        return DB::table('resource_tags_relation')
+            ->select('resource_tags.*')
+            ->join('resource_tags', 'resource_tags.id', 'resource_tags_relation.resource_tag_id')
+            ->where('resource_tags.tenant_id',Auth::user()->tenant_id)
+            ->where('resource_tags_relation.relation_id', $id)
+            ->where('resource_tags.model', get_class($resource->model))
+        ->get();
+    }
+
+    public function tagOptions($resource)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!@$resource->useTags()) abort(403);
+        return  Tag::where("model", get_class($resource->model))->get();
+    }
+
+    public function destroyTag($resource, $resource_id,$tag_id)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if (!@$resource->useTags()) abort(403);
+        TagRelation::where("resource_tag_id", $tag_id)->where("relation_id", $resource_id)->delete();
+        if(TagRelation::where("resource_tag_id", $tag_id)->count() <= 0 ) Tag::where("id",$tag_id)->delete();
+        return ["success" => true];
+    }
+
+    public function addTag($resource,$id,Request $request)
+    {
+        $resource = ResourcesHelpers::find($resource);
+        if(!@$resource->useTags()) abort(403);
+        $class_name = get_class($resource->model);
+        $tag = $this->getTag($class_name, @$request["name"],$resource);
+        $relations = TagRelation::where("resource_tag_id", $tag->id)->where("relation_id",$id);
+        if($relations->count() > 0) return $tag;
+        $created = TagRelation::create([
+            "resource_tag_id" => $tag->id,
+            "relation_id" => $id,
+            "model" => $class_name
+        ]);
+        return $created->tag;
+    }
+
+    protected function getTag($model_class,$name,$resource)
+    {
+        $colors = $resource->tagColors();
+        $old_tag = Tag::where("model",$model_class)->where("name",$name)->first();
+        if($old_tag) return $old_tag;
+        return Tag::create([
+            "model" => $model_class,
+            "name" => $name,
+            "color" => $colors[rand(0,count($colors)-1)]
+        ]);
+    }
+
+    
 }

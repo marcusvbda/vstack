@@ -3,9 +3,7 @@
 namespace marcusvbda\vstack\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Notifications\Alert;
 use App\User;
-use Illuminate\Http\Request;
 
 class NotificationsController extends Controller
 {

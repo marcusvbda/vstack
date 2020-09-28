@@ -78,12 +78,12 @@ class Resource
 
     public function importButtonlabel()
     {
-        return "<span class='el-icon-upload2 mr-2'></span>Importar";
+        return "<span class='el-icon-upload2 mr-2'></span>Importar Planilha de " . $this->label();
     }
 
     public function exportButtonlabel()
     {
-        return "<span class='el-icon-download mr-2'></span>Exportar";
+        return "<span class='el-icon-download mr-2'></span>Exportar Planilha de " . $this->label();
     }
 
     public function noResultsFoundText()
@@ -121,6 +121,11 @@ class Resource
         return [new Card("Informações", $fields)];
     }
 
+    public function export_columns()
+    {
+        return ["id", "created_at"];
+    }
+
     public function getTableColumns()
     {
         return $this->model->getConnection()->getSchemaBuilder()->getColumnListing($this->model->getTable());
@@ -155,6 +160,11 @@ class Resource
     {
         $aux =  explode("/", $this->route());
         $this->id = $aux[count($aux) - 1];
+    }
+
+    public function maxRowsExportSync()
+    {
+        return 300;
     }
 
     public function canViewList()
@@ -197,14 +207,14 @@ class Resource
         return true;
     }
 
-    public function canCustomizeMetrics()
+    public function groupFilters()
     {
-        return false;
+        return true;
     }
 
-    public function customMetricsButtonText()
+    public function exportNotificationView()
     {
-        return "Editar Cards Customizados";
+        return "vStack::resources.mails.export_notification";
     }
 
     public function getValidationRule()
@@ -267,4 +277,28 @@ class Resource
     {
         return false;
     }
+
+    public function useTags()
+    {
+        return false;
+    }
+
+    public function tagColors()
+    {
+        return [
+            "red",
+            "blue",
+            "green",
+            "purple",
+            "brown",
+            "orange",
+            "pink",
+            "#f115e0",
+            "#7e15f1",
+            "#02bec7",
+            "#01a02a",
+            "#deec0d"
+        ];
+    }
+
 }
