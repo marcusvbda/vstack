@@ -17,7 +17,8 @@ use marcusvbda\vstack\Imports\GlobalImporter;
 use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
 use marcusvbda\vstack\Services\SendMail;
-use marcusvbda\vstack\Models\{Tag,TagRelation};
+use marcusvbda\vstack\Models\{Tag, TagRelation};
+
 class ResourceController extends Controller
 {
     public function index($resource, Request $request)
@@ -74,7 +75,7 @@ class ResourceController extends Controller
         if (!$resource->canCreate()) abort(403);
         $data = $this->makeCrudData($resource);
         $data["page_type"] = "Cadastro";
-        return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
+        return view("vStack::resources.crud", compact("resource", "data", "params"));
     }
 
     public function import($resource)
@@ -221,10 +222,10 @@ class ResourceController extends Controller
                         "type" => 'success'
                     ]),
                 ]);
-                
+
                 $user->save();
                 $user->refresh();
-                $html = view($resource->exportNotificationView(),compact('user','resource', 'filename'))->render();
+                $html = view($resource->exportNotificationView(), compact('user', 'resource', 'filename'))->render();
                 SendMail::to($user->email, "Planilha de " . $resource->label(), $html, $filename);
             } catch (\Exception $e) {
                 $message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
@@ -895,17 +896,17 @@ class ResourceController extends Controller
         return $fields;
     }
 
-    public function getTags($resource,$id)
+    public function getTags($resource, $id)
     {
         $resource = ResourcesHelpers::find($resource);
         if (!@$resource->useTags()) abort(403);
         return DB::table('resource_tags_relation')
             ->select('resource_tags.*')
             ->join('resource_tags', 'resource_tags.id', 'resource_tags_relation.resource_tag_id')
-            ->where('resource_tags.tenant_id',Auth::user()->tenant_id)
+            ->where('resource_tags.tenant_id', Auth::user()->tenant_id)
             ->where('resource_tags_relation.relation_id', $id)
             ->where('resource_tags.model', get_class($resource->model))
-        ->get();
+            ->get();
     }
 
     public function tagOptions($resource)
@@ -915,23 +916,23 @@ class ResourceController extends Controller
         return  Tag::where("model", get_class($resource->model))->get();
     }
 
-    public function destroyTag($resource, $resource_id,$tag_id)
+    public function destroyTag($resource, $resource_id, $tag_id)
     {
         $resource = ResourcesHelpers::find($resource);
         if (!@$resource->useTags()) abort(403);
         TagRelation::where("resource_tag_id", $tag_id)->where("relation_id", $resource_id)->delete();
-        if(TagRelation::where("resource_tag_id", $tag_id)->count() <= 0 ) Tag::where("id",$tag_id)->delete();
+        if (TagRelation::where("resource_tag_id", $tag_id)->count() <= 0) Tag::where("id", $tag_id)->delete();
         return ["success" => true];
     }
 
-    public function addTag($resource,$id,Request $request)
+    public function addTag($resource, $id, Request $request)
     {
         $resource = ResourcesHelpers::find($resource);
-        if(!@$resource->useTags()) abort(403);
+        if (!@$resource->useTags()) abort(403);
         $class_name = get_class($resource->model);
-        $tag = $this->getTag($class_name, @$request["name"],$resource);
-        $relations = TagRelation::where("resource_tag_id", $tag->id)->where("relation_id",$id);
-        if($relations->count() > 0) return $tag;
+        $tag = $this->getTag($class_name, @$request["name"], $resource);
+        $relations = TagRelation::where("resource_tag_id", $tag->id)->where("relation_id", $id);
+        if ($relations->count() > 0) return $tag;
         $created = TagRelation::create([
             "resource_tag_id" => $tag->id,
             "relation_id" => $id,
@@ -940,17 +941,15 @@ class ResourceController extends Controller
         return $created->tag;
     }
 
-    protected function getTag($model_class,$name,$resource)
+    protected function getTag($model_class, $name, $resource)
     {
         $colors = $resource->tagColors();
-        $old_tag = Tag::where("model",$model_class)->where("name",$name)->first();
-        if($old_tag) return $old_tag;
+        $old_tag = Tag::where("model", $model_class)->where("name", $name)->first();
+        if ($old_tag) return $old_tag;
         return Tag::create([
             "model" => $model_class,
             "name" => $name,
-            "color" => $colors[rand(0,count($colors)-1)]
+            "color" => $colors[rand(0, count($colors) - 1)]
         ]);
     }
-
-    
 }
