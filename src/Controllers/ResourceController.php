@@ -26,7 +26,8 @@ class ResourceController extends Controller
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canViewList()) abort(403);
         $data = $this->getData($resource, $request);
-        $data = $data->paginate($resource->resultsPerPage());
+        $per_page = $this->getPerPage($resource);
+        $data = $data->paginate($per_page);
         $data->map(function ($query) {
             $query->setAppends([]);
         });
@@ -626,12 +627,20 @@ class ResourceController extends Controller
         return ["belongsToMany" => $fields, "data" => $data];
     }
 
+    protected function getPerPage($resource)
+    {
+        $results_per_page = $resource->resultsPerPage();
+        $per_page = is_array($results_per_page) ? ((in_array(@$_GET['per_page'] ? $_GET['per_page'] : [], $results_per_page)) ? $_GET['per_page'] : $results_per_page[0]) : $results_per_page;
+        return $per_page;
+    }
+
     public function customCard($resource)
     {
         $resource = ResourcesHelpers::find($resource);
         if (!$resource->canCustomizeMetrics()) abort(403);
         $query = CustomResourceCard::where("resource_id", $resource->id);
-        $cards = $query->paginate($resource->resultsPerPage());
+        $per_page = $this->getPerPage($resource);
+        $cards = $query->paginate($per_page);
         return view("vStack::resources.custom_cards_index", compact("resource", "cards"));
     }
 

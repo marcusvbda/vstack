@@ -7,4 +7,4 @@
         "filters"   => $filters
     ];
 ?>
-<resource-filter-btn :data="{{json_encode($data)}}" label="{{$resource->label()}}"></resource-filter-btn>
+<resource-filter-btn :per_page="{{json_encode($resource->resultsPerPage())}}" :data="{{json_encode($data)}}" label="{{$resource->label()}}"></resource-filter-btn>

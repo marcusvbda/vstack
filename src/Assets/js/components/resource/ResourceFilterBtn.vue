@@ -2,7 +2,7 @@
     <div
         class="dropdown ml-2"
         style="position: relative"
-        v-if="data.filters.length > 0"
+        v-if="(data.filters.length > 0 || show_page_list)"
     >
         <span
             class="badge-number out"
@@ -26,6 +26,42 @@
             <div class="row">
                 <div class="col-12">
                     <table class="table mb-0">
+                        <tbody v-if="show_page_list">
+                            <tr class="tr-hover">
+                                <td
+                                    class="px-2 tr-label"
+                                    style="position: relative"
+                                >
+                                    <div class="w-100">
+                                        <div class="d-flex flex-row px-3 font-weight-bold">
+                                            <div class="col-5 pt-2 px-0">
+                                                <label
+                                                    class="mb-0 text-muted mr-2"
+                                                    style="font-size: 13px; font-weight: bold"
+                                                    v-html="'Resultados por Página'"
+                                                />
+                                            </div>
+                                            <div class="col-7 pr-0">
+                                                <el-select
+                                                    v-model='filter.per_page'
+                                                    size='medium'
+                                                    class='w-100'
+                                                    @change='makeNewRoute'
+                                                >
+                                                    <el-option
+                                                        :key="op"
+                                                        v-for="op in per_page"
+                                                        :value='Number(op)'
+                                                        :label="`${op} ${Number(op) > 1 ? 'resultados': 'resultado'}`"
+                                                    />
+                                                </el-select>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                         <btn-body
                             v-for="(f, key) in data.filters"
                             :key="key"
@@ -34,6 +70,7 @@
                             :filter="filter"
                             :index="f.index"
                             :data="data"
+                            :makeNewRoute="makeNewRoute"
                         />
                     </table>
                 </div>
@@ -44,11 +81,13 @@
 <script>
 import VRuntimeTemplate from "v-runtime-template"
 export default {
-    props: ["data", "label"],
+    props: ["data", "label", "per_page"],
     data() {
         return {
             drawer: false,
-            filter: {},
+            filter: {
+                per_page: Number(this.data?.query?.per_page ? this.data?.query?.per_page : Array.isArray(this.per_page) ? this.per_page[0] : this.per_page)
+            },
             timeout: null
         }
     },
@@ -58,8 +97,11 @@ export default {
     },
     computed: {
         qty_filters() {
-            const qty = Object.keys(this.filter).map(key => this.$root.$refs.tags_filter.hasContent(this.filter, key)).filter(x => x).length
+            const qty = Object.keys(this.filter).filter(y => y != 'per_page').map(key => this.$root.$refs.tags_filter.hasContent(this.filter, key)).filter(x => x).length
             return qty || 0
+        },
+        show_page_list() {
+            return Array.isArray(this.per_page)
         }
     },
     created() {
@@ -71,6 +113,22 @@ export default {
         el.addEventListener('click', event => event.stopPropagation())
     },
     methods: {
+        makeNewRoute() {
+            let str_query = ""
+            let filter_keys = Object.keys(this.filter)
+            filter_keys.forEach(key => this.data.query[key] = this.filter[key])
+            Object.keys(this.data.query).forEach(key => {
+                if ((key != "page") && (key != "_")) {
+                    if (!["null", null].includes(this.data.query[key])) {
+                        str_query += `${key}=${this.data.query[key]}&`
+                    }
+                }
+            })
+            if (this.data.query["_"]) str_query += `${str_query ? "&" : ""}_=${this.data.query["_"] ? this.data.query["_"] : ""}`
+            str_query = str_query.slice(0, -1)
+            this.$loading({ text: 'Atualizando Filtros...' })
+            window.location.href = `${this.data.route}?${str_query}`
+        },
         setFormValue(index, value, filter) {
             if (filter.component == "text-filter") value = String(value)
             if (filter.component == "check-filter") value = value === "true"

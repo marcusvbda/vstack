@@ -34,6 +34,7 @@ export default {
     },
     methods: {
         hasContent(filter, key) {
+            if (!filter) return false
             if (filter[key]) {
                 if (Array.isArray(filter[key])) { return filter[key].length > 1 ? true : null }
                 return true
