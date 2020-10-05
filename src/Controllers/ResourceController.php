@@ -198,7 +198,7 @@ class ResourceController extends Controller
     {
         if ($count <= $resource->maxRowsExportSync()) {
             try {
-                $exporter = new GlobalExporter($resource, $columns, $resource->model->whereIn("id", $ids)->get());
+                $exporter = new GlobalExporter($resource, $columns, $ids);
                 Excel::store($exporter, $filename, "local");
                 $message = "Planilha de " . $resource->label() . " exportada com sucesso";
                 return ['success' => true, 'message_type' => 'success', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
@@ -209,7 +209,7 @@ class ResourceController extends Controller
         }
         dispatch(function () use ($user, $resource, $columns, $ids, $filename) {
             try {
-                $exporter = new GlobalExporter($resource, $columns, $resource->model->whereIn("id", $ids)->get());
+                $exporter = new GlobalExporter($resource, $columns, $ids);
                 Excel::store($exporter, $filename, "local");
                 DB::table("notifications")->insert([
                     "type" => 'App\Notifications\CustomerNotification',
