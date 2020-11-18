@@ -62,8 +62,14 @@ class ResourceController extends Controller
 		foreach ($resource->lenses() as $len) {
 			$field = $len["field"];
 			if (isset($data[$field])) {
-				$value = $data[$field];
-				$query = $query->where($field, $value);
+				if (!@$len["handler"]) {
+					$value = $data[$field];
+					$query = $query->where($field, $value);
+				} else {
+					$query = $query->where(function ($q) use ($len) {
+						return $len["handler"]($q);
+					});
+				}
 			}
 		}
 		return $query->orderBy($orderBy, $orderType);
