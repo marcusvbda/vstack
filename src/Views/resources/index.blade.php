@@ -41,9 +41,6 @@
     $filters = $resource->filters();
 ?>
 @if($model_count>0)
-@if(!@$resource->groupFilters())
-@include("vStack::resources.partials._filter")
-@endif
 <div class="row d-flex align-items-end mb-2">
     <div class="col-12 d-flex align-items-end justify-content-between">
         <resource-filter-tags ref="tags_filter" :resource_filters="{{json_encode($filters)}}"
@@ -62,9 +59,7 @@
                 <div class="ml-3">{{$data->appends(request()->query())->links()}}</div>
             </div>
             @endif
-            @if(@$resource->groupFilters())
             @include("vStack::resources.partials._filter_btn")
-            @endif
             @if($resource->search())
             <resource-filter-global class="ml-2" :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
             @endif

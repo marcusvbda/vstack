@@ -23,7 +23,7 @@ class Resource
 
     public function resultsPerPage()
     {
-        return 12;
+        return [10, 20, 50, 100];
     }
 
     public function menu()
@@ -207,11 +207,6 @@ class Resource
         return true;
     }
 
-    public function groupFilters()
-    {
-        return true;
-    }
-
     public function exportNotificationView()
     {
         return "vStack::resources.mails.export_notification";
@@ -300,5 +295,4 @@ class Resource
             "#deec0d"
         ];
     }
-
 }
