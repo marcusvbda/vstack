@@ -15,4 +15,14 @@ trait hasCode
     {
         return Hashids::encode($this->id);
     }
+
+    public static function findByCode($code)
+    {
+        return static::find(@\Hashids::decode($code)[0]);
+    }
+
+    public static function findByCodeOrFail($code)
+    {
+        return static::findOrFail(@\Hashids::decode($code)[0]);
+    }
 }
