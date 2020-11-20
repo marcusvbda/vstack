@@ -21,10 +21,18 @@ use marcusvbda\vstack\Models\{Tag, TagRelation};
 
 class ResourceController extends Controller
 {
-	public function index($resource, Request $request)
+	public function report($resource, Request $request)
+	{
+		return $this->showIndexList($resource, $request, true);
+	}
+
+	protected function showIndexList($resource, Request $request, $report_mode = false)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canViewList()) abort(403);
+		if ($report_mode && !$resource->canViewReport()) abort(403);
+		else {
+			if (!$resource->canViewList()) abort(403);
+		}
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
 		$data = $data->paginate($per_page);
@@ -32,7 +40,13 @@ class ResourceController extends Controller
 			$query->setAppends([]);
 		});
 		if (@$request["list_type"]) session([$resource->id . "_list_type" => $request["list_type"]]);
-		return view("vStack::resources.index", compact("resource", "data"));
+		return view("vStack::resources.index", compact("resource", "data", "report_mode"));
+	}
+
+
+	public function index($resource, Request $request)
+	{
+		return $this->showIndexList($resource, $request);
 	}
 
 	public function getData($resource, Request $request, $query = null)

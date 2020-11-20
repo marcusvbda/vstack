@@ -19,14 +19,16 @@ $table_keys = array_keys($table);
 ?>
 
 <select-table-style id="{{$resource->id}}" :list_type="{{json_encode($list_types)}}" :has_lenses="{{json_encode(count($resource->lenses())>0)}}"
-    selected_list_type="{{$list_type}}">
-    <template slot="lenses">
-        <div class="col-md-9 col-sm-12">
-            @if($resource->lenses())
-            @include("vStack::resources.partials._lenses")
-            @endif
-        </div>
-    </template>
+	selected_list_type="{{$list_type}}">
+	@if(!$report_mode)
+		<template slot="lenses">
+			<div class="col-md-9 col-sm-12">
+				@if($resource->lenses())
+				@include("vStack::resources.partials._lenses")
+				@endif
+			</div>
+		</template>
+	@endif
     <template slot="content">
         @if($list_type == "table")
         <div class="table-responsive-sm">

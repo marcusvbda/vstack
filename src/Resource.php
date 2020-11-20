@@ -71,6 +71,11 @@ class Resource
 		return "<span class='" . $this->icon() . " mr-2'></span>" . " Listagem de " . $this->label();
 	}
 
+	public function reportLabel()
+	{
+		return "<span class='" . $this->icon() . " mr-2'></span>" . " Relatório de " . $this->label();
+	}
+
 	public function storeButtonlabel()
 	{
 		return "<span class='el-icon-plus mr-2'></span>Cadastrar";
@@ -151,6 +156,11 @@ class Resource
 		return [];
 	}
 
+	public function report_route()
+	{
+		return route("resource.report", ["resource" => strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', (new \ReflectionClass($this))->getShortName()))]);
+	}
+
 	public function route()
 	{
 		return route("resource.index", ["resource" => strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', (new \ReflectionClass($this))->getShortName()))]);
@@ -207,6 +217,11 @@ class Resource
 		return true;
 	}
 
+	public function canViewReport()
+	{
+		return false;
+	}
+
 	public function exportNotificationView()
 	{
 		return "vStack::resources.mails.export_notification";
@@ -236,6 +251,11 @@ class Resource
 			}
 		}
 		return $validation_messages;
+	}
+
+	public function beforeReportListSlot()
+	{
+		return false;
 	}
 
 	public function beforeListSlot()

@@ -1,7 +1,8 @@
 <?php 
     Session::forget('breadcrumb');
-    Session::push('breadcrumb',["Dashboard" => asset('admin')]);
-    Session::push('breadcrumb',[$resource->label() => @$resource->route()]);
+	Session::push('breadcrumb',["Dashboard" => asset('admin')]);
+	Session::push('breadcrumb',[$resource->label() => @$resource->route()]);
+	if($report_mode) Session::push('breadcrumb',['Relatório de '.$resource->label() => @$resource->report_route()]);
 ?>
 <div class="row">
     <div class="col-12">

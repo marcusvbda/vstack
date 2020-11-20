@@ -1,37 +1,21 @@
 <template>
-    <div
-        class="dropdown ml-2"
-        style="position: relative"
-        v-if="(data.filters.length > 0 || show_page_list)"
-    >
-        <span
-            class="badge-number out"
-            v-if="qty_filters > 0"
-            v-html="qty_filters"
-        />
+    <div class="dropdown ml-2" style="position: relative" v-if="data.filters.length > 0 || show_page_list">
+        <span class="badge-number out" v-if="qty_filters > 0" v-html="qty_filters" />
         <button
             :class="`btn-secondary btn-sm`"
             style="height: 33px"
             type="button"
             id="dropdownMenuButton"
-            @click.prevent="drawer = !drawer"
+            @click.prevent="toggleFilters"
             v-html="`Filtrar ${label}`"
         />
-        <el-drawer
-            :with-header="true"
-            title="Filtros"
-            :visible.sync="drawer"
-            direction="rtl"
-        >
+        <el-drawer :with-header="true" :title="`${report_mode ? 'Filtros do Relatório' : 'Filtros da Listagem'}`" :visible.sync="drawer" direction="rtl">
             <div class="row">
                 <div class="col-12">
                     <table class="table mb-0">
                         <tbody v-if="show_page_list">
                             <tr class="tr-hover">
-                                <td
-                                    class="px-2 tr-label"
-                                    style="position: relative"
-                                >
+                                <td class="px-2 tr-label" style="position: relative">
                                     <div class="w-100">
                                         <div class="d-flex flex-row px-3 font-weight-bold">
                                             <div class="col-5 pt-2 px-0">
@@ -42,20 +26,14 @@
                                                 />
                                             </div>
                                             <div class="col-7 pr-0">
-                                                <el-select
-                                                    v-model='filter.per_page'
-                                                    size='medium'
-                                                    class='w-100'
-                                                    @change='makeNewRoute'
-                                                >
+                                                <el-select v-model="filter.per_page" size="medium" class="w-100" @change="makeNewRoute">
                                                     <el-option
                                                         :key="op"
                                                         v-for="op in per_page"
-                                                        :value='Number(op)'
-                                                        :label="`${op} ${Number(op) > 1 ? 'resultados': 'resultado'}`"
+                                                        :value="Number(op)"
+                                                        :label="`${op} ${Number(op) > 1 ? 'resultados' : 'resultado'}`"
                                                     />
                                                 </el-select>
-
                                             </div>
                                         </div>
                                     </div>
@@ -79,61 +57,70 @@
     </div>
 </template>
 <script>
-import VRuntimeTemplate from "v-runtime-template"
+import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ["data", "label", "per_page"],
+    props: ['data', 'label', 'per_page', 'report_mode'],
     data() {
         return {
             drawer: false,
+            route: window.location.href.split('?')[0],
             filter: {
-                per_page: Number(this.data?.query?.per_page ? this.data?.query?.per_page : Array.isArray(this.per_page) ? this.per_page[0] : this.per_page)
+                per_page: Number(this.data?.query?.per_page ? this.data?.query?.per_page : Array.isArray(this.per_page) ? this.per_page[0] : this.per_page),
             },
-            timeout: null
+            timeout: null,
         }
     },
     components: {
-        "v-runtime-template": VRuntimeTemplate,
-        "btn-body": require("./partials/-filter-btn-row.vue").default,
+        'v-runtime-template': VRuntimeTemplate,
+        'btn-body': require('./partials/-filter-btn-row.vue').default,
     },
     computed: {
         qty_filters() {
-            const qty = Object.keys(this.filter).filter(y => y != 'per_page').map(key => this.$root.$refs.tags_filter.hasContent(this.filter, key)).filter(x => x).length
+            const qty = Object.keys(this.filter)
+                .filter((y) => y != 'per_page')
+                .map((key) => this.$root.$refs.tags_filter.hasContent(this.filter, key))
+                .filter((x) => x).length
             return qty || 0
         },
         show_page_list() {
             return Array.isArray(this.per_page)
-        }
+        },
     },
     created() {
         this.initFormFilter()
+        if (this.report_mode) this.toggleFilters()
     },
     mounted() {
         const el = this.$refs.content
         if (!el) return
-        el.addEventListener('click', event => event.stopPropagation())
+        el.addEventListener('click', (event) => event.stopPropagation())
     },
     methods: {
+        toggleFilters() {
+            this.drawer = !this.drawer
+        },
         makeNewRoute() {
-            let str_query = ""
+            let str_query = ''
             let filter_keys = Object.keys(this.filter)
-            filter_keys.forEach(key => this.data.query[key] = this.filter[key])
-            Object.keys(this.data.query).forEach(key => {
-                if ((key != "page") && (key != "_")) {
-                    if (!["null", null].includes(this.data.query[key])) {
+            filter_keys.forEach((key) => (this.data.query[key] = this.filter[key]))
+            Object.keys(this.data.query).forEach((key) => {
+                if (key != 'page' && key != '_') {
+                    if (!['null', null].includes(this.data.query[key])) {
                         str_query += `${key}=${this.data.query[key]}&`
                     }
                 }
             })
-            if (this.data.query["_"]) str_query += `${str_query ? "&" : ""}_=${this.data.query["_"] ? this.data.query["_"] : ""}`
+            if (this.data.query['_']) str_query += `${str_query ? '&' : ''}_=${this.data.query['_'] ? this.data.query['_'] : ''}`
             str_query = str_query.slice(0, -1)
             this.$loading({ text: 'Atualizando Filtros...' })
-            window.location.href = `${this.data.route}?${str_query}`
+
+            window.location.href = `${this.route}?${str_query}`
         },
         setFormValue(index, value, filter) {
-            if (filter.component == "text-filter") value = String(value)
-            if (filter.component == "check-filter") value = value === "true"
-            if (filter.component == "select-filter") value = value ? (!isNaN(Number(value)) ? Number(value) : "") : ""
-            if (filter.component == "rangedate-filter") value = value.split(",")
+            if (filter.component == 'text-filter') value = String(value)
+            if (filter.component == 'check-filter') value = value === 'true'
+            if (filter.component == 'select-filter') value = value ? (!isNaN(Number(value)) ? Number(value) : '') : ''
+            if (filter.component == 'rangedate-filter') value = value.split(',')
             this.$set(this.filter, index, value)
         },
         initFormFilter() {
@@ -141,7 +128,11 @@ export default {
             for (let i in filter_keys) {
                 if (this.data.filters[filter_keys[i]]) {
                     if (this.data.filters[filter_keys[i]].index)
-                        this.setFormValue(this.data.filters[filter_keys[i]].index, this.data.query[this.data.filters[filter_keys[i]].index] ? this.data.query[this.data.filters[filter_keys[i]].index] : '', this.data.filters[filter_keys[i]])
+                        this.setFormValue(
+                            this.data.filters[filter_keys[i]].index,
+                            this.data.query[this.data.filters[filter_keys[i]].index] ? this.data.query[this.data.filters[filter_keys[i]].index] : '',
+                            this.data.filters[filter_keys[i]]
+                        )
                 }
             }
         },
