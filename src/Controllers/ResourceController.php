@@ -206,10 +206,10 @@ class ResourceController extends Controller
 			try {
 				$exporter = new GlobalExporter($resource, $columns, $ids);
 				Excel::store($exporter, $filename, "local");
-				$message = "Planilha de " . $resource->label() . " exportada com sucesso";
+				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
 				return ['success' => true, 'message_type' => 'success', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
 			} catch (\Exception $e) {
-				$message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
+				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . " )";
 				return ['success' => false, 'message_type' => 'error', 'message' => $message];
 			}
 		}
@@ -225,7 +225,7 @@ class ResourceController extends Controller
 					"tenant_id" => $user->tenant_id,
 					"created_at" => carbon::now(),
 					"data" => json_encode([
-						"message" => "Sua planilha de " . $resource->label() . " foi exportada com sucesso e o arquivo foi enviado para seu email, " . $user->email,
+						"message" => "Seu relatório de " . $resource->label() . " foi exportada com sucesso e o arquivo foi enviado para seu email, " . $user->email,
 						"type" => 'success'
 					]),
 				]);
@@ -233,9 +233,9 @@ class ResourceController extends Controller
 				$user->save();
 				$user->refresh();
 				$html = view($resource->exportNotificationView(), compact('user', 'resource', 'filename'))->render();
-				SendMail::to($user->email, "Planilha de " . $resource->label(), $html, $filename);
+				SendMail::to($user->email, "relatório de " . $resource->label(), $html, $filename);
 			} catch (\Exception $e) {
-				$message = "Erro na exportação de planilha de " . $resource->label() . " ( " . $e->getMessage() . " )";
+				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . " )";
 				DB::table("notifications")->insert([
 					"type" => 'App\Notifications\CustomerNotification',
 					"notifiable_type" => 'App\User',
@@ -251,7 +251,7 @@ class ResourceController extends Controller
 				return ['success' => false, 'message' => $message];
 			}
 		})->onQueue("resource-import");
-		$message = "Sua Planinha de " . $resource->label() . " está sendo exportada, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $user->email . "), isso pode levar alguns minutos.";
+		$message = "Sua Relatório de " . $resource->label() . " está sendo exportada, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $user->email . "), isso pode levar alguns minutos.";
 		return ['success' => true, 'message_type' => 'info', 'message' => $message];
 	}
 
