@@ -220,7 +220,7 @@ class ResourceController extends Controller
 			try {
 				$exporter = new GlobalExporter($resource, $columns, $ids);
 				Excel::store($exporter, $filename, "local");
-				$message = "Relatório de " . $resource->label() . " exportado com sucesso";
+				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
 				return ['success' => true, 'message_type' => 'success', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
 			} catch (\Exception $e) {
 				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . " )";
