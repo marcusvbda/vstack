@@ -315,4 +315,15 @@ class Resource
 			"#deec0d"
 		];
 	}
+	
+	public function getColumnIndex($columns,$row,$key,$placeholder = "          -          ") {
+		$value = "";
+		if (!@$columns[$key]["handler"]) {
+			$value = $row;
+			$_runner = explode("->", $key);
+			foreach ($_runner as $idx) $value = @$value->{$idx};
+			return ($value ? $value : $placeholder);
+		}
+		return  $columns[$key]["handler"]($row);
+	}
 }
