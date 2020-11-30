@@ -28,6 +28,9 @@
                                 <template v-if="['checkbox'].includes(input.type)">
                                     <el-checkbox class="mt-3" v-model="form[input.id]" :label="input.title" border />
                                 </template>
+                                <template v-if="['textarea'].includes(input.type)">
+                                    <textarea class="form-control" :rows="input.rows" v-model="form[input.id]" />
+                                </template>
                             </div>
                         </div>
                     </template>
