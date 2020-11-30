@@ -981,4 +981,14 @@ class ResourceController extends Controller
 			"color" => $colors[rand(0, count($colors) - 1)]
 		]);
 	}
+
+	public function handlerAction($resource, $action_id, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		$action = current(array_filter($resource->Actions(), function ($action) use ($action_id) {
+			return $action->id == $action_id;
+		}));
+		if (!@$action->id) abort(404);
+		return $action->handler($request);
+	}
 }

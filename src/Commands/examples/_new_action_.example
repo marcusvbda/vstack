@@ -1,0 +1,24 @@
+<?php 
+namespace App\Http\Filters\_RESOURCE_NAME_;
+use  marcusvbda\vstack\Action;
+use Illuminate\Http\Request;
+
+class _ACTION_NAME extends Action
+{
+    public $id = "_INDEX_";
+	public $run_btn = "Executar";
+	public $title = "_ACTION_NAME";
+	public $message = "";
+
+	public function inputs()
+	{
+		return [
+			//["title" => 'Campo 1', "id" => "field_id", "type" => "text", "required" => true]
+		];
+	}
+
+	public function handler(Request $request)
+	{
+		return ['success' => true];
+	}
+}

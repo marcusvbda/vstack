@@ -28,17 +28,33 @@ $table_keys = array_keys($table);
 			</div>
 		</template>
     <template slot="content">
-        @if($list_type == "table")
+		@if($list_type == "table")
+		@if(count($resource->actions()) > 0)
+		<?php
+			$actions = array_map(function($action) {
+				$action->inputs = $action->inputs();
+				return $action;
+			},$resource->actions());
+		?>
+			<action-process resource_id="{{ $resource->id }}" :ids='@json($data->pluck("id")->toArray())' :actions='@json($actions)'></action-process>
+		@endif
         <div class="table-responsive-sm">
             <table class="table table-striped hovered resource-table table-hover mb-0">
                 <thead>
                     <tr>
+						@if(count($resource->actions()) > 0)
+							<th width="1%;">
+								<div class="d-flex align-items-center justify-content-center">
+									<input class='select-action-resource' type="checkbox" id="{{ $resource->id.'_action_select_all' }}"  />
+								</div>
+							</th>
+						@endif
                         @foreach($table as $key=>$value)
                         <?php
                             $size = !$show_btns ? (isset($value['size']) ? $value['size'] : 'auto') : '390px';
                             $sortable_index = isset($value['sortable_index']) ? $value['sortable_index'] : $key;
                             $show_btns = false;
-                        ?>
+						?>
                         <th width="{{$size}}">
                             @if(@$value["sortable"]!==false)
                             <a href="{{ResourcesHelpers::sortLink($resource->route(),request()->query(), $sortable_index,$order_type)}}"
@@ -59,7 +75,8 @@ $table_keys = array_keys($table);
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($data as $row)
+					
+					@foreach($data as $row)
                     <?php 
                         $code = \Hashids::encode($row->id);
                     ?>
@@ -67,7 +84,16 @@ $table_keys = array_keys($table);
                         resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
                         type="resourceTableContent" :can_view="{{json_encode($resource->canView())}}"
                         :can_delete="{{json_encode($resource->canDelete())}}"
-                        :can_update="{{json_encode($resource->canUpdate())}}">
+						:can_update="{{json_encode($resource->canUpdate())}}">
+						@if(count($resource->actions()) > 0)
+							<template slot="first-column">
+								<th width="1%;">
+									<div class="d-flex align-items-center justify-content-center">
+										<input class="select-action-resource select_action_box" type="checkbox" id="{{ $resource->id.'_action_select_'.$row->id }}" />
+									</div>
+								</th>
+							</template>
+						@endif
                     </tr>
                     @endforeach
                 </tbody>

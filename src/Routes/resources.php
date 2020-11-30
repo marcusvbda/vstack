@@ -41,5 +41,6 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
 		Route::post('globalsearch', [ResourceController::class, 'globalSearch'])->name("resource.globalsearch");
 		Route::post('{resource}/metric-calculate/{key}', [ResourceController::class, 'metricCalculate'])->name("resource.metricCalculate");
+		Route::post('{resource}/action/{id}', [ResourceController::class, 'handlerAction'])->name("resource.action.submit");
 	});
 });

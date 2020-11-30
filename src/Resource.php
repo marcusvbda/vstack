@@ -315,8 +315,9 @@ class Resource
 			"#deec0d"
 		];
 	}
-	
-	public function getColumnIndex($columns,$row,$key,$placeholder = "          -          ") {
+
+	public function getColumnIndex($columns, $row, $key, $placeholder = "          -          ")
+	{
 		$value = "";
 		if (!@$columns[$key]["handler"]) {
 			$value = $row;
@@ -325,5 +326,10 @@ class Resource
 			return ($value ? $value : $placeholder);
 		}
 		return  $columns[$key]["handler"]($row);
+	}
+
+	public function actions()
+	{
+		return [];
 	}
 }

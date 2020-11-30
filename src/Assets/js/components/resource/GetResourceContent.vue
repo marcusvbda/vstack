@@ -1,5 +1,6 @@
 <template>
     <tr>
+        <slot name="first-column" />
         <template v-if="loading">
             <template v-for="(item, i) in cols">
                 <td :key="i">
