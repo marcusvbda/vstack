@@ -1,5 +1,5 @@
 <?php 
-namespace App\Http\Filters\_RESOURCE_NAME_;
+namespace App\Http\Actions\_RESOURCE_NAME_;
 use  marcusvbda\vstack\Action;
 use Illuminate\Http\Request;
 
