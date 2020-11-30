@@ -1,13 +1,20 @@
 <template>
     <div class="d-flex justify-content-start py-2" style="padding-left: 13px" v-if="has_ids">
-        <el-dropdown trigger="click">
-            <el-button type="primary"> Ações<i class="el-icon-arrow-down el-icon--right" /> </el-button>
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="(action, i) in actions" :key="i">
-                    <a @click.prevent="runAction(action)">{{ action.title }}</a>
-                </el-dropdown-item>
-            </el-dropdown-menu>
-        </el-dropdown>
+        <div class="dropdown">
+            <button
+                class="btn btn-primary dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+            >
+                Ações
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" v-for="(action, i) in actions" :key="i" @click.prevent="runAction(action)">{{ action.title }}</a>
+            </div>
+        </div>
         <el-dialog :title="running_action.title" :visible.sync="running_action.visible" width="50%">
             <template v-if="running_action.visible">
                 <form v-on:submit.prevent="submit">
@@ -21,14 +28,23 @@
                                 </template>
                                 <template v-if="['select'].includes(input.type)">
                                     <label>{{ input.title }}</label>
-                                    <el-select class="w-100" filterable v-model="form[input.id]" :required="input.required" :multiple="input.multiple">
+                                    <el-select
+                                        class="w-100"
+                                        filterable
+                                        v-model="form[input.id]"
+                                        :required="input.required"
+                                        :multiple="input.multiple"
+                                        placeholder=""
+                                    >
                                         <el-option v-for="(op, i) in input.options" :label="op.label" :value="op.value" :key="i" placeholder="" />
                                     </el-select>
+                                    <input v-model="form[input.id]" style="" :required="input.required" style="position: relative; top: -34px; z-index: -1" />
                                 </template>
                                 <template v-if="['checkbox'].includes(input.type)">
                                     <el-checkbox class="mt-3" v-model="form[input.id]" :label="input.title" border />
                                 </template>
                                 <template v-if="['textarea'].includes(input.type)">
+                                    <label>{{ input.title }}</label>
                                     <textarea class="form-control" :rows="input.rows" v-model="form[input.id]" :required="input.required" />
                                 </template>
                             </div>
