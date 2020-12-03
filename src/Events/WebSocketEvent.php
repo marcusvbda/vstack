@@ -4,13 +4,14 @@ namespace marcusvbda\vstack\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class WebSocketEvent implements ShouldBroadcastNow
+class WebSocketEvent implements ShouldBroadcast
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
+	public $broadcastQueue = 'event-broadcasts';
 
 	public $channel;
 	public $data;
