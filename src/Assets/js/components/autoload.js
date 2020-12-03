@@ -19,7 +19,6 @@ require('./libs/pace')
 require('./libs/helpers')
 Vue.config.productionTip = false
 Vue.config.devtools = true
-Vue.prototype.$echo = Echo
 const vue = new Vue({
 	data() {
 		return {
