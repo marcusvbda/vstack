@@ -4,7 +4,7 @@
             <span style="font-weight: 600; opacity: 0.4; letter-spacing: -1">ID .: {{ Number(id).pad(8) }}</span>
         </div>
         <el-dropdown trigger="click" :class="`ml-4 ${!isOpened ? 'crud-btns' : ''}`" @visible-change="setVisible">
-            <span class="el-dropdown-link text-primary">Ações<i class="el-icon-arrow-down el-icon--right"></i> </span>
+            <span class="el-dropdown-link" style="color: #5a8dee !important">Ações<i class="el-icon-arrow-down el-icon--right"></i> </span>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item icon="el-icon-view" v-if="data.can_view">
                     <a class="link ml-3" :href="data.route">Visualizar </a>
@@ -12,8 +12,8 @@
                 <el-dropdown-item icon="el-icon-edit" v-if="data.can_update">
                     <a class="link ml-3" v-if="data.can_update" :href="`${data.route}/edit`"> Editar </a>
                 </el-dropdown-item>
-                <el-dropdown-item icon="el-icon-delete" v-if="data.can_delete">
-                    <a class="link ml-3 text-danger" v-if="data.can_delete" @click.prevent="destroy"> Excluir </a>
+                <el-dropdown-item icon="el-icon-delete  text-danger" divided v-if="data.can_delete">
+                    <a class="link ml-3" v-if="data.can_delete" @click.prevent="destroy" style="color: red !important"> Excluir </a>
                 </el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
