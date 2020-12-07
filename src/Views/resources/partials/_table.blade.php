@@ -72,7 +72,7 @@ $table_keys = array_keys($table);
                             @endif
                         </th>
 						@endforeach
-						<th width="8%;"></th>
+						<th style="min-width: 168px;max-width : 10%;    width: 10%;"></th>
                     </tr>
                 </thead>
                 <tbody>
