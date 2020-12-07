@@ -71,7 +71,8 @@ $table_keys = array_keys($table);
                             <div class="link-sortable">{{isset($value["label"]) ? @$value["label"] : $value}}</div>
                             @endif
                         </th>
-                        @endforeach
+						@endforeach
+						<th width="8%;"></th>
                     </tr>
                 </thead>
                 <tbody>

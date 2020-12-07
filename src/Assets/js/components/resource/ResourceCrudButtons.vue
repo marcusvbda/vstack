@@ -1,9 +1,6 @@
 <template>
     <div class="d-flex flex-row flex-wrap cursor-pointer align-items-center" style="min-height: 25px">
-        <div class="d-flex align-items-center mr-2">
-            <span style="font-weight: 600; opacity: 0.4; letter-spacing: -1">ID .: {{ Number(id).pad(8) }}</span>
-        </div>
-        <el-dropdown trigger="click" :class="`ml-4 ${!isOpened ? 'crud-btns' : ''}`" @visible-change="setVisible">
+        <el-dropdown trigger="click" :class="`ml-4 ${!isOpened ? '' : ''}`" @visible-change="setVisible">
             <span class="el-dropdown-link" style="color: #5a8dee !important">Ações<i class="el-icon-arrow-down el-icon--right"></i> </span>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item icon="el-icon-view" v-if="data.can_view">

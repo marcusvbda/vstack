@@ -15,32 +15,31 @@
             </template>
         </template>
         <template v-else>
-            <template v-for="(key, i) in Object.keys(content)">
-                <td :key="i">
-                    <div class="d-flex flex-column">
-                        <template v-if="i == 0">
-                            <b>
-                                <a :href="`${resource_route}/${row_code}`" class="link" v-html="content[key]" v-if="can_view" />
-                                <span v-else v-html="content[key]" />
-                            </b>
-                        </template>
-                        <template v-else>
-                            <v-runtime-template :template="`<span>${content[key]}</span>`" />
-                        </template>
-                        <resource-crud-buttons
-                            v-if="i == 0"
-                            :data="{
-                                code: row_code,
-                                route: `${resource_route}/${row_code}`,
-                                can_view: can_view,
-                                can_update: can_update,
-                                can_delete: can_delete,
-                            }"
-                            :id="row_id"
-                        />
-                    </div>
-                </td>
-            </template>
+            <td :key="i" v-for="(key, i) in Object.keys(content)">
+                <div class="d-flex flex-column">
+                    <template v-if="i == 0">
+                        <b>
+                            <a :href="`${resource_route}/${row_code}`" class="link" v-html="content[key]" v-if="can_view" />
+                            <span v-else v-html="content[key]" />
+                        </b>
+                    </template>
+                    <template v-else>
+                        <v-runtime-template :template="`<span>${content[key]}</span>`" />
+                    </template>
+                </div>
+            </td>
+            <td>
+                <resource-crud-buttons
+                    :data="{
+                        code: row_code,
+                        route: `${resource_route}/${row_code}`,
+                        can_view: can_view,
+                        can_update: can_update,
+                        can_delete: can_delete,
+                    }"
+                    :id="row_id"
+                />
+            </td>
         </template>
     </tr>
 </template>
