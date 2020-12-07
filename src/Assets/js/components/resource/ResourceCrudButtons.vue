@@ -1,65 +1,61 @@
 <template>
-    <div class="d-flex flex-row flex-wrap cursor-pointer" style="min-height: 25px;">
-        <div class="crud-btns d-flex align-items-center mr-2">
-            <span
-                style="font-weight: 600;opacity: .4;letter-spacing: -1;"
-            >ID .: {{Number(id).pad(8)}}</span>
+    <div class="d-flex flex-row flex-wrap cursor-pointer align-items-center" style="min-height: 25px">
+        <div class="d-flex align-items-center mr-2">
+            <span style="font-weight: 600; opacity: 0.4; letter-spacing: -1">ID .: {{ Number(id).pad(8) }}</span>
         </div>
-        <a
-            class="link mr-1 crud-btns d-flex align-items-center"
-            v-if="data.can_view"
-            :href="data.route"
-        >
-            <span class="mr-2" style="opacity:.4;color:black;">|</span>
-            <span class="el-icon-view pr-1"></span>Visualizar
-        </a>
-        <a
-            class="link mx-1 crud-btns d-flex align-items-center"
-            v-if="data.can_update"
-            :href="`${data.route}/edit`"
-        >
-            <span class="mr-2" style="opacity:.4;color:black;">|</span>
-            <span class="el-icon-edit pr-1"></span>Editar
-        </a>
-        <a
-            class="link mx-1 text-danger crud-btns d-flex align-items-center"
-            style="text-decoration:underline;"
-            v-if="data.can_delete"
-            @click.prevent="destroy"
-        >
-            <span class="mr-2" style="opacity:.4;color:black;">|</span>
-            <span class="el-icon-delete pr-1"></span>Excluir
-        </a>
+        <el-dropdown trigger="click" :class="`ml-4 ${!isOpened ? 'crud-btns' : ''}`" @visible-change="setVisible">
+            <span class="el-dropdown-link text-primary">Ações<i class="el-icon-arrow-down el-icon--right"></i> </span>
+            <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item icon="el-icon-view" v-if="data.can_view">
+                    <a class="link ml-3" :href="data.route">Visualizar </a>
+                </el-dropdown-item>
+                <el-dropdown-item icon="el-icon-edit" v-if="data.can_update">
+                    <a class="link ml-3" v-if="data.can_update" :href="`${data.route}/edit`"> Editar </a>
+                </el-dropdown-item>
+                <el-dropdown-item icon="el-icon-delete" v-if="data.can_delete">
+                    <a class="link ml-3 text-danger" v-if="data.can_delete" @click.prevent="destroy"> Excluir </a>
+                </el-dropdown-item>
+            </el-dropdown-menu>
+        </el-dropdown>
     </div>
 </template>
 <script>
 export default {
-    props: ["data", "id"],
+    props: ['data', 'id'],
     data() {
         return {
-            loading: null
+            isOpened: false,
+            loading: null,
         }
     },
     methods: {
+        setVisible(val) {
+            this.isOpened = val
+        },
         destroy() {
-            this.$confirm(`Confirma Exclusão ?`, "Confirmação", {
-                confirmButtonText: "Sim",
-                cancelButtonText: "Não",
-                type: 'error'
-            }).then(() => {
-                this.loading = this.$loading()
-                this.$http.delete(this.data.route + "/destroy", {}).then(res => {
-                    res = res.data
-                    return window.location.href = res.route
-                }).catch(er => {
-                    this.loading.close()
-                    this.$message({
-                        message: er.response.data.message,
-                        type: 'error'
-                    })
+            this.$confirm(`Confirma Exclusão ?`, 'Confirmação', {
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Não',
+                type: 'error',
+            })
+                .then(() => {
+                    this.loading = this.$loading()
+                    this.$http
+                        .delete(this.data.route + '/destroy', {})
+                        .then((res) => {
+                            res = res.data
+                            return (window.location.href = res.route)
+                        })
+                        .catch((er) => {
+                            this.loading.close()
+                            this.$message({
+                                message: er.response.data.message,
+                                type: 'error',
+                            })
+                        })
                 })
-            }).catch(() => false)
-        }
-    }
+                .catch(() => false)
+        },
+    },
 }
 </script>
