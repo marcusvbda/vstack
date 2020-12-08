@@ -58,5 +58,8 @@
         <template slot="title">
             <h4>@if( @$resource->icon() ) <span class="{{$resource->icon()}} mr-2"></span> @endif {{$data["page_type"]}} de {{$resource->singularLabel()}}</h4>
         </template>
-    </resource-view>
+	</resource-view>
+	@if(@$resource->afterViewSlot())
+        {!! @$resource->afterViewSlot() !!}
+    @endif
 @endsection
