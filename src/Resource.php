@@ -293,6 +293,11 @@ class Resource
 		return false;
 	}
 
+	public function afterViewSlot()
+	{
+		return false;
+	}
+
 	public function useTags()
 	{
 		return false;
