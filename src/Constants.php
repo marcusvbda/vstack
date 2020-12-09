@@ -1,8 +1,8 @@
 <?php
 
-namespace marcusvbda\vstack\Statuses;
+namespace marcusvbda\vstack;
 
-class ConstStatus
+class Constants
 {
 	public static function options()
 	{
