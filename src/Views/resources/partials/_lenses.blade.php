@@ -17,8 +17,15 @@
     @foreach($lenses as $len_key=>$len_value)
         <?php
             $query = request()->query();
+			$field = $len_value["field"];
+			$other_fields = array_filter($lenses,function($row) use ($field){
+				return $row["field"] != $field;
+			});
             $query[$len_value["field"]] = $len_value["value"];
-            $query["current_len"] = $len_key;
+			$query["current_len"] = $len_key;
+			foreach($other_fields as $other) {
+				if(@$query[$other["field"]]) unset($query[$other["field"]]);
+			}
             $route = route("resource.index",array_merge(["resource"=>$resource->id],$query));
         ?>
         <div class="mx-2" style="opacity:.5;">|</div>
