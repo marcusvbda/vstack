@@ -8,7 +8,6 @@ $crud_buttons = [
 ];
 
 $list_types = @$resource->listType() ? $resource->listType() : ["table"];
-$show_btns = true;
 $order_by = @$_GET["order_by"];
 $order_type = @$_GET["order_type"]=="desc" ? "asc" : "desc";
 $list_type = @$_GET["list_type"] ? $_GET["list_type"] : $list_types[0];
@@ -51,9 +50,8 @@ $table_keys = array_keys($table);
 						@endif
                         @foreach($table as $key=>$value)
                         <?php
-                            $size = !$show_btns ? (isset($value['size']) ? $value['size'] : 'auto') : '390px';
+                            $size =  (isset($value['size']) ? $value['size'] : 'auto') ;
                             $sortable_index = isset($value['sortable_index']) ? $value['sortable_index'] : $key;
-                            $show_btns = false;
 						?>
                         <th width="{{$size}}">
                             @if(@$value["sortable"]!==false)
