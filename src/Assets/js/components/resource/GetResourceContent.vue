@@ -13,6 +13,15 @@
                     />
                 </td>
             </template>
+            <td>
+                <div
+                    class="shimmer"
+                    :style="{
+                        width: '100%',
+                        height: Math.random() * (45 - 10) + 20,
+                    }"
+                />
+            </td>
         </template>
         <template v-else>
             <td :key="i" v-for="(key, i) in Object.keys(content)">
