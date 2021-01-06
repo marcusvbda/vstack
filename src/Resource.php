@@ -337,4 +337,9 @@ class Resource
 	{
 		return [];
 	}
+
+	public function viewListBlade()
+	{
+		return "vStack::resources.partials._default_table";
+	}
 }
