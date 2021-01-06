@@ -7,7 +7,6 @@ use ResourcesHelpers;
 use Illuminate\Http\Request;
 use Storage;
 use marcusvbda\vstack\Services\Messages;
-use marcusvbda\vstack\Models\CustomResourceCard;
 use Auth;
 use DB;
 use Carbon\Carbon;
