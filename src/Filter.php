@@ -87,10 +87,13 @@ class Filter
 	private function makeViewDateField()
 	{
 		$index = $this->index;
-		$placeholder = @$this->placeholder ? $this->placeholder : "";
+		$placeholder  = @$this->placeholder ? $this->placeholder : "";
+		$start_placeholder = @$this->start_placeholder ? $this->start_placeholder : "";
+		$value_format = @$this->value_format ? $this->value_format : 'yyyy-MM-dd';
 		$this->view = view("vStack::resources.filter.date", compact(
 			"index",
-			"placeholder"
+			"placeholder",
+			"value_format"
 		))->render();
 	}
 
