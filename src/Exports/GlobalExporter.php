@@ -27,15 +27,17 @@ class GlobalExporter implements FromQuery, WithHeadings, WithMapping, ShouldAuto
 
 	public function headings(): array
 	{
-		return (array_filter(array_map(function ($key) {
+		$this->filtered_columns =  (array_filter(array_map(function ($key) {
 			if ($this->columns[$key]["enabled"]) return $this->columns[$key]["label"];
 		}, array_keys($this->columns))));
+		return $this->filtered_columns;
 	}
 
 	public function map($row): array
 	{
+		$result = [];
 		$result = (array_filter(array_map(function ($key)  use ($row) {
-			return $this->resource->getColumnIndex($this->resource->export_columns(),$row,$key);
+			if ($this->columns[$key]["enabled"])  return $this->resource->getColumnIndex($this->resource->export_columns(), $row, $key);
 		}, array_keys($this->columns))));
 		return $result;
 	}
