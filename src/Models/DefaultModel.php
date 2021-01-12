@@ -35,8 +35,8 @@ class DefaultModel extends Model
 	{
 		$user = \Auth::user();
 		$tz = config('app.timezone');
-		if ($tenant = @$user->tenant) $tz =  @$tenant->timezone ?? config("app.timezone");
-		$_tz = @config("timezones")[$tz] ?? "UTC";
+		if ($tenant = @$user->tenant) $tz =  @$tenant->timezone ?? config("vstack.timezone");
+		$_tz = @config("vstack.timezones")[$tz] ?? "UTC";
 		return Carbon::create($value)->tz($_tz);
 	}
 
@@ -47,8 +47,7 @@ class DefaultModel extends Model
 
 	public function getDeletedAtAttribute($value)
 	{
-		$timezone = config("app.timezone");
-		return Carbon::parse($value, "UTC")->tz($timezone);
+		return $this->tenantTimezone($value);
 	}
 
 	public static function hasTenant()
