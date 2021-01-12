@@ -9,6 +9,7 @@ class _FILTER_NAME_ extends Filter
     public $label       = "_LABEL_";
     public $placeholder = "";
     public $index = "_INDEX_";
+    public $multiple = false;
 
     public function __construct()
     {

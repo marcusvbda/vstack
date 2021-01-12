@@ -11,7 +11,7 @@ class _FILTER_NAME_ extends Filter
 
     public function __construct()
     {
-        $this->element = "<input class='form-control' v-model='filter.".$this->index."'  @change='makeNewRoute' />";
+        $this->element = "<input class='form-control' v-model='filter.".$this->index."'  @change='showConfirm' />";
         parent::__construct();
     }
     
