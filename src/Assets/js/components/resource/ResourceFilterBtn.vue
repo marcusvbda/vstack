@@ -9,7 +9,13 @@
             @click.prevent="toggleFilters"
             v-html="`Filtrar ${label}`"
         />
-        <el-drawer :with-header="true" :title="`${report_mode ? 'Filtros do Relatório' : 'Filtros da Listagem'}`" :visible.sync="drawer" direction="rtl">
+        <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl">
+            <template slot="title">
+                <div class="w-100 d-flex flex-row justify-content-between">
+                    <span>Filtros</span>
+                    <el-button v-if="showConfirmBtn" class="mr-3" size="medium" type="primary" @click="makeNewRoute">Filtrar</el-button>
+                </div>
+            </template>
             <div class="row">
                 <div class="col-12">
                     <table class="table mb-0">
@@ -26,7 +32,7 @@
                                                 />
                                             </div>
                                             <div class="col-7 pr-0">
-                                                <el-select v-model="filter.per_page" size="medium" class="w-100" @change="makeNewRoute">
+                                                <el-select v-model="filter.per_page" size="medium" class="w-100" @change="showConfirmBtn = true">
                                                     <el-option
                                                         :key="op"
                                                         v-for="op in per_page"
@@ -49,6 +55,7 @@
                             :index="f.index"
                             :data="data"
                             :makeNewRoute="makeNewRoute"
+                            @show-confirm-btn="showConfirmBtn = true"
                         />
                     </table>
                 </div>
@@ -62,6 +69,7 @@ export default {
     props: ['data', 'label', 'per_page', 'report_mode'],
     data() {
         return {
+            showConfirmBtn: false,
             drawer: false,
             route: window.location.href.split('?')[0],
             filter: {
@@ -99,6 +107,7 @@ export default {
         toggleFilters() {
             this.drawer = !this.drawer
         },
+
         makeNewRoute() {
             let str_query = ''
             let filter_keys = Object.keys(this.filter)

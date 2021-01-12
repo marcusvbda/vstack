@@ -67,10 +67,12 @@ class Filter
 		$index         = $this->index;
 		$placeholder   = @$this->placeholder ? $this->placeholder : "";
 		$options   = @$this->options ? $this->options : [];
+		$multiple   = !@$this->multiple ? false : true;
 		$this->view = view("vStack::resources.filter.select", compact(
 			"index",
 			"placeholder",
-			"options"
+			"options",
+			"multiple"
 		))->render();
 	}
 
