@@ -1,17 +1,17 @@
 <template>
-    <div class="d-flex align-items-center flex-row">
+    <div class="d-flex align-items-center flex-row flex-wrap">
         <el-tag
-            class="filter-tag mb-2"
+            class="filter-tag mb-2 ml-0 mr-2"
             size="mini"
             closable
             v-for="(f, i) in selected_filters"
             :key="i"
             effect="dark"
             @close="handleClose(f.index)"
-            :title="`${f.content}`"
+            style="height: auto"
         >
-            <b>{{ f.label }}</b>
-            : {{ f.content }}
+            <b class="mr-2">{{ f.label }}</b>
+            : <span class="ml-2" v-html="f.content" />
         </el-tag>
     </div>
 </template>
@@ -23,7 +23,21 @@ export default {
             return this.resource_filters
                 .map((rf) => {
                     if (this.hasContent(this.get_params, rf.index)) {
-                        let content = rf.options.length <= 0 ? this.get_params[rf.index] : rf.options.find((x) => x.value == this.get_params[rf.index]).label
+                        let content = ''
+                        if (rf.component == 'select-filter') {
+                            if (!rf?.multiple) {
+                                content = rf.options.find((x) => x.value == this.get_params[rf.index]).label
+                            } else {
+                                let ids = this.get_params[rf.index].split(',').map((x) => (x ? (!isNaN(Number(x)) ? Number(x) : '') : ''))
+                                content = rf.options
+                                    .filter((x) => ids.includes(x.value))
+                                    .map((x) => x.label)
+                                    .filter((x) => x)
+                                    .join(', <br>')
+                            }
+                        } else {
+                            content = this.get_params[rf.index]
+                        }
                         return {
                             label: rf.label,
                             index: rf.index,

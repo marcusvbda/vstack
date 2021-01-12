@@ -107,7 +107,6 @@ export default {
         toggleFilters() {
             this.drawer = !this.drawer
         },
-
         makeNewRoute() {
             let str_query = ''
             let filter_keys = Object.keys(this.filter)
@@ -128,7 +127,14 @@ export default {
         setFormValue(index, value, filter) {
             if (filter.component == 'text-filter') value = String(value)
             if (filter.component == 'check-filter') value = value === 'true'
-            if (filter.component == 'select-filter') value = value ? (!isNaN(Number(value)) ? Number(value) : '') : ''
+            if (filter.component == 'select-filter') {
+                if (filter?.multiple) {
+                    value = value
+                        .split(',')
+                        .map((x) => (x ? (!isNaN(Number(x)) ? Number(x) : '') : ''))
+                        .filter((x) => x)
+                } else value = value ? (!isNaN(Number(value)) ? Number(value) : '') : ''
+            }
             if (filter.component == 'rangedate-filter') value = value.split(',')
             this.$set(this.filter, index, value)
         },

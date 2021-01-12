@@ -75,7 +75,7 @@
                 "value" => @$_GET["_"] ? $_GET["_"] : ""
             ];
         ?>
-        <div class="d-flex flex-row align-items-center">
+        <div class="d-flex flex-row align-items-center d-flex align-self-end ml-auto">
             @if($data->total()>0)
 				<div class="d-flex flex-row align-items-center justify-content-center">
 					{!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
