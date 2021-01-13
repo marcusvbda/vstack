@@ -65,9 +65,12 @@
 ?>
 @if($model_count>0)
 <div class="row d-flex align-items-end mb-2">
-    <div class="col-12 d-flex align-items-end justify-content-between">
-        <resource-filter-tags ref="tags_filter" :resource_filters="{{json_encode($filters)}}"
-            :get_params="{{json_encode($_GET)}}"></resource-filter-tags>
+    <div class="col-12 d-flex align-items-end justify-content-start flex-column">
+        <div class="w-100 mt-2">
+			<resource-filter-tags ref="tags_filter" :resource_filters="{{json_encode($filters)}}"
+				:get_params="{{json_encode($_GET)}}">
+			</resource-filter-tags>
+		</div>
         <?php 
             $globalFilterData = [
                 "filter_route" => request()->url(),
@@ -75,17 +78,24 @@
                 "value" => @$_GET["_"] ? $_GET["_"] : ""
             ];
         ?>
-        <div class="d-flex flex-row align-items-center d-flex align-self-end ml-auto">
-            @if($data->total()>0)
-				<div class="d-flex flex-row align-items-center justify-content-center">
-					{!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
-					<div class="ml-3">{{$data->appends(request()->query())->links()}}</div>
-				</div>
-            @endif
-            	@include("vStack::resources.partials._filter_btn")
-            @if($resource->search())
-            	<resource-filter-global class="ml-2" :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
-            @endif
+        <div class="d-flex flex-column align-items-start justify-content-between w-100">
+			<div class="d-flex flex-column w-100">
+				@if($report_mode && $resource->canCreateReportTemplates())
+					@include("vStack::resources.partials._save_filter_btn")
+				@endif
+			</div>
+            <div class="d-flex flex-row ml-auto align-items-center">
+				@if($data->total()>0)
+					<div class="d-flex flex-row align-items-center justify-content-center">
+						{!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
+						<div class="ml-3">{{$data->appends(request()->query())->links()}}</div>
+					</div>
+				@endif
+				@include("vStack::resources.partials._filter_btn")
+				@if($resource->search())
+					<resource-filter-global class="ml-2" :data="{{json_encode($globalFilterData)}}"></resource-filter-global>
+				@endif
+			</div>
         </div>
     </div>
 </div>

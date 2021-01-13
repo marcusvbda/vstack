@@ -9,11 +9,14 @@
             @click.prevent="toggleFilters"
             v-html="`Filtrar ${label}`"
         />
-        <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl">
+        <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl" :before-close="confirmClose">
             <template slot="title">
-                <div class="w-100 d-flex flex-row justify-content-between">
-                    <span>Filtros</span>
-                    <el-button v-if="showConfirmBtn" class="mr-3" size="medium" type="primary" @click="makeNewRoute">Filtrar</el-button>
+                <div class="w-100 d-flex flex-row">
+                    <div class="d-flex flex-row align-items-center">
+                        <span class="el-icon-search mr-2" />
+                        <span>Filtragem</span>
+                    </div>
+                    <el-button v-if="showConfirmBtn" class="mr-3 ml-auto" size="medium" type="primary" @click="makeNewRoute">Confirmar Filtro</el-button>
                 </div>
             </template>
             <div class="row">
@@ -96,7 +99,6 @@ export default {
     },
     created() {
         this.initFormFilter()
-        if (this.report_mode) this.toggleFilters()
     },
     mounted() {
         const el = this.$refs.content
@@ -104,6 +106,16 @@ export default {
         el.addEventListener('click', (event) => event.stopPropagation())
     },
     methods: {
+        confirmClose() {
+            if (this.showConfirmBtn) {
+                this.$confirm('Deseja confirmar o filtro selecionado ?', 'Confirmação', { closeOnClickModal: false })
+                    .then(() => this.makeNewRoute())
+                    .catch(() => this.closeDrawer())
+            } else this.closeDrawer()
+        },
+        closeDrawer() {
+            this.drawer = false
+        },
         toggleFilters() {
             this.drawer = !this.drawer
         },

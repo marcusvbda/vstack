@@ -17,6 +17,7 @@ use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
 use marcusvbda\vstack\Services\SendMail;
 use marcusvbda\vstack\Models\{Tag, TagRelation};
+use marcusvbda\vstack\Models\ResourceConfig;
 
 class ResourceController extends Controller
 {
@@ -40,6 +41,28 @@ class ResourceController extends Controller
 		});
 		if (@$request["list_type"]) session([$resource->id . "_list_type" => $request["list_type"]]);
 		return view("vStack::resources.index", compact("resource", "data", "report_mode"));
+	}
+
+	public function createReportTemplate($resource, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		if (!$resource->canViewReport()) abort(403);
+		if (!$resource->canCreateReportTemplates()) abort(403);
+		$user = Auth::user();
+		$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "report_templates")->first();
+		$config = @$config->id ? $config : new ResourceConfig;
+
+		$config->resource = $resource->id;
+		$config->config = "report_templates";
+		$_data = @$config->data ?? (object)[];
+		$templates = @$_data->templates ?? [];
+		$templates = $request->all();
+		$_data->templates = $templates;
+		$_data->user_id = $user->id;
+		$config->data = $_data;
+		$config->save();
+
+		return ["success" => true, "reports" => $templates];
 	}
 
 
@@ -226,7 +249,8 @@ class ResourceController extends Controller
 				return ['success' => false, 'message_type' => 'error', 'message' => $message];
 			}
 		}
-		dispatch(function () use ($user, $resource, $columns, $ids, $filename) {
+		$email = $user->email;
+		dispatch(function () use ($user, $resource, $columns, $ids, $filename, $email) {
 			try {
 				$exporter = new GlobalExporter($resource, $columns, $ids);
 				Excel::store($exporter, $filename, "local");
@@ -238,7 +262,7 @@ class ResourceController extends Controller
 					"tenant_id" => $user->tenant_id,
 					"created_at" => carbon::now(),
 					"data" => json_encode([
-						"message" => "Seu relatório de " . $resource->label() . " foi exportada com sucesso e o arquivo foi enviado para seu email, " . $user->email,
+						"message" => "Seu relatório de " . $resource->label() . " foi exportada com sucesso e o arquivo foi enviado para seu email, " . $email,
 						"type" => 'success'
 					]),
 				]);
@@ -246,7 +270,7 @@ class ResourceController extends Controller
 				$user->save();
 				$user->refresh();
 				$html = view($resource->exportNotificationView(), compact('user', 'resource', 'filename'))->render();
-				SendMail::to($user->email, "relatório de " . $resource->label(), $html, $filename);
+				SendMail::to($email, "relatório de " . $resource->label(), $html, $filename);
 			} catch (\Exception $e) {
 				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . " )";
 				DB::table("notifications")->insert([
@@ -264,7 +288,7 @@ class ResourceController extends Controller
 				return ['success' => false, 'message' => $message];
 			}
 		})->onQueue("resource-import");
-		$message = "Sua Relatório de " . $resource->label() . " está sendo exportada, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $user->email . "), isso pode levar alguns minutos.";
+		$message = "Sua Relatório de " . $resource->label() . " está sendo exportado, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $email . "), isso pode levar alguns minutos.";
 		return ['success' => true, 'message_type' => 'info', 'message' => $message];
 	}
 

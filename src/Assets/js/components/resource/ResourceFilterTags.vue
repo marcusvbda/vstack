@@ -53,7 +53,7 @@ export default {
             if (!filter) return false
             if (filter[key]) {
                 if (Array.isArray(filter[key])) {
-                    return filter[key].length > 1 ? true : null
+                    return filter[key].filter((x) => x).length > 0 ? true : false
                 }
                 return true
             }

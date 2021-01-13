@@ -303,6 +303,15 @@ class Resource
 		return false;
 	}
 
+	public function canCreateReportTemplates()
+	{
+		return true;
+	}
+
+	public function reportLimitTemplates()
+	{
+		return 5;
+	}
 	public function tagColors()
 	{
 		return [
