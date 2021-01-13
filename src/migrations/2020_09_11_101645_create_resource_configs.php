@@ -19,6 +19,7 @@ class CreateResourceConfigs extends Migration
 			$table->engine = 'InnoDB';
 			$table->bigIncrements('id');
 			$table->string('name');
+			$table->string('resource');
 			$table->string('config');
 			$table->jsonb('data');
 		});
