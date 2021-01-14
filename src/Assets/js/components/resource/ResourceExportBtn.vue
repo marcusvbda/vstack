@@ -12,15 +12,7 @@
             </div>
             <div class="row mt-4">
                 <div class="col-12">
-                    <el-checkbox
-                        class="no-check-mgt mx-1"
-                        v-for="(f, i) in columns"
-                        :key="i"
-                        v-model="columns[i].enabled"
-                        :label="columns[i].label"
-                        @change="saveColumnLocalStorage(i)"
-                        border
-                    />
+                    <el-checkbox class="no-check-mgt mx-1" v-for="(f, i) in columns" :key="i" v-model="columns[i].enabled" :label="columns[i].label" border />
                 </div>
             </div>
             <el-alert
@@ -40,28 +32,25 @@
 </template>
 <script>
 export default {
-    props: ['id', 'export_columns', 'label', 'qty_results', 'get_params', 'limit'],
+    props: ['id', 'export_columns', 'label', 'qty_results', 'get_params', 'limit', 'config_columns'],
     data() {
         return {
             visible: false,
             columns: {},
+            disabled_columns: this.config_columns?.data?.disabled_columns ?? [],
         }
     },
     mounted() {
         this.setColumns()
     },
     methods: {
-        saveColumnLocalStorage(key) {
-            setTimeout(() => {
-                localStorage.setItem(`${this.id}_export_column_option_${key}`, this.columns[key].enabled)
-            }, 500)
-        },
         setColumns() {
             Object.keys(this.export_columns).map((key) => {
-                let storage_value = localStorage.getItem(`${this.id}_export_column_option_${key}`)
+                let _disabled_columns = this.disabled_columns ?? []
+                let storage_value = !(_disabled_columns ?? []).includes(key)
                 this.$nextTick(() => {
                     this.$set(this.columns, key, {
-                        enabled: storage_value ? storage_value == 'true' : true,
+                        enabled: storage_value,
                         label: this.export_columns[key].label ? this.export_columns[key].label : this.export_columns[key],
                     })
                 })
@@ -82,10 +71,7 @@ export default {
                         resp = resp.data
                         this.visible = false
                         this.setColumns()
-                        if (resp.url) {
-                            loading.close()
-                            return window.open(resp.url, '_BLANK')
-                        }
+                        if (resp.url) window.open(resp.url, '_BLANK')
                         return window.location.reload()
                     })
             })

@@ -4,6 +4,7 @@
 @include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
+<?php $user = Auth::user(); ?>
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center">
         <h4 class="mb-1">
@@ -32,9 +33,19 @@
 			@if($report_mode)
 				@if($resource->canExport())
 					@if($resource->model->count()>0)
-						<resource-export-btn class="ml-2 link" id="{{$resource->id}}" label="{{$resource->label()}}"
-							:export_columns="{{json_encode($resource->export_columns())}}" :get_params="{{json_encode($_GET)}}"
-							:qty_results="{{json_encode($data->total())}}" :limit="{{json_encode($resource->maxRowsExportSync())}}">
+						<?php
+							$config_columns = \marcusvbda\vstack\Models\ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "resource_export_disabled_columns")->first();
+							$config_columns = $config_columns ? $config_columns : [];
+						?>
+						<resource-export-btn class="ml-2 link" 
+							id="{{$resource->id}}" 
+							label="{{$resource->label()}}"
+							:export_columns='@json($resource->export_columns())' 
+							:get_params='@json($_GET)'
+							:qty_results='@json($data->total())' 
+							:limit='@json($resource->maxRowsExportSync())'
+							:config_columns='@json($config_columns)'
+						>
 							{!! $resource->exportButtonlabel() !!}
 						</resource-export-btn>
 					@endif

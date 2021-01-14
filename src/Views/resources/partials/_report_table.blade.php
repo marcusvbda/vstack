@@ -10,7 +10,7 @@ $crud_buttons = [
 $list_types = @$resource->listType() ? $resource->listType() : ["table"];
 $table = $resource->export_columns();
 $table_keys = array_keys($table);
-$exports = \marcusvbda\vstack\Models\ResourceConfig::where("data->user_id", Auth::user()->id)
+$exports = \marcusvbda\vstack\Models\ResourceConfig::where("data->user_id", $user->id)
 			->where("resource", $resource->id)->where("config","like","report_export_%")
 			->get();
 ?>

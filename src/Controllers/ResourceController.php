@@ -234,6 +234,22 @@ class ResourceController extends Controller
 		$file_id = md5(uniqid());
 		$path = '/public/vstack/resource_export/';
 		$ids =  $result->pluck("id")->all();
+
+		$disabled_columns = [];
+		foreach ($data['columns'] as $key => $value) {
+			if (!@$value["enabled"]) {
+				$disabled_columns[] = $key;
+			}
+		}
+		$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "resource_export_disabled_columns")->first();
+		$config = @$config->id ? $config : new ResourceConfig;
+		$config->resource = $resource->id;
+		$config->config = "resource_export_disabled_columns";
+		$_data = @$config->data ?? (object)[];
+		$_data->user_id = $user->id;
+		$_data->disabled_columns = $disabled_columns;
+		$config->data = $_data;
+		$config->save();
 		return $this->exportSheetOrDispatch($user, count($ids), $ids, $resource, $data['columns'], $path, $file_id);
 	}
 
