@@ -8,19 +8,21 @@ trait useTenantTz
 {
 	protected function asDateTime($value): Carbon
 	{
-		if (is_numeric($value)) return parent::asDateTime($value);
-		$justCreated = false;
+		if (!config("vstack.timezone")) {
+			if (is_numeric($value)) return parent::asDateTime($value);
+			$justCreated = false;
 
-		if (!($value instanceof \DateTime)) {
-			$value = new \DateTime($value);
-			$justCreated = true;
-		}
-		$tz = config('app.timezone');
-		if ($value->getTimezone()->getName() !== $tz) {
-			if (!$justCreated) {
-				$value = clone $value;
+			if (!($value instanceof \DateTime)) {
+				$value = new \DateTime($value);
+				$justCreated = true;
 			}
-			$value->setTimezone(new \DateTimeZone($tz));
+			$tz = config('app.timezone');
+			if ($value->getTimezone()->getName() !== $tz) {
+				if (!$justCreated) {
+					$value = clone $value;
+				}
+				$value->setTimezone(new \DateTimeZone($tz));
+			}
 		}
 		return parent::asDateTime($value);
 	}

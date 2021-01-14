@@ -33,6 +33,7 @@ class DefaultModel extends Model
 
 	protected function tenantTimezone($value)
 	{
+		if (!config("vstack.timezone")) return Carbon::create($value);
 		$user = \Auth::user();
 		$tz = config('app.timezone');
 		if ($tenant = @$user->tenant) $tz =  @$tenant->timezone ?? config("vstack.timezone");

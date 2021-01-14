@@ -2,7 +2,7 @@
 
 return [
 	"default_upload_route" => "/admin/upload_file",
-	"timezone" => "+00:00",
+	#"timezone" => "",//descomente se desejar passar pelo cast de datas no default model
 	"timezones" => [
 		'Pacific/Midway'       => "-11:00",
 		'US/Samoa'             => "-11:00",
