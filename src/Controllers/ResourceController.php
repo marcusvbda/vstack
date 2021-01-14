@@ -231,73 +231,92 @@ class ResourceController extends Controller
 		foreach ($data["get_params"] as $key => $value) $params[$key] = $value;
 		$_request->request->add($params);
 		$result = $this->getData($resource, $_request);
-		$filename =    'Relatório de ' . $resource->id . '_' . Carbon::now()->format('Y_m_d_H_i_s') . '_' . $user->tenant->name . '.xls';
+		$file_id = md5(uniqid());
+		$path = '/public/vstack/resource_export/';
 		$ids =  $result->pluck("id")->all();
-		return $this->exportSheetOrDispatch($user, count($ids), $ids, $resource, $data['columns'], $filename);
+		return $this->exportSheetOrDispatch($user, count($ids), $ids, $resource, $data['columns'], $path, $file_id);
 	}
 
-	public function exportSheetOrDispatch($user, $count, $ids, $resource, $columns, $filename)
+	public function exportSheetOrDispatch($user, $count, $ids, $resource, $columns, $path, $file_id)
 	{
+		$email = $user->email;
+		$config = new ResourceConfig;
+		$config->resource = $resource->id;
+		$config->config = "report_export_$file_id";
+		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
+		$config->data = [
+			"user_id" => $user->id,
+			"path" => $path,
+			"file_id" => $file_id,
+			"file_extension" => 'xls',
+			"file_name" => $resource->id . '_' . Carbon::now()->format('YmdHis'),
+			"status" => 'exporting',
+			"due_date" => Carbon::now()->addDays(1),
+			"route" => $route
+		];
+		$config->save();
+
 		if ($count <= $resource->maxRowsExportSync()) {
 			try {
 				$exporter = new GlobalExporter($resource, $columns, $ids);
-				Excel::store($exporter, $filename, "local");
+				Excel::store($exporter, $path . $file_id . '.xls', "local");
 				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
-				return ['success' => true, 'message_type' => 'success', 'message' => $message, 'url' => route('resource.export_download', ['resource' => $resource->id, 'file' => $filename])];
+				$_data = $config->data;
+				$_data->status = "ready";
+				$config->data = $_data;
+				$config->save();
+				Messages::send("success", $message);
+				$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id, 'destroy' => true]);
+				return ['success' => true, 'url' => $route];
 			} catch (\Exception $e) {
 				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . " )";
 				return ['success' => false, 'message_type' => 'error', 'message' => $message];
 			}
 		}
-		$email = $user->email;
-		dispatch(function () use ($user, $resource, $columns, $ids, $filename, $email) {
+		dispatch(function () use ($user, $resource, $columns, $ids, $file_id, $email, $config, $path) {
+			$_data = $config->data;
+			$_data->status = "exporting";
+			$config->data = $_data;
+			$config->save();
 			try {
 				$exporter = new GlobalExporter($resource, $columns, $ids);
-				Excel::store($exporter, $filename, "local");
-				DB::table("notifications")->insert([
-					"type" => 'App\Notifications\CustomerNotification',
-					"notifiable_type" => 'App\User',
-					"notifiable_id" => $user->id,
-					"alert_type" => 'vstack_alert',
-					"tenant_id" => $user->tenant_id,
-					"created_at" => carbon::now(),
-					"data" => json_encode([
-						"message" => "Seu relatório de " . $resource->label() . " foi exportada com sucesso e o arquivo foi enviado para seu email, " . $email,
-						"type" => 'success'
-					]),
-				]);
-
-				$user->save();
-				$user->refresh();
-				$html = view($resource->exportNotificationView(), compact('user', 'resource', 'filename'))->render();
-				SendMail::to($email, "relatório de " . $resource->label(), $html, $filename);
+				Excel::store($exporter, $path . $file_id . '.xls', "local");
+				$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
+				$_data = $config->data;
+				$_data->status = "ready";
+				$_data->due_date = Carbon::now()->addDays(1);
+				$config->data = $_data;
+				$config->save();
+				$html = view($resource->exportNotificationView(), compact('user', 'resource', 'route'))->render();
+				SendMail::to($email, "relatório de " . $resource->label(), $html);
 			} catch (\Exception $e) {
-				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . " )";
-				DB::table("notifications")->insert([
-					"type" => 'App\Notifications\CustomerNotification',
-					"notifiable_type" => 'App\User',
-					"notifiable_id" => $user->id,
-					"alert_type" => 'vstack_alert',
-					"tenant_id" => $user->tenant_id,
-					"created_at" => carbon::now(),
-					"data" => json_encode([
-						"message" => $message,
-						"type" => 'error'
-					]),
-				]);
+				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . '  - on line ' . $e->getLine() . " )";
+				$_data = $config->data;
+				$_data->status = "error";
+				$_data->error_message = $message;
+				$config->data = $_data;
+				$config->save();
 				return ['success' => false, 'message' => $message];
 			}
-		})->onQueue("resource-import");
+		})->onQueue("resource-export");
 		$message = "Sua Relatório de " . $resource->label() . " está sendo exportado, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $email . "), isso pode levar alguns minutos.";
-		return ['success' => true, 'message_type' => 'info', 'message' => $message];
+		Messages::send("info", $message);
+		return ['success' => true];
 	}
 
-	public function exportDownload($resource, $file)
+	public function exportDownload($resource, $file_id, Request $request)
 	{
-		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canExport()) abort(403);
-		$full_path = storage_path("app/$file");
-		return response()->download($full_path)->deleteFileAfterSend(true);
+		try {
+			$resource = ResourcesHelpers::find($resource);
+			if (!$resource->canExport()) abort(403);
+			$user = Auth::user();
+			$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "report_export_$file_id")->firstOrFail();
+			$full_path = storage_path("app/public/vstack/resource_export/" . $config->data->file_id . "." . @$config->data->file_extension);
+			if ($request->has('destroy')) $config->delete();
+			return response()->download($full_path, $config->data->file_name . "." . @$config->data->file_extension)->deleteFileAfterSend($request->has('destroy'));
+		} catch (\Exception $e) {
+			abort(404);
+		}
 	}
 
 	public function sheetImportRow($rows, $params, $importer)

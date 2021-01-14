@@ -174,7 +174,7 @@ class Resource
 
 	public function maxRowsExportSync()
 	{
-		return 300;
+		return 1000;
 	}
 
 	public function canViewList()

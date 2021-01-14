@@ -3,7 +3,7 @@
 namespace marcusvbda\vstack;
 
 use Illuminate\Support\ServiceProvider;
-use marcusvbda\vstack\Commands\{createResource, createFilter, createAction};
+use marcusvbda\vstack\Commands\{createResource, createFilter, createAction, clearResourceExport};
 use marcusvbda\vstack\Middleware\HashIds;
 use Illuminate\Routing\Router;
 
@@ -17,6 +17,7 @@ class vStackServiceProvider extends ServiceProvider
 			createResource::class,
 			createFilter::class,
 			createAction::class,
+			clearResourceExport::class,
 		]);
 		$this->publishes([
 			__DIR__ . '/config' => config_path(),

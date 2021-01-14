@@ -80,11 +80,13 @@ export default {
                     })
                     .then((resp) => {
                         resp = resp.data
-                        this.$message({ type: resp.message_type, message: resp.message, duration: 9999999999, showClose: true })
                         this.visible = false
                         this.setColumns()
-                        loading.close()
-                        if (resp.url) return window.open(resp.url, '_BLANK')
+                        if (resp.url) {
+                            loading.close()
+                            return window.open(resp.url, '_BLANK')
+                        }
+                        return window.location.reload()
                     })
             })
         },

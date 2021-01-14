@@ -10,7 +10,9 @@ $crud_buttons = [
 $list_types = @$resource->listType() ? $resource->listType() : ["table"];
 $table = $resource->export_columns();
 $table_keys = array_keys($table);
-
+$exports = \marcusvbda\vstack\Models\ResourceConfig::where("data->user_id", Auth::user()->id)
+			->where("resource", $resource->id)->where("config","like","report_export_%")
+			->get();
 ?>
 <div class="card">
 	<div class="card-header p-0">
@@ -45,3 +47,12 @@ $table_keys = array_keys($table);
 		</div>
 	</div>
 </div>
+
+
+
+@if($exports->count() > 0)
+	<resource-export-list
+		:report_exports='@json($exports)'
+	>
+	</resource-export-list>
+@endif

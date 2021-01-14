@@ -3,13 +3,13 @@
 namespace marcusvbda\vstack\Exports;
 
 use Maatwebsite\Excel\Concerns\{
-	FromQuery,
+	FromCollection,
 	WithHeadings,
 	WithMapping,
 	ShouldAutoSize
 };
 
-class GlobalExporter implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
+class GlobalExporter implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
 	public function __construct($resource, $columns, $ids)
 	{
@@ -20,9 +20,9 @@ class GlobalExporter implements FromQuery, WithHeadings, WithMapping, ShouldAuto
 		$this->resource = $resource;
 	}
 
-	public function query()
+	public function collection()
 	{
-		return $this->resource->model->whereIn("id", $this->ids)->orderBy("id", "desc");
+		return $this->resource->model->whereIn("id", $this->ids)->orderBy("id", "desc")->cursor();
 	}
 
 	public function headings(): array
