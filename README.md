@@ -208,5 +208,5 @@ class Cars extends Resource
 
 para executar as filas do vstack
 ```
-php artisan queue:work --queue=resource-import,alert-broadcasts,event-broadcasts
+php artisan queue:work --queue=resource-import,resource-export,alert-broadcasts,event-broadcasts
 ```
