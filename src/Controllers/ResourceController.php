@@ -133,7 +133,7 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 		if (!($resource->canImport() && $resource->canCreate())) abort(403);
-		$file_extension = config("vstack.resource_export_extension") ?? "xls";
+		$file_extension = config("vstack.resource_export_extension") ? config("vstack.resource_export_extension") : "xls";
 		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . "." . $file_extension;
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
 		Excel::store($exporter, $filename, "local");
@@ -188,7 +188,7 @@ class ResourceController extends Controller
 
 		$config = json_decode($data["config"]);
 		$fieldlist = $config->fieldlist;
-		$file_extension = config("vstack.resource_export_extension") ?? "xls";
+		$file_extension = config("vstack.resource_export_extension") ? config("vstack.resource_export_extension") : "xls";
 		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
 		$filepath = $file->storeAs('local', $filename);
 		$user = Auth::user();
@@ -262,7 +262,7 @@ class ResourceController extends Controller
 		$config->resource = $resource->id;
 		$config->config = "report_export_$file_id";
 		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
-		$file_extension = config("vstack.resource_export_extension") ?? "xls";
+		$file_extension = config("vstack.resource_export_extension") ? config("vstack.resource_export_extension") : "xls";
 		$config->data = [
 			"user_id" => $user->id,
 			"path" => $path,

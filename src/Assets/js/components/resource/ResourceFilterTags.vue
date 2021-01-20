@@ -62,6 +62,7 @@ export default {
         handleClose(index) {
             let params = Object.assign({}, this.get_params)
             delete params[index]
+            if (params['page']) delete params['page']
             let query = Object.keys(params)
                 .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
                 .join('&')
