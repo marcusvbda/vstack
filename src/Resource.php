@@ -312,6 +312,7 @@ class Resource
 	{
 		return 5;
 	}
+	
 	public function tagColors()
 	{
 		return [
@@ -339,7 +340,7 @@ class Resource
 			foreach ($_runner as $idx) $value = @$value->{$idx};
 			return ($value ? $value : $placeholder);
 		}
-		return  $columns[$key]["handler"]($row);
+		return  @$columns[$key]["handler"]($row) ? $columns[$key]["handler"]($row) : $placeholder;
 	}
 
 	public function actions()
