@@ -133,7 +133,8 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 		if (!($resource->canImport() && $resource->canCreate())) abort(403);
-		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . ".xls";
+		$file_extension = config("vstack.resource_export_extension") ?? "xls";
+		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . "." . $file_extension;
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
 		Excel::store($exporter, $filename, "local");
 		$full_path = storage_path("app/$filename");
@@ -187,7 +188,8 @@ class ResourceController extends Controller
 
 		$config = json_decode($data["config"]);
 		$fieldlist = $config->fieldlist;
-		$filename = Auth::user()->tenant_id . "_" . uniqid() . ".xls";
+		$file_extension = config("vstack.resource_export_extension") ?? "xls";
+		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
 		$filepath = $file->storeAs('local', $filename);
 		$user = Auth::user();
 		$tenant_id = array_search("tenant_id", $resource->getTableColumns()) === false ? null : $user->tenant_id;
@@ -260,11 +262,12 @@ class ResourceController extends Controller
 		$config->resource = $resource->id;
 		$config->config = "report_export_$file_id";
 		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
+		$file_extension = config("vstack.resource_export_extension") ?? "xls";
 		$config->data = [
 			"user_id" => $user->id,
 			"path" => $path,
 			"file_id" => $file_id,
-			"file_extension" => 'xls',
+			"file_extension" => $file_extension,
 			"file_name" => $resource->id . '_' . Carbon::now()->format('YmdHis'),
 			"status" => 'exporting',
 			"due_date" => Carbon::now()->addDays(1),
@@ -275,7 +278,7 @@ class ResourceController extends Controller
 		if ($count <= $resource->maxRowsExportSync()) {
 			try {
 				$exporter = new GlobalExporter($resource, $columns, $ids);
-				Excel::store($exporter, $path . $file_id . '.xls', "local");
+				Excel::store($exporter, $path . $file_id . '.' . $file_extension, "local");
 				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
 				$_data = $config->data;
 				$_data->status = "ready";
@@ -289,14 +292,14 @@ class ResourceController extends Controller
 				return ['success' => false, 'message_type' => 'error', 'message' => $message];
 			}
 		}
-		dispatch(function () use ($user, $resource, $columns, $ids, $file_id, $email, $config, $path) {
+		dispatch(function () use ($user, $resource, $columns, $ids, $file_id, $email, $config, $path, $file_extension) {
 			$_data = $config->data;
 			$_data->status = "exporting";
 			$config->data = $_data;
 			$config->save();
 			try {
 				$exporter = new GlobalExporter($resource, $columns, $ids);
-				Excel::store($exporter, $path . $file_id . '.xls', "local");
+				Excel::store($exporter, $path . $file_id . '.' . $file_extension, "local");
 				$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
 				$_data = $config->data;
 				$_data->status = "ready";

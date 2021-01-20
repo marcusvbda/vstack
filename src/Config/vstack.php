@@ -2,6 +2,7 @@
 
 return [
 	"default_upload_route" => "/admin/upload_file",
+	"resource_export_extension" => "xlsx",
 	#"timezone" => "",//descomente se desejar passar pelo cast de datas no default model
 	"timezones" => [
 		'Pacific/Midway'       => "-11:00",

@@ -4,6 +4,7 @@ namespace marcusvbda\vstack;
 
 use App;
 use marcusvbda\vstack\Fields\{Card, Text};
+use Symfony\Polyfill\Mbstring\Mbstring;
 
 class Resource
 {
@@ -338,9 +339,9 @@ class Resource
 			$value = $row;
 			$_runner = explode("->", $key);
 			foreach ($_runner as $idx) $value = @$value->{$idx};
-			return (@trim($value) ? $value : $placeholder);
+			return utf8_encode(@trim($value) ? $value : $placeholder);
 		}
-		return  @trim(@$columns[$key]["handler"]($row)) ? $columns[$key]["handler"]($row) : $placeholder;
+		return  utf8_encode(@trim(@$columns[$key]["handler"]($row)) ? $columns[$key]["handler"]($row) : $placeholder);
 	}
 
 	public function actions()
