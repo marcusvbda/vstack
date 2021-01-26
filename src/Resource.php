@@ -358,7 +358,6 @@ class Resource
 			foreach ($_runner as $idx) $value = @$value->{$idx};
 			return $removeEmoji(@trim($value) ? $value : $placeholder);
 		}
-		dd($columns[$key]["handler"]);
 		return $removeEmoji(@trim(@$columns[$key]["handler"] ? $columns[$key]["handler"]($row) : $placeholder));
 	}
 
