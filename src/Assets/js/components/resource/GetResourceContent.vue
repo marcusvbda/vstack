@@ -81,9 +81,13 @@ export default {
         getResourceTableIndex() {
             this.attempts++
             this.$http
-                .post(`/vstack/${this.resource_id}/get-partial-content`, {
-                    type: this.type,
-                })
+                .post(
+                    `/vstack/${this.resource_id}/get-partial-content`,
+                    {
+                        type: this.type,
+                    },
+                    { retries: 3 }
+                )
                 .then((resp) => {
                     resp = resp.data
                     this.content = resp.html

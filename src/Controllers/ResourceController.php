@@ -18,6 +18,7 @@ use Excel;
 use marcusvbda\vstack\Services\SendMail;
 use marcusvbda\vstack\Models\{Tag, TagRelation};
 use marcusvbda\vstack\Models\ResourceConfig;
+use marcusvbda\vstack\Events\WebSocketEvent;
 
 class ResourceController extends Controller
 {
@@ -307,6 +308,9 @@ class ResourceController extends Controller
 				$config->data = $_data;
 				$config->save();
 				$html = view($resource->exportNotificationView(), compact('user', 'resource', 'route'))->render();
+				broadcast(new WebSocketEvent("App.User." . $config->data->user_id, "notifications.exporting_status." . $config->id, [
+					"config" => $config
+				]));
 				SendMail::to($email, "relatório de " . $resource->label(), $html);
 			} catch (\Exception $e) {
 				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . '  - on line ' . $e->getLine() . " )";

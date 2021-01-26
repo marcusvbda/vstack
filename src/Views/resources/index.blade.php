@@ -34,8 +34,11 @@
 				@if($resource->canExport())
 					@if($resource->model->count()>0)
 						<?php
-							$config_columns = \marcusvbda\vstack\Models\ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "resource_export_disabled_columns")->first();
+							$resource_config_query = \marcusvbda\vstack\Models\ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id);
+							$config_columns = (clone $resource_config_query)->where("config", "resource_export_disabled_columns")->first();
 							$config_columns = $config_columns ? $config_columns : [];
+							$exports =  (clone $resource_config_query)->where("config","like","report_export_%")->get();
+							$waiting_qty = $exports->count();
 						?>
 						<resource-export-btn class="ml-2 link" 
 							id="{{$resource->id}}" 
@@ -45,6 +48,8 @@
 							:qty_results='@json($data->total())' 
 							:limit='@json($resource->maxRowsExportSync())'
 							:config_columns='@json($config_columns)'
+							:waiting_qty='@json($waiting_qty)'
+							:waiting_limit='@json($resource->maxWaitingReportsByUser())'
 						>
 							{!! $resource->exportButtonlabel() !!}
 						</resource-export-btn>

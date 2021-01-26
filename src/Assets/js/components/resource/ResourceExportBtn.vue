@@ -32,7 +32,7 @@
 </template>
 <script>
 export default {
-    props: ['id', 'export_columns', 'label', 'qty_results', 'get_params', 'limit', 'config_columns'],
+    props: ['id', 'export_columns', 'label', 'qty_results', 'get_params', 'limit', 'config_columns', 'waiting_limit', 'waiting_qty'],
     data() {
         return {
             visible: false,
@@ -57,11 +57,17 @@ export default {
             })
         },
         openExportModal() {
+            if (this.waiting_qty >= this.waiting_limit)
+                return this.$message(
+                    `Você já possui ${this.waiting_qty} relatório${
+                        this.waiting_qty > 1 ? 's' : ''
+                    } aguardando a exportação, aguarde a finalização para exportar novos.`
+                )
             this.visible = true
         },
         confirm() {
             this.$confirm('Exportar relatório para planilha ? ', 'Confirmação').then(() => {
-                const loading = this.$loading({ text: `Aguarde, Gerando Planilha de ${this.id} ...` })
+                this.$loading({ text: `Aguarde, Gerando Planilha de ${this.id} ...` })
                 this.$http
                     .post(`/admin/${this.id}/export`, {
                         get_params: this.get_params,

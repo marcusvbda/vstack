@@ -129,7 +129,10 @@ class Resource
 
 	public function export_columns()
 	{
-		return ["id", "created_at"];
+		return [
+			"id" => ["label" => "Código"],
+			"created_at" => ["label" => "Data de Criação"],
+		];
 	}
 
 	public function getTableColumns()
@@ -355,7 +358,8 @@ class Resource
 			foreach ($_runner as $idx) $value = @$value->{$idx};
 			return $removeEmoji(@trim($value) ? $value : $placeholder);
 		}
-		return $removeEmoji(@trim(@$columns[$key]["handler"]($row)) ? $columns[$key]["handler"]($row) : $placeholder);
+		dd($columns[$key]["handler"]);
+		return $removeEmoji(@trim(@$columns[$key]["handler"] ? $columns[$key]["handler"]($row) : $placeholder));
 	}
 
 	public function actions()
@@ -366,5 +370,10 @@ class Resource
 	public function viewListBlade()
 	{
 		return "vStack::resources.partials._default_table";
+	}
+
+	public function maxWaitingReportsByUser()
+	{
+		return 5;
 	}
 }
