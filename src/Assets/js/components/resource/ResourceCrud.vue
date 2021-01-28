@@ -59,17 +59,6 @@ export default {
         this.initForm()
     },
     methods: {
-        getRedirect() {
-            try {
-                let keys = Object.keys(this.breadcrumb)
-                let key = keys[keys.length - 2]
-                return this.breadcrumb[key]
-            } catch {
-                let keys = Object.keys(this.breadcrumb)
-                let key = keys[0]
-                return this.breadcrumb[key]
-            }
-        },
         initForm() {
             this.initFields()
             this.loadParams()
@@ -136,7 +125,7 @@ export default {
                         .then((res) => {
                             let data = res.data
                             if (data.message) this.$message({ showClose: true, message: data.message.text, type: data.message.type })
-                            if (data.success) return (window.location.href = this.getRedirect())
+                            if (data.success) return (window.location.href = data.route)
                             loading.close()
                         })
                         .catch((er) => {
