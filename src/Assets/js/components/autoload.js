@@ -1,7 +1,7 @@
 import Vue from 'vue'
 const files = require.context('./', true, /(\/)(?!.*\/)(?!-.*$).*\.vue$/i)
 files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-
+import moment from 'moment'
 require("./libs/charts")
 require("./libs/cookies")
 require("./libs/vmask")
@@ -19,6 +19,7 @@ require('./libs/pace')
 require('./libs/helpers')
 Vue.config.productionTip = false
 Vue.config.devtools = true
+Vue.prototype.$moment = moment
 const vue = new Vue({
 	data() {
 		return {

@@ -11,7 +11,6 @@ use Maatwebsite\Excel\Concerns\{
 
 class GlobalExporter implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
-	// public $counter = 0;
 	public function __construct($resource, $columns, $ids)
 	{
 		ini_set('memory_limit', '-1');
@@ -40,7 +39,6 @@ class GlobalExporter implements FromCollection, WithHeadings, WithMapping, Shoul
 		$result = (array_filter(array_map(function ($key)  use ($row) {
 			if ($this->columns[$key]["enabled"])  return $this->resource->getColumnIndex($this->resource->export_columns(), $row, $key);
 		}, array_keys($this->columns))));
-		// echo ++$this->counter . PHP_EOL;
 		return $result;
 	}
 }

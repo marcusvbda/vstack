@@ -272,7 +272,11 @@ class ResourceController extends Controller
 			"file_name" => $resource->id . '_' . Carbon::now()->format('YmdHis'),
 			"status" => 'exporting',
 			"due_date" => Carbon::now()->addDays(1),
-			"route" => $route
+			"route" => $route,
+			"microtime" => [
+				"start" => microtime(true),
+				"end" => 0,
+			]
 		];
 		$config->save();
 
@@ -283,6 +287,7 @@ class ResourceController extends Controller
 				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
 				$_data = $config->data;
 				$_data->status = "ready";
+				$_data->microtime->end = microtime(true);
 				$config->data = $_data;
 				$config->save();
 				Messages::send("success", $message);
@@ -304,6 +309,7 @@ class ResourceController extends Controller
 				$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
 				$_data = $config->data;
 				$_data->status = "ready";
+				$_data->microtime->end = microtime(true);
 				$_data->due_date = Carbon::now()->addDays(1);
 				$config->data = $_data;
 				$config->save();

@@ -16,6 +16,7 @@
                                 <th>#</th>
                                 <th>Url</th>
                                 <th>Nome</th>
+                                <th>Tempo de Processamento</th>
                                 <th>Validade da Url</th>
                             </tr>
                         </thead>
