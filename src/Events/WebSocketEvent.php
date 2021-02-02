@@ -11,14 +11,15 @@ use Illuminate\Queue\SerializesModels;
 class WebSocketEvent implements ShouldBroadcast
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
-	public $broadcastQueue = 'event-broadcasts';
 
 	public $channel;
 	public $data;
 	public $namespace;
+	public $broadcastQueue;
 
 	public function __construct($channel, $namespace, $data)
 	{
+		$this->broadcastQueue = config('vstack.queue.event-broadcasts', 'event-broadcasts');
 		$this->data = $data;
 		$this->namespace = $namespace;
 		$this->channel = $channel;

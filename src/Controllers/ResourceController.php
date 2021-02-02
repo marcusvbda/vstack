@@ -216,7 +216,7 @@ class ResourceController extends Controller
 					"type" => @$result["success"] ? 'success' : 'error'
 				]),
 			]);
-		})->onQueue("resource-import");
+		})->onQueue(config("vstack.queue.resource-import", "resource-import"));
 
 
 		return ["success" => true];
@@ -327,7 +327,7 @@ class ResourceController extends Controller
 				$config->save();
 				return ['success' => false, 'message' => $message];
 			}
-		})->onQueue("resource-export");
+		})->onQueue(config("vstack.queue.resource-export", "resource-export"));
 		$message = "Sua Relatório de " . $resource->label() . " está sendo exportado, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $email . "), isso pode levar alguns minutos.";
 		Messages::send("info", $message);
 		return ['success' => true];

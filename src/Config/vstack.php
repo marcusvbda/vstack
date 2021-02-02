@@ -3,6 +3,12 @@
 return [
 	"default_upload_route" => "/admin/upload_file",
 	"resource_export_extension" => "xlsx",
+	"queue" => [
+		"resource-export" => "resource-export",
+		"resource-import" => "resource-import",
+		"alert-broadcasts" => "alert-broadcasts",
+		"event-broadcasts" => "event-broadcasts",
+	],
 	#"timezone" => "",//descomente se desejar passar pelo cast de datas no default model
 	"timezones" => [
 		'Pacific/Midway'       => "-11:00",

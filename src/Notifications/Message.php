@@ -10,41 +10,41 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 
 class Message extends Notification
 {
-    use Queueable;
+	use Queueable;
 
-    public $message;
-    public function __construct($message, $type)
-    {
-        $this->message  = $message;
-        $this->_type  = $type;
-    }
+	public $message;
+	public function __construct($message, $type)
+	{
+		$this->message  = $message;
+		$this->_type  = $type;
+	}
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function via($notifiable)
-    {
-        return ['broadcast'];
-    }
+	/**
+	 * Get the notification's delivery channels.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function via($notifiable)
+	{
+		return ['broadcast'];
+	}
 
-    public function toBroadcast($notifiable)
-    {
-        return (new BroadcastMessage($this->makeData()))->onQueue('alert-broadcasts');
-    }
+	public function toBroadcast($notifiable)
+	{
+		return (new BroadcastMessage($this->makeData()))->onQueue(config('vstack.queue.alert-broadcasts', 'alert-broadcasts'));
+	}
 
-    public function toArray($notifiable)
-    {
-        return $this->makeData();
-    }
+	public function toArray($notifiable)
+	{
+		return $this->makeData();
+	}
 
-    private function makeData()
-    {
-        return [
-            "message"  => $this->message,
-            "_type"    => $this->_type
-        ];
-    }
+	private function makeData()
+	{
+		return [
+			"message"  => $this->message,
+			"_type"    => $this->_type
+		];
+	}
 }

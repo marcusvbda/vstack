@@ -11,8 +11,12 @@ use Maatwebsite\Excel\Concerns\{
 
 class GlobalExporter implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
+	// public $counter = 0;
+	// public $start = null;
 	public function __construct($resource, $columns, $ids)
 	{
+		// $this->start = microtime(true);
+		// echo "__construct " . PHP_EOL;
 		ini_set('memory_limit', '-1');
 		set_time_limit(-1);
 		$this->columns = $columns;
@@ -22,11 +26,13 @@ class GlobalExporter implements FromCollection, WithHeadings, WithMapping, Shoul
 
 	public function collection()
 	{
+		// echo "collection " . PHP_EOL;
 		return $this->resource->model->whereIn("id", $this->ids)->orderBy("id", "desc")->cursor();
 	}
 
 	public function headings(): array
 	{
+		// echo "headings " . PHP_EOL;
 		$this->filtered_columns =  (array_filter(array_map(function ($key) {
 			if ($this->columns[$key]["enabled"]) return $this->columns[$key]["label"];
 		}, array_keys($this->columns))));
@@ -39,6 +45,7 @@ class GlobalExporter implements FromCollection, WithHeadings, WithMapping, Shoul
 		$result = (array_filter(array_map(function ($key)  use ($row) {
 			if ($this->columns[$key]["enabled"])  return $this->resource->getColumnIndex($this->resource->export_columns(), $row, $key);
 		}, array_keys($this->columns))));
+		// echo "map " . ++$this->counter . "  " . (microtime(true) - $this->start) . PHP_EOL;
 		return $result;
 	}
 }
