@@ -40,8 +40,24 @@ class ResourceController extends Controller
 		$data->map(function ($query) {
 			$query->setAppends([]);
 		});
-		if (@$request["list_type"]) session([$resource->id . "_list_type" => $request["list_type"]]);
+		if (@$request["list_type"]) $this->storeListType($resource, $request["list_type"]);
 		return view("vStack::resources.index", compact("resource", "data", "report_mode"));
+	}
+
+	private function storeListType($resource, $type)
+	{
+		if (Auth::check()) {
+			$user = Auth::user();
+			$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", 'list_type')->first();
+			$config = @$config->id ? $config : new ResourceConfig;
+			$_data = @$config->data ?? (object)[];
+			$_data->type = $type;
+			$_data->user_id = $user->id;
+			$config->data = $_data;
+			$config->resource = $resource->id;
+			$config->config = 'list_type';
+			$config->save();
+		}
 	}
 
 	public function createReportTemplate($resource, Request $request)
