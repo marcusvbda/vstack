@@ -23,7 +23,7 @@
                         <a :href="data.list_route" class="mr-5 text-danger link d-none d-lg-block">
                             <b>Cancelar</b>
                         </a>
-                        <button class="btn btn-primary btn-sm-block" type="sumit">{{ pageType == 'CREATE' ? 'Cadastrar' : 'Alterar' }}</button>
+                        <button class="btn btn-primary btn-sm-block" type="submit">{{ pageType == 'CREATE' ? 'Cadastrar' : 'Alterar' }}</button>
                     </div>
                 </div>
             </form>
