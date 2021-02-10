@@ -335,32 +335,6 @@ class Resource
 		];
 	}
 
-	public function getColumnIndex($columns, $row, $key, $placeholder = "          -          ")
-	{
-		$removeEmoji = function ($text) {
-			$clean_text = "";
-			$regexEmoticons = '/[\x{1F600}-\x{1F64F}]/u';
-			$clean_text = preg_replace($regexEmoticons, '', $text);
-			$regexSymbols = '/[\x{1F300}-\x{1F5FF}]/u';
-			$clean_text = preg_replace($regexSymbols, '', $clean_text);
-			$regexTransport = '/[\x{1F680}-\x{1F6FF}]/u';
-			$clean_text = preg_replace($regexTransport, '', $clean_text);
-			$regexMisc = '/[\x{2600}-\x{26FF}]/u';
-			$clean_text = preg_replace($regexMisc, '', $clean_text);
-			$regexDingbats = '/[\x{2700}-\x{27BF}]/u';
-			$clean_text = preg_replace($regexDingbats, '', $clean_text);
-			return $clean_text;
-		};
-		$value = "";
-		if (!@$columns[$key]["handler"]) {
-			$value = $row;
-			$_runner = explode("->", $key);
-			foreach ($_runner as $idx) $value = @$value->{$idx};
-			return $removeEmoji(@trim($value) ? $value : $placeholder);
-		}
-		return $removeEmoji(@trim(@$columns[$key]["handler"] ? $columns[$key]["handler"]($row) : $placeholder));
-	}
-
 	public function actions()
 	{
 		return [];

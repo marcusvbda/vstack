@@ -10,6 +10,7 @@ $crud_buttons = [
 $list_types = @$resource->listType() ? $resource->listType() : ["table"];
 $table = $resource->export_columns();
 $table_keys = array_keys($table);
+$controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 ?>
 <div class="card">
 	<div class="card-header p-0">
@@ -40,7 +41,7 @@ $table_keys = array_keys($table);
 						<tr>
 							@foreach($table_keys as $key)
 								<td>
-									{{ $resource->getColumnIndex($table,$resource->model->find($row->id),$key) }}
+									{{ $controller->getColumnIndex($table,$resource->model->find($row->id),$key) }}
 								</td>
 							@endforeach
 						</tr>

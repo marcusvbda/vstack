@@ -8,11 +8,13 @@ use Maatwebsite\Excel\Concerns\{
 	WithMapping,
 	ShouldAutoSize
 };
+use  marcusvbda\vstack\Controllers\VstackController;
 
 class GlobalExporter implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
 	// public $counter = 0;
 	// public $start = null;
+	public $controller = null;
 	public function __construct($resource, $columns, $ids)
 	{
 		// $this->start = microtime(true);
@@ -22,6 +24,7 @@ class GlobalExporter implements FromCollection, WithHeadings, WithMapping, Shoul
 		$this->columns = $columns;
 		$this->ids = $ids;
 		$this->resource = $resource;
+		$this->controller = new VstackController;
 	}
 
 	public function collection()
@@ -43,7 +46,7 @@ class GlobalExporter implements FromCollection, WithHeadings, WithMapping, Shoul
 	{
 		$result = [];
 		$result = (array_filter(array_map(function ($key)  use ($row) {
-			if ($this->columns[$key]["enabled"])  return $this->resource->getColumnIndex($this->resource->export_columns(), $row, $key);
+			if ($this->columns[$key]["enabled"])  return $this->controller->getColumnIndex($this->resource->export_columns(), $row, $key);
 		}, array_keys($this->columns))));
 		// echo "map " . ++$this->counter . "  " . (microtime(true) - $this->start) . PHP_EOL;
 		return $result;
