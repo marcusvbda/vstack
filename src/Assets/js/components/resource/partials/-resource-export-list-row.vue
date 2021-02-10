@@ -52,25 +52,22 @@ export default {
             }
         },
         getDueDate(report) {
-            if (report.data.status != 'ready') return this.getExportingGif()
+            if (!['ready', 'error'].includes(report.data.status)) return this.getExportingGif()
             let date = new Date(report.data.due_date)
             return date.toLocaleString('pt-BR')
         },
         getExportingGif() {
             return `
-				<div class="d-flex flex-row align-items-center">
-					<div class="d-flex flex-row align-items-center mr-1">
-						<div class="spinner-grow spinner-grow-sm text-muted mr-2" style="zoom:.5;" role="status">
-							<span class="sr-only">Loading...</span>
-						</div>
-						<div class="spinner-grow spinner-grow-sm text-muted mr-2" style="zoom:.5;" role="status">
-							<span class="sr-only">Loading...</span>
-						</div>
-						<div class="spinner-grow spinner-grow-sm text-muted mr-2" style="zoom:.5;" role="status">
-							<span class="sr-only">Loading...</span>
-						</div>
+				<div class="d-flex flex-row align-items-center py-2">
+					<div class="spinner-grow spinner-grow-sm text-muted mr-2" style="zoom:.5;" role="status">
+						<span class="sr-only">Loading...</span>
 					</div>
-					<span class="text-muted">Processando</span>
+					<div class="spinner-grow spinner-grow-sm text-muted mr-2" style="zoom:.5;" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+					<div class="spinner-grow spinner-grow-sm text-muted mr-2" style="zoom:.5;" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
 				</div>
 			`
         },
