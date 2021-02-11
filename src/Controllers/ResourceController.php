@@ -593,6 +593,11 @@ class ResourceController extends Controller
 							$card->view = str_replace($oldView, $view, $card->view);
 						} else  $card->view = "";
 						break;
+					case "html_editor":
+						$value = @$content->{$input->options["field"]};
+						// dd($value);
+						$input->options["value"] = $value ? $value : (object)["css" => "", "body" => ""];
+						break;
 					default:
 						$input->options["value"] = ($input->options["field"] == "password") ? null : @$content->{$input->options["field"]};
 						break;
@@ -794,14 +799,27 @@ class ResourceController extends Controller
 
 	public function upload(Request $request)
 	{
-		if (is_string($request['file'])) {
+		if (@$request['file']) {
 			$url = $request['file'];
 			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
 			Storage::put(
 				"public/$name",
 				file_get_contents($url)
 			);
-			return ["path" => asset("storage/$name")];
+			return ["path" => asset("public/storage/$name")];
+		}
+		if (@$request['files']) {
+			$url = $request['files'];
+			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
+			Storage::put(
+				"public/$name",
+				file_get_contents($url)
+			);
+			return [
+				"data" => [
+					asset("public/storage/$name")
+				]
+			];
 		}
 		return ["path" => asset(str_replace("public", "storage", $request->file('file')->store('public')))];
 	}

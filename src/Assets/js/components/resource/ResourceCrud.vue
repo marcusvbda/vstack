@@ -84,7 +84,7 @@ export default {
         processFieldValue(name, options) {
             let value = null
             if (!['null', ''].includes(String(options.value))) {
-                value = this.processFieldPerType(options.type, String(options.value))
+                value = this.processFieldPerType(options.type, typeof options.value != 'object' ? String(options.value) : options.value)
             } else {
                 value = this.processFieldPerType(options.type, options.default)
             }
