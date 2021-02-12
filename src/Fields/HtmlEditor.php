@@ -19,7 +19,7 @@ class HtmlEditor extends Field
 
 		$field     = $this->options["field"];
 		$label = $this->options["label"];
-		$uploadroute = @$this->options["uploadroute"];
+		$uploadroute = @$this->options["uploadroute"] ?? config("vstack.default_upload_route");
 		$mode = @$this->options["mode"] ? $this->options["mode"] : 'webpage';
 		$field = $this->options["field"];
 		$default = $this->options["default"];
