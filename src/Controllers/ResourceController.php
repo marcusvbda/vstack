@@ -540,6 +540,7 @@ class ResourceController extends Controller
 
 	protected function makeCrudData($resource, $content = null)
 	{
+		request()->request->add(["content" => @$content]);
 		return [
 			"id"          => @$content->id,
 			"fields"      => $this->makeCrudDataFields($content, $resource->fields()),
