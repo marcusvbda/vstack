@@ -18,6 +18,10 @@ import grapesjs from 'grapesjs'
 // import pt from 'grapesjs/locale/pt'
 export default {
     props: {
+        default: {
+            type: Object,
+            default: () => undefined,
+        },
         uploadroute: {
             type: String,
             default: laravel.vstack.default_upload_route,
@@ -43,10 +47,7 @@ export default {
         return {
             editor: null,
             block_manager: null,
-            content: this.$attrs.value ?? {
-                body: this.$attrs.value?.body,
-                css: this.$attrs.value?.css,
-            },
+            content: this.default != undefined ? this.default : this.$attrs.value,
             pluginsArray: {
                 newsletter: [grapesPresetNewsLetter],
                 webpage: [grapesPresetWebpage, grapesJsCustomCode, grapesPluginForms],
@@ -84,8 +85,8 @@ export default {
                     headers: { 'X-CSRF-TOKEN': laravel.general.csrf_token ? laravel.general.csrf_token : '' },
                     multiUpload: false,
                 },
-                style: this.content.css,
-                components: this.content.body,
+                style: this.content.css ?? '',
+                components: this.content.body ?? '',
             })
             this.block_manager = this.editor.BlockManager
 

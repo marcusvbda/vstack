@@ -22,11 +22,13 @@ class HtmlEditor extends Field
 		$uploadroute = @$this->options["uploadroute"];
 		$mode = @$this->options["mode"] ? $this->options["mode"] : 'webpage';
 		$field = $this->options["field"];
+		$default = $this->options["default"];
 		return $this->view = view("vStack::resources.field.html_editor", compact(
 			"label",
 			"field",
 			"uploadroute",
-			"mode"
+			"mode",
+			"default"
 		))->render();
 	}
 }
