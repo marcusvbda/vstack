@@ -23,57 +23,77 @@
 </template>
 <script>
 export default {
-    props : ["placeholder","label","route_list","list_model","disabled","errors","optionlist","required","size","multiple","relation","allowcreate","option_list","description"],
+    props: [
+        'placeholder',
+        'label',
+        'route_list',
+        'list_model',
+        'disabled',
+        'errors',
+        'optionlist',
+        'required',
+        'size',
+        'multiple',
+        'relation',
+        'allowcreate',
+        'option_list',
+        'description',
+    ],
     data() {
         return {
-            loading : true,
-            started : false,
+            loading: true,
+            started: false,
             options: [],
-            value: this.multiple ? [] : null
-      }
+            value: this.multiple ? [] : null,
+        }
     },
     created() {
         this.initialize()
     },
-    watch : {
-        value(val){
-            if(this.started) {
-                return this.$emit("input",val)
+    watch: {
+        value(val) {
+            if (this.started) {
+                return this.$emit('input', val)
             }
-        }
+        },
     },
-    methods : {
+    methods: {
         initialize() {
-            if(this.list_model)
-            {
-                this.initOptions( _ => {
-                    this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
+            if (this.optionlist) {
+                this.initOptions((_) => {
+                    this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null
                     this.loading = false
                     this.started = true
                 })
             } else {
-                for(let i in this.option_list) this.options.push({id:this.option_list[i],value:this.option_list[i]})
-                this.value = this.$attrs.value ? this.$attrs.value : (this.multiple ? [] : null)
+                for (let i in this.option_list) {
+                    let value = this.option_list[i]
+                    if (typeof value == 'string') this.options.push({ id: value, value: value })
+                }
+                this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null
                 this.loading = false
                 this.started = true
             }
         },
-        initOptions(callback){
-            if(this.optionlist||(!this.list_model)) {
+        initOptions(callback) {
+            if (this.optionlist || !this.list_model) {
                 this.options = this.optionlist ? this.optionlist : []
                 return callback()
             }
-            this.$http.post(this.route_list,{model:this.list_model}).then( res => {
-                res = res.data
-                this.options = res.data
-                callback()
-            }).catch(er => {
-                this.loading = false
-                this.initialize()
-                console.log(er)
-            })
-        }
-    }
+            this.$http
+                .post(this.route_list, { model: this.list_model })
+                .then((res) => {
+                    res = res.data
+                    this.options = res.data
+                    callback()
+                })
+                .catch((er) => {
+                    this.loading = false
+                    this.initialize()
+                    console.log(er)
+                })
+        },
+    },
 }
 </script>
 <style scoped lang="scss">
@@ -83,7 +103,7 @@ export default {
             border: 1px solid red;
         }
         .invalid-feedback {
-            display:block;
+            display: block;
         }
     }
 }
