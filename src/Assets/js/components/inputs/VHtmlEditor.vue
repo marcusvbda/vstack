@@ -1,7 +1,12 @@
 <template>
     <tr>
         <td colspan="2">
-            <p v-if="label">{{ label }}</p>
+            <div class="d-flex flex-column card-title">
+                <span class="input-title" v-if="label" v-html="label ? label : ''" />
+                <small v-if="description" class="mt-1 text-muted">
+                    <span v-html="description"></span>
+                </small>
+            </div>
             <div :id="id" ref="content" />
         </td>
     </tr>
