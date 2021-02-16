@@ -6,7 +6,7 @@
                     <div class="col-12 d-flex align-items-center justify-content-between">
                         <div><b v-html="label" class="card-title" /></div>
                         <div v-if="advanced">
-                            <el-switch v-model="showing" active-text="Informações Avançadas" />
+                            <el-checkbox v-model="showing">Mostrar Informações Avançadas</el-checkbox>
                         </div>
                     </div>
                 </div>
