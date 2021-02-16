@@ -17,7 +17,7 @@
                                             <div class="col-12">
                                                 <ul class="d-flex flex-column mb-0">
                                                     <li v-for="(card, i) in namedCards" :key="i">
-                                                        <a class="f-12" :href="`#${card.label}`" v-html="card.label" />
+                                                        <a class="f-12 link" :href="`#${card.label}`" v-html="card.label" />
                                                     </li>
                                                 </ul>
                                             </div>
