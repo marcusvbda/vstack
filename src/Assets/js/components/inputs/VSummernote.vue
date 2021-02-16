@@ -1,17 +1,20 @@
 <template>
     <tr>
-        <td v-if="label" v-html="label ? label : ''"></td>
+        <td class="w-25">
+            <div class="d-flex flex-column">
+                <span class="title" v-if="label" v-html="label ? label : ''" />
+                <small v-if="description" class="mt-1" style="color: gray">
+                    <span v-html="description"></span>
+                </small>
+            </div>
+        </td>
         <td>
             <div class="d-flex flex-column">
-                <div
-                    v-loading="loading"
-                    class="w-100"
-                    v-bind:class="{'summernote-is-invalid' : errors}"
-                >
-                    <textarea ref="textarea" style="display:none" v-model="text" :name="name"></textarea>
+                <div v-loading="loading" class="w-100" v-bind:class="{ 'summernote-is-invalid': errors }">
+                    <textarea ref="textarea" style="display: none" v-model="text" :name="name"></textarea>
                     <div class="invalid-feedback" v-if="errors">
                         <ul class="pl-3 mb-0">
-                            <li v-for="(e,i) in errors" :key="i">{{e}}</li>
+                            <li v-for="(e, i) in errors" :key="i">{{ e }}</li>
                         </ul>
                     </div>
                 </div>
@@ -22,53 +25,49 @@
 <script>
 export default {
     props: {
-        disabled:
-        {
+        disabled: {
             type: Boolean,
-            default: false
+            default: false,
         },
-        disableresize:
-        {
+        disableresize: {
             type: Boolean,
-            default: false
+            default: false,
         },
-        name:
-        {
+        name: {
             type: String,
-            default: 'text'
+            default: 'text',
         },
-        label:
-        {
+        label: {
             type: String,
-            default: 'text'
+            default: 'text',
         },
         placeholder: {
             type: String,
-            default: ''
+            default: '',
         },
         height: {
             type: Number,
-            default: 350
+            default: 350,
         },
         minHeight: {
             type: Number,
-            default: 200
+            default: 200,
         },
         maxHeight: {
             type: Number,
-            default: 700
+            default: 700,
         },
         focus: {
             type: Boolean,
-            default: true
+            default: true,
         },
         errors: {
             type: Array,
-            default: null
+            default: null,
         },
         uploadroute: {
             type: String,
-            default: 'text'
+            default: 'text',
         },
         toolbar: {
             type: Array,
@@ -80,9 +79,9 @@ export default {
                 ['color', ['color']],
                 ['insert', ['link', 'picture']],
                 ['misc', ['codeview', 'fullscreen']],
-                ['height', ['height']]
-            ]
-        }
+                ['height', ['height']],
+            ],
+        },
     },
     data() {
         return {
@@ -90,7 +89,7 @@ export default {
             initialized: false,
             loading: false,
             options: {
-                lang: "pt-BR",
+                lang: 'pt-BR',
                 placeholder: this.placeholder,
                 popover: {},
                 toolbar: this.toolbar,
@@ -102,9 +101,9 @@ export default {
                 prettifyHtml: true,
                 codemirror: {
                     theme: 'default',
-                    mode: "text/html",
+                    mode: 'text/html',
                     lineNumbers: true,
-                    tabMode: 'indent'
+                    tabMode: 'indent',
                 },
                 callbacks: {
                     onInit: () => {
@@ -138,13 +137,13 @@ export default {
                     onImageUpload: (image) => {
                         this.loading = true
                         this.uploadImage(image[0])
-                    }
-                }
-            }
+                    },
+                },
+            },
         }
     },
     async created() {
-        $(document).ready(_ => {
+        $(document).ready((_) => {
             var params = Object.assign({}, this.options)
             if (this.disabled) {
                 $(this.$refs.textarea).summernote('disable')
@@ -159,7 +158,7 @@ export default {
     methods: {
         uploadImage: function (image) {
             let data = new FormData()
-            data.append("file", image)
+            data.append('file', image)
             let self = this
             $.ajax({
                 url: this.uploadroute,
@@ -167,27 +166,26 @@ export default {
                 contentType: false,
                 processData: false,
                 data: data,
-                type: "POST",
+                type: 'POST',
                 success: function (response) {
                     self.loading = false
                     var image = $('<img>').attr('src', response.path)
-                    $(self.$refs.textarea).summernote("insertNode", image[0])
+                    $(self.$refs.textarea).summernote('insertNode', image[0])
                 },
                 error: function (data) {
                     console.log(data)
                     self.loading = false
-                }
+                },
             })
         },
         run: function (code, value) {
             if (typeof value === undefined) {
-                return $(this.$refs.textarea).summernote(code, "")
+                return $(this.$refs.textarea).summernote(code, '')
             } else {
-
                 return $(this.$refs.textarea).summernote(code, value)
             }
-        }
-    }
+        },
+    },
 }
 </script>
 <style lang="scss">

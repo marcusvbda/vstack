@@ -1,23 +1,38 @@
 <template>
     <tr>
-        <td v-if="label" v-html="label ? label : ''"></td>
-            <td>
-                <div class="d-flex flex-column">
-                    <div class="input-group v-select"  v-bind:class="{'is-invalid' : errors}">
-                        <el-select :allow-create="allowcreate" :disabled="disabled" :multiple="multiple" :size="(size ? size : 'large')" class="w-100" clearable v-model="value" filterable :placeholder="placeholder" v-loading="loading"
-                        >
-                            <el-option v-if="required==undefined" label="" value=""></el-option>
-                            <el-option v-for="(item,i) in options" :key="i" :label="item.name" :value="String(item.id)"></el-option>
-                        </el-select>
-                        <div class="invalid-feedback" v-if="errors">
-                            <ul class="pl-3 mb-0">
-                                <li v-for="(e,i) in errors" :key="i">{{e}}</li>
-                            </ul>
-                        </div>
-                        <small v-if="description" class="mt-1" style="color: gray;"><span v-html="description"></span></small>
+        <td class="w-25">
+            <div class="d-flex flex-column">
+                <span class="title" v-if="label" v-html="label ? label : ''" />
+                <small v-if="description" class="mt-1" style="color: gray">
+                    <span v-html="description"></span>
+                </small>
+            </div>
+        </td>
+        <td>
+            <div class="d-flex flex-column">
+                <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
+                    <el-select
+                        :allow-create="allowcreate"
+                        :disabled="disabled"
+                        :multiple="multiple"
+                        :size="size ? size : 'large'"
+                        class="w-100"
+                        clearable
+                        v-model="value"
+                        filterable
+                        :placeholder="placeholder"
+                        v-loading="loading"
+                    >
+                        <el-option v-if="required == undefined" label="" value=""></el-option>
+                        <el-option v-for="(item, i) in options" :key="i" :label="item.name" :value="String(item.id)"></el-option>
+                    </el-select>
+                    <div class="invalid-feedback" v-if="errors">
+                        <ul class="pl-3 mb-0">
+                            <li v-for="(e, i) in errors" :key="i">{{ e }}</li>
+                        </ul>
                     </div>
                 </div>
-            </td>
+            </div>
         </td>
     </tr>
 </template>

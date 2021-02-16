@@ -1,31 +1,43 @@
 <template>
-    <div class="row">
+    <div class="row" id="crud-view">
         <div class="col-12">
             <form class="needs-validation m-0" novalidate v-on:submit.prevent="submit" @keypress.13.prevent>
                 <div class="row">
-                    <div class="col-md-2 pr-0 d-none d-md-block" v-if="showPills">
-                        <ul class="nav nav-pills nav-fill flex-column" :style="{ top: 10, position: 'sticky' }">
-                            <li class="nav-item mb-2" v-for="(card, i) in namedCards" :key="i">
-                                <a class="nav-link active" :href="`#${card.label}`" v-html="card.label"></a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div v-bind:class="{ 'col-md-10 col-sm-12': showPills, 'col-12': !showPills }">
+                    <div class="col-md-10 col-sm-12">
                         <template v-for="(card, i) in data.fields">
                             <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
                         </template>
                     </div>
+                    <div class="col-md-2 d-none d-md-block fields-tab">
+                        <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
+                            <div class="col-12 pl-0">
+                                <div class="card">
+                                    <div class="card-body p-2" v-if="showPills">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <ul class="d-flex flex-column mb-0">
+                                                    <li v-for="(card, i) in namedCards" :key="i">
+                                                        <a class="f-12" :href="`#${card.label}`" v-html="card.label" />
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer d-flex flex-row justify-content-between p-2 align-items-center">
+                                        <a :href="data.list_route" class="mr-5 link d-none d-lg-block f-12 d-flex align-items-center">
+                                            <span class="el-icon-back mr-2" />Voltar
+                                        </a>
+                                        <button class="btn btn-primary btn-sm btn-sm-block f-12 d-flex align-items-center" type="sumit">
+                                            <span class="el-icon-success mr-2" />Salvar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <slot name="aftercreate" v-if="pageType == 'CREATE'"></slot>
                 <slot name="afteredit" v-if="pageType != 'CREATE'"></slot>
-                <div class="row">
-                    <div class="col-12 d-flex justify-content-end d-flex align-items-center flex-wrap">
-                        <a :href="data.list_route" class="mr-5 text-danger link d-none d-lg-block">
-                            <b>Cancelar</b>
-                        </a>
-                        <button class="btn btn-primary btn-sm-block" type="sumit">{{ pageType == 'CREATE' ? 'Cadastrar' : 'Alterar' }}</button>
-                    </div>
-                </div>
             </form>
         </div>
     </div>
@@ -139,3 +151,15 @@ export default {
     },
 }
 </script>
+<style lang="scss" scoped>
+#crud-view {
+    .fields-tab {
+        .nav-link {
+            font-size: 12px;
+        }
+    }
+    .f-12 {
+        font-size: 12px;
+    }
+}
+</style>

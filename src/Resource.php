@@ -326,7 +326,6 @@ class Resource
 			"purple",
 			"brown",
 			"orange",
-			"pink",
 			"#f115e0",
 			"#7e15f1",
 			"#02bec7",

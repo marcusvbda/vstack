@@ -59,7 +59,7 @@
 				@endif
 			@else
 				@if($resource->canViewReport())
-					<a class="ml-2" href="/admin/relatorios/{{ $resource->id }}">
+					<a class="ml-2 f-12" href="/admin/relatorios/{{ $resource->id }}">
 					<span class="el-icon-tickets mr-1"></span>Relatório de {{ $resource->label() }}</a>
 				@endif
 			@endif
@@ -102,7 +102,7 @@
 					@include("vStack::resources.partials._save_filter_btn")
 				@endif
 			</div>
-            <div class="d-flex flex-row ml-auto align-items-center">
+            <div class="d-flex flex-row ml-auto align-items-center f-12">
 				@if($data->total()>0)
 					<div class="d-flex flex-row align-items-center justify-content-center">
 						{!! $resource->resultsFoundLabel() !!} {{ $data->total() }}

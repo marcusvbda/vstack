@@ -1,17 +1,18 @@
 <template>
     <div :id="label">
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="row mb-3">
+        <div class="card mb-4 p-0">
+            <div class="card-header crud-card-header px-3">
+                <div class="row">
                     <div class="col-12 d-flex align-items-center justify-content-between">
-                        <div><h4 v-html="label" /></div>
+                        <div><b v-html="label" class="card-title" /></div>
                         <div v-if="advanced">
                             <el-switch v-model="showing" active-text="Informações Avançadas" />
                         </div>
                     </div>
                 </div>
-
-                <div class="row mb-3" v-if="real_showing">
+            </div>
+            <div class="card-body p-0">
+                <div class="row" v-if="real_showing">
                     <div class="col-12">
                         <slot />
                     </div>
