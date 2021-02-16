@@ -1,7 +1,7 @@
 <template>
     <div :id="label">
         <div class="card mb-4 p-0">
-            <div class="card-header crud-card-header px-3">
+            <div class="card-header crud-card-header">
                 <div class="row">
                     <div class="col-12 d-flex align-items-center justify-content-between">
                         <div><b v-html="label" class="card-title" /></div>
