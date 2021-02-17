@@ -25,7 +25,6 @@
                         v-model="val"
                         v-bind:class="{ 'is-invalid': errors }"
                         :placeholder="placeholder ? placeholder : ''"
-                        name="email"
                         :type="type ? type : 'text'"
                     />
                     <input
@@ -35,7 +34,6 @@
                         v-model="val"
                         v-bind:class="{ 'is-invalid': errors }"
                         :placeholder="placeholder ? placeholder : ''"
-                        name="email"
                         :type="type ? type : 'text'"
                     />
 
