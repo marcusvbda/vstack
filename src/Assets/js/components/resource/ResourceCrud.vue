@@ -3,19 +3,19 @@
         <div class="col-12">
             <form class="needs-validation m-0" novalidate v-on:submit.prevent="submit" @keypress.13.prevent>
                 <div class="row">
-                    <div class="col-md-10 col-sm-12">
+                    <div class="col-md-9 col-sm-12 col-sm-12">
                         <template v-for="(card, i) in data.fields">
                             <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
                         </template>
                     </div>
-                    <div class="col-md-2 d-none d-md-block fields-tab">
+                    <div class="col-md-3 col-sm-12 fields-tab">
                         <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
-                            <div class="col-12 pl-0">
+                            <div class="col-12">
                                 <div class="card">
-                                    <div class="card-body p-2" v-if="showPills">
+                                    <div class="card-body d-none d-md-block d-lg-block" v-if="showPills">
                                         <div class="row">
                                             <div class="col-12">
-                                                <ul class="d-flex flex-column mb-0">
+                                                <ul class="d-flex flex-column mb-0 pl-3">
                                                     <li v-for="(card, i) in namedCards" :key="i">
                                                         <a class="f-12 link" :href="`#${card.label}`" v-html="card.label" />
                                                     </li>
@@ -23,9 +23,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-footer d-flex flex-row justify-content-between p-2 align-items-center">
-                                        <a :href="data.list_route" class="mr-5 link d-none d-lg-block f-12 d-flex align-items-center">
-                                            <span class="el-icon-back mr-2" />Voltar
+                                    <div class="card-footer flex-wrap d-flex flex-row justify-content-between p-2 align-items-center">
+                                        <a :href="data.list_route" class="mr-5 link d-none d-md-block d-lg-block f-12">
+                                            <span class="d-flex align-items-center"> <span class="el-icon-back mr-2" />Voltar </span>
                                         </a>
                                         <button class="btn btn-primary btn-sm btn-sm-block f-12 d-flex align-items-center" type="sumit">
                                             <span class="el-icon-success mr-2" />Salvar
