@@ -5,5 +5,6 @@
     :rows='{{$rows}}'                                                          
     v-model='{{"form.$field"}}'                                                            
     placeholder='{{$placeholder}}'                                                       
+    description='{{$description}}'                                                       
     :errors='{{"errors.$field ? errors.$field : false"}}'                                              
 />
