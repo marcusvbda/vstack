@@ -158,6 +158,9 @@ ul.pagination {
 .table-crud {
     .w-25 {
         background-color: #f9f9f9;
+        @media (max-width: 749px) {
+            width: 100% !important;
+        }
     }
     .input-title {
         font-weight: bold;
