@@ -21,10 +21,7 @@
                 inactive-color='{{$inactive_color}}'      
                 active-text='{{$active_text}}'            
                 inactive-text='{{$inactive_text}}'>       
-            </el-switch> 
-            @if(@$description)
-                <br><small style='color:gray;' class='mt-1 pl-3'>{!! $description!!}</small>
-            @endif
+            </el-switch>
         </div>                             
     </td>                             
 </tr>
