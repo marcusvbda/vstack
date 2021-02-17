@@ -6,7 +6,7 @@
                     <div class="col-12 d-flex align-items-center justify-content-between">
                         <div><b v-html="label" class="card-title" /></div>
                         <div v-if="advanced">
-                            <el-checkbox v-model="showing">Visualizar Informações</el-checkbox>
+                            <el-checkbox v-model="showing" class="mb-1">Visualizar Informações</el-checkbox>
                         </div>
                     </div>
                 </div>
