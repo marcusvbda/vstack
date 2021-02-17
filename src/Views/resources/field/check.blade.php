@@ -1,8 +1,19 @@
 <tr>
-    <td>{{$label}}</td>
+	<td class="w-25">
+		<div class="d-flex flex-column">
+			@if(@$label) 
+				<span class="input-title">{!! $label !!}</span> 
+			@endif
+			@if(@$description) 
+				<small  class="mt-1 text-muted">
+					{!! $description !!}
+				</small>
+			@endif
+		</div>
+	</td>
     <td>
         <div class='d-flex flex-column'>                                                   
-            <el-switch             
+            <el-switch              
                 :disabled='{{$disabled}}'                               
                 class='ml-3'                          
                 v-model='{{"form.$field"}}'                 
