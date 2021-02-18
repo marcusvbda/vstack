@@ -41,7 +41,6 @@
                         <li v-for="(e, i) in errors" :key="i">{{ e }}</li>
                     </ul>
                 </div>
-                <small style="color: gray" v-if="description"><span v-html="description"></span></small>
             </div>
         </td>
     </tr>
