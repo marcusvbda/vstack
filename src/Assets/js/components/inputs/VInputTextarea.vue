@@ -2,10 +2,8 @@
     <tr>
         <td class="w-25">
             <div class="d-flex flex-column">
-                <span class="input-title" v-if="label" v-html="label ? label : ''" />
-                <small v-if="description" class="mt-1 text-muted">
-                    <span v-html="description"></span>
-                </small>
+                <b class="input-title" v-if="label" v-html="label ? label : ''" />
+                <small v-if="description" class="mt-1 text-muted" v-html="description" />
             </div>
         </td>
         <td>
