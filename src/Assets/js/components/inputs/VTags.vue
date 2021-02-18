@@ -2,7 +2,7 @@
     <tr>
         <td class="w-25">
             <div class="d-flex flex-column">
-                <span class="input-title" v-if="label" v-html="label ? label : ''" />
+                <b class="input-title" v-if="label" v-html="label ? label : ''" />
                 <small v-if="description" class="mt-1 text-muted">
                     <span v-html="description"></span>
                 </small>
@@ -12,7 +12,7 @@
             <div class="d-flex flex-column">
                 <div class="d-flex flex-row align-items-center">
                     <el-tag
-                        class="mr-2"
+                        class="m-2"
                         :key="tag"
                         v-for="tag in dynamicTags"
                         :closable="disabled != true ? true : false"
@@ -24,7 +24,7 @@
                     </el-tag>
                     <template v-if="disabled != true">
                         <el-input
-                            class="input-new-tag ml-0"
+                            class="input-new-tag ml-0 mr-2"
                             v-if="inputVisible"
                             v-model="inputValue"
                             ref="saveTagInput"
