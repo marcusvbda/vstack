@@ -620,7 +620,7 @@ class ResourceController extends Controller
 		$target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
 		$data = $request->except(["resource_id", "id", "redirect_back"]);
 		$data = $this->processStoreData($resource, $data);
-		$target->fill($data["data"]);
+		foreach (array_keys($data["data"]) as $key) $target->{$key} = $data["data"][$key];
 		$target->save();
 		$this->storeBelongsToMany($target, $data["belongsToMany"]);
 		$this->storeMorphsMany($target, $data["morphsMany"]);
