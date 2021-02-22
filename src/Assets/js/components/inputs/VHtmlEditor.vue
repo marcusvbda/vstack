@@ -35,10 +35,6 @@ export default {
             type: String,
             default: '',
         },
-        description: {
-            type: String,
-            default: '',
-        },
         mode: {
             type: String,
             default: 'webpage',
@@ -56,7 +52,7 @@ export default {
         return {
             editor: null,
             block_manager: null,
-            content: { body: '', css: '' },
+            content: this.default != undefined ? this.default : this.$attrs.value,
             pluginsArray: {
                 newsletter: [grapesPresetNewsLetter],
                 webpage: [grapesPresetWebpage, grapesJsCustomCode, grapesPluginForms],
@@ -72,8 +68,6 @@ export default {
         },
     },
     created() {
-        if (this.$attrs?.value?.body || this.$attrs?.value?.css) this.content = this.$attrs.value
-        if (this.default?.body || this.default?.css) this.content = this.default
         this.$nextTick(() => {
             this.init()
         })

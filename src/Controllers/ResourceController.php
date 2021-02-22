@@ -471,13 +471,16 @@ class ResourceController extends Controller
 				"inputs" => []
 			];
 			foreach ($card->inputs  as $field) {
-				if (!in_array($field->options["field"], ["password", "password_confirmation"])) {
+				if (!in_array(@$field->options["field"], ["password", "password_confirmation"])) {
 					switch ($field->options["type"]) {
 						case "text":
 							$_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
 							break;
 						case "check":
 							$_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]} ? '<span class="badge badge-success">Sim</span>' : '<span class="badge badge-danger">Não</span>';
+							break;
+						case "custom_component":
+							$_card["inputs"][$field->options["label"]] = @$field->view;
 							break;
 						case "belongsTo":
 							if (@$field->options["model"]) {
@@ -596,8 +599,10 @@ class ResourceController extends Controller
 						break;
 					case "html_editor":
 						$value = @$content->{$input->options["field"]};
-						// dd($value);
 						$input->options["value"] = $value ? $value : (object)["css" => "", "body" => ""];
+						break;
+					case "custom_component":
+						// 
 						break;
 					default:
 						$input->options["value"] = ($input->options["field"] == "password") ? null : @$content->{$input->options["field"]};

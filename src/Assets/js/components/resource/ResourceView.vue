@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="crud-view">
         <div class="row mb-3">
             <div class="col-md-12 d-flex justify-content-between align-items-center flex-wrap">
                 <div>
@@ -16,30 +16,23 @@
         </div>
 
         <div class="row mb-4">
-            <div class="col-md-2 pr-0 d-none d-md-block" v-if="showPills">
-                <ul class="nav nav-pills nav-fill flex-column" :style="{ top: 10, position: 'sticky' }">
-                    <li class="nav-item mb-2" v-for="(card, i) in namedCards" :key="i">
-                        <a class="nav-link active" :href="`#${card.label}`" v-html="card.label"></a>
-                    </li>
-                </ul>
-            </div>
-            <div v-bind:class="{ 'col-md-10 col-sm-12': showPills, 'col-12': !showPills }">
+            <div class="col-md-9 col-sm-12">
                 <div class="row" v-for="(card, i) in data.fields" :key="i">
                     <div class="col-12">
                         <div class="card mb-3" :id="`${card.label}`">
-                            <div v-if="card.label" class="card-header">
-                                <h5 v-html="card.label"></h5>
+                            <div v-if="card.label" class="card-header crud-card-header">
+                                <b class="crud-title" v-html="card.label"></b>
                             </div>
                             <div class="card-body p-0">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <table class="table table-striped mb-0">
+                                        <table class="table table-crud mb-0">
                                             <tbody>
                                                 <tr v-for="(field, i) in card.inputs" :key="i">
-                                                    <td style="width: 25%" v-if="i.indexOf('IGNORE__') < 0">
-                                                        <span v-html="i"></span>
+                                                    <td class="w-25" v-if="i.indexOf('IGNORE__') < 0">
+                                                        <b class="input-title" v-html="i"></b>
                                                     </td>
-                                                    <td>
+                                                    <td style="max-width: 0px">
                                                         <v-runtime-template :key="i" :template="`<span>${field === null ? '' : field}</span>`" />
                                                     </td>
                                                 </tr>
@@ -52,37 +45,25 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row mb-4" v-if="false">
-            <div class="col-12">
-                <div class="row">
-                    <div v-bind:class="{ 'col-md-10 col-sm-12': showPills, 'col-12': !showPills }">
-                        <div class="row" v-for="(card, i) in data.fields" :key="i">
-                            <div class="col-12 p-0">
-                                <h4 v-if="card.label" v-html="card.label"></h4>
-                                <div class="card">
-                                    <div class="card-body p-0">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <table class="table table-striped mb-0">
-                                                    <tbody>
-                                                        <tr v-for="(field, i) in card.inputs" :key="i">
-                                                            <template v-if="!['custom'].includes(field.type)">
-                                                                <td style="width: 25%" v-if="i.indexOf('IGNORE__') < 0">
-                                                                    <span v-html="i"></span>
-                                                                </td>
-                                                                <td>
-                                                                    <v-runtime-template :key="i" :template="`<span>${field === null ? '' : field}</span>`" />
-                                                                </td>
-                                                            </template>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+            <div class="col-md-3 col-sm-12 fields-tab">
+                <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body d-none d-md-block d-lg-block" v-if="showPills">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <ul class="d-flex flex-column mb-0 pl-3">
+                                            <li v-for="(card, i) in namedCards" :key="i">
+                                                <a class="f-12 link" :href="`#${card.label}`" v-html="card.label" />
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="card-footer flex-wrap d-flex flex-row justify-content-between p-2 align-items-center">
+                                <a :href="data.list_route" class="mr-5 link d-none d-md-block d-lg-block f-12">
+                                    <span class="d-flex align-items-center"> <span class="el-icon-back mr-2" />Voltar </span>
+                                </a>
                             </div>
                         </div>
                     </div>

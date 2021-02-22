@@ -89,7 +89,9 @@ export default {
                 if (fields[i].options) {
                     let field_name = fields[i].options.field
                     let field_value = this.processFieldValue(field_name, fields[i].options)
-                    this.$set(fields[i].options.type == 'resource-field' ? this.resourceData : this.form, field_name, field_value)
+                    if (field_name) {
+                        this.$set(fields[i].options.type == 'resource-field' ? this.resourceData : this.form, field_name, field_value)
+                    }
                 }
             }
         },

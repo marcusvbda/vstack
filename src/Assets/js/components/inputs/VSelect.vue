@@ -74,7 +74,7 @@ export default {
     },
     methods: {
         initialize() {
-            if (this.list_model) {
+            if (this.optionlist) {
                 this.initOptions((_) => {
                     this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null
                     this.loading = false

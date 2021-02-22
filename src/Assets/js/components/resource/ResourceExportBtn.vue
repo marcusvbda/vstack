@@ -1,5 +1,5 @@
 <template>
-    <div class="f-12">
+    <div>
         <a href="#" @click.prevent="openExportModal">
             <slot />
         </a>
