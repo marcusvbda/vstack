@@ -33,7 +33,10 @@
                                                         <b class="input-title" v-html="i"></b>
                                                     </td>
                                                     <td style="max-width: 0px">
-                                                        <v-runtime-template :key="i" :template="`<span>${field === null ? '' : field}</span>`" />
+                                                        <v-runtime-template
+                                                            :key="i"
+                                                            :template="`<div style='overflow-x: auto;'>${field === null ? '' : field}</div>`"
+                                                        />
                                                     </td>
                                                 </tr>
                                             </tbody>
