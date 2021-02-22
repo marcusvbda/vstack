@@ -75,12 +75,11 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'breadcrumb'],
+    props: ['data', 'breadcrumb', 'form'],
     data() {
         return {
             loading: false,
             resourceData: {},
-            form: {},
             errors: {},
         }
     },

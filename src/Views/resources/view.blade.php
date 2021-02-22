@@ -52,6 +52,7 @@
     @endif
     <resource-view 
         :data="{{json_encode($data)}}" 
+        :form="{{json_encode($content)}}" 
         redirect="{{$current_route}}" 
         :breadcrumb="{{json_encode($routes)}}" 
     >
