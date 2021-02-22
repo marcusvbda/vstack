@@ -236,8 +236,7 @@ class Resource
 		$validation_rules = [];
 		foreach ($this->fields() as $card) {
 			foreach ($card->inputs as $field) {
-				$field = @$field->options["field"];
-				if ($field) $validation_rules[$field] = @$field->options["rules"] ?? [];
+				$validation_rules[@$field->options["field"]] = @$field->options["rules"] ?? [];
 			}
 		}
 		return $validation_rules;

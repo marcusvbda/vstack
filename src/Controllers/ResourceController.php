@@ -445,7 +445,7 @@ class ResourceController extends Controller
 		$data = $this->makeViewData($content->code, $resource, $content);
 		$data["page_type"] = "Visualização";
 		$params = @$request["params"] ? $request["params"] : [];
-		return view("vStack::resources.view", compact("resource", "data", "params", "content"));
+		return view("vStack::resources.view", compact("resource", "data", "params", "content", "form"));
 	}
 
 	public function makeViewData($code, $resource, $content = null)

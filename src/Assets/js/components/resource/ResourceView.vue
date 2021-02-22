@@ -79,6 +79,9 @@ export default {
     data() {
         return {
             loading: false,
+            resourceData: {},
+            form: {},
+            errors: {},
         }
     },
     components: {
