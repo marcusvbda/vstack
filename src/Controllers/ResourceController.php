@@ -602,7 +602,8 @@ class ResourceController extends Controller
 						$input->options["value"] = $value ? $value : (object)["css" => "", "body" => ""];
 						break;
 					case "custom_component":
-						// 
+						$value = @$content->{$input->options["field"]};
+						$input->options["value"] = $value ? $value : null;
 						break;
 					default:
 						$input->options["value"] = ($input->options["field"] == "password") ? null : @$content->{$input->options["field"]};
@@ -625,7 +626,9 @@ class ResourceController extends Controller
 		$target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
 		$data = $request->except(["resource_id", "id", "redirect_back"]);
 		$data = $this->processStoreData($resource, $data);
-		foreach (array_keys($data["data"]) as $key) $target->{$key} = $data["data"][$key];
+		foreach (array_keys($data["data"]) as $key) {
+			$target->{$key} = $data["data"][$key];
+		}
 		$target->save();
 		$this->storeBelongsToMany($target, $data["belongsToMany"]);
 		$this->storeMorphsMany($target, $data["morphsMany"]);
