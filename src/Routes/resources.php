@@ -7,6 +7,7 @@ use marcusvbda\vstack\Controllers\{
 
 Route::group(['prefix' => "vstack"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
+		Route::post('json-api', [ResourceController::class, 'getJson']);
 		Route::post('{resource}/get-partial-content', [VstackController::class, 'getPartialContent'])->name("vstack.get_partials_content");
 	});
 });
@@ -14,7 +15,6 @@ Route::group(['prefix' => "vstack"], function () {
 Route::group(['prefix' => "admin"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
 		Route::post('upload', [ResourceController::class, 'upload'])->name("resource.upload");
-		Route::post('json-api/{resource}', [ResourceController::class, 'getJson']);
 		Route::get('relatorios/{resource}', [ResourceController::class, 'report'])->name("resource.report");
 		Route::post('relatorios/{resource}/create-report-template', [ResourceController::class, 'createReportTemplate'])->name("resource.create.report.template");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
