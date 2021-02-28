@@ -56,4 +56,33 @@ class VstackController extends Controller
 		} else  $value =  $removeEmoji(@trim(@$columns[$key]["handler"] ? $columns[$key]["handler"]($row) : $placeholder));
 		return (@$value ? $value : $placeholder);
 	}
+
+
+	public function getJson(Request $request)
+	{
+		$model = @$request["model"];
+		if (!$model) abort(403);
+		$per_page = @$request["per_page"] ?? 10;
+		$includes = @$request["includes"] ?? [];
+		$fields = @$request["fields"] ?? ["*"];
+		$order_by = @$request["order_by"] ?? ["id", "asc"];
+		$query = app()->make($model)->where("id", ">", 0);
+		$filters  = @$request["filters"] ?? [];
+		foreach ($filters as $filter_type => $filters) {
+			foreach ($filters as $field => $queries) {
+				if ($filter_type == "where") {
+					foreach ($queries as $key => $value) {
+						$query = $query->where($field, $key, $value);
+					}
+				}
+				if ($filter_type == "where_in") $query = $query->whereIn($field, $queries);
+
+				if ($filter_type == "where_not_in") $query = $query->whereNotIn($field, $queries);
+			}
+		}
+		$result = $query->select($fields)->with($includes)
+			->orderBy($order_by[0], $order_by[1])
+			->paginate($per_page);
+		return $result;
+	}
 }
