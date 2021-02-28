@@ -14,6 +14,7 @@ Route::group(['prefix' => "vstack"], function () {
 Route::group(['prefix' => "admin"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
 		Route::post('upload', [ResourceController::class, 'upload'])->name("resource.upload");
+		Route::post('json-api/{resource}', [ResourceController::class, 'getJson']);
 		Route::get('relatorios/{resource}', [ResourceController::class, 'report'])->name("resource.report");
 		Route::post('relatorios/{resource}/create-report-template', [ResourceController::class, 'createReportTemplate'])->name("resource.create.report.template");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
@@ -27,7 +28,6 @@ Route::group(['prefix' => "admin"], function () {
 		Route::get('{resource}/import/sheet_template', [ResourceController::class, 'importSheetTemplate'])->name("resource.import.check_file");
 		Route::post('{resource}/import/check_file', [ResourceController::class, 'checkFileImport'])->name("resource.import.check_file");
 		Route::post('{resource}/import/submit', [ResourceController::class, 'importSubmit'])->name("resource.import.submit");
-		Route::post('{resource}/json', [ResourceController::class, 'getJson']);
 
 		Route::get('{resource}/{code}', [ResourceController::class, 'view'])->middleware(['hashids:code'])->name("resource.view");
 
