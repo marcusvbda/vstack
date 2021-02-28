@@ -962,14 +962,26 @@ class ResourceController extends Controller
 		$resource = ResourcesHelpers::find($resource);
 		if (!$resource->canViewList()) abort(403);
 		$per_page = @$request["per_page"] ?? 10;
+		$includes = @$request["includes"] ?? [];
+		$fields = @$request["fields"] ?? ["*"];
+		$order_by = @$request["order_by"] ?? ["id", "asc"];
 		$query = $resource->model->where("id", ">", 0);
-		$params = $request->except(["page", "per_page", "includes"]);
-		foreach ($params as $field => $filters) {
-			foreach ($filters as $type => $value) {
-				$query = $query->where($field, $type, $value);
+		$filters  = @$request["filters"] ?? [];
+		foreach ($filters as $filter_type => $filters) {
+			foreach ($filters as $field => $queries) {
+				if ($filter_type == "where") {
+					foreach ($queries as $key => $value) {
+						$query = $query->where($field, $key, $value);
+					}
+				}
+				if ($filter_type == "where_in") $query = $query->whereIn($field, $queries);
+
+				if ($filter_type == "where_not_in") $query = $query->whereNotIn($field, $queries);
 			}
 		}
-		$result = $query->with(@$request["includes"] ?? [])->paginate($per_page);
-		return response()->json($result);
+		$result = $query->select($fields)->with($includes)
+			->orderBy($order_by[0], $order_by[1])
+			->paginate($per_page);
+		return $result;
 	}
 }
