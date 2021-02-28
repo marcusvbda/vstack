@@ -7,7 +7,7 @@ use marcusvbda\vstack\Controllers\{
 
 Route::group(['prefix' => "vstack"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
-		Route::post('json-api', [ResourceController::class, 'getJson']);
+		Route::post('json-api', [VstackController::class, 'getJson']);
 		Route::post('{resource}/get-partial-content', [VstackController::class, 'getPartialContent'])->name("vstack.get_partials_content");
 	});
 });
