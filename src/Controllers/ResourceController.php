@@ -956,4 +956,20 @@ class ResourceController extends Controller
 		if (!@$action->id) abort(404);
 		return $action->handler($request);
 	}
+
+	public function getJson($resource, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		if (!$resource->canViewList()) abort(403);
+		$per_page = @$request["per_page"] ?? 10;
+		$query = $resource->model->where("id", ">", 0);
+		$params = $request->except(["page", "per_page", "includes"]);
+		foreach ($params as $field => $filters) {
+			foreach ($filters as $type => $value) {
+				$query = $query->where($field, $type, $value);
+			}
+		}
+		$result = $query->with(@$request["includes"] ?? [])->paginate($per_page);
+		return response()->json($result);
+	}
 }
