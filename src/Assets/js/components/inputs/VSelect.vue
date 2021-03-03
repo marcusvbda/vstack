@@ -83,7 +83,8 @@ export default {
             } else {
                 for (let i in this.option_list) {
                     let value = this.option_list[i]
-                    if (typeof value == 'string') this.options.push({ id: value, value: value })
+                    if (typeof value == 'string') this.options.push({ id: value, name: value })
+                    if (typeof value == 'object') this.options.push({ id: String(value.id), name: value.value })
                 }
                 this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null
                 this.loading = false
