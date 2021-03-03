@@ -62,7 +62,7 @@ class VstackController extends Controller
 	{
 		$model = @$request["model"];
 		if (!$model) abort(403);
-		$per_page = @$request["per_page"] ?? 10;
+		$per_page = @$request["per_page"];
 		$includes = @$request["includes"] ?? [];
 		$fields = @$request["fields"] ?? ["*"];
 		$order_by = @$request["order_by"] ?? ["id", "asc"];
@@ -81,8 +81,7 @@ class VstackController extends Controller
 			}
 		}
 		$result = $query->select($fields)->with($includes)
-			->orderBy($order_by[0], $order_by[1])
-			->paginate($per_page);
-		return $result;
+			->orderBy($order_by[0], $order_by[1]);
+		return $per_page ? $result->paginate($per_page) : $result->get();
 	}
 }
