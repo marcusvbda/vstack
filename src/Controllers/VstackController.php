@@ -75,8 +75,15 @@ class VstackController extends Controller
 						$query = $query->where($field, $key, $value);
 					}
 				}
+				if ($filter_type == "or_where") {
+					foreach ($queries as $key => $value) {
+						$query = $query->orWhere($field, $key, $value);
+					}
+				}
+				if ($filter_type == "or_where_in") $query = $query->orWhereIn($field, $queries);
 				if ($filter_type == "where_in") $query = $query->whereIn($field, $queries);
 
+				if ($filter_type == "or_where_not_in") $query = $query->OrWhereNotIn($field, $queries);
 				if ($filter_type == "where_not_in") $query = $query->whereNotIn($field, $queries);
 			}
 		}
