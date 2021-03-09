@@ -16,26 +16,37 @@
                             <span v-html="prepend ? prepend : ''"></span>
                         </span>
                     </div>
-                    <the-mask
-                        :disabled="disabled"
+                    <currency-input
+                        v-if="type == 'currency'"
                         class="form-control"
-                        v-if="mask"
-                        :mask="mask"
-                        :masked="true"
-                        v-model="val"
                         v-bind:class="{ 'is-invalid': errors }"
+                        currency="BRL"
                         :placeholder="placeholder ? placeholder : ''"
-                        :type="type ? type : 'text'"
-                    />
-                    <input
-                        :disabled="disabled"
-                        class="form-control"
-                        v-else
+                        :auto-decimal-mode="true"
                         v-model="val"
-                        v-bind:class="{ 'is-invalid': errors }"
-                        :placeholder="placeholder ? placeholder : ''"
-                        :type="type ? type : 'text'"
                     />
+                    <template v-else>
+                        <the-mask
+                            :disabled="disabled"
+                            class="form-control"
+                            v-if="mask"
+                            :mask="mask"
+                            :masked="true"
+                            v-model="val"
+                            v-bind:class="{ 'is-invalid': errors }"
+                            :placeholder="placeholder ? placeholder : ''"
+                            :type="type ? type : 'text'"
+                        />
+                        <input
+                            :disabled="disabled"
+                            class="form-control"
+                            v-else
+                            v-model="val"
+                            v-bind:class="{ 'is-invalid': errors }"
+                            :placeholder="placeholder ? placeholder : ''"
+                            :type="type ? type : 'text'"
+                        />
+                    </template>
 
                     <div class="input-group-append" v-if="append">
                         <span class="input-group-text">
