@@ -28,7 +28,7 @@
                     </el-select>
                     <div class="invalid-feedback" v-if="errors">
                         <ul class="pl-3 mb-0">
-                            <li v-for="(e, i) in errors" :key="i">{{ e }}</li>
+                           <li v-for="(e, i) in errors" :key="i" v-html="e" />
                         </ul>
                     </div>
                 </div>
