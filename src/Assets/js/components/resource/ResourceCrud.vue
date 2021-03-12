@@ -45,7 +45,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'redirect', 'params', 'breadcrumb'],
+    props: ['data', 'redirect', 'params'],
     data() {
         return {
             resourceData: {},
