@@ -32,7 +32,6 @@ class TextArea extends Field
 			"rows",
 			"placeholder",
 			"description",
-			"visible",
 			"field"
 		))->render();
 	}
