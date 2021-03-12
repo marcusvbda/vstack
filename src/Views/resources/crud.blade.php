@@ -1,36 +1,15 @@
 @extends("templates.admin")
 @section('title',$resource->label())
 <?php 
-$has_summernote = false;
 $cards = $data["fields"];
-for($i=0;$i<count($cards);$i++)
-{
-    $card = $cards[$i];
-    for($y=0;$y<count($card->inputs);$y++)
-    {
-        $field = $card->inputs[$y];
-        if($field->options["type"]=="summernote")
-        {
-            $has_summernote = true;
-            break;
-        }
-        if($field->options["type"]=="resource-field")
-        {
-            if($data["page_type"]!="Edição") unset($data["fields"][$i]);
-        }
-    }
-}
+$raw_types = ["Edição" => "edit","Cadastro" => "create"];
+
 ?>
-@if($has_summernote)
-    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.min.css" />
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
-@endif
 @section('breadcrumb')
 <?php 
     $routes = [];
     $current = $data['page_type']." de ".$resource->singularLabel();
-    $current_route = $resource->route()."/".@$content->code;
+    $current_route = $resource->route()."/".@$content->code."/".$raw_types[$data["page_type"]];
     Session::push("breadcrumb",[$current=>$current_route]);
     $bc = Session::get("breadcrumb");
     Session::forget('breadcrumb');
