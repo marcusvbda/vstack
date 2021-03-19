@@ -131,24 +131,30 @@ export default {
                 confirmButtonText: 'Sim',
                 cancelButtonText: 'Não',
                 type: 'warning',
+            }).then(() => {
+                let loading = this.$loading()
+                this.$http
+                    .post(this.data.store_route, this.form)
+                    .then((res) => {
+                        let data = res.data
+                        if (data.message) this.$message({ showClose: true, message: data.message.text, type: data.message.type })
+                        if (data.success) return (window.location.href = data.route)
+                        loading.close()
+                    })
+                    .catch((er) => {
+                        let errors = er.response.data.errors
+                        this.errors = errors
+                        loading.close()
+                        try {
+                            let message = Object.keys(errors)
+                                .map((key) => `<li>${errors[key][0]}</li>`)
+                                .join('')
+                            this.$message({ dangerouslyUseHTMLString: true, showClose: true, message: `<ul>${message}</ul>`, type: 'error' })
+                        } catch {
+                            return
+                        }
+                    })
             })
-                .then(() => {
-                    let loading = this.$loading()
-                    this.$http
-                        .post(this.data.store_route, this.form)
-                        .then((res) => {
-                            let data = res.data
-                            if (data.message) this.$message({ showClose: true, message: data.message.text, type: data.message.type })
-                            if (data.success) return (window.location.href = data.route)
-                            loading.close()
-                        })
-                        .catch((er) => {
-                            let errors = er.response.data.errors
-                            this.errors = errors
-                            loading.close()
-                        })
-                })
-                .catch(() => false)
         },
     },
 }
