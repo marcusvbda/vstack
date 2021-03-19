@@ -61,9 +61,8 @@
                     @endphp
                     <tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}"
                         resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
-                        type="resourceTableContent" :can_view="{{json_encode($resource->canViewRow($row) &&  $resource->canView())}}"
-                        :can_delete="{{json_encode($resource->canDeleteRow($row) && $resource->canDelete())}}"
-						:can_update="{{json_encode($resource->canUpdateRow($row) &&  $resource->canUpdate())}}">
+                        type="resourceTableContent"
+                        >
 						@if(count($resource->actions()) > 0)
 							<template slot="first-column">
 								<th width="1%;">
