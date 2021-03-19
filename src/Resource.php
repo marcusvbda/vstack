@@ -181,6 +181,14 @@ class Resource
 		return 1000;
 	}
 
+	public function checkAclResource($row, $type)
+	{
+		$type = ucfirst($type);
+		$acl_row = $this->{"can{$type}Row"}($row);
+		$acl_resource = $this->{"can{$type}"}();
+		return $acl_row && $acl_resource;
+	}
+
 	public function canViewList()
 	{
 		return true;
