@@ -407,8 +407,8 @@ class ResourceController extends Controller
 	public function edit($resource, $code, Request $request)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canUpdate()) abort(403);
 		$content = $resource->model->findOrFail($code);
+		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
 		$data = $this->makeCrudData($resource, $content);
 		$data["page_type"] = "Edição";
 		$params = @$request["params"] ? $request["params"] : [];
@@ -418,8 +418,8 @@ class ResourceController extends Controller
 	public function destroy($resource, $code)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canDelete()) abort(403);
 		$content = $resource->model->findOrFail($code);
+		if (!$resource->canDeleteRow($content) || !$resource->canDelete()) abort(403);
 		if ($content->delete()) {
 			Messages::send("success", "Registro excluido com sucesso !!");
 			return ["success" => true, "route" => $resource->route()];
@@ -440,8 +440,8 @@ class ResourceController extends Controller
 	public function view(Request $request, $resource, $code)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canView()) abort(403);
 		$content = $resource->model->findOrFail($code);
+		if (!$resource->canViewRow($content) || !$resource->canView()) abort(403);
 		$data = $this->makeViewData($content->code, $resource, $content);
 		$data["page_type"] = "Visualização";
 		$params = @$request["params"] ? $request["params"] : [];
