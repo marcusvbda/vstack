@@ -186,6 +186,21 @@ class Resource
 		return true;
 	}
 
+	public function canUpdateRow($row)
+	{
+		return true;
+	}
+
+	public function canDeleteRow($row)
+	{
+		return true;
+	}
+
+	public function canViewRow($row)
+	{
+		return true;
+	}
+
 	public function canView()
 	{
 		return true;
