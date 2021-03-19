@@ -56,12 +56,15 @@
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
     components: { 'v-runtime-template': VRuntimeTemplate },
-    props: ['type', 'can_update', 'can_delete', 'can_view', 'row_code', 'resource_route', 'cols', 'row_id', 'type', 'resource_id'],
+    props: ['type', 'row_code', 'resource_route', 'cols', 'row_id', 'type', 'resource_id'],
     data() {
         return {
             loading: true,
             content: {},
             attempts: 0,
+            can_update: false,
+            can_delete: false,
+            can_view: false,
         }
     },
     created() {
@@ -108,7 +111,8 @@ export default {
                 })
                 .then((resp) => {
                     resp = resp.data
-                    this.content = resp
+                    this.content = resp.content
+                    Object.keys(resp.acl).forEach((key) => (this[key] = resp.acl[key]))
                     this.loading = false
                 })
                 .catch((er) => {
