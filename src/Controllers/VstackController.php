@@ -28,12 +28,7 @@ class VstackController extends Controller
 				$content[$key] = ($value ? $value : ' - ');
 			}
 		}
-		$acl = [
-			"can_update" => $resource->checkAclResource($row, "update"),
-			"can_delete" => $resource->checkAclResource($row, "delete"),
-			"can_view" => $resource->checkAclResource($row, "view"),
-		];
-		return ["content" => $content, "acl" => $acl];
+		return $content;
 	}
 
 	public function getColumnIndex($columns, $row, $key, $placeholder = "          -          ")
@@ -73,27 +68,62 @@ class VstackController extends Controller
 		$order_by = @$request["order_by"] ?? ["id", "asc"];
 		$query = app()->make($model)->where("id", ">", 0);
 		$filters  = @$request["filters"] ?? [];
-		foreach ($filters as $filter_type => $filters) {
-			foreach ($filters as $field => $queries) {
-				if ($filter_type == "where") {
-					foreach ($queries as $key => $value) {
-						$query = $query->where($field, $key, $value);
-					}
-				}
-				if ($filter_type == "or_where") {
-					foreach ($queries as $key => $value) {
-						$query = $query->orWhere($field, $key, $value);
-					}
-				}
-				if ($filter_type == "or_where_in") $query = $query->orWhereIn($field, $queries);
-				if ($filter_type == "where_in") $query = $query->whereIn($field, $queries);
-
-				if ($filter_type == "or_where_not_in") $query = $query->OrWhereNotIn($field, $queries);
-				if ($filter_type == "where_not_in") $query = $query->whereNotIn($field, $queries);
-			}
-		}
+		$query = $this->processApiFilters($filters, $query);
 		$result = $query->select($fields)->with($includes)
 			->orderBy($order_by[0], $order_by[1]);
 		return $per_page ? $result->paginate($per_page) : $result->get();
+	}
+
+	private function processApiFilters($filters, $query)
+	{
+		foreach ($filters as $filter_type => $filters) {
+			foreach ($filters as $field => $queries) {
+				if ($filter_type == "where") {
+					$query = $query->where(function ($q) use ($field, $queries) {
+						foreach ($queries as $key => $value) {
+							$q = $q->where($field, $key, $value);
+						}
+					});
+				}
+				if ($filter_type == "or_where") {
+					$query = $query->where(function ($q) use ($field, $queries) {
+						foreach ($queries as $key => $value) {
+							$q = $q->orWhere($field, $key, $value);
+						}
+					});
+				}
+				if ($filter_type == "or_where_in") {
+					$query = $query->where(function ($q) use ($field, $queries) {
+						foreach ($queries as $key => $value) {
+							$q = $q->orWhereIn($field, $value);
+						}
+					});
+				}
+				if ($filter_type == "where_in") {
+					$query = $query->where(function ($q) use ($field, $queries) {
+						foreach ($queries as $key => $value) {
+							$q = $q->whereIn($field, $value);
+						}
+					});
+				}
+
+				if ($filter_type == "or_where_not_in") {
+					$query = $query->where(function ($q) use ($field, $queries) {
+						foreach ($queries as $key => $value) {
+							$q = $q->OrWhereNotIn($field, $value);
+						}
+					});
+				}
+
+				if ($filter_type == "where_not_in") {
+					$query = $query->where(function ($q) use ($field, $queries) {
+						foreach ($queries as $key => $value) {
+							$q = $q->whereNotIn($field, $value);
+						}
+					});
+				}
+			}
+		}
+		return $query;
 	}
 }
