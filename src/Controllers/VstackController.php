@@ -77,52 +77,26 @@ class VstackController extends Controller
 	private function processApiFilters($filters, $query)
 	{
 		foreach ($filters as $filter_type => $filters) {
-			foreach ($filters as $field => $queries) {
-				if ($filter_type == "where") {
-					$query = $query->where(function ($q) use ($field, $queries) {
-						foreach ($queries as $key => $value) {
-							$q = $q->where($field, $key, $value);
-						}
-					});
-				}
-				if ($filter_type == "or_where") {
-					$query = $query->where(function ($q) use ($field, $queries) {
-						foreach ($queries as $key => $value) {
-							$q = $q->orWhere($field, $key, $value);
-						}
-					});
-				}
-				if ($filter_type == "or_where_in") {
-					$query = $query->where(function ($q) use ($field, $queries) {
-						foreach ($queries as $key => $value) {
-							$q = $q->orWhereIn($field, $value);
-						}
-					});
-				}
-				if ($filter_type == "where_in") {
-					$query = $query->where(function ($q) use ($field, $queries) {
-						foreach ($queries as $key => $value) {
-							$q = $q->whereIn($field, $value);
-						}
-					});
-				}
-
-				if ($filter_type == "or_where_not_in") {
-					$query = $query->where(function ($q) use ($field, $queries) {
-						foreach ($queries as $key => $value) {
-							$q = $q->OrWhereNotIn($field, $value);
-						}
-					});
-				}
-
-				if ($filter_type == "where_not_in") {
-					$query = $query->where(function ($q) use ($field, $queries) {
-						foreach ($queries as $key => $value) {
-							$q = $q->whereNotIn($field, $value);
-						}
-					});
-				}
+			if ($filter_type == "where") $query = $query->where($filters);
+			if ($filter_type == "or_where") {
+				$query = $query->where(function ($q) use ($filters) {
+					foreach ($filters as $filter) $q = $q->orWhere([$filter]);
+				});
 			}
+			if ($filter_type == "or_where_in") {
+				$query = $query->where(function ($q) use ($filters) {
+					foreach ($filters as $filter) $q = $q->orWhereIn([$filter]);
+				});
+			}
+			if ($filter_type == "or_where_not_in") {
+				$query = $query->where(function ($q) use ($filters) {
+					foreach ($filters as $filter) $q = $q->OrWhereNotIn([$filter]);
+				});
+				$query = $query->orWhereIn($filters);
+			}
+			if ($filter_type == "where_in") $query = $query->whereIn($filters);
+			if ($filter_type == "where_in") $query = $query->whereIn($filters);
+			if ($filter_type == "where_not_in") $query = $query->whereNotIn($filters);
 		}
 		return $query;
 	}
