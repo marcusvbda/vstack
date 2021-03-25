@@ -28,7 +28,7 @@ class VstackController extends Controller
 				$content[$key] = ($value ? $value : ' - ');
 			}
 		}
-		return $content;
+		return ["content" => $content];
 	}
 
 	public function getColumnIndex($columns, $row, $key, $placeholder = "          -          ")
