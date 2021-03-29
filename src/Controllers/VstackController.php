@@ -28,7 +28,12 @@ class VstackController extends Controller
 				$content[$key] = ($value ? $value : ' - ');
 			}
 		}
-		return ["content" => $content];
+		$acl = [
+			"can_update" => $resource->checkAclResource($row, "update"),
+			"can_delete" => $resource->checkAclResource($row, "delete"),
+			"can_view" => $resource->checkAclResource($row, "view"),
+		];
+		return ["content" => $content, "acl" => $acl];
 	}
 
 	public function getColumnIndex($columns, $row, $key, $placeholder = "          -          ")
