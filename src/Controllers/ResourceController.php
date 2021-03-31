@@ -322,7 +322,7 @@ class ResourceController extends Controller
 			try {
 				$exporter = new GlobalExporter($resource, $columns, $ids);
 				Excel::store($exporter, $path . $file_id . '.' . $file_extension, "local");
-				$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
+				$route = route('resource.export_download_intercept', ['resource' => $resource->id, 'file' => $file_id]);
 				$_data = $config->data;
 				$_data->status = "ready";
 				$_data->microtime->end = microtime(true);
@@ -362,6 +362,13 @@ class ResourceController extends Controller
 		} catch (\Exception $e) {
 			abort(404);
 		}
+	}
+
+	public function exportDownloadIntercept($resource, $file_id)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
+		return View("vStack::resources.email_download", compact("route","resource"));
 	}
 
 	public function sheetImportRow($rows, $params, $importer)

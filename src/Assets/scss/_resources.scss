@@ -181,3 +181,9 @@ ul.pagination {
 .crud-card-header {
     padding: 5px 13px !important;
 }
+
+.link-not-hovered {
+    &:hover {
+        text-decoration: none !important;
+    }
+}

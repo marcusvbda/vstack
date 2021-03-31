@@ -25,6 +25,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::get('{resource}/import', [ResourceController::class, 'import'])->name("resource.import");
 		Route::post('{resource}/export', [ResourceController::class, 'export'])->name("resource.export");
 		Route::get('{resource}/export_download/{file}', [ResourceController::class, 'exportDownload'])->name("resource.export_download");
+		Route::get('{resource}/export_download_intercept/{file}', [ResourceController::class, 'exportDownloadIntercept'])->name("resource.export_download_intercept");
 		Route::get('{resource}/import/sheet_template', [ResourceController::class, 'importSheetTemplate'])->name("resource.import.check_file");
 		Route::post('{resource}/import/check_file', [ResourceController::class, 'checkFileImport'])->name("resource.import.check_file");
 		Route::post('{resource}/import/submit', [ResourceController::class, 'importSubmit'])->name("resource.import.submit");
