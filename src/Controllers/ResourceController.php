@@ -333,7 +333,7 @@ class ResourceController extends Controller
 				broadcast(new WebSocketEvent("App.User." . $config->data->user_id, "notifications.exporting_status." . $config->id, [
 					"config" => $config
 				]));
-				SendMail::to($email, "relatório de " . $resource->label(), $html);
+				SendMail::to($email, "Relatório de " . $resource->label(), $html);
 			} catch (\Exception $e) {
 				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . '  - on line ' . $e->getLine() . " )";
 				$_data = $config->data;
