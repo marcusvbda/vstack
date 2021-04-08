@@ -1,5 +1,5 @@
 <template>
-    <tr>
+    <tr :id="row_id">
         <slot name="first-column" />
         <template v-if="loading">
             <template v-for="(item, i) in cols">
