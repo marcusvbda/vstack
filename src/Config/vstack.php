@@ -3,6 +3,7 @@
 return [
 	"default_upload_route" => "/admin/upload_file",
 	"resource_export_extension" => "xlsx",
+	"extra_javascript_global_variables" => [],
 	"queue" => [
 		"resource-export" => "resource-export",
 		"resource-import" => "resource-import",
