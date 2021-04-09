@@ -38,7 +38,7 @@ $controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 				</thead>
 				<tbody>
 					@foreach($data as $row)
-						<tr>
+						<tr id="{{ $row->id }}">
 							@foreach($table_keys as $key)
 								<td>
 									{{ $controller->getColumnIndex($table,$resource->model->find($row->id),$key) }}
