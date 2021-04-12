@@ -61,10 +61,10 @@ export default {
         return {
             loading: true,
             content: {},
-            attempts: 0,
             can_update: false,
             can_delete: false,
             can_view: false,
+            pusher_initialized: false,
         }
     },
     created() {
@@ -82,7 +82,6 @@ export default {
             }
         },
         getResourceTableIndex() {
-            this.attempts++
             this.$http
                 .post(
                     `/vstack/${this.resource_id}/get-partial-content`,
@@ -96,14 +95,8 @@ export default {
                     this.content = resp.html
                     this.loading = false
                 })
-                .catch((er) => {
-                    if (this.attempts <= 3) return this.getResourceTableIndex()
-                    this.loading = false
-                    console.log(er)
-                })
         },
         getResourceTableContent() {
-            this.attempts++
             this.$http
                 .post(`/vstack/${this.resource_id}/get-partial-content`, {
                     row_id: this.row_id,
@@ -114,12 +107,22 @@ export default {
                     this.content = resp.content
                     Object.keys(resp.acl).forEach((key) => (this[key] = resp.acl[key]))
                     this.loading = false
+                    if (!this.pusher_initialized) {
+                        this.initPusher()
+                        this.pusher_initialized = true
+                    }
                 })
-                .catch((er) => {
-                    if (this.attempts <= 3) return this.getResourceTableContent()
-                    this.loading = false
-                    console.log(er)
+        },
+        recieve_data(resp) {},
+        initPusher() {
+            if (laravel.tenant.id && laravel.chat.pusher_key) {
+                this.$echo.private(`App.Tenant.${laravel.tenant.id}`).listen(`.notifications.resource.${this.resource_id}.${this.row_id}`, (resp) => {
+                    this.$debug(resp)
+                    if (resp.event == 'reload') {
+                        this.getResourceTableContent()
+                    }
                 })
+            }
         },
     },
 }
