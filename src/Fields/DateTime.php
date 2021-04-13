@@ -2,7 +2,7 @@
 
 namespace marcusvbda\vstack\Fields;
 
-class Text extends Field
+class DateTime extends Field
 {
 	public $options = [];
 	public $view = "";
@@ -22,12 +22,16 @@ class Text extends Field
 		$type           = $this->options["type"];
 		$field          = $this->options["field"];
 		$mask           = json_encode($this->options["mask"]);
-		$placeholder    = $this->options["placeholder"];
+		$end_placeholder   = @$this->options["end_placeholder"];
+		$placeholder = @$this->options["placeholder"];
+		$start_placeholder = @$this->options["start_placeholder"];
 		$disabled       = @$this->options["disabled"] ? "true" : "false";
 		$description    = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
+		$format         = @$this->options["format"] ? $this->options["format"] : 'dd/MM/yyyy HH:mm:ss';
+		$value_format   = @$this->options["value_format"] ? $this->options["value_format"] : 'yyyy-MM-dd HH:mm:ss';
 
-		return $this->view = view("vStack::resources.field.text", compact(
+		return $this->view = view("vStack::resources.field.datetime", compact(
 			"disabled",
 			"label",
 			"prepend",
@@ -36,9 +40,13 @@ class Text extends Field
 			"description",
 			"type",
 			"field",
+			"start_placeholder",
+			"end_placeholder",
 			"placeholder",
 			"visible",
-			"field"
+			"field",
+			"format",
+			"value_format"
 		))->render();
 	}
 }

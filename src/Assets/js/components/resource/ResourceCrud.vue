@@ -116,6 +116,10 @@ export default {
                 case 'upload':
                     return value ? (Array.isArray(value) ? value.map((x) => String(x)) : value.split(',')) : []
                     break
+                case 'daterange':
+                    if (Array.isArray(value)) return value.map((x) => new Date(String(x)))
+                    return value ? value.split(',').map((x) => new Date(String(x))) : []
+                    break
                 default:
                     return value
                     break
