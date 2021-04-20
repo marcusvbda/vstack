@@ -92,7 +92,6 @@ class ResourceController extends Controller
 	{
 		$table = $resource->model->getTable() . ".";
 		$data      = $request->all();
-
 		$orderBy   = $table . Arr::get($data, 'order_by', "id");
 		$orderType = Arr::get($data, 'order_type', "desc");
 
@@ -368,7 +367,7 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
-		return View("vStack::resources.email_download", compact("route","resource"));
+		return View("vStack::resources.email_download", compact("route", "resource"));
 	}
 
 	public function sheetImportRow($rows, $params, $importer)
@@ -755,7 +754,7 @@ class ResourceController extends Controller
 		return ["belongsToMany" => $fields, "data" => $data];
 	}
 
-	protected function getPerPage($resource)
+	public function getPerPage($resource)
 	{
 		$results_per_page = $resource->resultsPerPage();
 		$per_page = is_array($results_per_page) ? ((in_array(@$_GET['per_page'] ? $_GET['per_page'] : [], $results_per_page)) ? $_GET['per_page'] : $results_per_page[0]) : $results_per_page;
