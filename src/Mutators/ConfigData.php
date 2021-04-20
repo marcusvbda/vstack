@@ -4,7 +4,7 @@ namespace marcusvbda\vstack\Mutators;
 
 class ConfigData extends BaseMutator
 {
-	protected $needsAuth = true;
+	protected $needsAuth = false;
 	public function process($content)
 	{
 		$app = config("app");
