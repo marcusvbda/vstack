@@ -10,7 +10,6 @@ class ConfigData extends BaseMutator
 		$app = config("app");
 		$content["config"] = [
 			"name"  => $app["name"],
-			"description"  => $app["description"],
 			"env"  => $app["env"],
 			"debug"  => $app["debug"],
 			"timezone"  => $app["timezone"],
