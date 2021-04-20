@@ -3,7 +3,7 @@
         <el-tag
             class="filter-tag mb-2 ml-0 mr-2"
             size="mini"
-            closable
+            :closable="prevent_close == undefined"
             v-for="(f, i) in selected_filters"
             :key="i"
             effect="dark"
@@ -17,7 +17,7 @@
 </template>
 <script>
 export default {
-    props: ['get_params', 'resource_filters'],
+    props: ['get_params', 'resource_filters', 'prevent_close'],
     computed: {
         selected_filters() {
             return this.resource_filters
