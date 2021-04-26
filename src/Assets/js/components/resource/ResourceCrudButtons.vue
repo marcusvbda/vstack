@@ -1,6 +1,9 @@
 <template>
     <div class="d-flex flex-row flex-wrap cursor-pointer align-items-center justify-content-center" style="min-height: 25px">
         <el-button-group>
+            <el-tooltip class="item" effect="dark" content="Clonar" placement="top" v-if="data.can_clone">
+                <el-button size="small" plain type="secondary" icon="el-icon-document-copy" @click="goTo(`${data.route}/clone`)" />
+            </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Visualizar" placement="top" v-if="data.can_view">
                 <el-button size="small" plain type="info" icon="el-icon-search" @click="goTo(data.route)" />
             </el-tooltip>

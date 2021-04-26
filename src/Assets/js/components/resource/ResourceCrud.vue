@@ -36,8 +36,8 @@
                         </div>
                     </div>
                 </div>
-                <slot name="aftercreate" v-if="pageType == 'CREATE'"></slot>
-                <slot name="afteredit" v-if="pageType != 'CREATE'"></slot>
+                <slot name="aftercreate" v-if="['CREATE', 'CLONE'].includes(pageType)"></slot>
+                <slot name="afteredit" v-if="['EDIT'].includes(pageType)"></slot>
             </form>
         </div>
     </div>
@@ -45,7 +45,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'redirect', 'params'],
+    props: ['data', 'redirect', 'params', 'raw_type'],
     data() {
         return {
             resourceData: {},
@@ -61,7 +61,7 @@ export default {
             return this.namedCards.length > 1
         },
         pageType() {
-            return this.data.id ? 'EDIT' : 'CREATE'
+            return this.raw_type.toUpperCase()
         },
         namedCards() {
             return this.data.fields.filter((x) => x.label)
@@ -75,7 +75,9 @@ export default {
             this.initFields()
             this.loadParams()
             this.$set(this.form, 'resource_id', this.data.resource_id)
-            if (this.data.id) this.$set(this.form, 'id', this.data.id)
+            if (this.data.id && this.pageType == 'EDIT') {
+                this.$set(this.form, 'id', this.data.id)
+            }
         },
         initFields() {
             let fields = []

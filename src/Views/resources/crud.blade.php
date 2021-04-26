@@ -1,11 +1,16 @@
 @extends("templates.admin")
 @section('title',$resource->label())
 @php
-$cards = $data["fields"];
-$routes = [];
-$raw_types = ["Edição" => "edit","Cadastro" => "create"];
-$current = $data['page_type']." de ".$resource->singularLabel();
-$current_route = $resource->route()."/".@$content->code."/".$raw_types[$data["page_type"]];
+	$cards = $data["fields"];
+	$routes = [];
+	$raw_types = ["Edição" => "edit","Cadastro" => "create", "Clonagem" => "clone"];
+	$raw_type = $raw_types[$data["page_type"]];
+	$current = $data['page_type']." de ".$resource->singularLabel();
+	if(in_array($raw_type,["clone","edit"])) {
+		$current_route = $resource->route()."/".@$content->code."/".$raw_type;
+	} else {
+		$current_route = $resource->route()."/".$raw_type;
+	}
 @endphp
 @section('breadcrumb')
 @include("vStack::resources.partials._breadcrumb")
@@ -34,7 +39,9 @@ $current_route = $resource->route()."/".@$content->code."/".$raw_types[$data["pa
     :data="{{json_encode($data)}}"  
     :params="{{json_encode($params)}}"  
     redirect="{{$current_route}}" 
-    :breadcrumb="{{json_encode($routes)}}" >
+    :breadcrumb="{{json_encode($routes)}}" 
+	raw_type='{{ $raw_type }}'
+>
     @if(@!$data->id && !@$data["id"])
         @if(@$resource->afterCreateSlot())
             <template slot="aftercreate">

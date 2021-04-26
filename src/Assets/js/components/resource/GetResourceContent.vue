@@ -45,6 +45,7 @@
                         can_view: can_view,
                         can_update: can_update,
                         can_delete: can_delete,
+                        can_clone: can_clone,
                     }"
                     :id="row_id"
                 />
@@ -61,6 +62,7 @@ export default {
         return {
             loading: true,
             content: {},
+            can_clone: false,
             can_update: false,
             can_delete: false,
             can_view: false,
@@ -117,7 +119,6 @@ export default {
         initPusher() {
             if (laravel.tenant.id && laravel.chat.pusher_key) {
                 this.$echo.private(`App.Tenant.${laravel.tenant.id}`).listen(`.notifications.resource.${this.resource_id}.${this.row_id}`, (resp) => {
-                    this.$debug(resp)
                     if (resp.event == 'reload') {
                         this.getResourceTableContent()
                     }

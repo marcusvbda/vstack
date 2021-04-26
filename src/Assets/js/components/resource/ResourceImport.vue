@@ -7,13 +7,13 @@
                 <el-step title="Importação"></el-step>
             </el-steps>
             <div class="mt-3">
-                <a class="link" href="#" v-if="config.step>0" @click.prevent="reload">
+                <a class="link" href="#" v-if="config.step > 0" @click.prevent="reload">
                     <span class="el-icon-caret-left mr-2 mb-2"></span>
                     Voltar
                 </a>
-                <step-0 v-if="config.step==0" :data="data" :frm="frm" :config="config" />
-                <step-1 v-if="config.step==1" :data="data" :frm="frm" :config="config" />
-                <step-2 v-if="config.step>=2" :data="data" :frm="frm" :config="config" />
+                <step-0 v-if="config.step == 0" :data="data" :frm="frm" :config="config" />
+                <step-1 v-if="config.step == 1" :data="data" :frm="frm" :config="config" />
+                <step-2 v-if="config.step >= 2" :data="data" :frm="frm" :config="config" />
             </div>
         </div>
     </div>
@@ -24,27 +24,27 @@ export default {
     data() {
         return {
             frm: {
-                file: null
+                file: null,
             },
             config: {
                 step: 0,
                 data: {
                     columns: this.data.resource.columns,
-                    csv_header: []
+                    csv_header: [],
                 },
-                fieldlist: {}
-            }
+                fieldlist: {},
+            },
         }
     },
     components: {
-        "step-0": require("./partials/-ImportStep0").default,
-        "step-1": require("./partials/-ImportStep1").default,
-        "step-2": require("./partials/-ImportStep2").default,
+        'step-0': require('./partials/-ImportStep0').default,
+        'step-1': require('./partials/-ImportStep1').default,
+        'step-2': require('./partials/-ImportStep2').default,
     },
     methods: {
         reload() {
             window.location.reload()
-        }
-    }
+        },
+    },
 }
 </script>

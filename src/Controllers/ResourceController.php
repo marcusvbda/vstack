@@ -128,6 +128,18 @@ class ResourceController extends Controller
 		return $query->orderBy($orderBy, $orderType);
 	}
 
+	public function clone($resource, $code, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		$content = $resource->model->findOrFail($code);
+		if (!$resource->canCloneRow($content) || !$resource->canClone()) abort(403);
+		$data = $this->makeCrudData($resource, $content);
+		$data["page_type"] = "Clonagem";
+		$params = @$request["params"] ? $request["params"] : [];
+		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
+	}
+
+
 	public function create($resource, Request $request)
 	{
 		$params = @$request["params"] ? $request["params"] : [];
@@ -209,8 +221,7 @@ class ResourceController extends Controller
 		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
 		$filepath = $file->storeAs('local', $filename);
 		$user = Auth::user();
-		$tenant_id = array_search("tenant_id", $resource->getTableColumns()) === false ? null : $user->tenant_id;
-
+		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $user->tenant_id;
 		dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
 			$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('resource', 'fieldlist', 'filepath', 'tenant_id'));
 			Excel::import($importer, $importer->getFile());
@@ -388,7 +399,9 @@ class ResourceController extends Controller
 					$new[$field] = $value;
 				}
 				$new_model = @$new["id"] ? $resource->model->findOrFail($new["id"]) : new $resource->model;
-				$new["tenant_id"] = $tenant_id;
+				if ($tenant_id) {
+					$new["tenant_id"] = $tenant_id;
+				}
 				$new_model->fill($new);
 				$new_model->save();
 				unset($new_model, $row_values, $new);

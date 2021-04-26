@@ -204,12 +204,22 @@ class Resource
 		return true;
 	}
 
+	public function canCloneRow($row)
+	{
+		return true;
+	}
+
 	public function canViewRow($row)
 	{
 		return true;
 	}
 
 	public function canView()
+	{
+		return true;
+	}
+
+	public function canClone()
 	{
 		return true;
 	}
