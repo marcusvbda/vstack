@@ -19,6 +19,7 @@ use marcusvbda\vstack\Services\SendMail;
 use marcusvbda\vstack\Models\{Tag, TagRelation};
 use marcusvbda\vstack\Models\ResourceConfig;
 use marcusvbda\vstack\Events\WebSocketEvent;
+use marcusvbda\vstack\Vstack;
 
 class ResourceController extends Controller
 {
@@ -149,7 +150,7 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 		if (!($resource->canImport() && $resource->canCreate())) abort(403);
-		$file_extension = config("vstack.resource_export_extension") ? config("vstack.resource_export_extension") : "xls";
+		$file_extension = Vstack::resource_export_extension();
 		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . "." . $file_extension;
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
 		Excel::store($exporter, $filename, "local");
@@ -204,7 +205,7 @@ class ResourceController extends Controller
 
 		$config = json_decode($data["config"]);
 		$fieldlist = $config->fieldlist;
-		$file_extension = config("vstack.resource_export_extension") ? config("vstack.resource_export_extension") : "xls";
+		$file_extension = Vstack::resource_export_extension();
 		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
 		$filepath = $file->storeAs('local', $filename);
 		$user = Auth::user();
@@ -231,7 +232,7 @@ class ResourceController extends Controller
 					"type" => @$result["success"] ? 'success' : 'error'
 				]),
 			]);
-		})->onQueue(config("vstack.queue.resource-import", "resource-import"));
+		})->onQueue(Vstack::queue_resource_import());
 
 
 		return ["success" => true];
@@ -278,7 +279,7 @@ class ResourceController extends Controller
 		$config->resource = $resource->id;
 		$config->config = "report_export_$file_id";
 		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
-		$file_extension = config("vstack.resource_export_extension") ? config("vstack.resource_export_extension") : "xls";
+		$file_extension = Vstack::resource_export_extension();
 		$config->data = [
 			"user_id" => $user->id,
 			"path" => $path,
@@ -342,7 +343,7 @@ class ResourceController extends Controller
 				$config->save();
 				return ['success' => false, 'message' => $message];
 			}
-		})->onQueue(config("vstack.queue.resource-export", "resource-export"));
+		})->onQueue(Vstack::queue_resource_export());
 		$message = "Sua Relatório de " . $resource->label() . " está sendo exportado, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $email . "), isso pode levar alguns minutos.";
 		Messages::send("info", $message);
 		return ['success' => true];
