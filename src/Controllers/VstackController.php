@@ -37,6 +37,7 @@ class VstackController extends Controller
 			"can_clone" => $resource->checkAclResource($row, "clone"),
 			"can_delete" => $resource->checkAclResource($row, "delete"),
 			"can_view" => $resource->checkAclResource($row, "view"),
+			"use_tags" => $resource->useTags(),
 		];
 		return ["content" => $content, "acl" => $acl];
 	}
