@@ -96,14 +96,22 @@ export default {
                     resp = resp.data
                     this.content = resp.html
                     this.loading = false
+                    if (!this.pusher_initialized) {
+                        this.initPusher()
+                        this.pusher_initialized = true
+                    }
                 })
         },
         getResourceTableContent() {
             this.$http
-                .post(`/vstack/${this.resource_id}/get-partial-content`, {
-                    row_id: this.row_id,
-                    type: this.type,
-                })
+                .post(
+                    `/vstack/${this.resource_id}/get-partial-content`,
+                    {
+                        row_id: this.row_id,
+                        type: this.type,
+                    },
+                    { retries: 3 }
+                )
                 .then((resp) => {
                     resp = resp.data
                     this.content = resp.content
@@ -115,7 +123,6 @@ export default {
                     }
                 })
         },
-        recieve_data(resp) {},
         initPusher() {
             if (laravel.tenant.id && laravel.chat.pusher_key) {
                 this.$echo.private(`App.Tenant.${laravel.tenant.id}`).listen(`.notifications.resource.${this.resource_id}.${this.row_id}`, (resp) => {

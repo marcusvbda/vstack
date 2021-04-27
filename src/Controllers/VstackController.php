@@ -18,14 +18,18 @@ class VstackController extends Controller
 	{
 		$row = $resource->model->findOrFail($request["row_id"]);
 		$content = [];
-		foreach ($resource->table() as $key => $value) {
-			if (strpos($key, "->") === false) {
-				$content[$key] = @$row->{$key} ? $row->{$key} : " - ";
-			} else {
-				$value = $row;
-				$_runner = explode("->", $key);
-				foreach ($_runner as $idx) $value = @$value->{$idx};
-				$content[$key] = ($value ? $value : ' - ');
+		if (@$request["complete_model"]) {
+			$content = $row;
+		} else {
+			foreach ($resource->table() as $key => $value) {
+				if (strpos($key, "->") === false) {
+					$content[$key] = @$row->{$key} ? $row->{$key} : " - ";
+				} else {
+					$value = $row;
+					$_runner = explode("->", $key);
+					foreach ($_runner as $idx) $value = @$value->{$idx};
+					$content[$key] = ($value ? $value : ' - ');
+				}
 			}
 		}
 		$acl = [
