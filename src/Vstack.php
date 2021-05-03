@@ -13,9 +13,7 @@ class Vstack
 
 	public static function last_version()
 	{
-		$content = file_get_contents("https://raw.githubusercontent.com/marcusvbda/vstack/master/composer.json");
-		$content = json_decode($content, true);
-		return @$content["version"];
+		return "Verifique a versão mais atual em https://raw.githubusercontent.com/marcusvbda/vstack/master/composer.json";
 	}
 
 	public static function resource_field_route()
