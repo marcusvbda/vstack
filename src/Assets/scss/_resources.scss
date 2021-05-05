@@ -1,3 +1,4 @@
+@import "variables";
 .resource-table {
     &.table-striped {
         tbody {
@@ -15,6 +16,21 @@
                         td {
                             background-color: white !important;
                             border-top: unset;
+                            position: relative;
+                            padding: 0;
+                            margin: 0;
+                            .spacer {
+                                border-top: 1px solid #dee2e6;
+                                position: relative;
+                                height: 15px;
+                                @if variable-exists(bgColor) {
+                                    background-color: $bgColor;
+                                } @else {
+                                    background-color: #edeff2;
+                                }
+                                width: 100%;
+                                bottom: 0;
+                            }
                         }
                     }
                 }

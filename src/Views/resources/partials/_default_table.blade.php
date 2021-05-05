@@ -79,7 +79,10 @@
 					@if($table_after_row)
 						<tr class="table-row after">
 							<td colspan="{{ $columns_count }}">
-								{!! $table_after_row !!}
+								<div class="container-fluid py-3">
+									{!! $table_after_row !!}
+								</div>
+								<div class="spacer"></div>
 							</td>
 						</tr>
 					@endif
