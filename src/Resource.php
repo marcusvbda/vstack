@@ -381,4 +381,9 @@ class Resource
 	{
 		return 5;
 	}
+
+	public function tableAfterRow($row)
+	{
+		return false;
+	}
 }

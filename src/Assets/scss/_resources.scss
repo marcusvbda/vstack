@@ -10,6 +10,14 @@
                     transition: 0.5s;
                     background-color: rgba(0, 0, 0, 0.05);
                 }
+                &.table-row {
+                    &.after {
+                        td {
+                            background-color: white !important;
+                            border-top: unset;
+                        }
+                    }
+                }
             }
         }
     }

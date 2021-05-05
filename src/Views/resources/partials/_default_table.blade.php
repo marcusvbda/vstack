@@ -58,12 +58,15 @@
 					@foreach($data as $row)
                     @php 
                         $code = \Hashids::encode($row->id);
+						$has_actions = count($resource->actions()) > 0;
+						$columns_count = count($resource->table())+($has_actions ? 2 : 1);
+						$table_after_row = $resource->tableAfterRow($row);
                     @endphp
                     <tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}"
                         resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
                         type="resourceTableContent"
                         >
-						@if(count($resource->actions()) > 0)
+						@if($has_actions)
 							<template slot="first-column">
 								<th width="1%;">
 									<div class="d-flex align-items-center justify-content-center">
@@ -73,6 +76,13 @@
 							</template>
 						@endif
                     </tr>
+					@if($table_after_row)
+						<tr class="table-row after">
+							<td colspan="{{ $columns_count }}">
+								{!! $table_after_row !!}
+							</td>
+						</tr>
+					@endif
                     @endforeach
                 </tbody>
             </table>
