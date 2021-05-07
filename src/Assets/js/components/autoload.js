@@ -20,6 +20,8 @@ require('./libs/helpers')
 Vue.config.productionTip = false
 Vue.config.devtools = true
 Vue.prototype.$moment = moment
+import PortalVue from 'portal-vue'
+Vue.use(PortalVue)
 const vue = new Vue({
 	data() {
 		return {
