@@ -1,6 +1,6 @@
 <?php
 
-namespace marcusvbda\vstack\Traits;
+namespace marcusvbda\vstack\Models\Traits;
 
 trait CascadeOrRestrictSoftdeletes
 {
