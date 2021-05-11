@@ -15,15 +15,17 @@ trait CascadeOrRestrictSoftdeletes
 	private function validateCascadeSoftdeletes($model)
 	{
 		$relations = $model->cascadeDeletes;
-		
 		foreach ($relations as $relation) $model->{$relation}()->delete();
 	}
 
 	private function validateRestrictSoftdeletes($model)
 	{
 		$relations = $model->restrictDeletes;
-		foreach ($relations as $relation) {
-			if ($model->{$relation}) abort(500, "Não pode ser excluido pois está em uso");
+		foreach ($relations as $key => $relation) {
+			$isCompound = !is_integer($key);
+			if ($model->{($isCompound) ? $key : $relation}()->exists()) {
+				abort(500, ($isCompound) ? $relation : "Não pode ser excluido pois está em uso");
+			}
 		}
 	}
 }

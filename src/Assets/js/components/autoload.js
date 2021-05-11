@@ -17,6 +17,10 @@ require('./libs/echo')
 require('./libs/loadash')
 require('./libs/pace')
 require('./libs/helpers')
+import gsap from "gsap"
+import ScrollTrigger from "gsap/ScrollTrigger"
+gsap.registerPlugin(ScrollTrigger)
+Vue.prototype.$gsap = gsap
 Vue.config.productionTip = false
 Vue.config.devtools = true
 Vue.prototype.$moment = moment
