@@ -437,6 +437,14 @@ class ResourceController extends Controller
 		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
 	}
 
+	public function beforeDestroy($resource, $code, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		$action = $resource->beforeDelete()[$request["index"]];
+		$result = $action["handler"]($code);
+		return response()->json($result);
+	}
+
 	public function destroy($resource, $code)
 	{
 		$resource = ResourcesHelpers::find($resource);
@@ -915,6 +923,7 @@ class ResourceController extends Controller
 	public function getTags($resource, $id)
 	{
 		$resource = ResourcesHelpers::find($resource);
+		// dd($id, get_class($resource->model));
 		if (!@$resource->useTags()) abort(403);
 		return DB::table('resource_tags_relation')
 			->select('resource_tags.*')

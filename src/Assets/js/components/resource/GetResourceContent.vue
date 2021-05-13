@@ -46,6 +46,7 @@
                         can_update: can_update,
                         can_delete: can_delete,
                         can_clone: can_clone,
+                        before_delete: before_delete,
                     }"
                     :id="row_id"
                 />
@@ -65,6 +66,7 @@ export default {
             can_clone: false,
             can_update: false,
             can_delete: false,
+            before_delete: [],
             can_view: false,
             pusher_initialized: false,
         }

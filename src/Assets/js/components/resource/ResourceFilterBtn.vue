@@ -16,7 +16,7 @@
                         <span class="el-icon-search mr-2" />
                         <span>Filtragem</span>
                     </div>
-                    <el-button v-if="showConfirmBtn" class="mr-3 ml-auto" size="medium" type="primary" @click="makeNewRoute">Confirmar Filtro</el-button>
+                    <el-button class="mr-3 ml-auto" size="medium" type="primary" @click="makeNewRoute">Confirmar Filtro</el-button>
                 </div>
             </template>
             <div class="row">

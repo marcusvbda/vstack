@@ -28,7 +28,7 @@ export default {
         goTo(route) {
             window.location.href = route
         },
-        destroy() {
+        submitDelete() {
             this.$confirm(`Confirma Exclusão ?`, 'Confirmação', {
                 confirmButtonText: 'Sim',
                 cancelButtonText: 'Não',
@@ -51,6 +51,35 @@ export default {
                         })
                 })
                 .catch(() => false)
+        },
+        async destroy() {
+            for (let i in this.data.before_delete) {
+                let action = this.data.before_delete[i]
+                let confirmed = !action.confirm ? true : false
+                if (!confirmed) {
+                    await this.$confirm(action.confirm.message, action.confirm.title, {
+                        confirmButtonText: 'Sim',
+                        cancelButtonText: 'Não',
+                        type: 'error',
+                    })
+                }
+                let response = await this.$http.post(this.data.route + '/before-destroy', { index: i })
+                if (response.data?.confirm) {
+                    await this.$confirm(response.data.confirm.message, response.data.confirm.title, {
+                        confirmButtonText: 'Sim',
+                        cancelButtonText: 'Não',
+                        type: 'error',
+                    })
+                } else {
+                    if (!response.data.success) {
+                        throw this.$message({
+                            message: response.data?.message ?? 'Erro',
+                            type: 'error',
+                        })
+                    }
+                }
+            }
+            this.submitDelete()
         },
     },
 }

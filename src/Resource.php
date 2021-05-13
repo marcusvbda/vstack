@@ -204,6 +204,11 @@ class Resource
 		return true;
 	}
 
+	public function beforeDelete()
+	{
+		return [];
+	}
+
 	public function canCloneRow($row)
 	{
 		return true;
