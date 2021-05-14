@@ -23,13 +23,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-footer flex-wrap d-flex flex-row justify-content-between p-2 align-items-center">
-                                        <a :href="data.list_route" class="mr-5 link d-none d-md-block d-lg-block f-12">
-                                            <span class="d-flex align-items-center"> <span class="el-icon-back mr-2" />Voltar </span>
-                                        </a>
-                                        <button class="btn btn-primary btn-sm btn-sm-block f-12 d-flex align-items-center" type="sumit">
-                                            <span class="el-icon-success mr-2" />Salvar
-                                        </button>
+                                    <div class="card-footer flex-wrap d-flex flex-row justify-content-end p-2 align-items-center">
+                                        <el-button-group>
+                                            <el-button size="small" type="info" icon="el-icon-arrow-left" @click="submit()">Salvar e Voltar</el-button>
+                                            <el-button size="small" type="success" icon="el-icon-success" @click="submit(true)" v-if="acl.can_update">
+                                                Salvar
+                                            </el-button>
+                                        </el-button-group>
                                     </div>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'redirect', 'params', 'raw_type'],
+    props: ['data', 'redirect', 'params', 'raw_type', 'acl'],
     data() {
         return {
             resourceData: {},
@@ -132,7 +132,7 @@ export default {
             let paramKeys = Object.keys(this.params)
             for (let i in paramKeys) if (paramKeys[i] != 'redirect_back') this.$set(this.form, paramKeys[i], this.params[paramKeys[i]])
         },
-        submit() {
+        submit(goToEdit = false) {
             this.$confirm(`Confirma ${this.data.page_type} ?`, 'Confirmação', {
                 confirmButtonText: 'Sim',
                 cancelButtonText: 'Não',
@@ -144,7 +144,7 @@ export default {
                     .then((res) => {
                         let data = res.data
                         if (data.message) this.$message({ showClose: true, message: data.message.text, type: data.message.type })
-                        if (data.success) return (window.location.href = data.route)
+                        if (data.success) return (window.location.href = goToEdit ? data.edit_route : data.route)
                         loading.close()
                     })
                     .catch((er) => {

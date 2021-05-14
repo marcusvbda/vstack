@@ -664,7 +664,7 @@ class ResourceController extends Controller
 		$this->storeMorphsMany($target, $data["morphsMany"]);
 		$this->storeUploads($target, $data["upload"]);
 		Messages::send("success", "Registro salvo com sucesso !!");
-		return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
+		return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id]), "edit_route" => route('resource.edit', ["resource" => $resource->id, "code" => $target->code])];
 	}
 
 	public function storeField(Request $request)

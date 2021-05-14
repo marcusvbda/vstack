@@ -41,6 +41,7 @@
     redirect="{{$current_route}}" 
     :breadcrumb="{{json_encode($routes)}}" 
 	raw_type='{{ $raw_type }}'
+	:acl='@json(["can_update" => $resource->canUpdate()])'
 >
     @if(@!$data->id && !@$data["id"])
         @if(@$resource->afterCreateSlot())
