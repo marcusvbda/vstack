@@ -45,4 +45,14 @@ class Vstack
 	{
 		return config("vstack.queue.resource-export", "resource-export");
 	}
+
+	public static function numberToInt($value)
+	{
+		return (int)preg_replace("/[^A-Za-z0-9]/", "", number_format($value, 2));
+	}
+
+	public static function intToNumber($value)
+	{
+		return (int)$value / 100;
+	}
 }
