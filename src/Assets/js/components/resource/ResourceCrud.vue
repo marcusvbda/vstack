@@ -141,11 +141,14 @@ export default {
                 let loading = this.$loading()
                 this.$http
                     .post(this.data.store_route, this.form)
-                    .then((res) => {
-                        let data = res.data
-                        if (data.message) this.$message({ showClose: true, message: data.message.text, type: data.message.type })
+                    .then(({ data }) => {
                         if (data.success) return (window.location.href = goToEdit ? data.edit_route : data.route)
-                        loading.close()
+                        else {
+                            if (data.message) {
+                                this.$message({ showClose: true, message: data.message.text, type: data.message.type })
+                            }
+                            loading.close()
+                        }
                     })
                     .catch((er) => {
                         let errors = er.response.data.errors
