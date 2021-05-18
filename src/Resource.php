@@ -3,17 +3,21 @@
 namespace marcusvbda\vstack;
 
 use App;
+use Hamcrest\Type\IsObject;
 use marcusvbda\vstack\Fields\{Card, Text};
 use marcusvbda\vstack\Models\Migration;
 
 class Resource
 {
 	public $model = null;
+	public $model_string  = null;
+	public $debug = false;
 	public $id    = [];
 
 	public function __construct()
 	{
-		$this->model = App::make($this->model ??  Migration::class);
+		$this->model_string = $this->model ? (is_object($this->model) ? $this->model->getMorphClass() : $this->model) : Migration::class;
+		$this->model = App::make($this->model_string);
 		$this->makeId();
 	}
 
