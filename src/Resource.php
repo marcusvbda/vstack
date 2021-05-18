@@ -4,17 +4,22 @@ namespace marcusvbda\vstack;
 
 use App;
 use marcusvbda\vstack\Fields\{Card, Text};
-use Symfony\Polyfill\Mbstring\Mbstring;
+use marcusvbda\vstack\Models\Migration;
 
 class Resource
 {
-	public $model          = "";
-	public $id             = [];
+	public $model = null;
+	public $id    = [];
 
 	public function __construct()
 	{
-		$this->model = App::make($this->model);
+		$this->model = App::make($this->model ??  Migration::class);
 		$this->makeId();
+	}
+
+	public function isNoModelResource()
+	{
+		return $this->model->getMorphClass() === Migration::class;
 	}
 
 	public function singularLabel()
@@ -380,6 +385,26 @@ class Resource
 	public function viewListBlade()
 	{
 		return "vStack::resources.partials._default_table";
+	}
+
+	public function indexBlade()
+	{
+		return "vStack::resources.partials._default_index";
+	}
+
+	public function viewBlade()
+	{
+		return "vStack::resources.partials._default_view";
+	}
+
+	public function createBlade()
+	{
+		return "vStack::resources.partials._default_crud";
+	}
+
+	public function editBlade()
+	{
+		return "vStack::resources.partials._default_crud";
 	}
 
 	public function maxWaitingReportsByUser()

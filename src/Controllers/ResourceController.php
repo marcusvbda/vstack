@@ -91,6 +91,10 @@ class ResourceController extends Controller
 
 	public function getData($resource, Request $request, $query = null)
 	{
+		$table = $resource->model->getTable();
+		if ($resource->isNoModelResource()) {
+			return $resource->model->where("id", "<", 0);
+		}
 		$table = $resource->model->getTable() . ".";
 		$data      = $request->all();
 		$orderBy   = $table . Arr::get($data, 'order_by', "id");
