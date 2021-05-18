@@ -296,7 +296,7 @@ class Resource
 			foreach ($card->inputs as $field) {
 				if (@$field->options["custom_message"]) {
 					foreach (is_Array($field->options["custom_message"]) ? $field->options["custom_message"] : [] as $key => $value) {
-						$validation_messages[@$field->options["field"] ?? "*" . "." . $key] = @$value;
+						$validation_messages[(@$field->options["field"] ?? "*") . "." . $key] = @$value;
 					}
 				}
 			}
