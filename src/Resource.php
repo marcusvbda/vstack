@@ -274,7 +274,7 @@ class Resource
 		$validation_rules = [];
 		foreach ($this->fields() as $card) {
 			foreach ($card->inputs as $field) {
-				$validation_rules[@$field->options["field"]] = @$field->options["rules"] ?? [];
+				$validation_rules[@$field->options["field"] ?? "*"] = @$field->options["rules"] ?? [];
 			}
 		}
 		return $validation_rules;
@@ -287,7 +287,7 @@ class Resource
 			foreach ($card->inputs as $field) {
 				if (@$field->options["custom_message"]) {
 					foreach (is_Array($field->options["custom_message"]) ? $field->options["custom_message"] : [] as $key => $value) {
-						$validation_messages[@$field->options["field"] . "." . $key] = @$value;
+						$validation_messages[@$field->options["field"] ?? "*" . "." . $key] = @$value;
 					}
 				}
 			}
