@@ -8,5 +8,5 @@
 	@include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
-	@include($resource->viewBlade());
+	@include($resource->viewBlade())
 @endsection
