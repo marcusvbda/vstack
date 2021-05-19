@@ -5,4 +5,4 @@
 @endsection
 @section('content')
 @php $user = Auth::user(); @endphp
-@include($resource->indexBlade());
+@include($resource->indexBlade())
