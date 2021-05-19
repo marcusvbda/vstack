@@ -58,7 +58,7 @@
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
     components: { 'v-runtime-template': VRuntimeTemplate },
-    props: ['type', 'row_code', 'resource_route', 'cols', 'row_id', 'type', 'resource_id'],
+    props: ['type', 'row_code', 'resource_route', 'cols', 'row_id', 'type', 'resource_id', 'raw_content'],
     data() {
         return {
             loading: true,
@@ -91,6 +91,7 @@ export default {
                     `/vstack/${this.resource_id}/get-partial-content`,
                     {
                         type: this.type,
+                        raw_content: this.raw_content,
                     },
                     { retries: 3 }
                 )
@@ -111,6 +112,7 @@ export default {
                     {
                         row_id: this.row_id,
                         type: this.type,
+                        raw_content: this.raw_content,
                     },
                     { retries: 3 }
                 )
