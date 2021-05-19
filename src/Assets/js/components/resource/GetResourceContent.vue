@@ -37,7 +37,7 @@
                     </template>
                 </div>
             </td>
-            <td>
+            <td v-if="show_right_actions_column">
                 <resource-crud-buttons
                     :data="{
                         code: row_code,
@@ -58,7 +58,7 @@
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
     components: { 'v-runtime-template': VRuntimeTemplate },
-    props: ['type', 'row_code', 'resource_route', 'cols', 'row_id', 'type', 'resource_id', 'raw_content'],
+    props: ['type', 'row_code', 'resource_route', 'cols', 'row_id', 'type', 'resource_id', 'raw_content', 'show_right_actions_column'],
     data() {
         return {
             loading: true,

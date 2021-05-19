@@ -420,4 +420,14 @@ class Resource
 	{
 		return false;
 	}
+
+	public function useRawContentOnList()
+	{
+		return false;
+	}
+
+	public function showRightActionsColumn()
+	{
+		return $this->canView() && $this->canUpdate() && $this->canDelete() && $this->canClone();
+	}
 }

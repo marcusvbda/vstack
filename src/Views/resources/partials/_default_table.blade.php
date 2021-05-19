@@ -12,6 +12,7 @@
 			@php
 				$table_after_row = @$resource->tableAfterRow(@$data[0]) !== false;
 				$has_actions = count($resource->actions()) > 0;
+				$show_right_actions_column = $resource->showRightActionsColumn();
 			@endphp
 			@if($has_actions)
 				@php
@@ -58,7 +59,9 @@
 								@endif
 							</th>
 							@endforeach
-							<th style="min-width: 168px;max-width : 10%;    width: 10%;"></th>
+							@if($show_right_actions_column)
+								<th style="min-width: 168px;max-width : 10%;    width: 10%;"></th>
+							@endif
 						</tr>
 					</thead>
 					<tbody>
@@ -69,6 +72,7 @@
 							@endphp
 							<tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}" :raw_content='@json($row)'
 								resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
+								:show_right_actions_column='@json($show_right_actions_column)'
 								type="resourceTableContent"
 								>
 								@if($table_after_row)
