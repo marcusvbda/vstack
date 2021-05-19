@@ -67,7 +67,7 @@
 								$code = \Hashids::encode($row->id);
 								$columns_count = count($resource->table())+($has_actions ? 1 : 0)+($table_after_row ? 2 : 0);
 							@endphp
-							<tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}"
+							<tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}" :raw_content='@json($row)'
 								resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
 								type="resourceTableContent"
 								>
