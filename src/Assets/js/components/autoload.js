@@ -17,6 +17,7 @@ require('./libs/echo')
 require('./libs/loadash')
 require('./libs/pace')
 require('./libs/helpers')
+require('@fortawesome/fontawesome-free/js/all.js')
 import gsap from "gsap"
 import ScrollTrigger from "gsap/ScrollTrigger"
 gsap.registerPlugin(ScrollTrigger)
