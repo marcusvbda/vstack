@@ -16,7 +16,7 @@ class VstackController extends Controller
 
 	protected function resourceTableContent($resource, $request)
 	{
-		$row = $resource->model->findOrFail($request["row_id"]);
+		$row = $resource->useRawContentOnList() ? (object)$request['raw_content'] : $resource->model->findOrFail($request["row_id"]);
 		$content = [];
 		if (@$request["complete_model"]) {
 			$content = $row;
