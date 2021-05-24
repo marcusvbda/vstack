@@ -16,5 +16,5 @@
 @include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
-@include(@$data["page_type"] == 'edit' ? $resource->editBlade() : $resource->createBlade() )
+@include(@$raw_type == 'edit' ? $resource->editBlade() : $resource->createBlade() )
 @endsection
