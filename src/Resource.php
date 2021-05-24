@@ -428,6 +428,6 @@ class Resource
 
 	public function showRightActionsColumn()
 	{
-		return $this->canView() && $this->canUpdate() && $this->canDelete() && $this->canClone();
+		return $this->canView() || $this->canUpdate() || $this->canDelete() || $this->canClone();
 	}
 }
