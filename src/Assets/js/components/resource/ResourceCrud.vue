@@ -25,9 +25,11 @@
                                     </div>
                                     <div class="card-footer flex-wrap d-flex flex-row justify-content-end p-2 align-items-center">
                                         <el-button-group>
-                                            <el-button size="small" type="info" icon="el-icon-arrow-left" @click="submit()">Salvar e Voltar</el-button>
+                                            <el-button size="small" type="info" icon="el-icon-arrow-left" @click="submit()">{{
+                                                save_and_back_text ? save_and_back_text : 'Salvar e Voltar'
+                                            }}</el-button>
                                             <el-button size="small" type="success" icon="el-icon-success" @click="submit(true)" v-if="acl.can_update">
-                                                Salvar
+                                                {{ save_btn_text ? save_btn_text : 'Salvar' }}
                                             </el-button>
                                         </el-button-group>
                                     </div>
@@ -45,7 +47,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'redirect', 'params', 'raw_type', 'acl'],
+    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'save_btn_text', 'save_and_back_text'],
     data() {
         return {
             resourceData: {},
