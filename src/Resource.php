@@ -116,6 +116,16 @@ class Resource
 		return "<h4>Nada cadastrado ainda...<h4>";
 	}
 
+	public function btnCrudSaveText()
+	{
+		return "Salvar";
+	}
+
+	public function btnCrudSaveAndBackText()
+	{
+		return "Salvar e Voltar";
+	}
+
 	public function nothingStoredSubText()
 	{
 		return "<span>Clique no botão abaixo para adicionar o primeiro registro ...</span>";
