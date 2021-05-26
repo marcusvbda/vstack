@@ -135,7 +135,9 @@
             	<h1 style="opacity: .3;font-size: 250px;"><span class="{{$resource->icon()}}"></span></h1>
             @endif
             <div>{!! $resource->nothingStoredText() !!}</div>
-            <div>{!! $resource->nothingStoredSubText() !!}</div>
+            @if($resource->canCreate())
+				<div>{!! $resource->nothingStoredSubText() !!}</div>
+			@endif
         </h4>
         @if($resource->canCreate())
 			<a class="btn btn-primary btn-sm-block cursor-pointer mb-3 mt-3"
