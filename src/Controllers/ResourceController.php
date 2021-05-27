@@ -658,7 +658,7 @@ class ResourceController extends Controller
 		$validation_custom_message =  $resource->getValidationRuleMessage();
 		$this->validate($request, $resource->getValidationRule(), @$validation_custom_message ? $validation_custom_message : []);
 		$target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
-		$data = $request->except(["resource_id", "id", "redirect_back"]);
+		$data = $request->except(["resource_id", "id", "redirect_back", "clicked_btn"]);
 		$data = $this->processStoreData($resource, $data);
 		foreach (array_keys($data["data"]) as $key) {
 			$target->{$key} = $data["data"][$key];
