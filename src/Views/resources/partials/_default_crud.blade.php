@@ -23,8 +23,8 @@
     redirect="{{$current_route}}" 
     :breadcrumb="{{json_encode($routes)}}" 
 	raw_type='{{ $raw_type }}'
-	save_btn_text="{{ $resource->btnCrudSaveText() }}"
-	save_and_back_text="{{ $resource->btnCrudSaveAndBackText() }}"
+	:first_btn='@json($resource->firstCrudBtn())'
+	:second_btn='@json($resource->secondCrudBtn())'
 	:acl='@json(["can_update" => $resource->canUpdate()])'
 >
     @if(@!$data->id && !@$data["id"])

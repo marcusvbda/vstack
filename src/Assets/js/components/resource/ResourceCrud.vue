@@ -25,11 +25,11 @@
                                     </div>
                                     <div class="card-footer flex-wrap d-flex flex-row justify-content-end p-2 align-items-center">
                                         <el-button-group>
-                                            <el-button size="small" type="info" icon="el-icon-arrow-left" @click="submit()">{{
-                                                save_and_back_text ? save_and_back_text : 'Salvar e Voltar'
-                                            }}</el-button>
-                                            <el-button size="small" type="success" icon="el-icon-success" @click="submit(true)" v-if="acl.can_update">
-                                                {{ save_btn_text ? save_btn_text : 'Salvar' }}
+                                            <el-button :size="first_btn.size" :type="first_btn.type" @click="submit(first_btn.field)">
+                                                <span v-html="first_btn.content" />
+                                            </el-button>
+                                            <el-button :size="first_btn.size" :type="second_btn.type" @click="submit(second_btn.field)">
+                                                <span v-html="second_btn.content" />
                                             </el-button>
                                         </el-button-group>
                                     </div>
@@ -47,7 +47,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'save_btn_text', 'save_and_back_text'],
+    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'first_btn', 'second_btn'],
     data() {
         return {
             resourceData: {},
@@ -134,7 +134,7 @@ export default {
             let paramKeys = Object.keys(this.params)
             for (let i in paramKeys) if (paramKeys[i] != 'redirect_back') this.$set(this.form, paramKeys[i], this.params[paramKeys[i]])
         },
-        submit(goToEdit = false) {
+        submit(clicked_btn = 'save_and_back') {
             this.$confirm(`Confirma ${this.data.page_type} ?`, 'Confirmação', {
                 confirmButtonText: 'Sim',
                 cancelButtonText: 'Não',
@@ -142,10 +142,11 @@ export default {
             }).then(() => {
                 let loading = this.$loading()
                 this.$http
-                    .post(this.data.store_route, { ...this.form, clicked_btn: goToEdit ? 'save' : 'save_and_back' })
+                    .post(this.data.store_route, { ...this.form, clicked_btn })
                     .then(({ data }) => {
-                        if (data.success) return (window.location.href = goToEdit ? data.edit_route : data.route)
-                        else {
+                        if (data.success) {
+                            return (window.location.href = data.route)
+                        } else {
                             if (data.message) {
                                 this.$message({ showClose: true, message: data.message.text, type: data.message.type })
                             }

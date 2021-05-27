@@ -657,18 +657,10 @@ class ResourceController extends Controller
 		if (!@$data["id"]) if (!$resource->canCreate()) abort(403);
 		$validation_custom_message =  $resource->getValidationRuleMessage();
 		$this->validate($request, $resource->getValidationRule(), @$validation_custom_message ? $validation_custom_message : []);
-		$target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
+		$id = @$data["id"];
 		$data = $request->except(["resource_id", "id", "redirect_back", "clicked_btn"]);
 		$data = $this->processStoreData($resource, $data);
-		foreach (array_keys($data["data"]) as $key) {
-			$target->{$key} = $data["data"][$key];
-		}
-		$target->save();
-		$this->storeBelongsToMany($target, $data["belongsToMany"]);
-		$this->storeMorphsMany($target, $data["morphsMany"]);
-		$this->storeUploads($target, $data["upload"]);
-		Messages::send("success", "Registro salvo com sucesso !!");
-		return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id]), "edit_route" => route('resource.edit', ["resource" => $resource->id, "code" => $target->code])];
+		return $resource->storeMethod($id, $data);
 	}
 
 	public function storeField(Request $request)
@@ -690,7 +682,7 @@ class ResourceController extends Controller
 		return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
 	}
 
-	protected function storeUploads($target, $relations)
+	public function storeUploads($target, $relations)
 	{
 		$target->refresh();
 		foreach ($relations as $key => $values) {
@@ -708,7 +700,7 @@ class ResourceController extends Controller
 		}
 	}
 
-	protected function storeMorphsMany($target, $relations)
+	public function storeMorphsMany($target, $relations)
 	{
 		$target->refresh();
 		foreach ($relations as $key => $values) {
@@ -721,7 +713,7 @@ class ResourceController extends Controller
 		}
 	}
 
-	protected function storeBelongsToMany($target, $relations)
+	public function storeBelongsToMany($target, $relations)
 	{
 		$target->refresh();
 		foreach ($relations as $key => $value) {

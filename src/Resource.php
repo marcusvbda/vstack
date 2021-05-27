@@ -3,9 +3,10 @@
 namespace marcusvbda\vstack;
 
 use App;
-use Hamcrest\Type\IsObject;
+use marcusvbda\vstack\Controllers\ResourceController;
 use marcusvbda\vstack\Fields\{Card, Text};
 use marcusvbda\vstack\Models\Migration;
+use marcusvbda\vstack\Services\Messages;
 
 class Resource
 {
@@ -116,14 +117,30 @@ class Resource
 		return "<h4>Nada cadastrado ainda...<h4>";
 	}
 
-	public function btnCrudSaveText()
+	public function secondCrudBtn()
 	{
-		return "Salvar";
+		return [
+			"size" => "small",
+			"field" => "save",
+			"type" => "success",
+			"content" => "<div class='d-flex flex-row'>
+							<i class='el-icon-success mr-2'></i>
+							Salvar
+						</div>"
+		];
 	}
 
-	public function btnCrudSaveAndBackText()
+	public function firstCrudBtn()
 	{
-		return "Salvar e Voltar";
+		return [
+			"size" => "small",
+			"field" => "save_and_back",
+			"type" => "info",
+			"content" => "<div class='d-flex flex-row'>
+							<i class='el-icon-arrow-left mr-2'></i>
+							Salvar e Voltar
+						</div>"
+		];
 	}
 
 	public function nothingStoredSubText()
@@ -439,5 +456,25 @@ class Resource
 	public function showRightActionsColumn()
 	{
 		return $this->canView() || $this->canUpdate() || $this->canDelete() || $this->canClone();
+	}
+
+	public function storeMethod($id, $data)
+	{
+		$target = @$id ? $this->model->findOrFail($id) : new $this->model();
+		foreach (array_keys($data["data"]) as $key) {
+			$target->{$key} = $data["data"][$key];
+		}
+		$target->save();
+		$controller = new ResourceController;
+		$controller->storeBelongsToMany($target, $data["belongsToMany"]);
+		$controller->storeMorphsMany($target, $data["morphsMany"]);
+		$controller->storeUploads($target, $data["upload"]);
+		Messages::send("success", "Registro salvo com sucesso !!");
+		if (request("clicked_btn") == "save") {
+			$route = route('resource.edit', ["resource" => $this->id, "code" => $target->code]);
+		} else {
+			$route = route('resource.index', ["resource" => $this->id]);
+		}
+		return ["success" => true, "route" => $route];
 	}
 }
