@@ -24,11 +24,13 @@
                         v-loading="loading"
                     >
                         <el-option v-if="required == undefined" label="" value=""></el-option>
-                        <el-option v-for="(item, i) in options" :key="i" :label="item.name" :value="String(item.id)"></el-option>
+                        <el-option v-for="(item, i) in options" :key="i" :label="item.name" :value="String(item.id)">
+                            <div class="w-100 d-flex" v-html="item.name"></div>
+                        </el-option>
                     </el-select>
                     <div class="invalid-feedback" v-if="errors">
                         <ul class="pl-3 mb-0">
-                           <li v-for="(e, i) in errors" :key="i" v-html="e" />
+                            <li v-for="(e, i) in errors" :key="i" v-html="e" />
                         </ul>
                     </div>
                 </div>
