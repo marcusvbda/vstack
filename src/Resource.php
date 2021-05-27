@@ -460,7 +460,7 @@ class Resource
 
 	public function storeMethod($id, $data)
 	{
-		$target = @$id ? $this->model->findOrFail($id) : new $this->model();
+		$target = @$id ? $this->getModelInstance()->findOrFail($id) : $this->getModelInstance();
 		foreach (array_keys($data["data"]) as $key) {
 			$target->{$key} = $data["data"][$key];
 		}
@@ -476,5 +476,10 @@ class Resource
 			$route = route('resource.index', ["resource" => $this->id]);
 		}
 		return ["success" => true, "route" => $route];
+	}
+
+	public function getModelInstance()
+	{
+		return (is_string($this->model) ? app()->make($this->model)() : new $this->model());
 	}
 }
