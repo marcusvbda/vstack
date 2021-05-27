@@ -142,7 +142,7 @@ export default {
             }).then(() => {
                 let loading = this.$loading()
                 this.$http
-                    .post(this.data.store_route, this.form)
+                    .post(this.data.store_route, { ...this.form, clicked_btn: goToEdit ? 'save' : 'save_and_back' })
                     .then(({ data }) => {
                         if (data.success) return (window.location.href = goToEdit ? data.edit_route : data.route)
                         else {
