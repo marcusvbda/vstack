@@ -1,19 +1,7 @@
 <template>
     <tr :id="row_id">
-        <slot name="first-column" />
         <template v-if="loading">
-            <template v-for="(item, i) in cols">
-                <td :key="i">
-                    <div
-                        class="shimmer"
-                        :style="{
-                            width: '100%',
-                            height: Math.random() * (45 - 10) + 20,
-                        }"
-                    />
-                </td>
-            </template>
-            <td>
+            <td :key="i" :colspan="cols + (show_right_actions_column ? 1 : 0) + ($slots['first-column'] ? 1 : 0)">
                 <div
                     class="shimmer"
                     :style="{
@@ -24,6 +12,7 @@
             </td>
         </template>
         <template v-else>
+            <slot name="first-column" />
             <td :key="i" v-for="(key, i) in Object.keys(content)">
                 <div class="d-flex flex-column">
                     <template v-if="i == 0">
