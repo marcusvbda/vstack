@@ -21,7 +21,7 @@ $controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 		</div>
 	</div>
 	<div class="card-body p-0">
-		<div class="table-responsive">
+		<div class="table-responsive"  data-aos="fade-right" >
 			<table class="table table-sm table-hover mb-0">
 				<thead class="thead-dark">
 					<tr>

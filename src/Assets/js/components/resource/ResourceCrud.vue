@@ -8,7 +8,7 @@
                             <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
                         </template>
                     </div>
-                    <div class="col-md-3 col-sm-12 fields-tab">
+                    <div class="col-md-3 col-sm-12 fields-tab" data-aos="fade-up">
                         <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
                             <div class="col-12">
                                 <div class="card">

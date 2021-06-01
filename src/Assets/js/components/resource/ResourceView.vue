@@ -1,11 +1,12 @@
 <template>
     <div id="crud-view">
         <div class="row mb-3">
-            <div class="col-md-12 d-flex justify-content-between align-items-center flex-wrap">
+            <div class="col-md-12 d-flex justify-content-between align-items-center flex-wrap" data-aos="fade-right">
                 <div>
                     <slot name="title"></slot>
                 </div>
                 <resource-buttons-view
+                    data-aos="fade-left"
                     :can_delete="data.can_delete"
                     :can_update="data.can_update"
                     :update_route="getRoute('update_route')"
@@ -16,7 +17,7 @@
         </div>
 
         <div class="row mb-4">
-            <div class="col-md-9 col-sm-12">
+            <div class="col-md-9 col-sm-12" data-aos="fade-right">
                 <div class="row" v-for="(card, i) in data.fields" :key="i">
                     <div class="col-12">
                         <div class="card mb-3" :id="`${card.label}`">
@@ -48,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-12 fields-tab">
+            <div class="col-md-3 col-sm-12 fields-tab" data-aos="fade-up">
                 <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
                     <div class="col-12">
                         <div class="card">

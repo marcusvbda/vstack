@@ -27,6 +27,9 @@ Vue.config.devtools = true
 Vue.prototype.$moment = moment
 import PortalVue from 'portal-vue'
 Vue.use(PortalVue)
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+Vue.prototype.$aos = AOS
 const vue = new Vue({
 	data() {
 		return {
@@ -43,6 +46,7 @@ const vue = new Vue({
 	},
 	methods: {
 		init() {
+			this.$aos.init()
 			let body = document.querySelector("body")
 			body.style.display = 'block'
 

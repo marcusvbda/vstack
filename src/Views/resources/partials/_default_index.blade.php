@@ -1,5 +1,5 @@
 <div class="row mb-3 mt-2">
-    <div class="col-12 d-flex flex-row align-items-center">
+    <div class="col-12 d-flex flex-row align-items-center" data-aos="fade-left" >
         <h4 class="mb-1">
 			@if(!$report_mode)
 				{!! @$resource->indexLabel() !!}
@@ -61,15 +61,17 @@
 </div>
 
 
-@if($report_mode)
-	@if(@$resource->beforeReportListSlot())
-		{!! @$resource->beforeReportListSlot() !!}
+<div class="w-100" data-aos="fade-up">
+	@if($report_mode)
+		@if(@$resource->beforeReportListSlot())
+			{!! @$resource->beforeReportListSlot() !!}
+		@endif
+	@else
+		@if(@$resource->beforeListSlot())
+			{!! @$resource->beforeListSlot() !!}
+		@endif
 	@endif
-@else
-	@if(@$resource->beforeListSlot())
-		{!! @$resource->beforeListSlot() !!}
-	@endif
-@endif
+</div>
 <?php 
     $model_count = $resource->model->count();
     $filters = $resource->filters();
@@ -89,7 +91,7 @@
                 "value" => @$_GET["_"] ? $_GET["_"] : ""
             ];
         ?>
-        <div class="d-flex flex-column align-items-start justify-content-between w-100">
+        <div class="d-flex flex-column align-items-start justify-content-between w-100"  data-aos="fade-left" >
 			<div class="d-flex flex-column w-100">
 				@if($report_mode && $resource->canCreateReportTemplates())
 					@include("vStack::resources.partials._save_filter_btn")

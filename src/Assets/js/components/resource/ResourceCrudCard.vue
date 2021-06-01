@@ -1,5 +1,5 @@
 <template>
-    <div :id="label">
+    <div :id="label" data-aos="fade-right">
         <div class="card mb-4 p-0">
             <div class="card-header crud-card-header">
                 <div class="row">

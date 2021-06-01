@@ -1,4 +1,4 @@
-<select-table-style id="{{$resource->id}}" :list_type="{{json_encode($list_types)}}" :has_lenses="{{json_encode(count($resource->lenses())>0)}}"
+<select-table-style data-aos="fade-right" id="{{$resource->id}}" :list_type="{{json_encode($list_types)}}" :has_lenses="{{json_encode(count($resource->lenses())>0)}}"
 	selected_list_type="{{$list_type}}">
 		<template slot="lenses">
 			<div class="col-md-9 col-sm-12">

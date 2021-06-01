@@ -1,6 +1,8 @@
-@if(@$resource->beforeViewSlot())
+<div class="w-100" data-aos="fade-up">
+	@if(@$resource->beforeViewSlot())
 	{!! @$resource->beforeViewSlot() !!}
 @endif
+</div>
 <resource-view 
 	:data="{{json_encode($data)}}" 
 	:form="{{json_encode($content)}}" 
