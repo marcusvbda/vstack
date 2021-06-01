@@ -52,7 +52,7 @@ $controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 	</div>
 </div>
 
-@if($waiting_qty > 0)
+@if(@$waiting_qty > 0)
 	<resource-export-list
 		:report_exports='@json($exports)'
 	>

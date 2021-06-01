@@ -266,10 +266,10 @@ class ResourceController extends Controller
 		$params = [];
 		foreach ($data["get_params"] as $key => $value) $params[$key] = $value;
 		$_request->request->add($params);
-		$result = $this->getData($resource, $_request);
+		$count = $this->getData($resource, $_request)->count();
+		$filter = $_request->all();
 		$file_id = md5(uniqid());
 		$path = '/public/vstack/resource_export/';
-		$ids =  $result->pluck("id")->all();
 
 		$disabled_columns = [];
 		foreach ($data['columns'] as $key => $value) {
@@ -286,10 +286,10 @@ class ResourceController extends Controller
 		$_data->disabled_columns = $disabled_columns;
 		$config->data = $_data;
 		$config->save();
-		return $this->exportSheetOrDispatch($user, count($ids), $ids, $resource, $data['columns'], $path, $file_id);
+		return $this->exportSheetOrDispatch($user, $count, $filter, $resource, $data['columns'], $path, $file_id);
 	}
 
-	public function exportSheetOrDispatch($user, $count, $ids, $resource, $columns, $path, $file_id)
+	public function exportSheetOrDispatch($user, $count, $filter, $resource, $columns, $path, $file_id)
 	{
 		$email = $user->email;
 		$config = new ResourceConfig;
@@ -315,7 +315,7 @@ class ResourceController extends Controller
 
 		if ($count <= $resource->maxRowsExportSync()) {
 			try {
-				$exporter = new GlobalExporter($resource, $columns, $ids);
+				$exporter = new GlobalExporter($resource, $columns, $filter);
 				Excel::store($exporter, $path . $file_id . '.' . $file_extension, "local");
 				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
 				$_data = $config->data;
@@ -331,13 +331,13 @@ class ResourceController extends Controller
 				return ['success' => false, 'message_type' => 'error', 'message' => $message];
 			}
 		}
-		dispatch(function () use ($user, $resource, $columns, $ids, $file_id, $email, $config, $path, $file_extension) {
+		dispatch(function () use ($user, $resource, $columns, $filter, $file_id, $email, $config, $path, $file_extension) {
 			$_data = $config->data;
 			$_data->status = "exporting";
 			$config->data = $_data;
 			$config->save();
 			try {
-				$exporter = new GlobalExporter($resource, $columns, $ids);
+				$exporter = new GlobalExporter($resource, $columns, $filter);
 				Excel::store($exporter, $path . $file_id . '.' . $file_extension, "local");
 				$route = route('resource.export_download_intercept', ['resource' => $resource->id, 'file' => $file_id]);
 				$_data = $config->data;
