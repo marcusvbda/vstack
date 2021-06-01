@@ -17,6 +17,7 @@ class SetVstackMutator extends BaseMutator
 			"resource_field_route"   => Vstack::resource_field_route(),
 			"default_upload_route"   => Vstack::default_upload_route(),
 			"default_import_csv_separator"   => Vstack::default_import_csv_separator(),
+			"animation_enabled"   => Vstack::animation_enabled(),
 		];
 		return $content;
 	}

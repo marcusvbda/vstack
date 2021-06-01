@@ -46,6 +46,11 @@ class Vstack
 		return config("vstack.queue.resource-export", "resource-export");
 	}
 
+	public static function animation_enabled()
+	{
+		return config("vstack.animation.enabled", true);
+	}
+
 	public static function numberToInt($value)
 	{
 		return (int)preg_replace("/[^A-Za-z0-9]/", "", number_format($value, 2));

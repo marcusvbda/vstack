@@ -12,7 +12,7 @@ $table = $resource->export_columns();
 $table_keys = array_keys($table);
 $controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 ?>
-<div class="card">
+<div class="card" data-aos="fade-right" >
 	<div class="card-header p-0">
 		<div class="col-md-9 col-sm-12">
 			@if($resource->lenses())
@@ -21,7 +21,7 @@ $controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 		</div>
 	</div>
 	<div class="card-body p-0">
-		<div class="table-responsive"  data-aos="fade-right" >
+		<div class="table-responsive"  >
 			<table class="table table-sm table-hover mb-0">
 				<thead class="thead-dark">
 					<tr>

@@ -1,12 +1,12 @@
 <template>
-    <div class="row d-flex justify-content-center mt-4">
+    <div class="row d-flex justify-content-center mt-4" data-aos="fade-left">
         <div class="col-12">
             <el-steps :active="config.step" finish-status="success" align-center>
                 <el-step title="Upload de arquivo"></el-step>
                 <el-step title="Mapeamento de coluna"></el-step>
                 <el-step title="Importação"></el-step>
             </el-steps>
-            <div class="mt-3">
+            <div class="mt-3" data-aos="fade-right">
                 <a class="link" href="#" v-if="config.step > 0" @click.prevent="reload">
                     <span class="el-icon-caret-left mr-2 mb-2"></span>
                     Voltar
