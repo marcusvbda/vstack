@@ -30,6 +30,9 @@ Vue.use(PortalVue)
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 Vue.prototype.$aos = AOS
+Vue.prototype.$getUrlParams = () => {
+	return Object.fromEntries(new URLSearchParams(location.search))
+}
 const vue = new Vue({
 	data() {
 		return {
