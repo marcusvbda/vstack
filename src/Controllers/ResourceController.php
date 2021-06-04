@@ -332,7 +332,7 @@ class ResourceController extends Controller
 			}
 		}
 		dispatch(function () use ($user, $resource, $columns, $filter, $file_id, $email, $config, $path, $file_extension) {
-			Auth::loginUsingId($config->data->user_id)
+			Auth::loginUsingId($config->data->user_id);
 			$_data = $config->data;
 			$_data->status = "exporting";
 			$config->data = $_data;
