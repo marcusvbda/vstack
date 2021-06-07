@@ -80,12 +80,15 @@ class VstackController extends Controller
 		$per_page = @$request["per_page"];
 		$includes = @$request["includes"] ?? [];
 		$fields = @$request["fields"] ?? ["*"];
-		$order_by = @$request["order_by"] ?? ["id", "asc"];
-		$query = app()->make($model)->where("id", ">", 0);
+		$order_by = @$request["order_by"];
+		$query = app()->make($model);
 		$filters  = @$request["filters"] ?? [];
 		$query = $this->processApiFilters($filters, $query);
-		$result = $query->select($fields)->with($includes)
-			->orderBy($order_by[0], $order_by[1]);
+		$result = $query->select($fields)->with($includes);
+		if ($order_by) {
+			$query = $query->orderBy($order_by[0], $order_by[1]);
+		}
+
 		return $per_page ? $result->paginate($per_page) : $result->get();
 	}
 
