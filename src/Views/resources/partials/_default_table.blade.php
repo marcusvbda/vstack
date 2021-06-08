@@ -28,10 +28,10 @@
 					<thead>
 						<tr>
 							@if($table_after_row)
-								<th width="1%;"></th>
+								<th  width="1%;"></th>
 							@endif
 							@if($has_actions)
-								<th width="1%;">
+								<th  width="1%;">
 									<div class="d-flex align-items-center justify-content-center">
 										<input class='select-action-resource' type="checkbox" id="{{ $resource->id.'_action_select_all' }}"  />
 									</div>
@@ -42,7 +42,7 @@
 								$size =  (isset($value['size']) ? $value['size'] : 'auto') ;
 								$sortable_index = isset($value['sortable_index']) ? $value['sortable_index'] : $key;
 							@endphp
-							<th width="{{$size}}">
+							<th  width="{{$size}}">
 								@if(@$value["sortable"]!==false)
 									<a href="{{ResourcesHelpers::sortLink($resource->route(),request()->query(), $sortable_index,$order_type)}}"
 										class="d-flex flex-row align-items-center link-sortable">
@@ -60,7 +60,7 @@
 							</th>
 							@endforeach
 							@if($show_right_actions_column)
-								<th style="min-width: 168px;max-width : 10%;    width: 10%;"></th>
+								<th  style="min-width: 168px;max-width : 10%;    width: 10%;"></th>
 							@endif
 						</tr>
 					</thead>
@@ -77,24 +77,24 @@
 								>
 								@if($table_after_row)
 									<template slot="first-column">
-										<th style="width:1%;padding-bottom: 10px!important;height: 1px;">
+										<td  style="width:1%;padding-bottom: 10px!important;height: 1px;">
 											<portal-target class="h-100 d-flex justify-content-center" name="resource_after_row_arrow_{{ $row->id }}"></portal-target>
-										</th>
+										</td>
 									</template>
 								@endif
 								@if($has_actions)
 									<template slot="first-column">
-										<th width="1%;">
+										<td  width="1%;">
 											<div class="d-flex align-items-center justify-content-center">
 												<input class="select-action-resource select_action_box" type="checkbox" id="{{ $resource->id.'_action_select_'.$row->id }}" />
 											</div>
-										</th>
+										</td>
 									</template>
 								@endif
 							</tr>
 							@if($table_after_row)
 								<tr class="table-row after">
-									<td colspan="{{ $columns_count }}">
+									<td  colspan="{{ $columns_count }}">
 										<after-row-resource row_id="{{  $row->id }}">
 											{!! $resource->tableAfterRow($row) !!}
 										</after-row-resource>
