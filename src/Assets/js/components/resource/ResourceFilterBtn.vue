@@ -12,11 +12,7 @@
         <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl" :before-close="confirmClose">
             <template slot="title">
                 <div class="w-100 d-flex flex-row">
-                    <div class="d-flex flex-row align-items-center">
-                        <span class="el-icon-search mr-2" />
-                        <span>Filtragem</span>
-                    </div>
-                    <el-button class="mr-3 ml-auto" size="medium" type="primary" @click="makeNewRoute">Confirmar Filtro</el-button>
+                    <el-button class="mr-3" size="medium" type="primary" @click="makeNewRoute"><span class="el-icon-search mr-2" />Confirmar Filtro</el-button>
                 </div>
             </template>
             <div class="row">
