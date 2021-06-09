@@ -9,6 +9,7 @@ use marcusvbda\vstack\Models\Traits\CascadeOrRestrictSoftdeletes;
 use marcusvbda\vstack\Models\Scopes\TenantScope;
 use marcusvbda\vstack\Models\Observers\TenantObserver;
 use marcusvbda\vstack\Models\Traits\useTenantTz;
+use marcusvbda\vstack\Vstack;
 
 class DefaultModel extends Model
 {
@@ -32,12 +33,7 @@ class DefaultModel extends Model
 
 	public function makeTwoLinesHtmlAppend($line, $subline)
 	{
-		return "
-            <div class='d-flex flex-column'>
-                <span><b>{$line}</b></span>
-                <small class='text-muted'>{$subline}</small>
-            </div>
-        ";
+		return Vstack::makeTwoLinesHtmlAppend($line, $subline);
 	}
 
 	public function getFCreatedAtBadgeAttribute()
