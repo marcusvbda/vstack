@@ -1,7 +1,7 @@
 <template>
     <tr :id="row_id">
         <template v-if="loading">
-            <td :key="i" :colspan="cols + (show_right_actions_column ? 1 : 0) + ($slots['first-column'] ? 1 : 0)">
+            <td :colspan="cols + (show_right_actions_column ? 1 : 0) + ($slots['first-column'] ? 1 : 0)">
                 <div
                     class="shimmer"
                     :style="{
