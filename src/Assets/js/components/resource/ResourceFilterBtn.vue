@@ -9,7 +9,7 @@
             @click.prevent="toggleFilters"
             v-html="`Filtrar ${label}`"
         />
-        <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl" :before-close="confirmClose">
+        <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl" :before-close="confirmClose" :append-to-body="true">
             <template slot="title">
                 <div class="w-100 d-flex flex-row">
                     <el-button class="mr-3" size="medium" type="primary" @click="makeNewRoute"><span class="el-icon-search mr-2" />Confirmar Filtro</el-button>
