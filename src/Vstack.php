@@ -60,4 +60,14 @@ class Vstack
 	{
 		return (int)$value / 100;
 	}
+
+	public static function makeTwoLinesHtmlAppend($line, $subline)
+	{
+		return "
+            <div class='d-flex flex-column'>
+                <span><b>{$line}</b></span>
+                <small class='text-muted'>{$subline}</small>
+            </div>
+        ";
+	}
 }
