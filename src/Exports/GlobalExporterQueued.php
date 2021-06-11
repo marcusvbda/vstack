@@ -2,7 +2,6 @@
 
 namespace marcusvbda\vstack\Exports;
 
-
 use Maatwebsite\Excel\Concerns\{
 	FromQuery,
 	WithHeadings,
@@ -12,10 +11,14 @@ use Maatwebsite\Excel\Concerns\{
 use  marcusvbda\vstack\Controllers\VstackController;
 use  marcusvbda\vstack\Controllers\ResourceController;
 use DB;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Illuminate\Bus\Queueable;
 use marcusvbda\vstack\Models\ResourceConfig;
 
-class GlobalExporter implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
+class GlobalExporterQueued implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, ShouldQueue
 {
+	use Exportable, Queueable;
 	public $counter = 0;
 	public $start = null;
 	public $controller = null;

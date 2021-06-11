@@ -73,11 +73,12 @@ export default {
                         get_params: this.get_params,
                         columns: this.columns,
                     })
-                    .then((resp) => {
-                        resp = resp.data
+                    .then(({ data }) => {
                         this.visible = false
                         this.setColumns()
-                        if (resp.url) window.open(resp.url, '_BLANK')
+                        if (data.success && data.url) {
+                            window.open(data.url, '_BLANK')
+                        }
                         return window.location.reload()
                     })
             })

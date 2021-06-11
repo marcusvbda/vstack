@@ -9,10 +9,10 @@ use Auth;
 
 class TenantScope implements Scope
 {
-    public function apply(Builder $builder, Model $model)
-    {
-        if (Auth::check()) {
-            @$builder->where($model->getTable() . '.' . 'tenant_id', Auth::user()->tenant_id);
-        }
-    }
+	public function apply(Builder $builder, Model $model)
+	{
+		if (Auth::check()) {
+			@$builder->where($model->getTable() . '.' . 'tenant_id', Auth::user()->tenant_id);
+		}
+	}
 }

@@ -11,14 +11,13 @@ use Auth;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use marcusvbda\vstack\Exports\{DefaultGlobalExporter, GlobalExporter};
+use marcusvbda\vstack\Exports\{DefaultGlobalExporter, GlobalExporterQueued, GlobalExporter};
 use marcusvbda\vstack\Imports\GlobalImporter;
 use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
-use marcusvbda\vstack\Services\SendMail;
 use marcusvbda\vstack\Models\{Tag, TagRelation};
 use marcusvbda\vstack\Models\ResourceConfig;
-use marcusvbda\vstack\Events\WebSocketEvent;
+use marcusvbda\vstack\Jobs\GlobalJob;
 use marcusvbda\vstack\Vstack;
 
 class ResourceController extends Controller
@@ -266,8 +265,8 @@ class ResourceController extends Controller
 		$params = [];
 		foreach ($data["get_params"] as $key => $value) $params[$key] = $value;
 		$_request->request->add($params);
-		$count = $this->getData($resource, $_request)->count();
-		$filter = $_request->all();
+		$query = $this->getData($resource, $_request);
+		$count = $query->count();
 		$file_id = md5(uniqid());
 		$path = '/public/vstack/resource_export/';
 
@@ -286,20 +285,24 @@ class ResourceController extends Controller
 		$_data->disabled_columns = $disabled_columns;
 		$config->data = $_data;
 		$config->save();
-		return $this->exportSheetOrDispatch($user, $count, $filter, $resource, $data['columns'], $path, $file_id);
+		return $this->exportSheetOrDispatch($user, $count, $query, $resource, $data['columns'], $path, $file_id);
 	}
 
-	public function exportSheetOrDispatch($user, $count, $filter, $resource, $columns, $path, $file_id)
+	public function exportSheetOrDispatch($user, $count, $query, $resource, $columns, $path, $file_id)
 	{
 		$email = $user->email;
 		$config = new ResourceConfig;
 		$config->resource = $resource->id;
 		$config->config = "report_export_$file_id";
 		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
+		$raw_sql = Vstack::toRawSql($query);
 		$file_extension = Vstack::resource_export_extension();
+		$filename =  $file_id . "." . $file_extension;
+		$full_path = "public/vstack/resource_export/$filename";
 		$config->data = [
 			"user_id" => $user->id,
 			"path" => $path,
+			"full_path" => $full_path,
 			"file_id" => $file_id,
 			"file_extension" => $file_extension,
 			"file_name" => $resource->id . '_' . Carbon::now()->format('YmdHis'),
@@ -309,14 +312,17 @@ class ResourceController extends Controller
 			"microtime" => [
 				"start" => microtime(true),
 				"end" => 0,
-			]
+			],
+			"raw_sql" => $raw_sql
 		];
-		$config->save();
 
-		if ($count <= $resource->maxRowsExportSync()) {
-			try {
-				$exporter = new GlobalExporter($resource, $columns, $filter);
-				Excel::store($exporter, $path . $file_id . '.' . $file_extension, "local");
+		$config->save();
+		$config_id = $config->id;
+		try {
+			if ($count <= $resource->maxRowsExportSync()) {
+
+				$exporter = new GlobalExporter($resource, $columns, $config_id);
+				Excel::store($exporter, $full_path, "local");
 				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
 				$_data = $config->data;
 				$_data->status = "ready";
@@ -326,45 +332,23 @@ class ResourceController extends Controller
 				Messages::send("success", $message);
 				$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id, 'destroy' => true]);
 				return ['success' => true, 'url' => $route];
-			} catch (\Exception $e) {
-				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . " )";
-				return ['success' => false, 'message_type' => 'error', 'message' => $message];
+			} else {
+				(new GlobalExporterQueued($resource, $columns, $config_id))->queue($full_path)->allOnQueue(Vstack::queue_resource_export())->chain([
+					new GlobalJob($config_id, $resource, $file_id)
+				]);
+				$message = "Sua Relatório de " . $resource->label() . " está sendo exportado, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $email . "), isso pode levar alguns minutos.";
+				Messages::send("info", $message);
+				return ['success' => true];
 			}
-		}
-		dispatch(function () use ($user, $resource, $columns, $filter, $file_id, $email, $config, $path, $file_extension) {
-			Auth::loginUsingId($config->data->user_id);
+		} catch (\Exception $e) {
+			$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . '  - on line ' . $e->getLine() . " )";
 			$_data = $config->data;
-			$_data->status = "exporting";
+			$_data->status = "error";
+			$_data->error_message = $message;
 			$config->data = $_data;
 			$config->save();
-			try {
-				$exporter = new GlobalExporter($resource, $columns, $filter);
-				Excel::store($exporter, $path . $file_id . '.' . $file_extension, "local");
-				$route = route('resource.export_download_intercept', ['resource' => $resource->id, 'file' => $file_id]);
-				$_data = $config->data;
-				$_data->status = "ready";
-				$_data->microtime->end = microtime(true);
-				$_data->due_date = Carbon::now()->addDays(1);
-				$config->data = $_data;
-				$config->save();
-				$html = view($resource->exportNotificationView(), compact('user', 'resource', 'route'))->render();
-				broadcast(new WebSocketEvent("App.User." . $config->data->user_id, "notifications.exporting_status." . $config->id, [
-					"config" => $config
-				]));
-				SendMail::to($email, "Relatório de " . $resource->label(), $html);
-			} catch (\Exception $e) {
-				$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . '  - on line ' . $e->getLine() . " )";
-				$_data = $config->data;
-				$_data->status = "error";
-				$_data->error_message = $message;
-				$config->data = $_data;
-				$config->save();
-				return ['success' => false, 'message' => $message];
-			}
-		})->onQueue(Vstack::queue_resource_export());
-		$message = "Sua Relatório de " . $resource->label() . " está sendo exportado, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $email . "), isso pode levar alguns minutos.";
-		Messages::send("info", $message);
-		return ['success' => true];
+			return ['success' => false, 'message' => $message, 'message_type' => 'error', 'message' => $message];
+		}
 	}
 
 	public function exportDownload($resource, $file_id, Request $request)
@@ -374,9 +358,8 @@ class ResourceController extends Controller
 			if (!$resource->canExport()) abort(403);
 			$user = Auth::user();
 			$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "report_export_$file_id")->firstOrFail();
-			$full_path = storage_path("app/public/vstack/resource_export/" . $config->data->file_id . "." . @$config->data->file_extension);
 			if ($request->has('destroy')) $config->delete();
-			return response()->download($full_path, $config->data->file_name . "." . @$config->data->file_extension)->deleteFileAfterSend($request->has('destroy'));
+			return response()->download(storage_path("app/" . $config->data->full_path), $config->data->file_name . "." . @$config->data->file_extension)->deleteFileAfterSend($request->has('destroy'));
 		} catch (\Exception $e) {
 			abort(404);
 		}

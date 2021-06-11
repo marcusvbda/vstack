@@ -70,4 +70,13 @@ class Vstack
             </div>
         ";
 	}
+
+	public static function toRawSql($query)
+	{
+		$bindings = $query->getBindings();
+		$str = array_reduce($bindings, function ($sql, $binding) {
+			return preg_replace('/\?/', is_numeric($binding) ? $binding : "'" . $binding . "'", $sql, 1);
+		}, $query->toSql());
+		return $str;
+	}
 }

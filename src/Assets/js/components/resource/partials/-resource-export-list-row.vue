@@ -5,7 +5,6 @@
             <span v-html="getUrlContent(cloned_row)" />
         </td>
         <td><span v-html="getName(cloned_row)" /></td>
-        <td><span v-html="getMicrotime(cloned_row)" /></td>
         <td><span v-html="getDueDate(cloned_row)" /></td>
     </tr>
 </template>
