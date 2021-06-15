@@ -3,40 +3,49 @@
         <div class="col-12">
             <form class="needs-validation m-0" novalidate v-on:submit.prevent="submit" @keypress.13.prevent>
                 <div class="row">
-                    <div class="col-md-9 col-sm-12 col-sm-12">
-                        <template v-for="(card, i) in data.fields">
-                            <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
-                        </template>
-                    </div>
-                    <div class="col-md-3 col-sm-12 fields-tab" data-aos="fade-up">
-                        <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body d-none d-md-block d-lg-block" v-if="showPills">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <ul class="d-flex flex-column mb-0 pl-3">
-                                                    <li v-for="(card, i) in namedCards" :key="i">
-                                                        <a class="f-12 link" :href="`#${card.label}`" v-html="card.label" />
-                                                    </li>
-                                                </ul>
+                    <template v-if="dialog">
+                        <div class="col-12">
+                            <template v-for="(card, i) in data.fields">
+                                <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
+                            </template>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="col-md-9 col-sm-12 col-sm-12">
+                            <template v-for="(card, i) in data.fields">
+                                <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
+                            </template>
+                        </div>
+                        <div class="col-md-3 col-sm-12 fields-tab" data-aos="fade-up">
+                            <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body d-none d-md-block d-lg-block" v-if="showPills">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <ul class="d-flex flex-column mb-0 pl-3">
+                                                        <li v-for="(card, i) in namedCards" :key="i">
+                                                            <a class="f-12 link" :href="`#${card.label}`" v-html="card.label" />
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="card-footer flex-wrap d-flex flex-row justify-content-end p-2 align-items-center">
-                                        <el-button-group>
-                                            <el-button v-if="first_btn" :size="first_btn.size" :type="first_btn.type" @click="submit(first_btn.field)">
-                                                <span v-html="first_btn.content" />
-                                            </el-button>
-                                            <el-button v-if="second_btn" :size="second_btn.size" :type="second_btn.type" @click="submit(second_btn.field)">
-                                                <span v-html="second_btn.content" />
-                                            </el-button>
-                                        </el-button-group>
+                                        <div class="card-footer flex-wrap d-flex flex-row justify-content-end p-2 align-items-center">
+                                            <el-button-group>
+                                                <el-button v-if="first_btn" :size="first_btn.size" :type="first_btn.type" @click="submit(first_btn.field)">
+                                                    <span v-html="first_btn.content" />
+                                                </el-button>
+                                                <el-button v-if="second_btn" :size="second_btn.size" :type="second_btn.type" @click="submit(second_btn.field)">
+                                                    <span v-html="second_btn.content" />
+                                                </el-button>
+                                            </el-button-group>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
                 <slot name="aftercreate" v-if="['CREATE', 'CLONE'].includes(pageType)"></slot>
                 <slot name="afteredit" v-if="['EDIT'].includes(pageType)"></slot>
@@ -47,7 +56,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'first_btn', 'second_btn'],
+    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'first_btn', 'second_btn', 'dialog'],
     data() {
         return {
             resourceData: {},
@@ -140,7 +149,7 @@ export default {
                 cancelButtonText: 'Não',
                 type: 'warning',
             }).then(() => {
-                let loading = this.$loading()
+                let loading = this.$loading({ text: 'Salvado ...' })
                 this.$http
                     .post(this.data.store_route, { ...this.form, clicked_btn })
                     .then(({ data }) => {

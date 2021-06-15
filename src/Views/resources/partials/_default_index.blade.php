@@ -11,10 +11,13 @@
 			@if(!$report_mode)
 				@if($resource->canCreate())
 					@if($resource->model->count()>0)
-						<a class="btn btn-primary btn-sm btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1"
-							href="{{route('resource.create',['resource'=>$resource->id])}}">
-							{!! $resource->storeButtonLabel() !!}
-						</a>
+						<resource-store-btn 
+							resource_id='{{ $resource->id }}'
+							crud_type='{{ $resource->crudType() }}'
+							label="{{ $resource->storeButtonLabel() }}"
+							route="{{route('resource.create',['resource'=>$resource->id])}}"
+						>
+						</resource-store-btn>
 					@endif
 					@if($resource->canImport())
 						<a class="ml-2 link" href="{{route('resource.import',['resource'=>$resource->id])}}">
@@ -142,10 +145,13 @@
 			@endif
         </h4>
         @if($resource->canCreate())
-			<a class="btn btn-primary btn-sm-block cursor-pointer mb-3 mt-3"
-				href="{{route('resource.create',['resource'=>$resource->id])}}">
-				{!! $resource->storeButtonLabel() !!}
-			</a>
+			<resource-store-btn 
+				resource_id='{{ $resource->id }}'
+				crud_type='{{ $resource->crudType() }}'
+				label="{{ $resource->storeButtonLabel() }}"
+				route="{{route('resource.create',['resource'=>$resource->id])}}"
+			>
+			</resource-store-btn>
         @endif
     </div>
 </div>

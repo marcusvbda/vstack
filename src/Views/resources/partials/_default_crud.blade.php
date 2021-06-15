@@ -1,7 +1,12 @@
 <div class="row mt-2"  data-aos="fade-left">
     <div class="col-12">
         <div class="d-flex flex-row justify-content-between mb-3">
-            <h4>@if( @$resource->icon() ) <span class="{{$resource->icon()}} mr-2"></span> @endif {{$data["page_type"]}} de {{$resource->singularLabel()}}</h4>
+            <h4>
+				@if( @$resource->icon() ) 
+					<span class="{{$resource->icon()}} mr-2"></span> 
+				@endif 
+			{{ $resource->breadcrumbLabels()[$raw_type] }}
+			</h4>
         </div>
     </div>
 </div>

@@ -79,4 +79,13 @@ class Vstack
 		}, $query->toSql());
 		return $str;
 	}
+
+	public static function getPageType($page_type)
+	{
+		if ($page_type == "Clonage") return "clone";
+		if ($page_type == "Cadastro") return "create";
+		if ($page_type == "Edição") return "edit";
+		if ($page_type == "Visualização") return "view";
+		return "";
+	}
 }

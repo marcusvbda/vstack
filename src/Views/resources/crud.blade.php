@@ -3,9 +3,7 @@
 @php
 	$cards = $data["fields"];
 	$routes = [];
-	$raw_types = ["Edição" => "edit","Cadastro" => "create", "Clonagem" => "clone"];
-	$raw_type = $raw_types[$data["page_type"]];
-	$current = $data['page_type']." de ".$resource->singularLabel();
+	$raw_type = \marcusvbda\vstack\Vstack::getPageType(@$data['page_type']);
 	if(in_array($raw_type,["clone","edit"])) {
 		$current_route = $resource->route()."/".@$content->code."/".$raw_type;
 	} else {

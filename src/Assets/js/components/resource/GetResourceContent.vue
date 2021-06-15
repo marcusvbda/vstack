@@ -28,6 +28,7 @@
             </td>
             <td v-if="show_right_actions_column">
                 <resource-crud-buttons
+                    :resource_id="resource_id"
                     :data="{
                         code: row_code,
                         route: `${resource_route}/${row_code}`,
@@ -36,6 +37,7 @@
                         can_delete: can_delete,
                         can_clone: can_clone,
                         before_delete: before_delete,
+                        crud_type: crud_type,
                     }"
                     :id="row_id"
                 />
@@ -55,6 +57,7 @@ export default {
             can_clone: false,
             can_update: false,
             can_delete: false,
+            crud_type: 'page',
             before_delete: [],
             can_view: false,
             pusher_initialized: false,

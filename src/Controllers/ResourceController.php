@@ -138,20 +138,61 @@ class ResourceController extends Controller
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
 		if (!$resource->canCloneRow($content) || !$resource->canClone()) abort(403);
+		if ($resource->crudType() == "dialog") abort(404);
 		$data = $this->makeCrudData($resource, $content);
 		$data["page_type"] = "Clonagem";
 		$params = @$request["params"] ? $request["params"] : [];
 		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
 	}
 
+	public function getResourceCrudContent($resource, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		$page_type = request("type");
+		if ($page_type == "create") {
+			$data = $this->getResourceCreateCrudContent($resource, $request);
+		} else {
+			$content = $resource->model->findOrFail($request["id"]);
+			$data = $this->getResourceEditCrudContent($content, $resource, $request);
+		}
+		return ["resource" => $resource->serialize($page_type), "data" => $data];
+	}
+
+	protected function getResourceEditCrudContent($content, $resource, Request $request)
+	{
+		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
+		if (!$resource->canCreate()) abort(403);
+		$data = $this->makeCrudData($resource, $content);
+		$data["page_type"] = "Edição";
+		return $data;
+	}
+
+	public function edit($resource, $code, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		$content = $resource->model->findOrFail($code);
+		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
+		$data = $this->getResourceEditCrudContent($content, $resource, $request);
+		if ($resource->crudType() == "dialog") abort(404);
+		$params = @$request["params"] ? $request["params"] : [];
+		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
+	}
+
+	protected function getResourceCreateCrudContent($resource, Request $request)
+	{
+		if (!$resource->canCreate()) abort(403);
+		$data = $this->makeCrudData($resource);
+		$data["page_type"] = "Cadastro";
+		return $data;
+	}
 
 	public function create($resource, Request $request)
 	{
 		$params = @$request["params"] ? $request["params"] : [];
 		$resource = ResourcesHelpers::find($resource);
 		if (!$resource->canCreate()) abort(403);
-		$data = $this->makeCrudData($resource);
-		$data["page_type"] = "Cadastro";
+		$data = $this->getResourceCreateCrudContent($resource, $request);
+		if ($resource->crudType() == "dialog") abort(404);
 		return view("vStack::resources.crud", compact("resource", "data", "params"));
 	}
 
@@ -412,17 +453,6 @@ class ResourceController extends Controller
 			]);
 			DB::rollback();
 		}
-	}
-
-	public function edit($resource, $code, Request $request)
-	{
-		$resource = ResourcesHelpers::find($resource);
-		$content = $resource->model->findOrFail($code);
-		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
-		$data = $this->makeCrudData($resource, $content);
-		$data["page_type"] = "Edição";
-		$params = @$request["params"] ? $request["params"] : [];
-		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
 	}
 
 	public function beforeDestroy($resource, $code, Request $request)

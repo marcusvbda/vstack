@@ -1,13 +1,14 @@
 @php 
+	$breadcrumbs = $resource->breadcrumbLabels();
 	$bc = [
 		"Dashboard" => "/admin",
-		$resource->label() => @$resource->route()
+		$breadcrumbs["list"] => @$resource->route()
 	];
 	if(@$report_mode) {
-		$bc['Relatório de '.$resource->label()] = @$resource->report_route();
+		$bc[$breadcrumbs["report"]] = @$resource->report_route();
 	}
-	if(@$data["page_type"]) {
-		$bc[$current] =  $current_route;
+	if(@$raw_type) {
+		$bc[$breadcrumbs[$raw_type]] = $current_route;
 	}
 @endphp
 <div class="row">

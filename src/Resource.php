@@ -119,6 +119,9 @@ class Resource
 
 	public function secondCrudBtn()
 	{
+		if ($this->crudType() == "dialog") {
+			return false;
+		}
 		return [
 			"size" => "small",
 			"field" => "save",
@@ -481,5 +484,47 @@ class Resource
 	public function getModelInstance()
 	{
 		return (is_string($this->model) ? app()->make($this->model)() : new $this->model());
+	}
+
+	public function breadcrumbLabels()
+	{
+		return [
+			"list" => "{$this->label()}",
+			"create" => "Cadastro de {$this->singularLabel()}",
+			"view" => "Visualização de {$this->singularLabel()}",
+			"report" => "Relatório de {$this->singularLabel()}",
+			"edit" => "Edição de {$this->singularLabel()}"
+		];
+	}
+
+	public function serialize($page_type)
+	{
+		return [
+			"label" => $this->label(),
+			"singular_label" => $this->singularLabel(),
+			"page_type" => $page_type,
+			"breadcrumb_labels" => $this->breadcrumbLabels(),
+			"first_btn" => $this->firstCrudBtn(),
+			"second_btn" => $this->secondCrudBtn(),
+			"acl" => ["can_update" => $this->canUpdate()],
+			"after_create_slot" => $this->afterCreateSlot(),
+			"after_edit_slot" => $this->afterEditSlot(),
+			"before_edit_slot" => $this->beforeEditSlot(),
+			"before_create_slot" => $this->beforeCreateSlot(),
+			"dialog_sub_titles" => $this->dialogSubTitles(),
+		];
+	}
+
+	public function dialogSubTitles()
+	{
+		return [
+			"create" => false,
+			"edit" => false,
+		];
+	}
+
+	public function crudType()
+	{
+		return "page";
 	}
 }

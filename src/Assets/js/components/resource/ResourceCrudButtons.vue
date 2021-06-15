@@ -8,23 +8,30 @@
                 <el-button size="small" plain type="info" icon="el-icon-search" @click="goTo(data.route)" />
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Editar" placement="top" v-if="data.can_update">
-                <el-button size="small" plain type="primary" icon="el-icon-edit" @click="goTo(`${data.route}/edit`)" />
+                <el-button size="small" plain type="primary" icon="el-icon-edit" @click="goToEdit()" />
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Excluir" placement="top" v-if="data.can_delete">
                 <el-button size="small" plain type="danger" icon="el-icon-delete" @click.prevent="destroy" />
             </el-tooltip>
         </el-button-group>
+        <resource-crud-dialog :resource_id="resource_id" ref="dialog" :row_id="id" />
     </div>
 </template>
 <script>
 export default {
-    props: ['data', 'id'],
+    props: ['data', 'id', 'resource_id'],
     data() {
         return {
             loading: null,
         }
     },
     methods: {
+        goToEdit() {
+            if (this.data.crud_type == 'page') {
+                return (window.location.href = `${this.data.route}/edit`)
+            }
+            this.$refs.dialog.open()
+        },
         goTo(route) {
             window.location.href = route
         },
