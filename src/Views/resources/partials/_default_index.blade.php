@@ -146,6 +146,7 @@
         </h4>
         @if($resource->canCreate())
 			<resource-store-btn 
+				big
 				class="mt-3"
 				resource_id='{{ $resource->id }}'
 				crud_type='{{ $resource->crudType() }}'
