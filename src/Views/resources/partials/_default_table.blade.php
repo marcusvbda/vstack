@@ -60,7 +60,7 @@
 							</th>
 							@endforeach
 							@if($show_right_actions_column)
-								<th  style="width: auto;"></th>
+								<th  style="max-width: 210px;width: 210px;"></th>
 							@endif
 						</tr>
 					</thead>
