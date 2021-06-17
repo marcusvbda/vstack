@@ -161,7 +161,6 @@ class ResourceController extends Controller
 	protected function getResourceEditCrudContent($content, $resource, Request $request)
 	{
 		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
-		if (!$resource->canCreate()) abort(403);
 		$data = $this->makeCrudData($resource, $content);
 		$data["page_type"] = "Edição";
 		return $data;
@@ -171,7 +170,6 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
-		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
 		$data = $this->getResourceEditCrudContent($content, $resource, $request);
 		if ($resource->crudType() == "dialog") abort(404);
 		$params = @$request["params"] ? $request["params"] : [];
@@ -190,7 +188,6 @@ class ResourceController extends Controller
 	{
 		$params = @$request["params"] ? $request["params"] : [];
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canCreate()) abort(403);
 		$data = $this->getResourceCreateCrudContent($resource, $request);
 		if ($resource->crudType() == "dialog") abort(404);
 		return view("vStack::resources.crud", compact("resource", "data", "params"));
