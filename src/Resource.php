@@ -478,7 +478,7 @@ class Resource
 		} else {
 			$route = route('resource.index', ["resource" => $this->id]);
 		}
-		return ["success" => true, "route" => $route];
+		return ["success" => true, "route" => $route, "model" => $target];
 	}
 
 	public function getModelInstance()
