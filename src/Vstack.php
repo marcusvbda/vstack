@@ -61,14 +61,17 @@ class Vstack
 		return (int)$value / 100;
 	}
 
-	public static function makeTwoLinesHtmlAppend($line, $subline)
+	public static function makeLinesHtmlAppend(...$args)
 	{
-		return "
-            <div class='d-flex flex-column'>
-                <span><b>{$line}</b></span>
-                <small class='text-muted'>{$subline}</small>
-            </div>
-        ";
+		$html = "<div class='d-flex flex-column'>";
+		foreach ($args as $key => $value) {
+			if ($key == 0) {
+				$html .= "<span><b>{$value}</b></span>";
+			} else {
+				$html .= "<small class='text-muted'>{$value}</small>";
+			}
+		}
+		return $html . "</div>";
 	}
 
 	public static function toRawSql($query)
