@@ -41,7 +41,9 @@
 						<resource-export-btn class="ml-2 link" 
 							id="{{$resource->id}}" 
 							label="{{$resource->label()}}"
-							:export_columns='@json($resource->export_columns())' 
+							:export_columns='@json($resource->export_columns((object)[
+								"user" => \Auth::user()
+							]))' 
 							:get_params='@json($_GET)'
 							:qty_results='@json($data->total())' 
 							:limit='@json($resource->maxRowsExportSync())'

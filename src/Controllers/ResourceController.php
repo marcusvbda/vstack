@@ -24,6 +24,7 @@ class ResourceController extends Controller
 {
 	public function report($resource, Request $request)
 	{
+		request()->request->add(["context" => (object)["user" => Auth::user()]]);
 		return $this->showIndexList($resource, $request, true);
 	}
 

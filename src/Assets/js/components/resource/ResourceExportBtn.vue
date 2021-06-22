@@ -67,7 +67,7 @@ export default {
         },
         confirm() {
             this.$confirm('Exportar relatório para planilha ? ', 'Confirmação').then(() => {
-                this.$loading({ text: `Aguarde, Gerando Planilha de ${this.id} ...` })
+                let loading = this.$loading({ text: `Aguarde, Gerando Planilha de ${this.id} ...` })
                 this.$http
                     .post(`/admin/${this.id}/export`, {
                         get_params: this.get_params,
@@ -76,10 +76,14 @@ export default {
                     .then(({ data }) => {
                         this.visible = false
                         this.setColumns()
-                        if (data.success && data.url) {
-                            window.open(data.url, '_BLANK')
+                        if (data.success) {
+                            if (data.url) {
+                                window.open(data.url, '_BLANK')
+                            }
+                            return window.location.reload()
                         }
-                        return window.location.reload()
+                        loading.close()
+                        return this.$message.error(data.message)
                     })
             })
         },

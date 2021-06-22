@@ -166,7 +166,7 @@ class Resource
 		return [new Card("Informações", $fields)];
 	}
 
-	public function export_columns()
+	public function export_columns($cx)
 	{
 		return [
 			"id" => ["label" => "Código"],
