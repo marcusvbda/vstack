@@ -31,19 +31,14 @@ class DefaultModel extends Model
 		return true;
 	}
 
-	public function makeTwoLinesHtmlAppend($line, $subline)
-	{
-		return Vstack::makeTwoLinesHtmlAppend($line, $subline);
-	}
-
 	public function getFCreatedAtBadgeAttribute()
 	{
-		return $this->makeTwoLinesHtmlAppend($this->f_created_at, $this->created_at->diffForHumans());
+		return Vstack::makeLinesHtmlAppend($this->f_created_at, $this->created_at->diffForHumans());
 	}
 
 	public function getFUpdatedAtBadgeAttribute()
 	{
-		return $this->makeTwoLinesHtmlAppend($this->f_updated_at, $this->updated_at->diffForHumans());
+		return Vstack::makeLinesHtmlAppend($this->f_updated_at, $this->updated_at->diffForHumans());
 	}
 
 	public function getFCreatedAtAttribute()
