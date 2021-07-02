@@ -1,11 +1,25 @@
 <template>
     <div data-aos="fade-down" v-if="options.length">
         <slot />
-        <el-dialog :title="title" :visible.sync="showing" center ref="selection" :lock-scroll="true" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog
+            :title="title"
+            :visible.sync="showing"
+            center
+            ref="selection"
+            :lock-scroll="true"
+            :close-on-click-modal="false"
+            :append-to-body="true"
+            :automatic-dropdown="true"
+        >
             <div class="d-flex flex-column">
-                <el-select v-model="value" filterable placeholder="" :multiple="multiple ? multiple : false" :clearable="true">
-                    <el-option v-for="item in options" :key="item.value" :value="item.value" :label="item.label">
-                        <div v-html="item.label" />
+                <el-select v-model="value" filterable placeholder="Selecione ..." :multiple="multiple ? multiple : false" :clearable="true">
+                    <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :value="item[value_index ? value_index : 'id']"
+                        :label="item[label_index ? label_index : 'label']"
+                    >
+                        <slot name="item-label" :item="item" />
                     </el-option>
                 </el-select>
             </div>
@@ -17,7 +31,7 @@
 </template>
 <script>
 export default {
-    props: ['title', 'default', 'btn_text', 'multiple', 'options'],
+    props: ['title', 'default', 'btn_text', 'multiple', 'options', 'value_index', 'label_index'],
     data() {
         return {
             showing: false,
