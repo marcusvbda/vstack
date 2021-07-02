@@ -1,7 +1,7 @@
 <template>
     <div data-aos="fade-down" v-if="options.length">
         <slot />
-        <el-dialog :title="title" :visible.sync="showing" center ref="selection" :lock-scroll="true" :close-on-click-modal="false">
+        <el-dialog :title="title" :visible.sync="showing" center ref="selection" :lock-scroll="true" :close-on-click-modal="false" :append-to-body="true">
             <div class="d-flex flex-column">
                 <el-select v-model="value" filterable placeholder="" :multiple="multiple ? multiple : false" :clearable="true">
                     <el-option v-for="item in options" :key="item.value" :value="item.value" :label="item.label">
