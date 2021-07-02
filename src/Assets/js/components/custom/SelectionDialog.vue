@@ -12,7 +12,15 @@
             :automatic-dropdown="true"
         >
             <div class="d-flex flex-column">
-                <el-select v-model="value" filterable placeholder="Selecione ..." :multiple="multiple ? multiple : false" :clearable="true">
+                <el-select
+                    :append-to-body="true"
+                    v-model="value"
+                    popper-class="selection"
+                    filterable
+                    placeholder="Selecione ..."
+                    :multiple="multiple ? multiple : false"
+                    :clearable="true"
+                >
                     <el-option
                         v-for="item in options"
                         :key="item.value"
@@ -50,3 +58,12 @@ export default {
     },
 }
 </script>
+<style lang="scss">
+.selection {
+    .el-select-dropdown__item {
+        height: auto !important;
+        min-height: 34px !important;
+        border-bottom: 1px solid #e9e9e9;
+    }
+}
+</style>
