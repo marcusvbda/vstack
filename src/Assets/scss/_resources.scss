@@ -1,4 +1,8 @@
 @import "variables";
+.resource-tag {
+    padding: 2px 5px !important;
+    height: auto !important;
+}
 .resource-table {
     &.table-striped {
         tbody {
