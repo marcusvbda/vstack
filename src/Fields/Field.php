@@ -14,7 +14,7 @@ class Field
 		@$this->options["field"]                = @$this->options["field"] ?? "";
 		@$this->options["required"]             = @$this->options["required"] ?? false;
 		@$this->options["placeholder"]          = @$this->options["placeholder"] ?? "";
-		@$this->options["minlength"]            = @$this->options["minlength"] ?? 0;
+		@$this->options["maxlength"]            = @$this->options["maxlength"] ?? 0;
 		@$this->options["max"]                  = @$this->options["max"] ?? null;
 		@$this->options["min"]                  = @$this->options["min"] ?? null;
 		@$this->options["mask"]                 = @$this->options["mask"] ?? null;

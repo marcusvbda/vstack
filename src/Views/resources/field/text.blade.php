@@ -5,7 +5,8 @@
     append='{{$append}}'                                                               
     append='{{$append}}' 
     :mask='{{$mask}}'                                                              
-    description='{{$description}}'                                                              
+    description='{{$description}}'
+	maxlength="{{ $maxlength }}"                                                              
     type='{{$type}}'                                                                     
     v-model='{{"form.$field"}}'                                                            
     placeholder='{{$placeholder}}'   

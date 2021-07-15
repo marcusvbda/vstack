@@ -24,6 +24,7 @@
                         :placeholder="placeholder ? placeholder : ''"
                         :auto-decimal-mode="true"
                         v-model="val"
+                        :maxlength="maxlength"
                     />
                     <template v-else>
                         <the-mask
@@ -35,6 +36,7 @@
                             v-model="val"
                             v-bind:class="{ 'is-invalid': errors }"
                             :placeholder="placeholder ? placeholder : ''"
+                            :maxlength="maxlength"
                             :type="type ? type : 'text'"
                         />
                         <input
@@ -44,6 +46,7 @@
                             v-model="val"
                             v-bind:class="{ 'is-invalid': errors }"
                             :placeholder="placeholder ? placeholder : ''"
+                            :maxlength="maxlength"
                             :type="type ? type : 'text'"
                         />
                     </template>
@@ -65,7 +68,7 @@
 </template>
 <script>
 export default {
-    props: ['label', 'type', 'placeholder', 'errors', 'prepend', 'append', 'disabled', 'mask', 'description'],
+    props: ['label', 'type', 'placeholder', 'errors', 'prepend', 'append', 'disabled', 'mask', 'description', 'maxlength'],
     data() {
         return {
             val: null,
