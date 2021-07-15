@@ -14,7 +14,7 @@
                     <el-select
                         :allow-create="allowcreate"
                         :disabled="disabled"
-                        :multiple="multiple"
+                        :multiple="multiple ? true : false"
                         :size="size ? size : 'large'"
                         class="w-100"
                         clearable
