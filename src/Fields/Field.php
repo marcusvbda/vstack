@@ -26,6 +26,7 @@ class Field
 		@$this->options["mask"]                 = @$this->options["mask"] ?? '';
 		@$this->options["description"]          = @$this->options["description"] ?? '';
 		@$this->options["visible"]              = @$this->options["visible"] ?? true;
+		@$this->options["multiple"]              = @$this->options["multiple"] ?? false;
 		$this->checkRequired();
 	}
 

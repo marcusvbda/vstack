@@ -8,5 +8,6 @@
     placeholder='{{$placeholder}}' 
     route_list='{{$route_list}}' 
     :option_list='{{$options}}' 
+    :multiple='{{$multiple}}' 
     :errors='{{"errors.$field ? errors.$field : false"}}'     
 />
