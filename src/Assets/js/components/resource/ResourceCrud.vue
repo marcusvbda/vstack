@@ -21,7 +21,7 @@
                                 <div class="col-12">
                                     <div class="card">
                                         <div class="card-body d-none d-md-block d-lg-block" v-if="showPills">
-                                            <div class="row">
+                                            <div class="row" v-if="!right_card_content">
                                                 <div class="col-12">
                                                     <ul class="d-flex flex-column mb-0 pl-3">
                                                         <li v-for="(card, i) in namedCards" :key="i">
@@ -30,6 +30,7 @@
                                                     </ul>
                                                 </div>
                                             </div>
+                                            <v-runtime-template v-else :template="right_card_content" />
                                         </div>
                                         <div class="card-footer flex-wrap d-flex flex-row justify-content-end p-2 align-items-center">
                                             <el-button-group>
@@ -56,7 +57,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'first_btn', 'second_btn', 'dialog'],
+    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'first_btn', 'second_btn', 'dialog', 'right_card_content'],
     data() {
         return {
             resourceData: {},
@@ -69,7 +70,7 @@ export default {
     },
     computed: {
         showPills() {
-            return this.namedCards.length > 1
+            return this.namedCards.length > 1 || this.right_card_content
         },
         pageType() {
             return this.raw_type.toUpperCase()

@@ -527,4 +527,9 @@ class Resource
 	{
 		return "page";
 	}
+
+	public function crudRightCardBody()
+	{
+		return null;
+	}
 }
