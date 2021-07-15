@@ -35,7 +35,9 @@ class Field
 		if ($this->options["required"] || $this->hasRequiredRule($rules)) {
 			if ($this->options["required"]) $this->addRequireRule($rules);
 			else $this->options["required"] = true;
-			$this->options["label"] = $this->options["label"] . "*";
+			$this->options["label"] = $this->options["label"] . ' <small class="text-danger" style="position: relative;top: -2px;">*</small>';
+		} else {
+			$this->options["label"] = $this->options["label"] . ' <small class="text-muted" style="position: relative;top: -2px;">(opcional)</small>';
 		}
 	}
 
