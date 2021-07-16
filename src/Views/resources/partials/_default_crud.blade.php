@@ -27,6 +27,9 @@
     :params="{{json_encode($params)}}"  
     redirect="{{$current_route}}" 
     :breadcrumb="{{json_encode($routes)}}" 
+	@if(@$content)
+    	:content="{{json_encode($content)}}" 
+	@endif
 	right_card_content="{{ $resource->crudRightCardBody() }}"
 	raw_type='{{ $raw_type }}'
 	:first_btn='@json($resource->firstCrudBtn())'

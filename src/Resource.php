@@ -313,7 +313,14 @@ class Resource
 		$validation_rules = [];
 		foreach ($this->fields() as $card) {
 			foreach ($card->inputs as $field) {
-				$validation_rules[@$field->options["field"] ?? "*"] = @$field->options["rules"] ?? [];
+				$rules = @$field->options["rules"] ?? [];
+				if ($field->options["required"]) {
+					$rules[] = "required";
+				}
+				$rules = array_unique(is_array($rules) ? $rules : [$rules]);
+				$validation_rules[@$field->options["field"] ?? "*"] = array_filter($rules, function ($row) {
+					return $row;
+				});
 			}
 		}
 		return $validation_rules;
