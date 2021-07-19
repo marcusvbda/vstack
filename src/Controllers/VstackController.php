@@ -99,35 +99,35 @@ class VstackController extends Controller
 			if ($filter_type == "or_where") {
 				$query = $query->where(function ($q) use ($filters) {
 					foreach ($filters as $filter) {
-						$q = $q->orWhere([$filter]);
+						$q->orWhere([$filter]);
 					}
 				});
 			}
 			if ($filter_type == "or_where_in") {
 				$query = $query->where(function ($q) use ($filters) {
 					foreach ($filters as $filter) {
-						$q = $q->orWhereIn([$filter]);
+						$q->orWhereIn([$filter]);
 					}
 				});
 			}
 			if ($filter_type == "or_where_not_in") {
 				$query = $query->where(function ($q) use ($filters) {
 					foreach ($filters as $filter) {
-						$q = $q->orWhereNotIn($filter[0], $filter[1]);
+						$q->orWhereNotIn($filters[0], $filters[1]);
 					}
 				});
 			}
 			if ($filter_type == "where_in") {
 				$query = $query->where(function ($q) use ($filters) {
 					foreach ($filters as $filter) {
-						$q = $q->whereIn($filter[0], $filter[1]);
+						$q->whereIn($filters[0], $filters[1]);
 					}
 				});
 			}
 			if ($filter_type == "where_in") {
 				$query = $query->where(function ($q) use ($filters) {
 					foreach ($filters as $filter) {
-						$q = $q->whereIn($filter[0], $filter[1]);
+						$q->whereIn($filters[0], $filters[1]);
 					}
 				});
 			}
