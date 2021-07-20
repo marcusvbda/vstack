@@ -124,23 +124,31 @@ export default {
             else this.selected_ids = this.selected_ids.filter((x) => x != id)
         },
         initiateAllInput() {
-            const input = document.querySelector(`#${this.resource_id}_action_select_all`)
-            input.addEventListener('change', (event) => {
-                const checked_value = event.target.checked
-                this.ids.map((id) => {
-                    const checkbox = document.querySelector(`#${this.resource_id}_action_select_${id}`)
-                    checkbox.checked = checked_value
-                    this.toggleSelectedId(checkbox.checked, id)
-                })
+            this.$waitFor(`#${this.resource_id}_action_select_all`).then(() => {
+                setTimeout(() => {
+                    const input = document.querySelector(`#${this.resource_id}_action_select_all`)
+                    input.addEventListener('change', (event) => {
+                        const checked_value = event.target.checked
+                        this.ids.map((id) => {
+                            const checkbox = document.querySelector(`#${this.resource_id}_action_select_${id}`)
+                            checkbox.checked = checked_value
+                            this.toggleSelectedId(checkbox.checked, id)
+                        })
+                    })
+                }, 500)
             })
         },
         initiateEventListener() {
-            const inputs = [...document.querySelectorAll('.select_action_box')].map((input) => {
-                input.addEventListener('change', (event) => {
-                    const checkbox = event.target
-                    const id = Number(checkbox.id.replace(`${this.resource_id}_action_select_`, ''))
-                    this.toggleSelectedId(checkbox.checked, id)
-                })
+            this.$waitFor('.select_action_box').then(() => {
+                setTimeout(() => {
+                    const inputs = [...document.querySelectorAll('.select_action_box')].map((input) => {
+                        input.addEventListener('change', (event) => {
+                            const checkbox = event.target
+                            const id = Number(checkbox.id.replace(`${this.resource_id}_action_select_`, ''))
+                            this.toggleSelectedId(checkbox.checked, id)
+                        })
+                    })
+                }, 500)
             })
         },
     },
