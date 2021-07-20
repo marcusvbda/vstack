@@ -496,6 +496,7 @@ class ResourceController extends Controller
 	public function makeViewData($code, $resource, $content = null)
 	{
 		$route = $resource->route();
+		request()->request->add(["content" => @$content]);
 		return [
 			"fields"        => $this->makeViewDataFields($content, $resource->fields()),
 			"can_update"    => $resource->canUpdate(),
