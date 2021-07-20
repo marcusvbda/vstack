@@ -57,7 +57,7 @@
 <script>
 import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'first_btn', 'second_btn', 'dialog', 'right_card_content', 'content'],
+    props: ['data', 'redirect', 'params', 'raw_type', 'acl', 'first_btn', 'second_btn', 'dialog', 'right_card_content', 'content_id'],
     data() {
         return {
             resourceData: {},

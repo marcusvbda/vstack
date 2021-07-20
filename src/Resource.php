@@ -476,8 +476,6 @@ class Resource
 		}
 		$target->save();
 		$controller = new ResourceController;
-		$controller->storeBelongsToMany($target, $data["belongsToMany"]);
-		$controller->storeMorphsMany($target, $data["morphsMany"]);
 		$controller->storeUploads($target, $data["upload"]);
 		Messages::send("success", "Registro salvo com sucesso !!");
 		if (request("clicked_btn") == "save") {
@@ -500,7 +498,8 @@ class Resource
 			"create" => "Cadastro de {$this->singularLabel()}",
 			"view" => "Visualização de {$this->singularLabel()}",
 			"report" => "Relatório de {$this->singularLabel()}",
-			"edit" => "Edição de {$this->singularLabel()}"
+			"edit" => "Edição de {$this->singularLabel()}",
+			"clone" => "Clonagem de {$this->singularLabel()}"
 		];
 	}
 

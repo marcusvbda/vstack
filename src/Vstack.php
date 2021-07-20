@@ -85,10 +85,12 @@ class Vstack
 
 	public static function getPageType($page_type)
 	{
-		if ($page_type == "Clonage") return "clone";
-		if ($page_type == "Cadastro") return "create";
-		if ($page_type == "Edição") return "edit";
-		if ($page_type == "Visualização") return "view";
-		return "";
+		$types = [
+			"Clonagem" => "clone",
+			"Cadastro" => "create",
+			"Edição" => "edit",
+			"Visualização" => "view",
+		];
+		return $types[$page_type] ?? "";
 	}
 }

@@ -19,11 +19,13 @@ class HtmlEditor extends Field
 
 		$field     = $this->options["field"];
 		$label = $this->options["label"];
+		$description = $this->options["description"];
 		$uploadroute = @$this->options["uploadroute"] ?? config("vstack.default_upload_route");
 		$mode = @$this->options["mode"] ? $this->options["mode"] : 'webpage';
 		$field = $this->options["field"];
 		$default = $this->options["default"];
 		return $this->view = view("vStack::resources.field.html_editor", compact(
+			"description",
 			"label",
 			"field",
 			"uploadroute",
