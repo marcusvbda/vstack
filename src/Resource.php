@@ -317,7 +317,7 @@ class Resource
 				if ($field->options["required"]) {
 					$rules[] = "required";
 				}
-				$rules = array_unique(is_array($rules) ? $rules : [$rules]);
+				$rules = is_array($rules) ? $rules : [$rules];
 				$validation_rules[@$field->options["field"] ?? "*"] = array_filter($rules, function ($row) {
 					return $row;
 				});
@@ -537,5 +537,23 @@ class Resource
 	public function crudRightCardBody()
 	{
 		return null;
+	}
+
+	public function createMethod($params, $data)
+	{
+		if ($this->crudType() == "dialog") {
+			return abort(404);
+		}
+		$resource = $this;
+		return view("vStack::resources.crud", compact("resource", "data", "params"));
+	}
+
+	public function editMethod($params, $data, $content)
+	{
+		if ($this->crudType() == "dialog") {
+			return  abort(404);
+		}
+		$resource = $this;
+		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
 	}
 }

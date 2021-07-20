@@ -172,9 +172,8 @@ class ResourceController extends Controller
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
 		$data = $this->getResourceEditCrudContent($content, $resource, $request);
-		if ($resource->crudType() == "dialog") abort(404);
 		$params = @$request["params"] ? $request["params"] : [];
-		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
+		return $resource->editMethod($params, $data, $content);
 	}
 
 	protected function getResourceCreateCrudContent($resource, Request $request)
@@ -189,9 +188,9 @@ class ResourceController extends Controller
 	{
 		$params = @$request["params"] ? $request["params"] : [];
 		$resource = ResourcesHelpers::find($resource);
+		if (!@$resource->canCreate()) abort(403);
 		$data = $this->getResourceCreateCrudContent($resource, $request);
-		if ($resource->crudType() == "dialog") abort(404);
-		return view("vStack::resources.crud", compact("resource", "data", "params"));
+		return $resource->createMethod($params, $data);
 	}
 
 	public function import($resource)
