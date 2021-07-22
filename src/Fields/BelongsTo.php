@@ -27,6 +27,7 @@ class BelongsTo extends Field
 		$options     = @$this->options["options"] ? json_encode($this->options["options"]) : "[]";
 		$description = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
+		$all_options_label = @$this->options["all_options_label"] ? $this->options["all_options_label"] : 'Todos(as)';
 
 		return $this->view = view("vStack::resources.field.belongsto", compact(
 			"field",
@@ -38,7 +39,8 @@ class BelongsTo extends Field
 			"placeholder",
 			"route_list",
 			"options",
-			"multiple"
+			"multiple",
+			"all_options_label"
 		))->render();
 	}
 }

@@ -11,10 +11,26 @@
         <td>
             <div class="d-flex flex-column">
                 <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
-                    <el-select
+                    <ElSelectAll
                         :allow-create="allowcreate"
                         :disabled="disabled"
                         :multiple="multiple ? true : false"
+                        :size="size ? size : 'large'"
+                        class="w-100"
+                        clearable
+                        v-model="value"
+                        collapse-tags
+                        filterable
+                        :placeholder="placeholder"
+                        v-loading="loading"
+                        :options="options.map((x) => ({ label: x.name, value: String(x.id) }))"
+                        :label="all_options_label"
+                        v-if="multiple"
+                    />
+                    <el-select
+                        :allow-create="allowcreate"
+                        :disabled="disabled"
+                        v-else
                         :size="size ? size : 'large'"
                         class="w-100"
                         clearable
@@ -23,7 +39,6 @@
                         :placeholder="placeholder"
                         v-loading="loading"
                     >
-                        <el-option v-if="required == undefined" label="" value=""></el-option>
                         <el-option v-for="(item, i) in options" :key="i" :label="item.name" :value="String(item.id)">
                             <div class="w-100 d-flex" v-html="item.name"></div>
                         </el-option>
@@ -55,6 +70,7 @@ export default {
         'allowcreate',
         'option_list',
         'description',
+        'all_options_label',
     ],
     data() {
         return {
