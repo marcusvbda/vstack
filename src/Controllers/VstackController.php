@@ -88,7 +88,6 @@ class VstackController extends Controller
 		if ($order_by) {
 			$query = $query->orderBy($order_by[0], $order_by[1]);
 		}
-
 		return $per_page ? $result->paginate($per_page) : $result->get();
 	}
 
@@ -128,6 +127,13 @@ class VstackController extends Controller
 				$query = $query->where(function ($q) use ($filters) {
 					foreach ($filters as $filter) {
 						$q->whereIn($filter[0], $filter[1]);
+					}
+				});
+			}
+			if ($filter_type == "raw_where") {
+				$query = $query->where(function ($q) use ($filters) {
+					foreach ($filters as $filter) {
+						$q->whereRaw($filter);
 					}
 				});
 			}
