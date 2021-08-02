@@ -150,7 +150,7 @@ export default {
                 cancelButtonText: 'Não',
                 type: 'warning',
             }).then(() => {
-                let loading = this.$loading({ text: 'Salvado ...' })
+                let loading = this.$loading({ text: 'Salvando ...' })
                 this.$http
                     .post(this.data.store_route, { ...this.form, clicked_btn })
                     .then(({ data }) => {
