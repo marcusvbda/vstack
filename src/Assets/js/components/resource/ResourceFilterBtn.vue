@@ -12,7 +12,9 @@
         <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl" :before-close="confirmClose" :append-to-body="true">
             <template slot="title">
                 <div class="w-100 d-flex flex-row">
-                    <el-button class="mr-3" size="medium" type="primary" @click="makeNewRoute"><span class="el-icon-search mr-2" />Confirmar Filtro</el-button>
+                    <el-button class="mr-3" size="medium" type="primary" @click="makeNewRoute"
+                        ><span class="el-icon-search mr-2" />Confirmar Filtro</el-button
+                    >
                 </div>
             </template>
             <div class="row">
@@ -63,7 +65,7 @@
     </div>
 </template>
 <script>
-import VRuntimeTemplate from 'v-runtime-template'
+import VRuntimeTemplate from 'v-runtime-template';
 export default {
     props: ['data', 'label', 'per_page', 'report_mode'],
     data() {
@@ -72,10 +74,12 @@ export default {
             drawer: false,
             route: window.location.href.split('?')[0],
             filter: {
-                per_page: Number(this.data?.query?.per_page ? this.data?.query?.per_page : Array.isArray(this.per_page) ? this.per_page[0] : this.per_page),
+                per_page: Number(
+                    this.data?.query?.per_page ? this.data?.query?.per_page : Array.isArray(this.per_page) ? this.per_page[0] : this.per_page
+                ),
             },
             timeout: null,
-        }
+        };
     },
     components: {
         'v-runtime-template': VRuntimeTemplate,
@@ -84,70 +88,68 @@ export default {
     computed: {
         qty_filters() {
             const qty = Object.keys(this.filter)
-                .filter((y) => y != 'per_page')
-                .map((key) => this.$root.$refs.tags_filter.hasContent(this.filter, key))
-                .filter((x) => x).length
-            return qty || 0
+                .filter(y => y != 'per_page')
+                .map(key => this.$root.$refs.tags_filter.hasContent(this.filter, key))
+                .filter(x => x).length;
+            return qty || 0;
         },
         show_page_list() {
-            return Array.isArray(this.per_page)
+            return Array.isArray(this.per_page);
         },
     },
     created() {
-        this.initFormFilter()
+        this.initFormFilter();
     },
     mounted() {
-        const el = this.$refs.content
-        if (!el) return
-        el.addEventListener('click', (event) => event.stopPropagation())
+        const el = this.$refs.content;
+        if (!el) return;
+        el.addEventListener('click', event => event.stopPropagation());
     },
     methods: {
         confirmClose() {
             if (this.showConfirmBtn) {
-                this.$confirm('Deseja confirmar o filtro selecionado ?', 'Confirmação', { closeOnClickModal: false })
-                    .then(() => this.makeNewRoute())
-                    .catch(() => this.closeDrawer())
-            } else this.closeDrawer()
+                this.$confirm('Deseja confirmar o filtro selecionado ?', 'Confirmação', { closeOnClickModal: false }).then(() => this.makeNewRoute());
+            } else this.closeDrawer();
         },
         closeDrawer() {
-            this.drawer = false
+            this.drawer = false;
         },
         toggleFilters() {
-            this.drawer = !this.drawer
+            this.drawer = !this.drawer;
         },
         makeNewRoute() {
-            let str_query = ''
-            let filter_keys = Object.keys(this.filter)
-            filter_keys.forEach((key) => (this.data.query[key] = this.filter[key]))
-            Object.keys(this.data.query).forEach((key) => {
+            let str_query = '';
+            let filter_keys = Object.keys(this.filter);
+            filter_keys.forEach(key => (this.data.query[key] = this.filter[key]));
+            Object.keys(this.data.query).forEach(key => {
                 if (key != 'page' && key != '_') {
                     if (!['null', null].includes(this.data.query[key])) {
-                        str_query += `${key}=${this.data.query[key]}&`
+                        str_query += `${key}=${this.data.query[key]}&`;
                     }
                 }
-            })
-            if (this.data.query['_']) str_query += `${str_query ? '&' : ''}_=${this.data.query['_'] ? this.data.query['_'] : ''}`
-            str_query = str_query.slice(0, -1)
-            this.$loading({ text: 'Atualizando Filtros...' })
+            });
+            if (this.data.query['_']) str_query += `${str_query ? '&' : ''}_=${this.data.query['_'] ? this.data.query['_'] : ''}`;
+            str_query = str_query.slice(0, -1);
+            this.$loading({ text: 'Atualizando Filtros...' });
 
-            window.location.href = `${this.route}?${str_query}`
+            window.location.href = `${this.route}?${str_query}`;
         },
         setFormValue(index, value, filter) {
-            if (filter.component == 'text-filter') value = String(value)
-            if (filter.component == 'check-filter') value = value === 'true'
+            if (filter.component == 'text-filter') value = String(value);
+            if (filter.component == 'check-filter') value = value === 'true';
             if (filter.component == 'select-filter') {
                 if (filter?.multiple) {
                     value = value
                         .split(',')
-                        .map((x) => (x ? (!isNaN(Number(x)) ? Number(x) : '') : ''))
-                        .filter((x) => x)
-                } else value = value ? (!isNaN(Number(value)) ? Number(value) : '') : ''
+                        .map(x => (x ? (!isNaN(Number(x)) ? Number(x) : '') : ''))
+                        .filter(x => x);
+                } else value = value ? (!isNaN(Number(value)) ? Number(value) : '') : '';
             }
-            if (filter.component == 'rangedate-filter') value = value.split(',')
-            this.$set(this.filter, index, value)
+            if (filter.component == 'rangedate-filter') value = value.split(',');
+            this.$set(this.filter, index, value);
         },
         initFormFilter() {
-            let filter_keys = Object.keys(this.data.filters)
+            let filter_keys = Object.keys(this.data.filters);
             for (let i in filter_keys) {
                 if (this.data.filters[filter_keys[i]]) {
                     if (this.data.filters[filter_keys[i]].index)
@@ -155,12 +157,12 @@ export default {
                             this.data.filters[filter_keys[i]].index,
                             this.data.query[this.data.filters[filter_keys[i]].index] ? this.data.query[this.data.filters[filter_keys[i]].index] : '',
                             this.data.filters[filter_keys[i]]
-                        )
+                        );
                 }
             }
         },
     },
-}
+};
 </script>
 <style lang="scss">
 .badge-number {
