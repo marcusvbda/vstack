@@ -6,5 +6,6 @@
     v-model='{{"form.$field"}}'                                                            
     placeholder='{{$placeholder}}'                                                       
     description='{{$description}}'                                                       
-    :errors='{{"errors.$field ? errors.$field : false"}}'                                              
+    :errors='{{"errors.$field ? errors.$field : false"}}'  
+	maxlength="{{ $maxlength }}"             
 />

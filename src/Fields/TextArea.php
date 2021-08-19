@@ -24,6 +24,7 @@ class TextArea extends Field
 		$description    = @$this->options["description"];
 		$disabled       = @$this->options["disabled"] ? "true" : "false";
 		$rows           = @$this->options["rows"] ? $this->options["rows"] : 3;
+		$maxlength      = $this->options["maxlength"] ?  $this->options["maxlength"] : 9999999999;
 
 		return $this->view = view("vStack::resources.field.textarea", compact(
 			"disabled",
@@ -32,7 +33,8 @@ class TextArea extends Field
 			"rows",
 			"placeholder",
 			"description",
-			"field"
+			"field",
+			"maxlength"
 		))->render();
 	}
 }

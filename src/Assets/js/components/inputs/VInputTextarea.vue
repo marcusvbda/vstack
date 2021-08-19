@@ -24,6 +24,7 @@
                         :placeholder="placeholder ? placeholder : ''"
                         name="email"
                         :type="type ? type : 'text'"
+                        :maxlength="maxlength"
                     ></textarea>
                     <div class="input-group-append" v-if="append">
                         <span class="input-group-text">
@@ -42,7 +43,7 @@
 </template>
 <script>
 export default {
-    props: ['label', 'type', 'placeholder', 'errors', 'prepend', 'append', 'disabled', 'rows', 'description'],
+    props: ['label', 'type', 'placeholder', 'errors', 'prepend', 'append', 'disabled', 'rows', 'description','maxlength'],
     data() {
         return {
             val: null,
