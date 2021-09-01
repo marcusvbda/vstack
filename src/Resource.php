@@ -486,6 +486,22 @@ class Resource
 		return ["success" => true, "route" => $route, "model" => $target];
 	}
 
+	public function cloneMethod($id)
+	{
+		$content = $this->getModelInstance()->findOrFail($id);
+		$cloned = $this->getModelInstance();
+		$content_data = $content->toArray();
+		unset($content_data["id"]);
+		$cloned->fill($content_data);
+		$cloned->save();
+		return [
+			"origin_id" => $id,
+			"cloned_id" => $cloned->id,
+			"success" => true,
+			"route" => $this->id . "/" . $cloned->code . "/edit",
+		];
+	}
+
 	public function getModelInstance()
 	{
 		return (is_string($this->model) ? app()->make($this->model)() : new $this->model());
@@ -498,8 +514,7 @@ class Resource
 			"create" => "Cadastro de {$this->singularLabel()}",
 			"view" => "Visualização de {$this->singularLabel()}",
 			"report" => "Relatório de {$this->singularLabel()}",
-			"edit" => "Edição de {$this->singularLabel()}",
-			"clone" => "Clonagem de {$this->singularLabel()}"
+			"edit" => "Edição de {$this->singularLabel()}"
 		];
 	}
 

@@ -33,7 +33,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('{resource}/import/submit', [ResourceController::class, 'importSubmit'])->name("resource.import.submit");
 
 		Route::get('{resource}/{code}', [ResourceController::class, 'view'])->middleware(['hashids:code'])->name("resource.view");
-		Route::get('{resource}/{code}/clone', [ResourceController::class, 'clone'])->middleware(['hashids:code'])->name("resource.clone");
+		Route::post('{resource}/{code}/clone', [ResourceController::class, 'clone'])->middleware(['hashids:code'])->name("resource.clone");
 
 		Route::get('{resource}/tags/options', [ResourceController::class, 'tagOptions'])->name("resource.optionTags");
 		Route::get('{resource}/{code}/tags', [ResourceController::class, 'getTags'])->middleware(['hashids:code'])->name("resource.getTags");

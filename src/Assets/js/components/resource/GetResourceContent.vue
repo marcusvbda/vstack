@@ -6,7 +6,7 @@
                     class="shimmer"
                     :style="{
                         width: '100%',
-                        height: Math.random() * (45 - 10) + 20,
+                        height: Math.random() * (45 - 10) + 20
                     }"
                 />
             </td>
@@ -38,6 +38,9 @@
                         can_clone: can_clone,
                         before_delete: before_delete,
                         crud_type: crud_type,
+                        resource_label: resource_label,
+                        resource_icon: resource_icon,
+                        resource_singular_label: resource_singular_label
                     }"
                     :id="row_id"
                 />
@@ -46,10 +49,10 @@
     </tr>
 </template>
 <script>
-import VRuntimeTemplate from 'v-runtime-template'
+import VRuntimeTemplate from "v-runtime-template";
 export default {
-    components: { 'v-runtime-template': VRuntimeTemplate },
-    props: ['type', 'row_code', 'resource_route', 'cols', 'row_id', 'type', 'resource_id', 'raw_content', 'show_right_actions_column'],
+    components: { "v-runtime-template": VRuntimeTemplate },
+    props: ["type", "row_code", "resource_route", "cols", "row_id", "resource_id", "raw_content", "show_right_actions_column"],
     data() {
         return {
             loading: true,
@@ -57,24 +60,26 @@ export default {
             can_clone: false,
             can_update: false,
             can_delete: false,
-            crud_type: 'page',
+            crud_type: "page",
             before_delete: [],
+            resource_singular_label: "",
+            resource_icon: "",
+            resource_label: "",
+            before_clone: [],
             can_view: false,
-            pusher_initialized: false,
-        }
+            pusher_initialized: false
+        };
     },
     created() {
-        this.getContent()
+        this.getContent();
     },
     methods: {
         getContent() {
             switch (this.type) {
-                case 'resourceTableContent':
-                    return this.getResourceTableContent()
-                    break
-                case 'resourceTableIndex':
-                    return this.getResourceTableIndex()
-                    break
+            case "resourceTableContent":
+                return this.getResourceTableContent();
+            case "resourceTableIndex":
+                return this.getResourceTableIndex();
             }
         },
         getResourceTableIndex() {
@@ -83,19 +88,19 @@ export default {
                     `/vstack/${this.resource_id}/get-partial-content`,
                     {
                         type: this.type,
-                        raw_content: this.raw_content,
+                        raw_content: this.raw_content
                     },
                     { retries: 3 }
                 )
-                .then((resp) => {
-                    resp = resp.data
-                    this.content = resp.html
-                    this.loading = false
+                .then(resp => {
+                    resp = resp.data;
+                    this.content = resp.html;
+                    this.loading = false;
                     if (!this.pusher_initialized) {
-                        this.initPusher()
-                        this.pusher_initialized = true
+                        this.initPusher();
+                        this.pusher_initialized = true;
                     }
-                })
+                });
         },
         getResourceTableContent() {
             this.$http
@@ -104,30 +109,32 @@ export default {
                     {
                         row_id: this.row_id,
                         type: this.type,
-                        raw_content: this.raw_content,
+                        raw_content: this.raw_content
                     },
                     { retries: 3 }
                 )
-                .then((resp) => {
-                    resp = resp.data
-                    this.content = resp.content
-                    Object.keys(resp.acl).forEach((key) => (this[key] = resp.acl[key]))
-                    this.loading = false
+                .then(resp => {
+                    resp = resp.data;
+                    this.content = resp.content;
+                    Object.keys(resp.acl).forEach(key => (this[key] = resp.acl[key]));
+                    this.loading = false;
                     if (!this.pusher_initialized) {
-                        this.initPusher()
-                        this.pusher_initialized = true
+                        this.initPusher();
+                        this.pusher_initialized = true;
                     }
-                })
+                });
         },
         initPusher() {
             if (laravel.tenant.id && laravel.chat.pusher_key) {
-                this.$echo.private(`App.Tenant.${laravel.tenant.id}`).listen(`.notifications.resource.${this.resource_id}.${this.row_id}`, (resp) => {
-                    if (resp.event == 'reload') {
-                        this.getResourceTableContent()
-                    }
-                })
+                this.$echo
+                    .private(`App.Tenant.${laravel.tenant.id}`)
+                    .listen(`.notifications.resource.${this.resource_id}.${this.row_id}`, resp => {
+                        if (resp.event == "reload") {
+                            this.getResourceTableContent();
+                        }
+                    });
             }
-        },
-    },
-}
+        }
+    }
+};
 </script>

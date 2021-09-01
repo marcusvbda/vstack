@@ -134,16 +134,10 @@ class ResourceController extends Controller
 		return $query->orderBy($orderBy, $orderType);
 	}
 
-	public function clone($resource, $code, Request $request)
+	public function clone($resource, $code)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		$content = $resource->model->findOrFail($code);
-		if (!$resource->canCloneRow($content) || !$resource->canClone()) abort(403);
-		if ($resource->crudType() == "dialog") abort(404);
-		$data = $this->makeCrudData($resource, $content);
-		$data["page_type"] = "Clonagem";
-		$params = @$request["params"] ? $request["params"] : [];
-		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
+		return $resource->cloneMethod($code);
 	}
 
 	public function getResourceCrudContent($resource, Request $request)

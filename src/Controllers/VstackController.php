@@ -38,6 +38,9 @@ class VstackController extends Controller
 			"can_delete" => $resource->checkAclResource($row, "delete"),
 			"can_view" => $resource->checkAclResource($row, "view"),
 			"use_tags" => $resource->useTags(),
+			"resource_singular_label" => $resource->singularLabel(),
+			"resource_label" => $resource->label(),
+			"resource_icon" => $resource->icon(),
 			"crud_type" => $resource->crudType(),
 			"before_delete" => array_map(function ($row) {
 				unset($row["handler"]);

@@ -36,7 +36,11 @@
                                                     <td style="max-width: 0px">
                                                         <v-runtime-template
                                                             :key="i"
-                                                            :template="`<div style='overflow-x: auto;'>${field === null ? '' : field}</div>`"
+                                                            :template="
+                                                                `<div style='overflow-x: auto;'>${
+                                                                    field === null ? '' : field
+                                                                }</div>`
+                                                            "
                                                         />
                                                     </td>
                                                 </tr>
@@ -77,34 +81,34 @@
     </div>
 </template>
 <script>
-import VRuntimeTemplate from 'v-runtime-template'
+import VRuntimeTemplate from "v-runtime-template";
 export default {
-    props: ['data', 'breadcrumb', 'form'],
+    props: ["data", "breadcrumb", "form"],
     data() {
         return {
             loading: false,
             resourceData: {},
-            errors: {},
-        }
+            errors: {}
+        };
     },
     components: {
-        'v-runtime-template': VRuntimeTemplate,
+        "v-runtime-template": VRuntimeTemplate
     },
     computed: {
         showPills() {
-            return this.namedCards.length > 1
+            return this.namedCards.length > 1;
         },
         pageType() {
-            return this.data.id ? 'EDIT' : 'CREATE'
+            return this.data.id ? "EDIT" : "CREATE";
         },
         namedCards() {
-            return this.data.fields.filter((x) => x.label)
-        },
+            return this.data.fields.filter(x => x.label);
+        }
     },
     methods: {
         getRoute(route) {
-            return this.data[route]
-        },
-    },
-}
+            return this.data[route];
+        }
+    }
+};
 </script>
