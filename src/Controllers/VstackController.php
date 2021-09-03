@@ -23,12 +23,14 @@ class VstackController extends Controller
 		} else {
 			foreach ($resource->table() as $key => $value) {
 				if (strpos($key, "->") === false) {
-					$content[$key] = @$row->{$key} ? $row->{$key} : " - ";
+					$content[$key] = @$row->{$key} !== null ? $row->{$key} : " - ";
 				} else {
 					$value = $row;
 					$_runner = explode("->", $key);
-					foreach ($_runner as $idx) $value = @$value->{$idx};
-					$content[$key] = ($value ? $value : ' - ');
+					foreach ($_runner as $idx) {
+						$value = @$value->{$idx};
+					}
+					$content[$key] = (@$value !== null ? $value : ' - ');
 				}
 			}
 		}
@@ -71,8 +73,8 @@ class VstackController extends Controller
 			$value = $row;
 			$_runner = explode("->", $key);
 			foreach ($_runner as $idx) $value = @$value->{$idx};
-			$value = $removeEmoji(@trim($value) ? $value : $placeholder);
-		} else  $value =  $removeEmoji(@trim(@$columns[$key]["handler"] ? $columns[$key]["handler"]($row) : $placeholder));
+			$value = $removeEmoji(@trim($value) !== null ? $value : $placeholder);
+		} else  $value =  $removeEmoji(@trim(@$columns[$key]["handler"] !== null ? $columns[$key]["handler"]($row) : $placeholder));
 		return (@$value ? $value : $placeholder);
 	}
 
