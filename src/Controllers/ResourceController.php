@@ -89,6 +89,17 @@ class ResourceController extends Controller
 		return $this->showIndexList($resource, $request);
 	}
 
+	private function makeSorterHandler($resource, $query, $orderBy, $orderType)
+	{
+		$table = $resource->model->getTable();
+		$tableFields = $resource->table();
+		if (@$tableFields[$orderBy]["sortable_handler"]) {
+			return $tableFields[$orderBy]["sortable_handler"]($query, $orderType);
+		} else {
+			return $query->orderBy($orderBy, $orderType);
+		}
+	}
+
 	public function getData($resource, Request $request, $query = null)
 	{
 		$table = $resource->model->getTable();
@@ -97,11 +108,11 @@ class ResourceController extends Controller
 		}
 		$table = $resource->model->getTable() . ".";
 		$data      = $request->all();
-		$orderBy   = $table . Arr::get($data, 'order_by', "id");
+		$orderBy   = Arr::get($data, 'order_by', "id");
+		// dd($orderBy);
 		$orderType = Arr::get($data, 'order_type', "desc");
 
 		$query     = $query ? $query : $resource->model->select($table . "id")->where($table . "id", ">", 0);
-		$query->orderBy($orderBy, $orderType);
 
 		foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
 		$search = $resource->search();
@@ -131,7 +142,7 @@ class ResourceController extends Controller
 				}
 			}
 		}
-		return $query->orderBy($orderBy, $orderType);
+		return $this->makeSorterHandler($resource, $query, $orderBy, $orderType);
 	}
 
 	public function clone($resource, $code)
