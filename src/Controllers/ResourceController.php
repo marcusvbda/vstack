@@ -96,7 +96,8 @@ class ResourceController extends Controller
 		if (@$tableFields[$orderBy]["sortable_handler"]) {
 			return $tableFields[$orderBy]["sortable_handler"]($query, $orderType);
 		} else {
-			return $query->orderBy($table . "." . $orderBy, $orderType);
+			$sortableIndex = @$tableFields[$orderBy]["sortable_index"];
+			return $query->orderBy($table . "." . ($sortableIndex ? $sortableIndex : $orderBy), $orderType);
 		}
 	}
 
