@@ -96,7 +96,7 @@ class ResourceController extends Controller
 		if (@$tableFields[$orderBy]["sortable_handler"]) {
 			return $tableFields[$orderBy]["sortable_handler"]($query, $orderType);
 		} else {
-			return $query->orderBy($orderBy, $orderType);
+			return $query->orderBy($table . "." . $orderBy, $orderType);
 		}
 	}
 
@@ -109,7 +109,7 @@ class ResourceController extends Controller
 		$table = $resource->model->getTable() . ".";
 		$data      = $request->all();
 		$orderBy   = Arr::get($data, 'order_by', "id");
-		// dd($orderBy);
+
 		$orderType = Arr::get($data, 'order_type', "desc");
 
 		$query     = $query ? $query : $resource->model->select($table . "id")->where($table . "id", ">", 0);
