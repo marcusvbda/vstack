@@ -94,12 +94,11 @@ class Vstack
 		return $types[$page_type] ?? "";
 	}
 
-	public static function orderQueryByAppend($query, $type, $index)
+	public static function orderQueryByAppend($query, $type, $index, $key = "id")
 	{
-		$sorted = $query->get()
-			->{$type == "desc" ? 'sortByDesc' : 'sortBy'}($index)
-			->pluck('id')
-			->toArray();
-		return $query->orderByRaw("FIELD(id, " . implode(',', $sorted) . " )");
+		$sortedIds = $query->get()->{$type == "desc" ? 'sortByDesc' : 'sortBy'}($index)
+			->pluck($key)
+			->implode(",");
+		return $query->orderByRaw("FIELD($key, $sortedIds)");
 	}
 }
