@@ -3,6 +3,7 @@
 namespace marcusvbda\vstack\Controllers;
 
 use App\Http\Controllers\Controller;
+use Hamcrest\Type\IsString;
 use ResourcesHelpers;
 use Illuminate\Http\Request;
 
@@ -72,10 +73,17 @@ class VstackController extends Controller
 		if (!@$columns[$key]["handler"]) {
 			$value = $row;
 			$_runner = explode("->", $key);
-			foreach ($_runner as $idx) $value = @$value->{$idx};
+			foreach ($_runner as $idx) {
+				$value = @$value->{$idx};
+			}
 			$value = $removeEmoji(@trim($value) !== null ? $value : $placeholder);
-		} else  $value =  $removeEmoji(@trim(@$columns[$key]["handler"] !== null ? $columns[$key]["handler"]($row) : $placeholder));
-		return (@$value ? $value : $placeholder);
+		} else {
+			$value =  $removeEmoji(@trim(@$columns[$key]["handler"] !== null ? $columns[$key]["handler"]($row) : $placeholder));
+		}
+		if (@trim($value) === "") {
+			$value = null;
+		}
+		return (@$value !== null ? $value : $placeholder);
 	}
 
 	public function getJson(Request $request)
