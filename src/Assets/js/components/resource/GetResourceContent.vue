@@ -1,7 +1,7 @@
 <template>
     <tr :id="row_id">
         <template v-if="loading">
-            <td :colspan="cols + (show_right_actions_column ? 1 : 0) + ($slots['first-column'] ? 1 : 0)">
+            <td :colspan="colspan">
                 <div
                     class="shimmer"
                     :style="{
@@ -52,7 +52,7 @@
 import VRuntimeTemplate from "v-runtime-template";
 export default {
     components: { "v-runtime-template": VRuntimeTemplate },
-    props: ["type", "row_code", "resource_route", "cols", "row_id", "resource_id", "raw_content", "show_right_actions_column"],
+    props: ["type", "row_code", "resource_route", "cols", "row_id", "resource_id", "raw_content", "show_right_actions_column","has_actions"],
     data() {
         return {
             loading: true,
@@ -72,6 +72,21 @@ export default {
     },
     created() {
         this.getContent();
+    },
+    computed : {
+        colspan() {
+            let cols = this.cols;
+            if(this.show_right_actions_column) {
+                cols++;
+            }
+            if(this.$slots['first-column']) {
+                cols++;
+            }
+            if(this.has_actions) {
+                cols ++;
+            }
+            return cols;
+        }
     },
     methods: {
         getContent() {

@@ -74,6 +74,7 @@
 								resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
 								:show_right_actions_column='@json($show_right_actions_column)'
 								type="resourceTableContent"
+								:has_actions='@json($has_actions)'
 								>
 								@if($table_after_row)
 									<template slot="first-column">
