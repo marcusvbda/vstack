@@ -119,7 +119,7 @@ class Resource
 
 	public function secondCrudBtn()
 	{
-		if ($this->crudType() == "dialog") {
+		if ($this->crudType()["template"] == "dialog") {
 			return false;
 		}
 		return [
@@ -308,19 +308,29 @@ class Resource
 		return "vStack::resources.mails.export_notification";
 	}
 
-	public function getValidationRule()
+	private function getCardFieldsRules($card)
 	{
 		$validation_rules = [];
-		foreach ($this->fields() as $card) {
-			foreach ($card->inputs as $field) {
-				$rules = @$field->options["rules"] ?? [];
-				if (@$field->options["required"]) {
-					$rules[] = "required";
-				}
-				$rules = is_array($rules) ? $rules : [$rules];
-				$validation_rules[@$field->options["field"] ?? "*"] = array_filter($rules, function ($row) {
-					return $row;
-				});
+
+		foreach ($card->inputs as $field) {
+			$rules = @$field->options["rules"] ?? [];
+			if (@$field->options["required"]) {
+				$rules[] = "required";
+			}
+			$rules = is_array($rules) ? $rules : [$rules];
+			$validation_rules[@$field->options["field"] ?? "*"] = array_unique(array_filter($rules, function ($row) {
+				return $row;
+			}));
+		}
+		return $validation_rules;
+	}
+
+	public function getValidationRule($card_index = "all")
+	{
+		$validation_rules = [];
+		foreach ($this->fields() as $key => $card) {
+			if ($card_index === "all" || $key === $card_index) {
+				$validation_rules = array_merge($validation_rules, $this->getCardFieldsRules($card));
 			}
 		}
 		return $validation_rules;
@@ -546,7 +556,9 @@ class Resource
 
 	public function crudType()
 	{
-		return "page";
+		return [
+			"template" => "page"
+		];
 	}
 
 	public function crudRightCardBody()
@@ -556,7 +568,7 @@ class Resource
 
 	public function createMethod($params, $data)
 	{
-		if ($this->crudType() == "dialog") {
+		if ($this->crudType()["template"] == "dialog") {
 			return abort(404);
 		}
 		$resource = $this;
@@ -565,7 +577,7 @@ class Resource
 
 	public function editMethod($params, $data, $content)
 	{
-		if ($this->crudType() == "dialog") {
+		if ($this->crudType()["template"] == "dialog") {
 			return  abort(404);
 		}
 		$resource = $this;

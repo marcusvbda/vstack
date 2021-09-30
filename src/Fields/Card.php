@@ -8,13 +8,22 @@ class Card
 	public $label;
 	public $advanced;
 	public $inputs;
+	public $icon;
+	public $_uid;
 
-	public function __construct($label, $inputs, $advanced = false)
+	public function __construct($label, $inputs, $options = false)
 	{
 		$this->label = $label;
 		$this->inputs = $inputs;
-		$this->advanced = $advanced;
-		$this->makeView();
+		if (is_array($options)) {
+			foreach ($options as $key => $value) {
+				$this->{$key} = $value;
+			}
+		} else {
+			$this->advanced = $options;
+		}
+		$this->_uid = uniqid();
+		return $this->makeView();
 	}
 
 	private function mapInputs()
@@ -27,13 +36,15 @@ class Card
 
 	private function makeView()
 	{
+		$index = $this->_uid;
 		$label = $this->label;
 		$inputs = $this->mapInputs();
 		$advanced = $this->advanced;
 		return $this->view = view("vStack::resources.field.card", compact(
 			"label",
 			"inputs",
-			"advanced"
+			"advanced",
+			"index"
 		))->render();
 	}
 }

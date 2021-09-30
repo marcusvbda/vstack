@@ -26,7 +26,8 @@ class Field
 		@$this->options["mask"]                 = @$this->options["mask"] ?? '';
 		@$this->options["description"]          = @$this->options["description"] ?? '';
 		@$this->options["visible"]              = @$this->options["visible"] ?? true;
-		@$this->options["multiple"]              = @$this->options["multiple"] ?? false;
+		@$this->options["multiple"]             = @$this->options["multiple"] ?? false;
+		@$this->options["_uid"]             	= uniqid();
 		$this->checkRequired();
 	}
 
@@ -34,8 +35,11 @@ class Field
 	{
 		$rules = !is_array($this->options['rules']) ? explode("|", $this->options['rules']) : $this->options['rules'];
 		if ($this->options["required"] || $this->hasRequiredRule($rules)) {
-			if ($this->options["required"]) $this->addRequireRule($rules);
-			else $this->options["required"] = true;
+			if ($this->options["required"]) {
+				$this->addRequireRule($rules);
+			} else {
+				$this->options["required"] = true;
+			}
 			$this->options["label"] = $this->options["label"] . ' <small class="text-danger" style="position: relative;top: -2px;">*</small>';
 		} else {
 			$this->options["label"] = $this->options["label"] . ' <small class="text-muted" style="position: relative;top: -2px;">(opcional)</small>';

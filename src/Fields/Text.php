@@ -14,7 +14,9 @@ class Text extends Field
 
 	public function getView()
 	{
-		if (@$this->options["hide"])  return $this->view = "";
+		if (@$this->options["hide"]) {
+			return $this->view = "";
+		}
 
 		$label          = $this->options["label"];
 		$append         = @$this->options["append"];
@@ -26,7 +28,7 @@ class Text extends Field
 		$disabled       = @$this->options["disabled"] ? "true" : "false";
 		$description    = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
-		$maxlength        = $this->options["maxlength"] ?  $this->options["maxlength"] : 255;
+		$maxlength      = $this->options["maxlength"] ?  $this->options["maxlength"] : 255;
 
 		return $this->view = view("vStack::resources.field.text", compact(
 			"disabled",

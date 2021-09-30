@@ -69,7 +69,7 @@ String.prototype.isValidDoc = function() {
         if (resto == 10 || resto == 11) resto = 0;
         if (resto != parseInt(cpf.substring(9, 10))) return false;
         soma = 0;
-        for (var i = 1; i <= 10; i++) soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+        for (let i = 1; i <= 10; i++) soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i);
         resto = (soma * 10) % 11;
         if (resto == 10 || resto == 11) resto = 0;
         if (resto != parseInt(cpf.substring(10, 11))) return false;
@@ -107,7 +107,7 @@ String.prototype.isValidDoc = function() {
         numeros = cnpj.substring(0, tamanho);
         soma = 0;
         pos = tamanho - 7;
-        for (var i = tamanho; i >= 1; i--) {
+        for (let i = tamanho; i >= 1; i--) {
             soma += numeros.charAt(tamanho - i) * pos--;
             if (pos < 2) pos = 9;
         }
@@ -189,15 +189,18 @@ Vue.prototype.$getEnabledIcons = function(enabled) {
     return icons[enabled ? "true" : "false"];
 };
 
-Vue.prototype.$waitForEl = selector => {
+Vue.prototype.$waitForEls = selector => {
     return new Promise(resolve => {
-        if (document.querySelector(selector)) {
-            return resolve(document.querySelector(selector));
+        let els = document.querySelectorAll(selector);
+        if (els) {
+            return resolve(els);
         }
 
         const observer = new MutationObserver(() => {
-            if (document.querySelector(selector)) {
-                resolve(document.querySelector(selector));
+            let els = document.querySelectorAll(selector);
+
+            if (els) {
+                resolve(els);
                 observer.disconnect();
             }
         });
@@ -207,4 +210,31 @@ Vue.prototype.$waitForEl = selector => {
             subtree: true
         });
     });
+};
+
+Vue.prototype.$waitForEl = selector => {
+    return new Promise(resolve => {
+        let el = document.querySelector(selector);
+        if (el) {
+            return resolve(el);
+        }
+
+        const observer = new MutationObserver(() => {
+            let el = document.querySelector(selector);
+
+            if (el) {
+                resolve(el);
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+};
+
+Vue.prototype.$getUrlParams = () => {
+    return Object.fromEntries(new URLSearchParams(location.search));
 };

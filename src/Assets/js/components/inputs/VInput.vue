@@ -68,19 +68,19 @@
 </template>
 <script>
 export default {
-    props: ['label', 'type', 'placeholder', 'errors', 'prepend', 'append', 'disabled', 'mask', 'description', 'maxlength'],
+    props: ["label", "type", "placeholder", "errors", "prepend", "append", "disabled", "mask", "description", "maxlength"],
     data() {
         return {
-            val: null,
-        }
+            val: null
+        };
     },
     watch: {
         val(val) {
-            return this.$emit('input', val)
-        },
+            return this.$emit("input", val);
+        }
     },
     async created() {
-        this.val = this.$attrs.value
-    },
-}
+        this.val = this.$attrs.value;
+    }
+};
 </script>

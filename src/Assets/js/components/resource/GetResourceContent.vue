@@ -52,7 +52,17 @@
 import VRuntimeTemplate from "v-runtime-template";
 export default {
     components: { "v-runtime-template": VRuntimeTemplate },
-    props: ["type", "row_code", "resource_route", "cols", "row_id", "resource_id", "raw_content", "show_right_actions_column","has_actions"],
+    props: [
+        "type",
+        "row_code",
+        "resource_route",
+        "cols",
+        "row_id",
+        "resource_id",
+        "raw_content",
+        "show_right_actions_column",
+        "has_actions"
+    ],
     data() {
         return {
             loading: true,
@@ -73,17 +83,17 @@ export default {
     created() {
         this.getContent();
     },
-    computed : {
+    computed: {
         colspan() {
             let cols = this.cols;
-            if(this.show_right_actions_column) {
+            if (this.show_right_actions_column) {
                 cols++;
             }
-            if(this.$slots['first-column']) {
+            if (this.$slots["first-column"]) {
                 cols++;
             }
-            if(this.has_actions) {
-                cols ++;
+            if (this.has_actions) {
+                cols++;
             }
             return cols;
         }

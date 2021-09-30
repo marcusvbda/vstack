@@ -12,9 +12,11 @@ class Url extends Field
         parent::processFieldOptions();
     }
 
-    public function getView()
+    public function getView($card_rules = [])
     {
-        if (!@$this->options["hide"]) return $this->view = "";
+        if (@$this->options["hide"]) {
+            return $this->view = "";
+        }
 
         $label          = $this->options["label"];
         $append         = @$this->options["append"];

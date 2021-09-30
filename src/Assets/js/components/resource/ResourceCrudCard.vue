@@ -1,5 +1,5 @@
 <template>
-    <div :id="label" data-aos="fade-right">
+    <div :id="label" :index="index">
         <div class="card mb-4 p-0">
             <div class="card-header crud-card-header">
                 <div class="row">
@@ -8,6 +8,7 @@
                         <div v-if="advanced">
                             <el-checkbox v-model="showing" class="mb-1">Visualizar Informações</el-checkbox>
                         </div>
+                        <portal-target :name="`card-header-right-${index}`" />
                     </div>
                 </div>
             </div>
@@ -22,20 +23,16 @@
     </div>
 </template>
 <script>
-import VRuntimeTemplate from 'v-runtime-template'
 export default {
-    props: ['label', 'advanced', 'inputs'],
+    props: ["label", "advanced", "inputs", "index"],
     data: () => ({
-        showing: false,
+        showing: false
     }),
-    components: {
-        'v-runtime-template': VRuntimeTemplate,
-    },
     computed: {
         real_showing() {
-            if (!this.advanced) return true
-            return this.showing
-        },
-    },
-}
+            if (!this.advanced) return true;
+            return this.showing;
+        }
+    }
+};
 </script>

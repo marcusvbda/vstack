@@ -27,7 +27,7 @@ export default {
     },
     methods: {
         goToEdit() {
-            if (this.data.crud_type == "page") {
+            if (this.data.crud_type.template == "page" || this.data.crud_type.template == "wizard") {
                 return (window.location.href = `${this.data.route}/edit`);
             }
             this.$refs.dialog.open();

@@ -924,4 +924,12 @@ class ResourceController extends Controller
 		if (!@$action->id) abort(404);
 		return $action->handler($request);
 	}
+
+	public function storeWizardStepValidation(Request $request)
+	{
+		$resource = ResourcesHelpers::find($request["resource_id"]);
+		$rules = $resource->getValidationRule($request["wizard_step"]);
+		$request->validate($rules);
+		return ["success" => true];
+	}
 }

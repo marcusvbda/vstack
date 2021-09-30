@@ -23,6 +23,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('{resource}/action/{id}', [ResourceController::class, 'handlerAction'])->name("resource.action.submit");
 		Route::post('{resource}/get-resource-crud-content', [ResourceController::class, 'getResourceCrudContent'])->name("resource.dialog_content");
 		Route::post('{resource}/store', [ResourceController::class, 'store'])->name("resource.store");
+		Route::post('{resource}/store-wizard-step-validation', [ResourceController::class, 'storeWizardStepValidation'])->name("resource.store-wizard-step-validation");
 		Route::post('{resource}/field/store', [ResourceController::class, 'storeField'])->name("resource.field.store");
 		Route::get('{resource}/import', [ResourceController::class, 'import'])->name("resource.import");
 		Route::post('{resource}/export', [ResourceController::class, 'export'])->name("resource.export");
