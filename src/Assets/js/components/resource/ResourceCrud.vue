@@ -251,7 +251,6 @@ export default {
             if (this.crud_type.template != "wizard") {
                 return "";
             }
-            console.log(this.window_width);
             if (this.window_width <= 991) {
                 return "horizontal";
             }
