@@ -9,93 +9,180 @@
             </div>
         </td>
         <td>
-            <div class="d-flex flex-column">
+            <div class="d-flex flex-column upload-resource-field  input-group">
                 <el-upload
                     multiple
                     :limit="!multiple ? 1 : limit"
                     ref="uploader"
                     :disabled="fileList.length >= limit"
-                    v-bind:class="{ disabled: fileList.length >= limit }"
+                    v-bind:class="{
+                        disabled: fileList.length >= limit_value,
+                        'hide-input': loading || fileList.length >= limit_value,
+                        'is-invalid': errors
+                    }"
                     :action="uploadroute"
-                    :list-type="listtype"
+                    list-type="picture-card"
                     :file-list="fileList"
                     :on-success="handleAvatarSuccess"
+                    :before-upload="handleBeforeUpload"
                     :headers="header"
+                    v-loading="loading"
+                    :on-change="handleChange"
+                    element-loading-text="Aguarde, enviando arquivo..."
+                    v-if="renderComponent"
                 >
                     <div slot="file" slot-scope="{ file }">
-                        <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                        <div class="el-upload-list__item-actions">
-                            <span class="el-upload-list__item-preview" v-if="preview != undefined" @click="handlePictureCardPreview(file)">
-                                <i class="el-icon-zoom-in"></i>
-                            </span>
-                            <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                                <i class="el-icon-delete"></i>
-                            </span>
+                        <div>
+                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                            <div class="el-upload-list__item-actions">
+                                <span
+                                    class="el-upload-list__item-preview"
+                                    v-if="preview != undefined"
+                                    @click="handlePictureCardPreview(file)"
+                                >
+                                    <i class="el-icon-zoom-in"></i>
+                                </span>
+                                <span class="el-upload-list__item-delete" @click="handleRemove(file)">
+                                    <i class="el-icon-delete"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <template>
-                        <div class="d-flex align-items-center justify-content-center h-100" v-if="listtype == 'picture-card'">
+                        <div class="d-flex align-items-center justify-content-center h-100">
                             <i class="el-icon-plus"></i>
-                        </div>
-                        <div v-if="['text', 'picture'].includes(listtype)" class="d-flex align-items-center justify-content-center h-100">
-                            <button type="button" class="btn btn-primary btn-sm-block"><i class="el-icon-plus"></i> Selecione o arquivo</button>
                         </div>
                     </template>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible" v-if="preview != undefined">
                     <img width="100%" :src="dialogImageUrl" alt="" />
                 </el-dialog>
+                <span class="mt-2 text-muted text-size-alert">
+                    {{ multiple ? "Os arquivos devem conter no máximo" : "O arquivo deve conter no máximo" }}
+                    {{ $niceBytes(file_upload_limit_size) }}
+                </span>
+                <div class="invalid-feedback" v-if="errors">
+                    <ul class="pl-3 mb-0">
+                        <li v-for="(e, i) in errors" :key="i" v-html="e" />
+                    </ul>
+                </div>
             </div>
         </td>
     </tr>
 </template>
 <script>
+import { mapMutations } from "vuex";
 export default {
-    props: ['label', 'field', 'preview', 'listtype', 'multiple', 'disabled', 'limit', 'uploadroute'],
+    props: ["label", "field", "preview", "multiple", "disabled", "limit", "uploadroute", "description", "sizelimit", "errors"],
     data() {
         return {
-            dialogImageUrl: '',
+            dialogImageUrl: "",
             dialogVisible: false,
             fileList: [],
-            header: { 'X-CSRF-TOKEN': laravel.general.csrf_token ? laravel.general.csrf_token : '' },
-        }
+            header: { "X-CSRF-TOKEN": laravel.general.csrf_token ? laravel.general.csrf_token : "" },
+            loading: false,
+            limit_value: this.multiple ? this.limit : 1,
+            renderComponent: true,
+            file_upload_limit_size: this.sizelimit ? this.sizelimit : laravel.vstack.file_upload_limit_size ?? 0
+        };
     },
     mounted() {
-        let value = this.$attrs.value ? this.$attrs.value : []
-        value.filter((x) => x).forEach((item) => this.fileList.push({ url: item }))
+        this.init();
     },
     watch: {
-        fileList(val) {
-            return this.$emit(
-                'input',
-                val.map((x) => (x.url ? x.url : x))
-            )
-        },
+        loading(val) {
+            this.setActionBtnLoading(val);
+        }
     },
     methods: {
-        handleAvatarSuccess(res, file) {
-            this.fileList.push(file.response.path)
+        ...mapMutations("resource", ["setActionBtnLoading"]),
+        init() {
+            let value = this.$attrs.value ? this.$attrs.value : [];
+            let items = [];
+            value
+                .filter(x => x)
+                .forEach(item => {
+                    if (typeof item == "string") {
+                        items.push({
+                            name: new Date().getTime(),
+                            uid: new Date().getTime(),
+                            response: {
+                                path: item
+                            },
+                            url: item
+                        });
+                    } else {
+                        items.push(item);
+                    }
+                });
+            this.setInputFiles(items);
         },
-        handleRemove(file, fileList) {
-            let files = this.$refs.uploader.uploadFiles
-            files = files.filter((f) => {
-                return f.uid != file.uid
-            })
-            this.fileList = files.map((x) => (x.response ? x.response.path : x.url))
-            this.$refs.uploader.uploadFiles = files
+        setInputFiles(items) {
+            this.fileList = items;
+            this.$refs.uploader.uploadFiles = items;
+            this.forceRerender();
+        },
+        forceRerender() {
+            this.renderComponent = false;
+            this.$nextTick(() => {
+                this.renderComponent = true;
+            });
+        },
+        handleChange() {
+            this.emitChanges();
+        },
+        emitChanges() {
+            let files = this.$refs.uploader.uploadFiles;
+            return this.$emit("input", files);
+        },
+        handleBeforeUpload(file) {
+            if (file.size > this.file_upload_limit_size) {
+                this.$message.error(`O arquivo deve conter no máximo ${this.$niceBytes(this.file_upload_limit_size)}`);
+                return this.handleRemove(file);
+            }
+            this.loading = true;
+        },
+        handleAvatarSuccess(response, file) {
+            file.url = response.path;
+            let files = this.fileList;
+            files.push(file);
+            this.setInputFiles(files);
+            this.loading = false;
+        },
+        handleRemove(file) {
+            let files = this.$refs.uploader.uploadFiles;
+            files = files.filter(f => {
+                return f.uid != file.uid;
+            });
+            this.setInputFiles(files);
         },
         handlePictureCardPreview(file) {
-            this.dialogImageUrl = file.response ? file.response.path : file.url
-            this.dialogVisible = true
-        },
-    },
-}
+            this.dialogImageUrl = file.response ? file.response.path : file.url;
+            this.dialogVisible = true;
+        }
+    }
+};
 </script>
 <style lang="scss">
 .disabled {
     .el-upload {
         &.el-upload--picture-card {
             display: none;
+        }
+    }
+}
+
+.hide-input {
+    overflow: hidden;
+    .el-upload--picture-card {
+        display: none;
+    }
+}
+
+.upload-resource-field {
+    .is-invalid {
+        .el-upload--picture-card {
+            border-color: #dc3545;
         }
     }
 }

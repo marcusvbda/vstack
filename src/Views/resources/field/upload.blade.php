@@ -4,8 +4,8 @@
     v-model='{{'form.'.$field}}'   
     :multiple='{{$multiple}}'   
     :preview='{{$preview}}'   
-    :limit='{{$limit}}'   
-    listtype='{{$listType}}'                                                      
-    accept='{{$accept}}'                                                      
-    :errors='{{"errors.$field ? errors.$field : false"}}'                            
+    :limit='{{$limit}}'                                                      
+    accept='{{$accept}}'                        
+    :sizelimit='{{ $sizelimit }}'                              
+    :errors='{{"errors.$field ? errors.$field : false"}}'                          
 />

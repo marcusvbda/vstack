@@ -40,6 +40,7 @@ import "aos/dist/aos.css";
 Vue.prototype.$aos = AOS;
 
 const vue = new Vue({
+    store: require("../../store").default,
     data() {
         return {
             root_loading: false

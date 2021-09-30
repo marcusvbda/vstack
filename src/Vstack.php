@@ -101,4 +101,28 @@ class Vstack
 			->implode(",");
 		return $query->orderByRaw("FIELD($key, $sortedIds)");
 	}
+
+	public static function niceBytes($val)
+	{
+		$numbers = 0;
+		try {
+			$val = trim($val);
+			$numbers = (float)preg_replace("/[^0-9]/", "", $val);
+			$unit = strtolower(preg_replace("/[0-9]/", "", $val));
+
+			if (in_array($unit, ["g", 'gb'])) {
+				$numbers *= (1024 * 1024 * 1024);
+			}
+			if (in_array($unit, ["m", 'mb'])) {
+				$numbers *= (1024 * 1024);
+			}
+			if (in_array($unit, ["k", 'kb'])) {
+				$numbers *= 1024;
+			}
+		} catch (\Exception $e) {
+			return 0;
+		}
+
+		return $numbers;
+	}
 }

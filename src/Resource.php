@@ -314,6 +314,9 @@ class Resource
 
 		foreach ($card->inputs as $field) {
 			$rules = @$field->options["rules"] ?? [];
+			if (!is_array($rules)) {
+				$rules = explode("|", $rules);
+			}
 			if (@$field->options["required"]) {
 				$rules[] = "required";
 			}

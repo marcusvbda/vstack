@@ -8,7 +8,6 @@
                         <div v-if="advanced">
                             <el-checkbox v-model="showing" class="mb-1">Visualizar Informações</el-checkbox>
                         </div>
-                        <portal-target :name="`card-header-right-${index}`" />
                     </div>
                 </div>
             </div>

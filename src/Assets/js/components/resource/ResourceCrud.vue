@@ -14,12 +14,12 @@
                 <template v-else>
                     <template v-if="crud_type.template == 'page'">
                         <div class="row">
-                            <div class="col-md-9 col-sm-12 col-sm-12">
+                            <div class="col-12 col-lg-9">
                                 <template v-for="(card, i) in data.fields">
                                     <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
                                 </template>
                             </div>
-                            <div class="col-md-3 col-sm-12 fields-tab">
+                            <div class="col-12 col-lg-3 fields-tab">
                                 <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
                                     <div class="col-12">
                                         <div class="card">
@@ -70,12 +70,11 @@
                     </template>
                     <template v-if="crud_type.template == 'wizard'">
                         <div class="row">
-                            <div class="col-12 d-flex flex-column">
+                            <div class="col-12  col-lg-9 d-flex flex-column">
                                 <div :class="`d-flex ${wizardContentClass}`">
                                     <el-steps
                                         :active="wizard_step"
                                         finish-status="success"
-                                        align-center
                                         :direction="wizardDirection"
                                         class="step-resource-crud py-0"
                                         :simple="isSimple"
@@ -100,72 +99,86 @@
                                         </transition>
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                    <portal :to="`card-header-right-${data.fields[wizard_step]._uid}`">
-                                        <el-button-group>
-                                            <template v-if="wizard_step == data.fields.length - 1">
-                                                <el-button
-                                                    :disabled="wizard_step == 0"
-                                                    :size="first_btn.size"
-                                                    type="warning"
-                                                    @click="previousStep"
-                                                    :loading="loading_wizard_previous"
-                                                >
-                                                    <span>
-                                                        <div class="d-flex flex-row">
-                                                            <i class="el-icon-back mr-2"></i>
-                                                            Etapa Anterior
-                                                        </div>
-                                                    </span>
-                                                </el-button>
-                                                <el-button
-                                                    v-if="first_btn"
-                                                    :size="first_btn.size"
-                                                    :type="first_btn.type"
-                                                    @click="submit(first_btn.field)"
-                                                >
-                                                    <span v-html="first_btn.content" />
-                                                </el-button>
-                                                <el-button
-                                                    v-if="second_btn"
-                                                    :size="second_btn.size"
-                                                    :type="second_btn.type"
-                                                    @click="submit(second_btn.field)"
-                                                >
-                                                    <span v-html="second_btn.content" />
-                                                </el-button>
-                                            </template>
-                                            <template v-else>
-                                                <el-button
-                                                    v-if="wizard_step != 0"
-                                                    :size="first_btn.size"
-                                                    type="warning"
-                                                    @click="previousStep"
-                                                    :loading="loading_wizard_previous"
-                                                >
-                                                    <span>
-                                                        <div class="d-flex flex-row">
-                                                            <i class="el-icon-back mr-2"></i>
-                                                            Etapa Anterior
-                                                        </div>
-                                                    </span>
-                                                </el-button>
-                                                <el-button
-                                                    :size="second_btn.size"
-                                                    type="primary"
-                                                    @click="nextStep"
-                                                    :loading="loading_wizard_next"
-                                                >
-                                                    <span>
-                                                        <div class="d-flex flex-row">
-                                                            <i class="el-icon-right mr-2"></i>
-                                                            Próxima Etapa
-                                                        </div>
-                                                    </span>
-                                                </el-button>
-                                            </template>
-                                        </el-button-group>
-                                    </portal>
+                            </div>
+                            <div class="col-12 col-lg-3  fields-tab">
+                                <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body d-none d-md-block d-lg-block pb-0" v-if="showPills">
+                                                <div class="row" v-if="!right_card_content">
+                                                    <div class="col-12">
+                                                        <el-timeline class="pl-0">
+                                                            <el-timeline-item
+                                                                v-for="(step, i) in namedCards"
+                                                                :key="i"
+                                                                :type="getTimelineItemColor(i)"
+                                                                :timestamp="step.description"
+                                                            >
+                                                                {{ step.label }}
+                                                            </el-timeline-item>
+                                                        </el-timeline>
+                                                    </div>
+                                                </div>
+                                                <v-runtime-template v-else :template="right_card_content" />
+                                            </div>
+                                            <div
+                                                class="card-footer flex-wrap d-flex flex-row justify-content-end 
+                                            p-2 align-items-center"
+                                            >
+                                                <el-button-group>
+                                                    <template v-if="wizard_step == data.fields.length - 1">
+                                                        <el-button
+                                                            v-if="first_btn"
+                                                            :size="first_btn.size"
+                                                            :type="first_btn.type"
+                                                            @click="submit(first_btn.field)"
+                                                            v-loading="action_btn_loading"
+                                                        >
+                                                            <span v-html="first_btn.content" />
+                                                        </el-button>
+                                                        <el-button
+                                                            v-if="second_btn"
+                                                            :size="second_btn.size"
+                                                            :type="second_btn.type"
+                                                            @click="submit(second_btn.field)"
+                                                            v-loading="action_btn_loading"
+                                                        >
+                                                            <span v-html="second_btn.content" />
+                                                        </el-button>
+                                                    </template>
+                                                    <template v-else>
+                                                        <el-button
+                                                            v-if="wizard_step != 0"
+                                                            :size="first_btn.size"
+                                                            type="warning"
+                                                            @click="previousStep"
+                                                            :loading="loading_wizard_previous || action_btn_loading"
+                                                        >
+                                                            <span>
+                                                                <div class="d-flex flex-row">
+                                                                    <i class="el-icon-back mr-2"></i>
+                                                                    Voltar
+                                                                </div>
+                                                            </span>
+                                                        </el-button>
+                                                        <el-button
+                                                            :size="second_btn.size"
+                                                            type="primary"
+                                                            @click="nextStep"
+                                                            :loading="loading_wizard_next || action_btn_loading"
+                                                        >
+                                                            <span>
+                                                                <div class="d-flex flex-row">
+                                                                    <i class="el-icon-right mr-2"></i>
+                                                                    Prosseguir
+                                                                </div>
+                                                            </span>
+                                                        </el-button>
+                                                    </template>
+                                                </el-button-group>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -179,6 +192,8 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
+import { mapGetters } from "vuex";
+
 export default {
     props: [
         "crud_type",
@@ -196,6 +211,7 @@ export default {
     ],
     data() {
         return {
+            window_width: null,
             resourceData: {},
             form: {},
             errors: {},
@@ -209,6 +225,7 @@ export default {
         "v-runtime-template": VRuntimeTemplate
     },
     computed: {
+        ...mapGetters("resource", ["action_btn_loading"]),
         isSimple() {
             if (this.crud_type.template != "wizard") {
                 return false;
@@ -234,6 +251,10 @@ export default {
             if (this.crud_type.template != "wizard") {
                 return "";
             }
+            console.log(this.window_width);
+            if (this.window_width <= 991) {
+                return "horizontal";
+            }
             return ["left", "right"].includes(this.crud_type.position) && !this.isSimple ? "vertical" : "horizontal";
         },
         showPills() {
@@ -246,13 +267,12 @@ export default {
             return this.data.fields.filter(x => x.label);
         },
         wizardContentClass() {
-            console.log(this.wizardDirection);
             let justifyClasses = {
                 left: "justify-content-start",
                 right: "flex-row-reverse"
             };
             if (this.wizardDirection == "vertical") {
-                return `flex-row ${justifyClasses[this.wizardStepSide]}`;
+                return `flex-column flex-lg-row ${justifyClasses[this.wizardStepSide]}`;
             }
             if (this.wizardDirection === "horizontal") {
                 return "flex-column";
@@ -272,10 +292,34 @@ export default {
     },
     async created() {
         this.$nextTick(() => {
+            this.getScreenSize();
             this.initForm();
         });
     },
     methods: {
+        getScreenSize() {
+            this.window_width = window.innerWidth;
+        },
+        initScreenSizesWatcher() {
+            window.onresize = () => {
+                this.getScreenSize();
+            };
+        },
+        getTimelineItemColor(index) {
+            if (this.wizard_step == index) {
+                return "secondary";
+            }
+            if (this.wizard_step < index) {
+                return "";
+            }
+            if (this.wizard_step > index) {
+                return "success";
+            }
+            return "";
+        },
+        handleActionBtnLoading(val) {
+            this.action_btn_loading = val;
+        },
         clikedStepWizard(index) {
             let stepStatus = this.getResourceStepStatus(index);
             if (stepStatus == "done") {

@@ -1,24 +1,30 @@
 @import "variables";
+
 .resource-tag {
     padding: 2px 5px !important;
     height: auto !important;
 }
+
 .resource-table {
     &.table-striped {
         tbody {
             tr {
                 background-color: white;
+
                 &:nth-of-type(odd) {
                     background-color: #f9f9f9;
                 }
+
                 &:hover {
                     transition: 0.5s;
                     background-color: rgba(0, 0, 0, 0.05);
                 }
+
                 .arrow-after-icon {
                     font-size: 30px;
                     cursor: pointer;
                 }
+
                 &.table-row {
                     &.after {
                         td {
@@ -27,18 +33,24 @@
                             position: relative;
                             padding: 0;
                             margin: 0;
+
                             .spacer {
                                 border-top: 1px solid #dee2e6;
                                 position: relative;
                                 height: 15px;
+
                                 @if variable-exists(bgColor) {
                                     background-color: $bgColor;
-                                } @else {
+                                }
+
+                                @else {
                                     background-color: #edeff2;
                                 }
+
                                 width: 100%;
                                 bottom: 0;
                             }
+
                             .content {
                                 //
                             }
@@ -48,20 +60,26 @@
             }
         }
     }
+
     thead {
         background-color: white;
+
         tr {
             height: 30px;
+
             th {
                 padding: 8px;
                 border-bottom: 1px solid #ccd0d4;
+
                 .link-sortable {
                     font-size: 14px;
                     color: black;
                     text-decoration: unset;
                     font-weight: 400;
+
                     .sort-icon {
                         display: none;
+
                         &.active {
                             display: block;
                             font-weight: bolder;
@@ -71,16 +89,20 @@
             }
         }
     }
+
     tbody {
         tr {
             td {
                 font-size: 14px;
+
                 .crud-btns {
                     display: none !important;
                 }
             }
+
             &:hover {
                 transition: 0.5s;
+
                 .crud-btns {
                     display: block !important;
                 }
@@ -88,6 +110,7 @@
         }
     }
 }
+
 .dropdown-menu {
     &.filter {
         right: -5px;
@@ -127,6 +150,7 @@ html {
         tr {
             display: block;
         }
+
         thead {
             display: none;
         }
@@ -142,6 +166,7 @@ ul.pagination {
 }
 
 * {
+
     &:focus,
     &:active {
         outline: none !important;
@@ -159,11 +184,13 @@ ul.pagination {
         max-height: calc(100vh - 95px);
         overflow-y: auto;
         margin: 0;
+
         .col-12 {
             padding-right: 0;
             padding-left: 0;
         }
     }
+
     ::-webkit-scrollbar {
         width: 10px;
     }
@@ -193,10 +220,12 @@ ul.pagination {
 .table-crud {
     .w-25 {
         background-color: #f9f9f9;
+
         @media (max-width: 749px) {
             width: 100% !important;
         }
     }
+
     .input-title {
         font-weight: bold;
         font-size: 13px;
@@ -220,5 +249,17 @@ ul.pagination {
 .link-not-hovered {
     &:hover {
         text-decoration: none !important;
+    }
+}
+
+
+.el-timeline-item__node--secondary {
+    background-color: #6d6d6d !important;
+}
+
+
+@media screen and (max-width: 991px) {
+    .flex-sm-column {
+        flex-direction: column !important;
     }
 }

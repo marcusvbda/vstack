@@ -20,12 +20,11 @@ class Upload extends Field
         $field     = $this->options["field"];
         $preview   = !@$this->options["preview"] ? "undefined" : "true";
         $multiple  = @$this->options["multiple"] ? "true" : "false";
-        $listType  = @$this->options["list_type"] ? $this->options["list_type"] : "picture-card";
-        $accept    = @$this->options["accept"] ? $this->options["accept"] : "";
         $accept    = @$this->options["accept"] ? $this->options["accept"] : "";
         $limit     = @$this->options["limit"] ? ($multiple == "true" ? $this->options["limit"] : 1) : ($multiple == "true" ? 5 : 1);
         $uploadroute    = @$this->options["upload_route"] ? $this->options["upload_route"] : Config("vstack.default_upload_route");
         $label = $this->options["label"];
+        $sizelimit = @$this->options["file_size_limit"] ? $this->options["file_size_limit"] : 0;
 
         return $this->view = view("vStack::resources.field.upload", compact(
             "label",
@@ -34,8 +33,8 @@ class Upload extends Field
             "multiple",
             "preview",
             "limit",
-            "listType",
-            "accept"
+            "accept",
+            "sizelimit"
         ))->render();
     }
 }
