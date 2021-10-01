@@ -57,8 +57,9 @@ const vue = new Vue({
     methods: {
         init() {
             this.$aos.init({
+                once: true,
                 disable: !laravel.vstack.animation_enabled,
-                once: true
+                duration: 200
             });
             let body = document.querySelector("body");
             body.style.display = "block";
