@@ -321,9 +321,9 @@ class Resource
 				$rules[] = "required";
 			}
 			$rules = is_array($rules) ? $rules : [$rules];
-			$validation_rules[@$field->options["field"] ?? "*"] = array_unique(array_filter($rules, function ($row) {
+			$validation_rules[@$field->options["field"] ?? "*"] = array_filter($rules, function ($row) {
 				return $row;
-			}));
+			});
 		}
 		return $validation_rules;
 	}
@@ -585,5 +585,43 @@ class Resource
 		}
 		$resource = $this;
 		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
+	}
+
+	public function viewMethod($params, $data, $content)
+	{
+		if ($this->crudType()["template"] == "dialog") {
+			return  abort(404);
+		}
+		$resource = $this;
+		return view("vStack::resources.view", compact("resource", "data", "params", "content"));
+	}
+
+	public function secondViewBtn()
+	{
+		if ($this->crudType()["template"] == "dialog") {
+			return false;
+		}
+		return [
+			"size" => "small",
+			"field" => "edit",
+			"type" => "primary",
+			"content" => "<div class='d-flex flex-row'>
+							<i class='el-icon-edit mr-2'></i>
+							Editar
+						</div>"
+		];
+	}
+
+	public function firstViewBtn()
+	{
+		return [
+			"size" => "small",
+			"field" => "back",
+			"type" => "info",
+			"content" => "<div class='d-flex flex-row'>
+							<i class='el-icon-arrow-left mr-2'></i>
+							 Voltar
+						</div>"
+		];
 	}
 }

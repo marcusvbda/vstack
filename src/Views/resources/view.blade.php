@@ -1,13 +1,22 @@
 @extends("templates.admin")
-@section('title',$resource->label())
+@section('title', $resource->label())
 @php
-	$raw_type = \marcusvbda\vstack\Vstack::getPageType(@$data['page_type']);
-	$current = $data['page_type']." de ".$resource->singularLabel();
-    $current_route = $resource->route()."/".@$content->code;
+$cards = $data['fields'];
+$routes = [];
+$raw_type = \marcusvbda\vstack\Vstack::getPageType(@$data['page_type']);
+if (in_array($raw_type, ['clone', 'edit'])) {
+    $current_route = $resource->route() . '/' . @$content->code . '/' . $raw_type;
+} else {
+    if (in_array($raw_type, ['view'])) {
+        $current_route = $resource->route() . '/' . @$content->code;
+    } else {
+        $current_route = $resource->route() . '/' . $raw_type;
+    }
+}
 @endphp
 @section('breadcrumb')
-	@include("vStack::resources.partials._breadcrumb")
+    @include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
-	@include($resource->viewBlade())
+    @include($resource->viewBlade())
 @endsection

@@ -24,6 +24,7 @@ class ResourceController extends Controller
 {
 	public function report($resource, Request $request)
 	{
+		request()->request->add(["page_type" => "report"]);
 		request()->request->add(["context" => (object)["user" => Auth::user()]]);
 		return $this->showIndexList($resource, $request, true);
 	}
@@ -86,6 +87,7 @@ class ResourceController extends Controller
 
 	public function index($resource, Request $request)
 	{
+		request()->request->add(["page_type" => "list"]);
 		return $this->showIndexList($resource, $request);
 	}
 
@@ -167,7 +169,6 @@ class ResourceController extends Controller
 
 	protected function getResourceEditCrudContent($content, $resource, Request $request)
 	{
-		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
 		$data = $this->makeCrudData($resource, $content);
 		$data["page_type"] = "Edição";
 		return $data;
@@ -175,8 +176,10 @@ class ResourceController extends Controller
 
 	public function edit($resource, $code, Request $request)
 	{
+		request()->request->add(["page_type" => "edit"]);
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
+		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
 		$data = $this->getResourceEditCrudContent($content, $resource, $request);
 		$params = @$request["params"] ? $request["params"] : [];
 		return $resource->editMethod($params, $data, $content);
@@ -192,6 +195,7 @@ class ResourceController extends Controller
 
 	public function create($resource, Request $request)
 	{
+		request()->request->add(["page_type" => "create"]);
 		$params = @$request["params"] ? $request["params"] : [];
 		$resource = ResourcesHelpers::find($resource);
 		if (!@$resource->canCreate()) abort(403);
@@ -490,99 +494,14 @@ class ResourceController extends Controller
 
 	public function view(Request $request, $resource, $code)
 	{
+		request()->request->add(["page_type" => "view"]);
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
 		if (!$resource->canViewRow($content) || !$resource->canView()) abort(403);
-		$data = $this->makeViewData($content->code, $resource, $content);
-		$data["page_type"] = "Visualização";
+		$data = $this->getResourceEditCrudContent($content, $resource, $request);
 		$params = @$request["params"] ? $request["params"] : [];
-		return view("vStack::resources.view", compact("resource", "data", "params", "content"));
-	}
-
-	public function makeViewData($code, $resource, $content = null)
-	{
-		$route = $resource->route();
-		request()->request->add(["content" => @$content]);
-		return [
-			"fields"        => $this->makeViewDataFields($content, $resource->fields()),
-			"can_update"    => $resource->canUpdate(),
-			"can_delete"    => $resource->canDelete(),
-			"route"         => $route . "/" . $code,
-			"update_route"  => $route . "/" . $code . "/edit",
-			"route_destroy" => $route . "/" . $code . "/destroy",
-		];
-	}
-
-	protected function makeViewDataFields($content, $fields)
-	{
-		$data = [];
-		if (!$content) return $fields;
-		foreach ($fields  as $card) {
-			$_card = [
-				"label"  => $card->label,
-				"inputs" => []
-			];
-			foreach ($card->inputs  as $field) {
-				if (!in_array(@$field->options["field"], ["password", "password_confirmation"])) {
-					switch ($field->options["type"]) {
-						case "text":
-							$_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
-							break;
-						case "check":
-							$_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]} ? '<span class="badge badge-success">Sim</span>' : '<span class="badge badge-danger">Não</span>';
-							break;
-						case "custom_component":
-							$_card["inputs"][$field->options["label"]] = @$field->view;
-							break;
-						case "belongsTo":
-							if (@$field->options["model"]) {
-								$model = $field->options["model"];
-								$value = @app()->make($model)->find($content->{$field->options["field"]})->name;
-								$_card["inputs"][$field->options["label"]] = $value;
-							} else $_card["inputs"][$field->options["label"]] = $content->{$field->options["field"]};
-							break;
-						case "upload":
-							if (!@$content->casts[$field->options["field"]])
-								$array = $content ? @$content->{$field->options["field"]}->pluck("value")->toArray() : [];
-							else
-								$array = @$content->{$field->options["field"]} ? @$content->{$field->options["field"]} : null;
-
-							$array = $array ? $array : [];
-							if (!is_array($array)) $array = [$array];
-							foreach ($array as $row) {
-								@$_card["inputs"][$field->options["label"]] .= "<p class='my-0'><a class='link preview' target='_BLANK' href='" . $row . "'>" . $row . "</a></p>";
-							}
-							break;
-						case "url":
-							$_card["inputs"][$field->options["label"]] = "<a class='link preview' target='_BLANK' href='" . @$content->{$field->options["field"]} . "'>" . @$content->{$field->options["field"]} . "</a>";
-							break;
-						case "resource-field":
-							$_resource = ResourcesHelpers::find(strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $field->options["resource"])));
-							foreach ($field->options["params"] as $key => $value) $params[$key] = @$content->{$value} ? $content->{$value} : $value;
-							$view = $field->getView();
-							$target = substr($view, strpos($view, ":params='"), strpos($view, "' end_params"));
-							$view = str_replace($target, ":params='" . json_encode($params) . "' />", $view);
-							$_card["inputs"]["IGNORE__" . $_resource->label()] = $view;
-							break;
-						case "custom":
-							$custom_params = "";
-							foreach ($field->options['params'] as $custom_key => $custom_value) {
-								eval("\$custom_value = \"$custom_value\";");
-								$custom_params .= ":$custom_key='$custom_value' ";
-							}
-							$custom_oldView = $field->view;
-							$custom_view = str_replace(" />", " $custom_params  />", $custom_oldView);
-							$_card["inputs"]["IGNORE__" . uniqid()] = $custom_view;
-							break;
-						default:
-							$_card["inputs"][$field->options["label"]] = @$content->{$field->options["field"]};
-							break;
-					}
-				}
-			}
-			$data[] = $_card;
-		}
-		return $data;
+		$data["page_type"] = "Visualização";
+		return $resource->viewMethod($params, $data, $content);
 	}
 
 	protected function makeCrudData($resource, $content = null)

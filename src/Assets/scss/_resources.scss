@@ -263,3 +263,43 @@ ul.pagination {
         flex-direction: column !important;
     }
 }
+
+
+
+.resource-step {
+    .el-step__title {
+        margin-top: 0 !important;
+    }
+}
+
+
+
+.view-only {
+    .table-crud.table {
+        tbody {
+            tr {
+                td {
+                    &:not(.w-25) {
+                        position: relative;
+
+                        input {
+                            border: unset !important;
+                        }
+
+                        &::before {
+                            content: "";
+                            display: block;
+                            background-color: transparent;
+                            width: 100%;
+                            height: 100%;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            z-index: 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
