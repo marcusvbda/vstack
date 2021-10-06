@@ -27,7 +27,7 @@ class Field
 		@$this->options["description"]          = @$this->options["description"] ?? '';
 		@$this->options["visible"]              = @$this->options["visible"] ?? true;
 		@$this->options["multiple"]             = @$this->options["multiple"] ?? false;
-		@$this->options["_uid"]             	= uniqid();
+		@$this->options["_uid"]             	= @$this->options["_uid"] ? $this->options["_uid"] : uniqid();
 		$this->checkRequired();
 	}
 
