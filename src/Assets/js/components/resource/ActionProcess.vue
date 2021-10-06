@@ -124,7 +124,7 @@ export default {
             else this.selected_ids = this.selected_ids.filter((x) => x != id)
         },
         initiateAllInput() {
-            this.$waitFor(`#${this.resource_id}_action_select_all`).then(() => {
+            this.$waitForEl(`#${this.resource_id}_action_select_all`).then(() => {
                 setTimeout(() => {
                     const input = document.querySelector(`#${this.resource_id}_action_select_all`)
                     input.addEventListener('change', (event) => {
@@ -139,7 +139,7 @@ export default {
             })
         },
         initiateEventListener() {
-            this.$waitFor('.select_action_box').then(() => {
+            this.$waitForEl('.select_action_box').then(() => {
                 setTimeout(() => {
                     const inputs = [...document.querySelectorAll('.select_action_box')].map((input) => {
                         input.addEventListener('change', (event) => {
