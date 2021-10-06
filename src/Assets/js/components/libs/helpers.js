@@ -250,3 +250,5 @@ Vue.prototype.$niceBytes = x => {
 
     return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
 };
+
+Vue.prototype.$avoidNaN = (value, fallback = 0) => (isNaN(value) ? fallback : value);

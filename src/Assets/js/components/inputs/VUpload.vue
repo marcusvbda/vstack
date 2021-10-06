@@ -121,6 +121,7 @@ export default {
             this.fileList = items;
             this.$refs.uploader.uploadFiles = items;
             this.forceRerender();
+            this.handleChange();
         },
         forceRerender() {
             this.renderComponent = false;
