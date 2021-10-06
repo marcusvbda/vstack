@@ -26,10 +26,16 @@ class Card
 		return $this->makeView();
 	}
 
+	private function isViewType()
+	{
+		return request()->get("page_type") == "view";
+	}
+
 	private function mapInputs()
 	{
-		$views = collect($this->inputs)->map(function ($x) {
-			return $x->getView();
+		$isViewType = $this->isViewType();
+		$views = collect($this->inputs)->map(function ($x) use ($isViewType) {
+			return $x->getView($isViewType ? "view" : "input");
 		})->toArray();
 		return implode("", $views);
 	}

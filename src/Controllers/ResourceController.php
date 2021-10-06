@@ -522,27 +522,23 @@ class ResourceController extends Controller
 			foreach ($card->inputs  as $input) {
 				switch ($input->options["type"]) {
 					case "upload":
-						if (!@$content->casts[$input->options["field"]])
-							$input->options["value"] = $content ? @$content->{$input->options["field"]}->pluck("value")->toArray() : null;
-						else {
-							$view = $input->getView();
-							$oldView = $view;
+						if (!@$content->casts[$input->options["field"]]) {
+							$input->options["value"] = null;
+							$field_value = [];
+							if ($content && $content->{$input->options["field"]}) {
+								$field_value = @$content->{$input->options["field"]} ?? [];
+							}
+							$field_value = array_map(function ($row) {
+								return @$row->url;
+							}, $field_value);
+							$input->options["value"] = @$field_value;
+						} else {
 							$value = @$content->{$input->options["field"]};
-							if (!is_array($value)) $value = [$value];
+							if (!is_array($value)) {
+								$value = [$value];
+							}
 							$input->options["value"] = $value ? $value : null;
 						}
-						break;
-					case "custom":
-						if (@$content) {
-							$params = "";
-							foreach ($input->options['params'] as $key => $value) {
-								eval("\$value = \"$value\";");
-								$params .= ":$key='$value' ";
-							}
-							$oldView = $input->view;
-							$view = str_replace(" />", " $params  />", $oldView);
-							$card->view = str_replace($oldView, $view, $card->view);
-						} else  $card->view = "";
 						break;
 					case "html_editor":
 						$value = @$content->{$input->options["field"]};
@@ -767,9 +763,6 @@ class ResourceController extends Controller
 					$field->options["disabled"] = true;
 				}
 				$field->getView();
-				if ($field->options["type"] == "resource-field") {
-					$field->view  = str_replace("/>", "v-if='form.id' />", $field->view);
-				}
 				$fields[] = $field;
 			}
 		}

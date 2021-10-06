@@ -7,7 +7,9 @@ const getters = {
 };
 
 const mutations = {
-    setActionBtnLoading: (state, payload) => (state.action_btn_loading = payload)
+    setActionBtnLoading: (state, payload) => {
+        state.action_btn_loading = payload;
+    }
 };
 
 export default {

@@ -12,8 +12,12 @@ class Text extends Field
 		parent::processFieldOptions();
 	}
 
-	public function getView()
+	public function getView($type = "input")
 	{
+		if ($type == "view") {
+			return $this->getViewOnlyValue();
+		}
+
 		if (@$this->options["hide"]) {
 			return $this->view = "";
 		}

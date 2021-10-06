@@ -49,6 +49,7 @@
                                                         :size="first_btn.size"
                                                         :type="first_btn.type"
                                                         @click="submit(first_btn.field)"
+                                                        :loading="action_btn_loading"
                                                     >
                                                         <span v-html="first_btn.content" />
                                                     </el-button>
@@ -57,6 +58,7 @@
                                                         :size="second_btn.size"
                                                         :type="second_btn.type"
                                                         @click="submit(second_btn.field)"
+                                                        :loading="action_btn_loading"
                                                     >
                                                         <span v-html="second_btn.content" />
                                                     </el-button>
@@ -132,7 +134,7 @@
                                                             :size="first_btn.size"
                                                             :type="first_btn.type"
                                                             @click="submit(first_btn.field)"
-                                                            v-loading="action_btn_loading"
+                                                            :loading="action_btn_loading"
                                                         >
                                                             <span v-html="first_btn.content" />
                                                         </el-button>
@@ -141,7 +143,7 @@
                                                             :size="second_btn.size"
                                                             :type="second_btn.type"
                                                             @click="submit(second_btn.field)"
-                                                            v-loading="action_btn_loading"
+                                                            :loading="action_btn_loading"
                                                         >
                                                             <span v-html="second_btn.content" />
                                                         </el-button>

@@ -12,9 +12,15 @@ class Check extends Field
         parent::processFieldOptions();
     }
 
-    public function getView()
+    public function getView($type = "input")
     {
-        if (@$this->options["hide"]) return $this->view = "";
+        if (@$this->options["hide"]) {
+            return $this->view = "";
+        }
+
+        if ($type == "view") {
+            return $this->getViewOnlyValue();
+        }
         $label          = $this->options["label"];
         $field          = $this->options["field"];
         $active_color   = @$this->options["active_color"] ? $this->options["active_color"] : "green";

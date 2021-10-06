@@ -12,9 +12,15 @@ class DateTime extends Field
 		parent::processFieldOptions();
 	}
 
-	public function getView()
+	public function getView($type = "input")
 	{
-		if (@$this->options["hide"])  return $this->view = "";
+		if (@$this->options["hide"]) {
+			return $this->view = "";
+		}
+
+		if ($type == "view") {
+			return $this->getViewOnlyValue();
+		}
 
 		$label          = $this->options["label"];
 		$append         = @$this->options["append"];
@@ -28,8 +34,13 @@ class DateTime extends Field
 		$disabled       = @$this->options["disabled"] ? "true" : "false";
 		$description    = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
-		$format         = @$this->options["format"] ? $this->options["format"] : 'dd/MM/yyyy HH:mm:ss';
-		$value_format   = @$this->options["value_format"] ? $this->options["value_format"] : 'yyyy-MM-dd HH:mm:ss';
+		if ($type == "date" || $type == "daterange") {
+			$format         = @$this->options["format"] ? $this->options["format"] : 'dd/MM/yyyy';
+			$value_format   = @$this->options["value_format"] ? $this->options["value_format"] : 'yyyy-MM-dd';
+		} else {
+			$format         = @$this->options["format"] ? $this->options["format"] : 'dd/MM/yyyy HH:mm:ss';
+			$value_format   = @$this->options["value_format"] ? $this->options["value_format"] : 'yyyy-MM-dd HH:mm:ss';
+		}
 
 		return $this->view = view("vStack::resources.field.datetime", compact(
 			"disabled",

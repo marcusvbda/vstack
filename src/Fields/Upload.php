@@ -13,9 +13,15 @@ class Upload extends Field
         parent::processFieldOptions();
     }
 
-    public function getView()
+    public function getView($type = "input")
     {
-        if (@$this->options["hide"]) return $this->view = "";
+        if (@$this->options["hide"]) {
+            return $this->view = "";
+        }
+
+        if ($type == "view") {
+            return $this->getViewOnlyValue();
+        }
 
         $field     = $this->options["field"];
         $preview   = !@$this->options["preview"] ? "undefined" : "true";

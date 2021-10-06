@@ -13,9 +13,15 @@ class HtmlEditor extends Field
 		parent::processFieldOptions();
 	}
 
-	public function getView()
+	public function getView($type = "input")
 	{
-		if (@$this->options["hide"]) return $this->view = "";
+		if (@$this->options["hide"]) {
+			return $this->view = "";
+		}
+
+		if ($type == "view") {
+			return $this->getViewOnlyValue();
+		}
 
 		$field     = $this->options["field"];
 		$label = $this->options["label"];

@@ -13,10 +13,15 @@ class BelongsTo extends Field
 		parent::processFieldOptions();
 	}
 
-	public function getView()
+	public function getView($type = "input")
 	{
-		if (@$this->options["hide"]) return $this->view = "";
+		if (@$this->options["hide"]) {
+			return $this->view = "";
+		}
 
+		if ($type == "view") {
+			return $this->getViewOnlyValue();
+		}
 		$model       = @$this->options["model"] ? $this->options["model"] : null;
 		$field       = @$this->options["field"];
 		$multiple       = @$this->options["multiple"] ? @$this->options["multiple"] : false;
