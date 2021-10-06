@@ -22,7 +22,7 @@ class Card
 		} else {
 			$this->advanced = $options;
 		}
-		$this->_uid = uniqid();
+		$this->_uid = @$this->_uid ? $this->_uid :uniqid();
 		return $this->makeView();
 	}
 
