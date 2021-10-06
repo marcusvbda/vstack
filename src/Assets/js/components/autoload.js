@@ -37,16 +37,16 @@ import PortalVue from "portal-vue";
 Vue.use(PortalVue);
 import AOS from "aos";
 import "aos/dist/aos.css";
-Vue.prototype.$aos = AOS;
+import getDefaultStore from "../../store";
 
-const vue = new Vue({
-    store: require("../../store").default,
+Vue.prototype.$aos = AOS;
+const vue_settings = {
+    store: null,
     data() {
         return {
             root_loading: false
         };
     },
-    el: "#app",
     created() {
         this.init();
         this.$pace.start();
@@ -82,5 +82,33 @@ const vue = new Vue({
             }
         }
     }
-});
-window.vue = vue;
+};
+import Vuex from "vuex";
+Vue.use(Vuex);
+
+window.VueApp = {
+    div: "#app",
+    settings: vue_settings,
+    app: null,
+    store_modules: getDefaultStore(),
+    setStore(newStore) {
+        this.store = newStore;
+    },
+    setSettings(newSettings) {
+        this.settings = newSettings;
+    },
+    setStoreModules(newModules) {
+        this.store_modules = newModules;
+    },
+    appendStoreModule(moduleName, newModule) {
+        this.store_modules.modules[moduleName] = newModule;
+    },
+    initStore() {
+        this.settings.store = new Vuex.Store(this.store_modules);
+    },
+    start() {
+        this.initStore();
+        this.app = new Vue(this.settings);
+        this.app.$mount(this.div);
+    }
+};

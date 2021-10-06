@@ -55,15 +55,15 @@ export default {
                 datetimerange: () => {
                     return (Array.isArray(this.value) ? this.value : [])
                         .map(date => {
-                            return this.$moment(date).format(this.format);
+                            return this.formatDate(this.value);
                         })
                         .join(" - ");
                 },
                 date: () => {
-                    return this.$moment(this.value).format(this.format);
+                    return this.formatDate(this.value);
                 },
                 datetime: () => {
-                    return this.$moment(this.value).format(this.format);
+                    return this.formatDate(this.value);
                 },
                 upload: () => {
                     let images = (Array.isArray(this.value) ? this.value : [])
@@ -78,6 +78,13 @@ export default {
         }
     },
     methods: {
+        formatDate(dt) {
+            let date = this.$moment(dt)
+            if(!date.isValid()) {
+                return "";
+            }
+            return date.format(this.format);
+        },
         async init() {
             if (this.type == "belongsTo") {
                 if (this.model) {
