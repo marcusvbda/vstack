@@ -81,9 +81,9 @@ export default {
         formatDate(dt) {
             let date = this.$moment(dt)
             if(!date.isValid()) {
-                return "
+                return "";
             }
-            return date.format(this.format)
+            return date.format(this.format);
         },
         async init() {
             if (this.type == "belongsTo") {
