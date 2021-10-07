@@ -562,8 +562,18 @@ class ResourceController extends Controller
 		$data = $request->all();
 		if (!@$data["resource_id"]) abort(404);
 		$resource = ResourcesHelpers::find($data["resource_id"]);
-		if (@$data["id"]) if (!$resource->canUpdate()) abort(403);
-		if (!@$data["id"]) if (!$resource->canCreate()) abort(403);
+
+		if (@$data["id"]) {
+			request()->request->add(["page_type" => "edit"]);
+			if (!$resource->canUpdate()) {
+				abort(403);
+			}
+		} else {
+			request()->request->add(["page_type" => "create"]);
+			if (!$resource->canCreate()) {
+				abort(403);
+			}
+		}
 		$validation_custom_message =  $resource->getValidationRuleMessage();
 		$this->validate($request, $resource->getValidationRule(), @$validation_custom_message ? $validation_custom_message : []);
 		$id = @$data["id"];
@@ -839,6 +849,7 @@ class ResourceController extends Controller
 
 	public function storeWizardStepValidation(Request $request)
 	{
+		request()->request->add(["page_type" => $request["page_type"]]);
 		$resource = ResourcesHelpers::find($request["resource_id"]);
 		$rules = $resource->getValidationRule($request["wizard_step"]);
 		$request->validate($rules);
