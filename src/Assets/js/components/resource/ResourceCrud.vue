@@ -438,8 +438,13 @@ export default {
             if (this.wizard_step == this.data.fields.length - 1) {
                 return this.submit();
             }
+            let page_type = this.form.id ? "edit" : "create";
             this.$http
-                .post(`${this.data.store_route}-wizard-step-validation`, { ...this.form, wizard_step: this.wizard_step })
+                .post(`${this.data.store_route}-wizard-step-validation`, {
+                    ...this.form,
+                    wizard_step: this.wizard_step,
+                    page_type
+                })
                 .then(() => {
                     this.wizardTransitionName = "fade";
                     this.wizard_step++;
