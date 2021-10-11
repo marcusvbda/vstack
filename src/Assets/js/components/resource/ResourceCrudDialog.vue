@@ -29,6 +29,7 @@
             <resource-crud
                 :data="crud_content.data"
                 :params="$getUrlParams()"
+                :crud_type="crud_type"
                 :raw_type="crud_content.resource.page_type"
                 :first_btn="crud_content.resource.first_btn"
                 :second_btn="crud_content.resource.second_btn"
@@ -68,47 +69,46 @@
     </el-dialog>
 </template>
 <script>
-import VRuntimeTemplate from 'v-runtime-template'
+import VRuntimeTemplate from "v-runtime-template";
 export default {
-    props: ['resource_id', 'row_id'],
+    props: ["resource_id", "row_id", "crud_type"],
     data() {
         return {
             dialog: false,
             loading: true,
-            crud_content: {},
-        }
+            crud_content: {}
+        };
     },
     components: {
-        'v-runtime-template': VRuntimeTemplate,
+        "v-runtime-template": VRuntimeTemplate
     },
     computed: {
         title() {
-            return this.crud_content?.resource?.breadcrumb_labels[this.crud_content?.resource?.page_type] ?? ''
+            return this.crud_content?.resource?.breadcrumb_labels[this.crud_content?.resource?.page_type] ?? "";
         },
         sub_title() {
-            return this.crud_content?.resource?.dialog_sub_titles[this.crud_content?.resource?.page_type] ?? ''
-        },
+            return this.crud_content?.resource?.dialog_sub_titles[this.crud_content?.resource?.page_type] ?? "";
+        }
     },
     methods: {
         handleClose() {
-            this.dialog = false
+            this.dialog = false;
         },
         open() {
-            let loading = this.$loading({ text: 'Carregando ...' })
+            let loading = this.$loading({ text: "Carregando ..." });
             this.$http
                 .post(`/admin/${this.resource_id}/get-resource-crud-content`, {
-                    type: this.row_id ? 'edit' : 'create',
-                    id: this.row_id,
+                    type: this.row_id ? "edit" : "create",
+                    id: this.row_id
                 })
                 .then(({ data }) => {
-                    this.crud_content = data
-                    console.log(data)
-                    this.dialog = true
-                    loading.close()
-                })
-        },
-    },
-}
+                    this.crud_content = data;
+                    this.dialog = true;
+                    loading.close();
+                });
+        }
+    }
+};
 </script>
 
 <style lang="scss">
