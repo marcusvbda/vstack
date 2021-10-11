@@ -33,7 +33,8 @@ $row = $resource->getModelInstance()->findOrFail($data['id']);
     :crud_type='@json($resource->crudType())'
     code="{{ $row->code }}"
     >
-    @if (@$resource->afterViewSlot())
-        {!! @$resource->afterViewSlot() !!}
-    @endif
 </resource-view>
+
+@if (@$resource->afterViewSlot())
+    {!! @$resource->afterViewSlot() !!}
+@endif
