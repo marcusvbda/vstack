@@ -32,9 +32,14 @@ class ResourceController extends Controller
 	protected function showIndexList($resource, Request $request, $report_mode = false)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if ($report_mode && !$resource->canViewReport()) abort(403);
-		else {
-			if (!$resource->canViewList()) abort(403);
+		if ($report_mode) {
+			if (!$resource->canViewReport()) {
+				abort(403);
+			}
+		} else {
+			if (!$resource->canViewList()) {
+				abort(403);
+			}
 		}
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
