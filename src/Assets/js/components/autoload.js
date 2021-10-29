@@ -1,21 +1,13 @@
 import Vue from "vue";
 const files = require.context("./", true, /(\/)(?!.*\/)(?!-.*$).*\.vue$/i);
-files.keys().map(key =>
-    Vue.component(
-        key
-            .split("/")
-            .pop()
-            .split(".")[0],
-        files(key).default
-    )
-);
+files.keys().map((key) => Vue.component(key.split("/").pop().split(".")[0], files(key).default));
 import moment from "moment";
 require("./libs/charts");
 require("./libs/cookies");
 require("./libs/vmask");
 require("./libs/hash");
 require("./libs/linkPreview");
-require("summernote");
+// require("summernote");
 require("./libs/pace");
 require("jquery-ui-dist/jquery-ui");
 require("bootstrap");
@@ -44,7 +36,7 @@ const vue_settings = {
     store: null,
     data() {
         return {
-            root_loading: false
+            root_loading: false,
         };
     },
     created() {
@@ -59,7 +51,7 @@ const vue_settings = {
             this.$aos.init({
                 once: true,
                 disable: !laravel.vstack.animation_enabled,
-                duration: 200
+                duration: 200,
             });
             let body = document.querySelector("body");
             body.style.display = "block";
@@ -68,11 +60,11 @@ const vue_settings = {
                 if (laravel.user.code) {
                     this.$http
                         .post(`${laravel.general.root_url}/admin/vstack/notifications/${laravel.user.code}`, {})
-                        .then(res => {
+                        .then((res) => {
                             res = res.data;
                             res.notifications
-                                .filter(not => not.alert_type == "vstack_alert")
-                                .map(not => {
+                                .filter((not) => not.alert_type == "vstack_alert")
+                                .map((not) => {
                                     setTimeout(() => {
                                         this.$message({ showClose: true, message: not.data.message, type: not.data.type });
                                     });
@@ -80,8 +72,8 @@ const vue_settings = {
                         });
                 }
             }
-        }
-    }
+        },
+    },
 };
 import Vuex from "vuex";
 Vue.use(Vuex);
@@ -110,5 +102,5 @@ window.VueApp = {
         this.initStore();
         this.app = new Vue(this.settings);
         this.app.$mount(this.div);
-    }
+    },
 };
