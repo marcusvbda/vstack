@@ -13,7 +13,7 @@ $row = $resource->getModelInstance()->findOrFail($data['id']);
         </div>
     </div>
 </div>
-@if ($data['page_type'] == 'Edição' && $resource->useTags())
+@if ($resource->useTags())
     <resource-tags-input resource='{{ $resource->id }}' resource_code='{{ @$content->code }}' only_view></resource-tags-input>
 @endif
 <div class="w-100" data-aos="fade-up">
