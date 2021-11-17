@@ -39,10 +39,11 @@
 							@endif
 							@foreach($table as $key=>$value)
 							@php
-								$size =  (isset($value['size']) ? $value['size'] : 'auto') ;
+								$size =  (isset($value['size']) ? $value['size'] : 'auto');
+								$col_class = (isset($value['col_class']) ? $value['col_class'] : 'text-left');
 								$sortable_index = isset($value['sortable_index']) ? $value['sortable_index'] : $key;
 							@endphp
-							<th  width="{{$size}}">
+							<th  width="{{$size}}" class="resource-table-col {{ $col_class }}">
 								@if(@$value["sortable"]!==false)
 									<a href="{{ResourcesHelpers::sortLink($resource->route(),request()->query(), $sortable_index,$order_type)}}"
 										class="d-flex flex-row align-items-center link-sortable">
@@ -85,7 +86,7 @@
 								@endif
 								@if($has_actions)
 									<template slot="first-column">
-										<td  width="1%;">
+										<td  width="1%;" >
 											<div class="d-flex align-items-center justify-content-center">
 												<input class="select-action-resource select_action_box" type="checkbox" id="{{ $resource->id.'_action_select_'.$row->id }}" />
 											</div>
@@ -95,7 +96,7 @@
 							</tr>
 							@if($table_after_row)
 								<tr class="table-row after">
-									<td  colspan="{{ $columns_count }}">
+									<td  colspan="{{ $columns_count }}" >
 										<after-row-resource row_id="{{  $row->id }}">
 											{!! $resource->tableAfterRow($row) !!}
 										</after-row-resource>
