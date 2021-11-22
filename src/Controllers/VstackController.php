@@ -3,7 +3,6 @@
 namespace marcusvbda\vstack\Controllers;
 
 use App\Http\Controllers\Controller;
-use Hamcrest\Type\IsString;
 use ResourcesHelpers;
 use Illuminate\Http\Request;
 
@@ -23,15 +22,20 @@ class VstackController extends Controller
 			$content = $row;
 		} else {
 			foreach ($resource->table() as $key => $value) {
-				if (strpos($key, "->") === false) {
-					$content[$key] = @$row->{$key} !== null ? $row->{$key} : " - ";
-				} else {
-					$value = $row;
-					$_runner = explode("->", $key);
-					foreach ($_runner as $idx) {
-						$value = @$value->{$idx};
+				if (!@$value["handler"]) {
+					if (strpos($key, "->") === false) {
+						$content[$key] = @$row->{$key} !== null ? $row->{$key} : " - ";
+					} else {
+						$value = $row;
+						$_runner = explode("->", $key);
+						foreach ($_runner as $idx) {
+							$value = @$value->{$idx};
+						}
+						$content[$key] = (@$value !== null ? $value : ' - ');
 					}
-					$content[$key] = (@$value !== null ? $value : ' - ');
+				} else {
+					$result = @$value["handler"]($row);
+					$content[$key] = (@$result !== null ? $result : ' - ');
 				}
 			}
 		}
