@@ -16,41 +16,57 @@
                             <span v-html="prepend ? prepend : ''"></span>
                         </span>
                     </div>
-                    <currency-input
-                        v-if="type == 'currency'"
-                        class="form-control"
-                        v-bind:class="{ 'is-invalid': errors }"
-                        currency="BRL"
-                        :placeholder="placeholder ? placeholder : ''"
-                        :auto-decimal-mode="true"
-                        v-model="val"
-                        :maxlength="maxlength"
-                    />
-                    <template v-else>
-                        <the-mask
-                            :disabled="disabled"
-                            class="form-control"
-                            v-if="mask"
-                            :mask="mask"
-                            :masked="true"
-                            v-model="val"
-                            v-bind:class="{ 'is-invalid': errors }"
-                            :placeholder="placeholder ? placeholder : ''"
-                            :maxlength="maxlength"
-                            :type="type ? type : 'text'"
-                        />
+                    <template v-if="type == 'password'">
                         <input
                             :disabled="disabled"
                             class="form-control"
-                            v-else
                             v-model="val"
                             v-bind:class="{ 'is-invalid': errors }"
                             :placeholder="placeholder ? placeholder : ''"
                             :maxlength="maxlength"
-                            :type="type ? type : 'text'"
+                            :type="protected ? 'password' : 'text'"
                         />
+                        <el-button size="small" @click.prevent="protected = !protected">
+                            <i class="el-icon-lock" v-if="protected" />
+                            <i class="el-icon-unlock" v-else />
+                        </el-button>
                     </template>
-
+                    <template v-else>
+                        <currency-input
+                            v-if="type == 'currency'"
+                            class="form-control"
+                            v-bind:class="{ 'is-invalid': errors }"
+                            currency="BRL"
+                            :placeholder="placeholder ? placeholder : ''"
+                            :auto-decimal-mode="true"
+                            v-model="val"
+                            :maxlength="maxlength"
+                        />
+                        <template v-else>
+                            <the-mask
+                                :disabled="disabled"
+                                class="form-control"
+                                v-if="mask"
+                                :mask="mask"
+                                :masked="true"
+                                v-model="val"
+                                v-bind:class="{ 'is-invalid': errors }"
+                                :placeholder="placeholder ? placeholder : ''"
+                                :maxlength="maxlength"
+                                :type="type ? type : 'text'"
+                            />
+                            <input
+                                :disabled="disabled"
+                                class="form-control"
+                                v-else
+                                v-model="val"
+                                v-bind:class="{ 'is-invalid': errors }"
+                                :placeholder="placeholder ? placeholder : ''"
+                                :maxlength="maxlength"
+                                :type="type ? type : 'text'"
+                            />
+                        </template>
+                    </template>
                     <div class="input-group-append" v-if="append">
                         <span class="input-group-text">
                             <span v-html="append ? append : ''"></span>
@@ -71,7 +87,8 @@ export default {
     props: ["label", "type", "placeholder", "errors", "prepend", "append", "disabled", "mask", "description", "maxlength"],
     data() {
         return {
-            val: null
+            val: null,
+            protected: true
         };
     },
     watch: {
