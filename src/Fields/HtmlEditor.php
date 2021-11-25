@@ -26,17 +26,21 @@ class HtmlEditor extends Field
 		$field     = $this->options["field"];
 		$label = $this->options["label"];
 		$description = $this->options["description"];
-		$uploadroute = @$this->options["uploadroute"] ?? config("vstack.default_upload_route");
-		$mode = @$this->options["mode"] ? $this->options["mode"] : 'webpage';
+		$mode = @$this->options["mode"] ? $this->options["mode"] : 'both';
+		$show_btns = @$this->options["show_btns"] !== null ? $this->options["show_btns"] : true;
 		$field = $this->options["field"];
+		$placeholder = @$this->options["placeholder"] ? $this->options["placeholder"] : "Digite seu conteúdo markdown ou html";
+		$direction = @$this->options["direction"] ? $this->options["direction"] : "row";
 		$default = $this->options["default"];
 		return $this->view = view("vStack::resources.field.html_editor", compact(
 			"description",
 			"label",
 			"field",
-			"uploadroute",
 			"mode",
-			"default"
+			"default",
+			"show_btns",
+			"placeholder",
+			"direction"
 		))->render();
 	}
 }

@@ -1,7 +1,7 @@
 <template>
     <div :class="`row crud-type-${crud_type.template}`" id="crud-view">
         <div class="col-12">
-            <form class="needs-validation m-0" novalidate v-on:submit.prevent="submit" @keypress.13.prevent>
+            <form class="needs-validation m-0" novalidate v-on:submit.prevent>
                 <template v-if="dialog">
                     <div class="row">
                         <div class="col-12">

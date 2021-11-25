@@ -547,7 +547,7 @@ class ResourceController extends Controller
 						break;
 					case "html_editor":
 						$value = @$content->{$input->options["field"]};
-						$input->options["value"] = $value ? $value : (object)["css" => "", "body" => ""];
+						$input->options["value"] = $value ? $value : "";
 						break;
 					case "custom_component":
 						$value = @$content->{$input->options["field"]};
