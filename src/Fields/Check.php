@@ -29,6 +29,7 @@ class Check extends Field
         $inactive_text  = @$this->options["inactive_text"] ? $this->options["inactive_text"] : "";
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $description    = @$this->options["description"];
+        $eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
 
         return $this->view = view("vStack::resources.field.check", compact(
             "label",
@@ -38,7 +39,8 @@ class Check extends Field
             "active_text",
             "inactive_text",
             "active_color",
-            "inactive_color"
+            "inactive_color",
+            "eval"
         ))->render();
     }
 }

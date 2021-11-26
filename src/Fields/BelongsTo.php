@@ -33,6 +33,7 @@ class BelongsTo extends Field
 		$description = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
 		$all_options_label = @$this->options["all_options_label"] ? $this->options["all_options_label"] : 'Todos(as)';
+		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
 
 		return $this->view = view("vStack::resources.field.belongsto", compact(
 			"field",
@@ -45,7 +46,8 @@ class BelongsTo extends Field
 			"route_list",
 			"options",
 			"multiple",
-			"all_options_label"
+			"all_options_label",
+			"eval"
 		))->render();
 	}
 }

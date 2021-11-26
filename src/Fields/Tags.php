@@ -26,12 +26,15 @@ class Tags extends Field
         $field          = $this->options["field"];
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $description    = $this->options["description"];
+        $eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+
 
         return $this->view = view("vStack::resources.field.tags", compact(
             "disabled",
             "label",
             "description",
-            "field"
+            "field",
+            "eval"
         ))->render();
     }
 }

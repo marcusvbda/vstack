@@ -7,5 +7,6 @@
     :limit='{{$limit}}'                                                      
     accept='{{$accept}}'                        
     :sizelimit='{{ $sizelimit }}'                              
-    :errors='{{"errors.$field ? errors.$field : false"}}'                          
+    :errors='{{"errors.$field ? errors.$field : false"}}'    
+    {!! $eval !!}                          
 />

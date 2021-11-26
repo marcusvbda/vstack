@@ -29,6 +29,8 @@ class Radio extends Field
 		$disabled    = @$this->options["disabled"] ? "true" : "false";
 		$options     = @$this->options["options"] ? json_encode($this->options["options"]) : "[]";
 		$description = $this->options["description"];
+		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+
 
 		return $this->view = view("vStack::resources.field.radio", compact(
 			"field",
@@ -36,7 +38,8 @@ class Radio extends Field
 			"label",
 			"disabled",
 			"description",
-			"options"
+			"options",
+			"eval"
 		))->render();
 	}
 }

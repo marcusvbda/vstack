@@ -80,6 +80,8 @@ class Field
 		} else {
 			$format         = @$this->options["format"] ? $this->options["format"] : 'DD/MM/YYYY HH:mm:ss';
 		}
+		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+
 		return $this->view = view("vStack::resources.field.view_content", compact(
 			"label",
 			"description",
@@ -87,7 +89,8 @@ class Field
 			"type",
 			"options",
 			"model",
-			"format"
+			"format",
+			"eval"
 		))->render();
 	}
 }

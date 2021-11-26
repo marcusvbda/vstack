@@ -31,6 +31,8 @@ class Upload extends Field
         $uploadroute    = @$this->options["upload_route"] ? $this->options["upload_route"] : Config("vstack.default_upload_route");
         $label = $this->options["label"];
         $sizelimit = @$this->options["file_size_limit"] ? $this->options["file_size_limit"] : 0;
+        $eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+
 
         return $this->view = view("vStack::resources.field.upload", compact(
             "label",
@@ -40,7 +42,8 @@ class Upload extends Field
             "preview",
             "limit",
             "accept",
-            "sizelimit"
+            "sizelimit",
+            "eval"
         ))->render();
     }
 }

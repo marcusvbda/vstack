@@ -32,6 +32,8 @@ class HtmlEditor extends Field
 		$placeholder = @$this->options["placeholder"] ? $this->options["placeholder"] : "Digite seu conteúdo markdown ou html";
 		$direction = @$this->options["direction"] ? $this->options["direction"] : "row";
 		$default = $this->options["default"];
+		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+
 		return $this->view = view("vStack::resources.field.html_editor", compact(
 			"description",
 			"label",
@@ -40,7 +42,8 @@ class HtmlEditor extends Field
 			"default",
 			"show_btns",
 			"placeholder",
-			"direction"
+			"direction",
+			"eval"
 		))->render();
 	}
 }

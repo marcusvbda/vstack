@@ -11,5 +11,6 @@
     v-model='{{"form.$field"}}'                                                            
     placeholder='{{$placeholder}}'   
     v-show='{{$visible}}'                                                    
-    :errors='{{"errors.$field ? errors.$field : false"}}'                
+    :errors='{{"errors.$field ? errors.$field : false"}}'  
+    {!! $eval !!}                  
 />

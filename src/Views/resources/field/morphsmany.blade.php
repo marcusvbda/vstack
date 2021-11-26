@@ -6,5 +6,6 @@
     :disabled='{{$disabled}}' 
     :unique='{{$unique}}'                    
     placeholder='{{$placeholder}}' 
-    :errors='{{"errors.$field ? errors.$field : false"}}'   
+    :errors='{{"errors.$field ? errors.$field : false"}}' 
+    {!! $eval !!}      
 />

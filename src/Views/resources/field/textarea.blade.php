@@ -7,5 +7,6 @@
     placeholder='{{$placeholder}}'                                                       
     description='{{$description}}'                                                       
     :errors='{{"errors.$field ? errors.$field : false"}}'  
-	maxlength="{{ $maxlength }}"             
+	maxlength="{{ $maxlength }}"   
+    {!! $eval !!}              
 />

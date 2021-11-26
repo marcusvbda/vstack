@@ -3,5 +3,6 @@
     label='{{$label}}'                                                                 
     description='{{$description}}'                                                              
     v-model='{{"form.$field"}}'                                                            
-    :errors='{{"errors.$field ? errors.$field : false"}}'                                  
+    :errors='{{"errors.$field ? errors.$field : false"}}'
+    {!! $eval !!}                                  
 />

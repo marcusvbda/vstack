@@ -10,5 +10,6 @@
     :option_list='{{$options}}'  
 	all_options_label="{{ $all_options_label }}"
 	list_model='{{$model}}'
-	:errors='{{"errors.$field ? errors.$field : false"}}'     
+	:errors='{{"errors.$field ? errors.$field : false"}}'  
+    {!! $eval !!}          
 />

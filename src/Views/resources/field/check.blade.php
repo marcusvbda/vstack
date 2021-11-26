@@ -1,4 +1,4 @@
-<tr>
+<tr {!! $eval !!} >
 	<td class="w-25">
 		<div class="d-flex flex-column">
 			@if(@$label) 

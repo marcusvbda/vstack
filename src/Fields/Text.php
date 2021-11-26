@@ -33,6 +33,8 @@ class Text extends Field
 		$description    = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
 		$maxlength      = $this->options["maxlength"] ?  $this->options["maxlength"] : 255;
+		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+
 
 		return $this->view = view("vStack::resources.field.text", compact(
 			"disabled",
@@ -46,7 +48,8 @@ class Text extends Field
 			"placeholder",
 			"visible",
 			"field",
-			"maxlength"
+			"maxlength",
+			"eval"
 		))->render();
 	}
 }
