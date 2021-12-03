@@ -1,3 +1,32 @@
+
+@-webkit-keyframes animationGradient {
+    0% {
+      background-position: 88% 0%;
+    }
+  
+    50% {
+      background-position: 13% 100%;
+    }
+  
+    100% {
+      background-position: 88% 0%;
+    }
+  }
+  
+  @keyframes animationGradient {
+    0% {
+      background-position: 88% 0%;
+    }
+  
+    50% {
+      background-position: 13% 100%;
+    }
+  
+    100% {
+      background-position: 88% 0%;
+    }
+  }
+  
 .shimmer {
     background: linear-gradient(to right, #d9dfe4 0%, #edeef1 20%, #f1f1f1 40%, #cbd8e4 100%);
     background-size: 400% 400%;

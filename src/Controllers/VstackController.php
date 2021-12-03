@@ -14,13 +14,32 @@ class VstackController extends Controller
 		return  $this->{$request["type"]}($resource, $request);
 	}
 
-	protected function resourceTableContent($resource, $request)
+	protected function listAllInOne($resource, Request $request)
 	{
-		$row = $resource->useRawContentOnList() ? (object)$request['raw_content'] : $resource->model->findOrFail($request["row_id"]);
+		$rows = $resource->getModelInstance()->whereIn("id", $request->ids)->get();
+		$data = [];
+		foreach ($rows as $row) {
+			$row_data = $this->resourceTableContent($resource, $request, $row, true, true);
+			$data[] = $row_data;
+		}
+		return $data;
+	}
+
+	protected function resourceTableContent($resource, $request, $row = null, $force_id = false, $include_after_row = false)
+	{
+		if (@!$row) {
+			$row = $resource->useRawContentOnList() ? (object)$request['raw_content'] : $resource->model->findOrFail($request["row_id"]);
+		}
 		$content = [];
 		if (@$request["complete_model"]) {
 			$content = $row;
 		} else {
+			if ($force_id) {
+				$content["id"] = $row->id;
+			}
+			if ($include_after_row) {
+				$content["after_row"] = $resource->tableAfterRow($row);
+			}
 			foreach ($resource->table() as $key => $value) {
 				if (!@$value["handler"]) {
 					if (strpos($key, "->") === false) {

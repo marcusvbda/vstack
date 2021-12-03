@@ -65,46 +65,65 @@
 							@endif
 						</tr>
 					</thead>
-					<tbody>
-						@foreach($data as $row)
-							@php 
-								$code = \Hashids::encode($row->id);
-								$columns_count = count($resource->table())+($has_actions ? 1 : 0)+($table_after_row ? 2 : 0);
-							@endphp
-							<tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}" :raw_content='@json($row)'
-								resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
-								:show_right_actions_column='@json($show_right_actions_column)'
-								type="resourceTableContent"
-								:has_actions='@json($has_actions)'
-								>
-								@if($table_after_row)
-									<template slot="first-column">
-										<td  style="width:1%;padding-bottom: 10px!important;height: 1px;">
-											<portal-target class="h-100 d-flex justify-content-center" name="resource_after_row_arrow_{{ $row->id }}"></portal-target>
-										</td>
-									</template>
-								@endif
-								@if($has_actions)
-									<template slot="first-column">
-										<td  width="1%;" >
-											<div class="d-flex align-items-center justify-content-center">
-												<input class="select-action-resource select_action_box" type="checkbox" id="{{ $resource->id.'_action_select_'.$row->id }}" />
-											</div>
-										</td>
-									</template>
-								@endif
-							</tr>
-							@if($table_after_row)
-								<tr class="table-row after">
-									<td  colspan="{{ $columns_count }}" >
-										<after-row-resource row_id="{{  $row->id }}">
-											{!! $resource->tableAfterRow($row) !!}
-										</after-row-resource>
-									</td>
+					@php
+						$load_list_item_by_item = $resource->loadListItemByItem();
+					@endphp
+					@if($load_list_item_by_item)
+						<tbody>
+							@foreach($data as $row)
+								@php 
+									$code = \Hashids::encode($row->id);
+									$columns_count = count($resource->table())+($has_actions ? 1 : 0)+($table_after_row ? 2 : 0);
+								@endphp
+								<tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}" :raw_content='@json($row)'
+									resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
+									:show_right_actions_column='@json($show_right_actions_column)'
+									type="resourceTableContent"
+									:has_actions='@json($has_actions)'
+									>
+									@if($table_after_row)
+										<template slot="first-column">
+											<td  style="width:1%;padding-bottom: 10px!important;height: 1px;">
+												<portal-target class="h-100 d-flex justify-content-center" name="resource_after_row_arrow_{{ $row->id }}"></portal-target>
+											</td>
+										</template>
+									@endif
+									@if($has_actions)
+										<template slot="first-column">
+											<td  width="1%;" >
+												<div class="d-flex align-items-center justify-content-center">
+													<input class="select-action-resource select_action_box" type="checkbox" id="{{ $resource->id.'_action_select_'.$row->id }}" />
+												</div>
+											</td>
+										</template>
+									@endif
 								</tr>
-							@endif
-						@endforeach
-					</tbody>
+								@if($table_after_row)
+									<tr class="table-row after">
+										<td  colspan="{{ $columns_count }}" >
+											<after-row-resource row_id="{{  $row->id }}">
+												{!! $resource->tableAfterRow($row) !!}
+											</after-row-resource>
+										</td>
+									</tr>
+								@endif
+							@endforeach
+						</tbody>
+					@else
+						@php
+							$item_ids = $data->pluck("id")->toArray();
+						@endphp
+						<tbody is="resource-tablelist-allinone" 
+							:ids='@json($item_ids)'
+							:table_keys='@json($table_keys)'
+							:table_after_row='@json($table_after_row)'
+							:has_actions='@json($has_actions)'
+							:show_right_actions_column='@json($show_right_actions_column)'	
+							resource_id="{{$resource->id}}"			
+							resource_route="{{$resource->route()}}"			
+						>
+						</tbody>
+					@endif
 				</table>
 			</div>
         @else

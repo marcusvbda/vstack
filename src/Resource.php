@@ -624,4 +624,9 @@ class Resource
 						</div>"
 		];
 	}
+
+	public function loadListItemByItem()
+	{
+		return false;
+	}
 }
