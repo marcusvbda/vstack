@@ -15,7 +15,7 @@
         </template>
         <template v-else>
             <template v-for="(row, i) in rows">
-                <tr :key="i" :id="row.id">
+                <tr :key="i" :id="row.content.id">
                     <td v-for="(col, y) in columns" :key="`${i}_${y}`">
                         <resource-tablelist-allinone-item
                             :virtual_indexes="virtual_indexes"
