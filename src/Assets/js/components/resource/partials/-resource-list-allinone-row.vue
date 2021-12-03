@@ -37,22 +37,29 @@
             <template v-if="col == 'code'">
                 <b>
                     <template v-if="row.acl.can_view">
-                        <a :href="`${resource_route}/${row.content[col]}`" v-html="row.content[col]" />
+                        <a :href="`${resource_route}/${row.content[col]}`">
+                            <v-runtime-template :template="`<div>${row.content[col]}</div>`" />
+                        </a>
                     </template>
                     <template v-else>
-                        <span v-html="row.content[col]" />
+                        <v-runtime-template :template="`<div>${row.content[col]}</div>`" />
                     </template>
                 </b>
             </template>
             <template v-else>
-                <span v-html="row.content[col]" />
+                <v-runtime-template :template="`<div>${row.content[col]}</div>`" />
             </template>
         </template>
     </div>
 </template>
 <script>
+import VRuntimeTemplate from "v-runtime-template";
+
 export default {
     props: ["col", "row", "resource_id", "virtual_indexes", "resource_route"],
+    components: {
+        "v-runtime-template": VRuntimeTemplate
+    },
     data() {
         return {
             after_row: {
