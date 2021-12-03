@@ -36,6 +36,7 @@ class VstackController extends Controller
 		} else {
 			if ($force_id) {
 				$content["id"] = $row->id;
+				$content["code"] = $row->code;
 			}
 			if ($include_after_row) {
 				$content["after_row"] = $resource->tableAfterRow($row);
