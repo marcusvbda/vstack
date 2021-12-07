@@ -30,11 +30,10 @@
                             >
                                 <ElOption v-for="t in filteredOption" :key="t.id" :label="t.name" :value="t.name">
                                     <ElTag
-                                        :style="{ borderColor: t.color, color: t.color, fontWeight: 700 }"
+                                        :style="{ '--color': t.color }"
                                         class="resource-tag"
                                         size="mini"
                                         :key="t.id"
-                                        color="transparent"
                                         :hit="true"
                                     >
                                         {{ t.name }}
@@ -178,5 +177,8 @@ export default {
     background-color: var(--color);
     color: white;
     font-weight: 700;
+}
+.el-tag.el-tag__close {
+    color: white !important;
 }
 </style>

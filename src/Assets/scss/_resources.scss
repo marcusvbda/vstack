@@ -6,6 +6,9 @@
 }
 
 .resource-table {
+    small {
+        zoom: .9;
+    }
     &.table-striped {
         tbody {
             tr {

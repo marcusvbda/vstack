@@ -4,6 +4,7 @@ namespace marcusvbda\vstack\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use marcusvbda\vstack\Models\Traits\hasCode;
+use marcusvbda\vstack\Models\Traits\hasTags;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use marcusvbda\vstack\Models\Traits\CascadeOrRestrictSoftdeletes;
 use marcusvbda\vstack\Models\Scopes\TenantScope;
@@ -13,7 +14,7 @@ use marcusvbda\vstack\Vstack;
 
 class DefaultModel extends Model
 {
-	use hasCode, SoftDeletes, CascadeOrRestrictSoftdeletes, useTenantTz;
+	use hasCode, SoftDeletes, CascadeOrRestrictSoftdeletes, useTenantTz, hasTags;
 	public $guarded = ["created_at"];
 	public $cascadeDeletes = [];
 	public $restrictDeletes = [];
