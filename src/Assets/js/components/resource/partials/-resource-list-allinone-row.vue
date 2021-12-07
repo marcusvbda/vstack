@@ -27,14 +27,14 @@
                         crud_type: row.acl.crud_type,
                         resource_label: row.acl.resource_label,
                         resource_icon: row.acl.resource_icon,
-                        resource_singular_label: row.acl.resource_singular_label
+                        resource_singular_label: row.acl.resource_singular_label,
                     }"
                     :id="row.content.id"
                 />
             </template>
         </template>
         <template v-else>
-            <template v-if="col == 'code'">
+            <template v-if="first_key">
                 <b>
                     <template v-if="row.acl.can_view">
                         <a :href="`${resource_route}/${row.content[col]}`">
@@ -42,7 +42,7 @@
                         </a>
                     </template>
                     <template v-else>
-                        <v-runtime-template :template="`<div>${row.content[col]}</div>`" />
+                        <v-runtime-template class="text-muted" :template="`<div>${row.content[col]}</div>`" />
                     </template>
                 </b>
             </template>
@@ -56,23 +56,23 @@
 import VRuntimeTemplate from "v-runtime-template";
 
 export default {
-    props: ["col", "row", "resource_id", "virtual_indexes", "resource_route"],
+    props: ["col", "first_key", "row", "resource_id", "virtual_indexes", "resource_route"],
     components: {
-        "v-runtime-template": VRuntimeTemplate
+        "v-runtime-template": VRuntimeTemplate,
     },
     data() {
         return {
             after_row: {
-                visible: false
-            }
+                visible: false,
+            },
         };
     },
     computed: {
         virtual_columns() {
-            return Object.keys(this.virtual_indexes).map(key => {
+            return Object.keys(this.virtual_indexes).map((key) => {
                 return this.virtual_indexes[key];
             });
-        }
-    }
+        },
+    },
 };
 </script>

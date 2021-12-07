@@ -7,7 +7,7 @@
                         class="shimmer"
                         :style="{
                             width: '100%',
-                            height: Math.random() * (45 - 10) + 20
+                            height: Math.random() * (45 - 10) + 20,
                         }"
                     />
                 </td>
@@ -21,6 +21,7 @@
                             :virtual_indexes="virtual_indexes"
                             :row="row"
                             :col="col"
+                            :first_key="first_key == col"
                             :resource_id="resource_id"
                             :resource_route="resource_route"
                         >
@@ -68,17 +69,18 @@ export default {
         return {
             loading: true,
             pusher_initialized: false,
+            first_key: this.table_keys[0],
             virtual_indexes: {
                 action_col: "action_checkbox_index",
                 after_row: "after_row_index",
-                right_actions_column: "right_actions_index"
+                right_actions_column: "right_actions_index",
             },
-            rows: []
+            rows: [],
         };
     },
     components: {
         "resource-tablelist-allinone-item": require("./partials/-resource-list-allinone-row.vue").default,
-        "v-runtime-template": VRuntimeTemplate
+        "v-runtime-template": VRuntimeTemplate,
     },
     computed: {
         columns() {
@@ -94,7 +96,7 @@ export default {
                 columns.push(this.virtual_indexes.right_actions_column);
             }
             return columns;
-        }
+        },
     },
     created() {
         this.getContent();
@@ -106,7 +108,7 @@ export default {
                     `/vstack/${this.resource_id}/get-partial-content`,
                     {
                         type: "listAllInOne",
-                        ids: this.ids
+                        ids: this.ids,
                     },
                     { retries: 3 }
                 )
@@ -122,7 +124,7 @@ export default {
         subscribeToChannel(id) {
             this.$echo
                 .private(`App.Tenant.${laravel.tenant.id}`)
-                .listen(`.notifications.resource.${this.resource_id}.${id}`, resp => {
+                .listen(`.notifications.resource.${this.resource_id}.${id}`, (resp) => {
                     if (resp.event == "reload") {
                         this.getResourceTableContent();
                     }
@@ -130,11 +132,11 @@ export default {
         },
         initPusher() {
             if (laravel.tenant.id && laravel.chat.pusher_key) {
-                this.ids.map(id => {
+                this.ids.map((id) => {
                     this.subscribeToChannel(id);
                 });
             }
-        }
-    }
+        },
+    },
 };
 </script>

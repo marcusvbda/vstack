@@ -41,6 +41,9 @@ class VstackController extends Controller
 			if ($include_after_row) {
 				$content["after_row"] = $resource->tableAfterRow($row);
 			}
+			if ($resource->useTags()) {
+				$content["tags"] = $row->tags;
+			}
 			foreach ($resource->table() as $key => $value) {
 				if (!@$value["handler"]) {
 					if (strpos($key, "->") === false) {
