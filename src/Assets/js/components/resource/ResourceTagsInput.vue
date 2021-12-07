@@ -2,55 +2,67 @@
     <div class="row mb-3">
         <transition name="fade">
             <div class="col-12 d-flex flex-row flex-wrap align-items-center" v-if="!loading">
-                <ElTag
-                    :style="{ '--color': t.color }"
-                    class="resource-tag"
-                    size="mini"
-                    :closable="only_view == undefined"
-                    v-for="(t, i) in tags"
-                    :key="t.id"
-                    :hit="true"
-                    @close="handleClose(t, i)"
-                >
-                    {{ t.name }}
-                </ElTag>
-                <button class="ml-2 btn-new-tag" title="Nova Tag" @click="dialogVisible = true" v-if="only_view == undefined">
-                    <span class="el-icon-price-tag" />
-                </button>
-                <ElDialog title="Adicionar Tags" :visible.sync="dialogVisible" width="30%">
-                    <div class="row">
-                        <div class="col-12">
-                            <ElSelect
-                                class="w-100"
-                                v-model="newTag"
-                                filterable
-                                allow-create
-                                default-first-option
-                                placeholder="Selecione ou Digite a tag que deseja adicionar"
-                            >
-                                <ElOption v-for="t in filteredOption" :key="t.id" :label="t.name" :value="t.name">
-                                    <ElTag
-                                        :style="{ '--color': t.color }"
-                                        class="resource-tag"
-                                        size="mini"
-                                        :key="t.id"
-                                        :hit="true"
-                                    >
-                                        {{ t.name }}
-                                    </ElTag>
-                                </ElOption>
-                            </ElSelect>
+                <template v-if="only_view == undefined">
+                    <ElTag
+                        :style="{ '--color': t.color }"
+                        class="resource-tag"
+                        size="mini"
+                        :closable="only_view == undefined"
+                        v-for="(t, i) in tags"
+                        :key="t.id"
+                        :hit="true"
+                        @close="handleClose(t, i)"
+                    >
+                        {{ t.name }}
+                    </ElTag>
+                    <button class="ml-2 btn-new-tag" title="Nova Tag" @click="dialogVisible = true" v-if="only_view == undefined">
+                        <span class="el-icon-price-tag" />
+                    </button>
+                    <ElDialog title="Adicionar Tags" :visible.sync="dialogVisible" width="30%">
+                        <div class="row">
+                            <div class="col-12">
+                                <ElSelect
+                                    class="w-100"
+                                    v-model="newTag"
+                                    filterable
+                                    allow-create
+                                    default-first-option
+                                    placeholder="Selecione ou Digite a tag que deseja adicionar"
+                                >
+                                    <ElOption v-for="t in filteredOption" :key="t.id" :label="t.name" :value="t.name">
+                                        <ElTag
+                                            :style="{ '--color': t.color }"
+                                            class="resource-tag"
+                                            size="mini"
+                                            :key="t.id"
+                                            :hit="true"
+                                        >
+                                            {{ t.name }}
+                                        </ElTag>
+                                    </ElOption>
+                                </ElSelect>
+                            </div>
                         </div>
-                    </div>
-                    <span slot="footer" class="dialog-footer" v-if="canSave">
-                        <ElButton @click="dialogVisible = false">
-                            Cancelar
-                        </ElButton>
-                        <ElButton type="primary" @click="addTag" v-loading="submiting" :disabled="submiting">
-                            Adicionar
-                        </ElButton>
+                        <span slot="footer" class="dialog-footer" v-if="canSave">
+                            <ElButton @click="dialogVisible = false">
+                                Cancelar
+                            </ElButton>
+                            <ElButton type="primary" @click="addTag" v-loading="submiting" :disabled="submiting">
+                                Adicionar
+                            </ElButton>
+                        </span>
+                    </ElDialog>
+                </template>
+                <template v-else>
+                    <span
+                        class="resource-badge badge badge-primary"
+                        v-for="(t, i) in tags"
+                        :key="i"
+                        :style="{ '--color': t.color }"
+                    >
+                        {{ t.name }}
                     </span>
-                </ElDialog>
+                </template>
             </div>
         </transition>
     </div>
@@ -180,5 +192,17 @@ export default {
 }
 .el-tag.el-tag__close {
     color: white !important;
+    &:before {
+        color: white !important;
+    }
+}
+
+.resource-badge {
+    border-color: var(--color);
+    background-color: var(--color);
+    color: white;
+}
+.resource-badge + .resource-badge {
+    margin-left: 5px;
 }
 </style>
