@@ -9,7 +9,6 @@
                     :closable="only_view == undefined"
                     v-for="(t, i) in tags"
                     :key="t.id"
-                    color="transparent"
                     :hit="true"
                     @close="handleClose(t, i)"
                 >
@@ -90,7 +89,13 @@ export default {
             this.loading_options = false;
             this.loading = false;
         } else {
-            this.getTags();
+            if (this.default_tags === null) {
+                this.tags = [];
+                this.loading_options = false;
+                this.loading = false;
+            } else {
+                this.getTags();
+            }
         }
         if (this.only_view == undefined) {
             if (Array.isArray(this.default_options)) {
@@ -169,8 +174,9 @@ export default {
     }
 }
 .resource-tag {
-    border-color: var(--color);
-    color: var(--color);
+    border-color: #444;
+    background-color: var(--color);
+    color: white;
     font-weight: 700;
 }
 </style>
