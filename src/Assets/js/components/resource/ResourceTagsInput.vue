@@ -174,7 +174,7 @@ export default {
     }
 }
 .resource-tag {
-    border-color: #444;
+    border-color: var(--color);
     background-color: var(--color);
     color: white;
     font-weight: 700;
