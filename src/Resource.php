@@ -417,17 +417,13 @@ class Resource
 	public function tagColors()
 	{
 		return [
-			"red",
-			"blue",
-			"green",
-			"purple",
-			"brown",
-			"orange",
-			"#f115e0",
-			"#7e15f1",
-			"#02bec7",
-			"#01a02a",
-			"#deec0d"
+			"#e56868",
+			"#7d7ded",
+			"#87bf87",
+			"#903d90",
+			"#9c0c91",
+			"#9c76c5",
+			"#5ab2b6"
 		];
 	}
 
