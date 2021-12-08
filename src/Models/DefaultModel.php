@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use marcusvbda\vstack\Models\Traits\CascadeOrRestrictSoftdeletes;
 use marcusvbda\vstack\Models\Scopes\TenantScope;
 use marcusvbda\vstack\Models\Observers\TenantObserver;
+use marcusvbda\vstack\Models\Traits\HasSlug;
 use marcusvbda\vstack\Models\Traits\useTenantTz;
 use marcusvbda\vstack\Vstack;
 
 class DefaultModel extends Model
 {
-	use hasCode, SoftDeletes, CascadeOrRestrictSoftdeletes, useTenantTz, hasTags;
+	use hasCode, SoftDeletes, CascadeOrRestrictSoftdeletes, useTenantTz, hasTags, HasSlug;
 	public $guarded = ["created_at"];
 	public $cascadeDeletes = [];
 	public $restrictDeletes = [];
@@ -25,6 +26,11 @@ class DefaultModel extends Model
 			static::observe(new TenantObserver());
 			static::addGlobalScope(new TenantScope());
 		}
+	}
+
+	public static function sluggable()
+	{
+		return null;
 	}
 
 	public static function hasTenant()
