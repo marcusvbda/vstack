@@ -714,7 +714,7 @@ class ResourceController extends Controller
 			return ["path" => asset("public/storage/$name")];
 		}
 		if (@$request['files']) {
-			$url = $request['files'];
+			$url = $request['files'][0];
 			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
 			Storage::put(
 				"public/$name",
