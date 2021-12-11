@@ -180,4 +180,9 @@ class VstackController extends Controller
 		}
 		return $query;
 	}
+
+	public function grapesEditor()
+	{
+		return view("vStack::resources.field.grapes.iframe");
+	}
 }

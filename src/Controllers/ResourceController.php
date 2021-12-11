@@ -567,7 +567,6 @@ class ResourceController extends Controller
 		$data = $request->all();
 		if (!@$data["resource_id"]) abort(404);
 		$resource = ResourcesHelpers::find($data["resource_id"]);
-
 		if (@$data["id"]) {
 			request()->request->add(["page_type" => "edit"]);
 			if (!$resource->canUpdate()) {
