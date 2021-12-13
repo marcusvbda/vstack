@@ -8,5 +8,5 @@
     mode='{{$mode}}'  
     :blocks='@json($blocks)'       
     :settings='@json($settings)'       
-    height='{{ $height }}'       
+    :height='{{ $height }}'       
 />
