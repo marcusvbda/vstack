@@ -26,13 +26,13 @@ class HtmlEditor extends Field
 		$field     = $this->options["field"];
 		$label = $this->options["label"];
 		$description = $this->options["description"];
-		$mode = @$this->options["mode"] ? $this->options["mode"] : 'both';
-		$show_btns = @$this->options["show_btns"] !== null ? $this->options["show_btns"] : true;
+		$mode = @$this->options["mode"] ? $this->options["mode"] : 'webpage';
 		$field = $this->options["field"];
-		$placeholder = @$this->options["placeholder"] ? $this->options["placeholder"] : "Digite seu conteúdo markdown ou html";
-		$direction = @$this->options["direction"] ? $this->options["direction"] : "row";
 		$default = $this->options["default"];
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+		$blocks = @$this->options["blocks"] ? $this->options["blocks"]  : [];
+		$settings = @$this->options["settings"] ? (object)$this->options["settings"]  : (object)[];
+		$height = @$this->options["height"] ? $this->options["height"]  : 1000;
 
 		return $this->view = view("vStack::resources.field.html_editor", compact(
 			"description",
@@ -40,10 +40,10 @@ class HtmlEditor extends Field
 			"field",
 			"mode",
 			"default",
-			"show_btns",
-			"placeholder",
-			"direction",
-			"eval"
+			"eval",
+			"blocks",
+			"settings",
+			"height"
 		))->render();
 	}
 }
