@@ -1,12 +1,20 @@
 <template>
     <div class="grapes-preview-window" v-bind:class="{ 'is-invalid': errors }">
-        <iframe v-show="started" @load="onLoadIframe" ref="iframe" src="/vstack/grapes-editor" width="100%" frameborder="0" :style="{height}"/>
+        <iframe
+            v-show="started"
+            @load="onLoadIframe"
+            ref="iframe"
+            src="/vstack/grapes-editor"
+            width="100%"
+            frameborder="0"
+            :style="{ height }"
+        />
         <div class="invalid-feedback" v-if="errors">
             <ul class="pl-3 mb-0">
                 <li v-for="(e, i) in errors" :key="i" v-html="e" />
             </ul>
         </div>
-        <div class="shimmer w-100" :style="{height}" v-if="!started" />
+        <div class="shimmer w-100" :style="{ height }" v-if="!started" />
     </div>
 </template>
 
@@ -14,7 +22,7 @@
 import presetWebPage from "grapesjs-preset-webpage";
 import presetNewsletter from "grapesjs-preset-newsletter";
 import gpsCustomCode from "grapesjs-custom-code";
-import variables from '../../../../../../../../resources/sass/_variables.scss';
+import variables from "../../../../../../../../resources/sass/_variables.scss";
 import BR from "../libs/grapes_translate";
 
 export default {
@@ -141,7 +149,9 @@ export default {
         },
         setTheme() {
             let doc = this.$refs.iframe.contentDocument;
-            doc.body.innerHTML =  doc.body.innerHTML + `
+            doc.body.innerHTML =
+                doc.body.innerHTML +
+                `
             <style>  
                 .gjs-four-color{ 
                     color : ${variables.primary};
@@ -167,9 +177,9 @@ export default {
 .grapes-preview-window {
     display: flex;
     flex-direction: column;
-    height: 100%!important;
+    height: 100% !important;
     iframe {
-        height: 100%!important;
+        height: 100% !important;
         overflow: hidden;
         padding: 0.1;
         border: 1px solid #e2e2e2;
@@ -184,4 +194,4 @@ export default {
         }
     }
 }
-</styl>
+</style>
