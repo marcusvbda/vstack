@@ -28,6 +28,7 @@
   }
   
 .shimmer {
+    cursor: wait;
     background: linear-gradient(to right, #d9dfe4 0%, #edeef1 20%, #f1f1f1 40%, #cbd8e4 100%);
     background-size: 400% 400%;
     -webkit-animation: animationGradient 3s ease infinite;
