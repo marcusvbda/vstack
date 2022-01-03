@@ -36,10 +36,17 @@
         <template v-else>
             <template v-if="first_key">
                 <b>
-                    <template v-if="row.acl.can_view">
-                        <a :href="`${resource_route}/${row.content[col]}`">
-                            <v-runtime-template :template="`<div>${row.content[col]}</div>`" />
-                        </a>
+                    <template v-if="row.acl.can_view || row.acl.can_update">
+                        <template v-if="row.acl.can_view">
+                            <a :href="`${resource_route}/${row.content.code}`">
+                                <v-runtime-template :template="`<div>${row.content[col]}</div>`" />
+                            </a>
+                        </template>
+                        <template v-else>
+                            <a :href="`${resource_route}/${row.content.code}/edit`">
+                                <v-runtime-template :template="`<div>${row.content[col]}</div>`" />
+                            </a>
+                        </template>
                     </template>
                     <template v-else>
                         <v-runtime-template class="text-muted" :template="`<div>${row.content[col]}</div>`" />
