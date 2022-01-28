@@ -12,9 +12,10 @@
         <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl" :before-close="confirmClose" :append-to-body="true">
             <template slot="title">
                 <div class="w-100 d-flex flex-row">
-                    <el-button class="mr-3" size="medium" type="primary" @click="makeNewRoute"
-                        ><span class="el-icon-search mr-2" />Confirmar Filtro</el-button
-                    >
+                    <el-button class="mr-3" size="medium" type="primary" @click="makeNewRoute">
+                        <span class="el-icon-search mr-2" />
+                        Confirmar Filtro
+                    </el-button>
                 </div>
             </template>
             <div class="row">
@@ -33,7 +34,12 @@
                                                 />
                                             </div>
                                             <div class="col-7 pr-0">
-                                                <el-select v-model="filter.per_page" size="medium" class="w-100" @change="showConfirmBtn = true">
+                                                <el-select
+                                                    v-model="filter.per_page"
+                                                    size="medium"
+                                                    class="w-100"
+                                                    @change="showConfirmBtn = true"
+                                                >
                                                     <el-option
                                                         :key="op"
                                                         v-for="op in per_page"
@@ -65,32 +71,34 @@
     </div>
 </template>
 <script>
-import VRuntimeTemplate from 'v-runtime-template';
 export default {
-    props: ['data', 'label', 'per_page', 'report_mode'],
+    props: ["data", "label", "per_page", "report_mode"],
     data() {
         return {
             showConfirmBtn: false,
             drawer: false,
-            route: window.location.href.split('?')[0],
+            route: window.location.href.split("?")[0],
             filter: {
                 per_page: Number(
-                    this.data?.query?.per_page ? this.data?.query?.per_page : Array.isArray(this.per_page) ? this.per_page[0] : this.per_page
+                    this.data?.query?.per_page
+                        ? this.data?.query?.per_page
+                        : Array.isArray(this.per_page)
+                            ? this.per_page[0]
+                            : this.per_page
                 ),
             },
             timeout: null,
         };
     },
     components: {
-        'v-runtime-template': VRuntimeTemplate,
-        'btn-body': require('./partials/-filter-btn-row.vue').default,
+        "btn-body": require("./partials/-filter-btn-row.vue").default,
     },
     computed: {
         qty_filters() {
             const qty = Object.keys(this.filter)
-                .filter(y => y != 'per_page')
-                .map(key => this.$root.$refs.tags_filter.hasContent(this.filter, key))
-                .filter(x => x).length;
+                .filter((y) => y != "per_page")
+                .map((key) => this.$root.$refs.tags_filter.hasContent(this.filter, key))
+                .filter((x) => x).length;
             return qty || 0;
         },
         show_page_list() {
@@ -103,12 +111,14 @@ export default {
     mounted() {
         const el = this.$refs.content;
         if (!el) return;
-        el.addEventListener('click', event => event.stopPropagation());
+        el.addEventListener("click", (event) => event.stopPropagation());
     },
     methods: {
         confirmClose() {
             if (this.showConfirmBtn) {
-                this.$confirm('Deseja confirmar o filtro selecionado ?', 'Confirmação', { closeOnClickModal: false }).then(() => this.makeNewRoute());
+                this.$confirm("Deseja confirmar o filtro selecionado ?", "Confirmação", { closeOnClickModal: false }).then(() =>
+                    this.makeNewRoute()
+                );
             } else this.closeDrawer();
         },
         closeDrawer() {
@@ -118,46 +128,58 @@ export default {
             this.drawer = !this.drawer;
         },
         makeNewRoute() {
-            let str_query = '';
+            let str_query = "";
             let filter_keys = Object.keys(this.filter);
-            filter_keys.forEach(key => (this.data.query[key] = this.filter[key]));
-            Object.keys(this.data.query).forEach(key => {
-                if (key != 'page' && key != '_') {
-                    if (!['null', null].includes(this.data.query[key])) {
-                        str_query += `${key}=${this.data.query[key]}&`;
+            filter_keys.forEach((key) => (this.data.query[key] = this.filter[key]));
+            Object.keys(this.data.query).forEach((key) => {
+                if (key != "page" && key != "_") {
+                    if (!["null", null].includes(this.data.query[key])) {
+                        if (Array.isArray(this.data.query[key])) {
+                            if (this.data.query[key].length) {
+                                str_query += `${key}=${this.data.query[key]}&`;
+                            }
+                        } else {
+                            if (this.data.query[key]) {
+                                str_query += `${key}=${this.data.query[key]}&`;
+                            }
+                        }
                     }
                 }
             });
-            if (this.data.query['_']) str_query += `${str_query ? '&' : ''}_=${this.data.query['_'] ? this.data.query['_'] : ''}`;
+            if (this.data.query["_"]) {
+                str_query += `${str_query ? "&" : ""}_=${this.data.query["_"] ? this.data.query["_"] : ""}`;
+            }
             str_query = str_query.slice(0, -1);
-            this.$loading({ text: 'Atualizando Filtros...' });
-
+            this.$loading({ text: "Atualizando Filtros..." });
             window.location.href = `${this.route}?${str_query}`;
         },
         setFormValue(index, value, filter) {
-            if (filter.component == 'text-filter') value = String(value);
-            if (filter.component == 'check-filter') value = value === 'true';
-            if (filter.component == 'select-filter') {
+            if (filter.component == "text-filter") value = String(value);
+            if (filter.component == "check-filter") value = value === "true";
+            if (filter.component == "select-filter") {
                 if (filter?.multiple) {
                     value = value
-                        .split(',')
-                        .map(x => (x ? (!isNaN(Number(x)) ? Number(x) : '') : ''))
-                        .filter(x => x);
-                } else value = value ? (!isNaN(Number(value)) ? Number(value) : '') : '';
+                        .split(",")
+                        .map((x) => (x ? (!isNaN(Number(x)) ? Number(x) : "") : ""))
+                        .filter((x) => x);
+                } else value = value ? (!isNaN(Number(value)) ? Number(value) : "") : "";
             }
-            if (filter.component == 'rangedate-filter') value = value.split(',');
+            if (filter.component == "rangedate-filter") value = value.split(",");
             this.$set(this.filter, index, value);
         },
         initFormFilter() {
             let filter_keys = Object.keys(this.data.filters);
             for (let i in filter_keys) {
                 if (this.data.filters[filter_keys[i]]) {
-                    if (this.data.filters[filter_keys[i]].index)
+                    if (this.data.filters[filter_keys[i]].index) {
                         this.setFormValue(
                             this.data.filters[filter_keys[i]].index,
-                            this.data.query[this.data.filters[filter_keys[i]].index] ? this.data.query[this.data.filters[filter_keys[i]].index] : '',
+                            this.data.query[this.data.filters[filter_keys[i]].index]
+                                ? this.data.query[this.data.filters[filter_keys[i]].index]
+                                : "",
                             this.data.filters[filter_keys[i]]
                         );
+                    }
                 }
             }
         },
