@@ -25,6 +25,7 @@
                             :placeholder="placeholder ? placeholder : ''"
                             :maxlength="maxlength"
                             :type="protected ? 'password' : 'text'"
+                            @blur="$emit('blur', val)"
                         />
                         <el-button size="small" @click.prevent="protected = !protected">
                             <i class="el-icon-lock" v-if="protected" />
@@ -41,6 +42,7 @@
                             :auto-decimal-mode="true"
                             v-model="val"
                             :maxlength="maxlength"
+                            @blur="$emit('blur', val)"
                         />
                         <template v-else>
                             <the-mask
@@ -53,6 +55,7 @@
                                 v-bind:class="{ 'is-invalid': errors }"
                                 :placeholder="placeholder ? placeholder : ''"
                                 :maxlength="maxlength"
+                                @blur="$emit('blur', val)"
                                 :type="type ? type : 'text'"
                             />
                             <input
@@ -64,6 +67,7 @@
                                 :placeholder="placeholder ? placeholder : ''"
                                 :maxlength="maxlength"
                                 :type="type ? type : 'text'"
+                                @blur="$emit('blur', val)"
                             />
                         </template>
                     </template>
@@ -84,20 +88,35 @@
 </template>
 <script>
 export default {
-    props: ["label", "type", "placeholder", "errors", "prepend", "append", "disabled", "mask", "description", "maxlength"],
+    props: [
+        "label",
+        "type",
+        "placeholder",
+        "errors",
+        "prepend",
+        "append",
+        "disabled",
+        "mask",
+        "description",
+        "maxlength",
+        "value",
+    ],
     data() {
         return {
             val: null,
-            protected: true
+            protected: true,
         };
     },
     watch: {
         val(val) {
             return this.$emit("input", val);
-        }
+        },
+        value(val) {
+            this.val = val;
+        },
     },
     async created() {
         this.val = this.$attrs.value;
-    }
+    },
 };
 </script>
