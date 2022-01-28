@@ -252,3 +252,8 @@ Vue.prototype.$niceBytes = x => {
 };
 
 Vue.prototype.$avoidNaN = (value, fallback = 0) => (isNaN(value) ? fallback : value);
+
+
+Vue.prototype.$paramsToObject = () => {
+    return  Object.fromEntries(new URLSearchParams(location.search));
+}
