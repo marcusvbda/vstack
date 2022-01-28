@@ -57,13 +57,14 @@ export default {
             })
         },
         openExportModal() {
-            if (this.waiting_qty >= this.waiting_limit)
+            if (this.waiting_qty >= this.waiting_limit && this.qty_results > this.limit) {
                 return this.$message(
                     `Você já possui ${this.waiting_qty} relatório${
-                        this.waiting_qty > 1 ? 's' : ''
+                        this.waiting_qty > 1 ? "s" : ""
                     } aguardando a exportação, aguarde a finalização para exportar novos.`
-                )
-            this.visible = true
+                );
+            }
+            this.visible = true;
         },
         confirm() {
             this.$confirm('Exportar relatório para planilha ? ', 'Confirmação').then(() => {
