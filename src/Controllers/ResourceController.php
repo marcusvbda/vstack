@@ -309,6 +309,7 @@ class ResourceController extends Controller
 
 	public function export($resource, Request $request)
 	{
+		request()->request->add(["page_type" => "exporting_report"]);
 		$resource = ResourcesHelpers::find($resource);
 		if (!$resource->canExport()) abort(403);
 		$user = Auth::user();
