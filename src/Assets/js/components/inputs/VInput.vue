@@ -116,7 +116,7 @@ export default {
         },
     },
     async created() {
-        this.val = this.$attrs.value;
+        this.val = this.value;
     },
 };
 </script>
