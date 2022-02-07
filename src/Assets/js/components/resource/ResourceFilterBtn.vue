@@ -78,6 +78,7 @@ export default {
             showConfirmBtn: false,
             drawer: false,
             route: window.location.href.split("?")[0],
+            ignore_vstack_filters_index: ["_", "context", "page", "key"],
             filter: {
                 per_page: Number(
                     this.data?.query?.per_page
@@ -132,7 +133,7 @@ export default {
             let filter_keys = Object.keys(this.filter);
             filter_keys.forEach((key) => (this.data.query[key] = this.filter[key]));
             Object.keys(this.data.query).forEach((key) => {
-                if (key != "page" && key != "_") {
+                if (!this.ignore_vstack_filters_index.includes(key)) {
                     if (!["null", null].includes(this.data.query[key])) {
                         if (Array.isArray(this.data.query[key])) {
                             if (this.data.query[key].length) {
@@ -149,6 +150,7 @@ export default {
             if (this.data.query["_"]) {
                 str_query += `${str_query ? "&" : ""}_=${this.data.query["_"] ? this.data.query["_"] : ""}`;
             }
+
             str_query = str_query.slice(0, -1);
             this.$loading({ text: "Atualizando Filtros..." });
             window.location.href = `${this.route}?${str_query}`;
