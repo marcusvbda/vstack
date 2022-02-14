@@ -19,6 +19,8 @@ class DefaultModel extends Model
 	public $guarded = ["created_at"];
 	public $cascadeDeletes = [];
 	public $restrictDeletes = [];
+	public static $withoutAppends = false;
+
 	public static function boot()
 	{
 		parent::boot();
@@ -26,6 +28,22 @@ class DefaultModel extends Model
 			static::observe(new TenantObserver());
 			static::addGlobalScope(new TenantScope());
 		}
+	}
+
+	public function scopeWithoutAppends($query)
+	{
+		self::$withoutAppends = true;
+
+		return $query;
+	}
+
+	protected function getArrayableAppends()
+	{
+		if (self::$withoutAppends) {
+			return [];
+		}
+
+		return parent::getArrayableAppends();
 	}
 
 	public static function sluggable()
