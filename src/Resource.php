@@ -639,42 +639,16 @@ class Resource
 		return false;
 	}
 
-	public function importMethod($data, $file)
+	public function prepareImportData($data)
 	{
-		$config = json_decode($data["config"]);
-		$fieldlist = $config->fieldlist;
-		$file_extension = Vstack::resource_export_extension();
-		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
-		$filepath = $file->storeAs('local', $filename);
-		$user = Auth::user();
-		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $user->tenant_id;
-		$resource = $this;
-		dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
-			$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('resource', 'fieldlist', 'filepath', 'tenant_id'));
-			Excel::import($importer, $importer->getFile());
-			$result = $importer->getResult();
-			unlink(storage_path("app/" . $filepath));
-
-
-			if (@$result["success"]) {
-				$message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
-			} else {
-				$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
-			}
-			DB::table("notifications")->insert([
-				"type" => 'App\Notifications\CustomerNotification',
-				"notifiable_type" => 'App\User',
-				"notifiable_id" => $user->id,
-				"alert_type" => 'vstack_alert',
-				"tenant_id" => $user->tenant_id,
-				"created_at" => carbon::now(),
-				"data" => json_encode([
-					"message" => $message,
-					"type" => @$result["success"] ? 'success' : 'error'
-				]),
-			]);
-		})->onQueue(Vstack::queue_resource_import());
-
 		return ["success" => true];
+	}
+
+	public function importMethod($new, $extra_data)
+	{
+		$new_model = @$new["id"] ? $this->getModelInstance()->findOrFail($new["id"]) : $this->getModelInstance();
+		$new_model->fill($new);
+		$new_model->save();
+		return $new_model;
 	}
 }
