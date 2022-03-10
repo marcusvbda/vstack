@@ -3,6 +3,7 @@
 namespace marcusvbda\vstack;
 
 use App;
+use Illuminate\Support\Facades\Auth;
 use marcusvbda\vstack\Controllers\ResourceController;
 use marcusvbda\vstack\Fields\{Card, Text};
 use marcusvbda\vstack\Models\Migration;
@@ -176,7 +177,17 @@ class Resource
 
 	public function getTableColumns()
 	{
-		return $this->model->getConnection()->getSchemaBuilder()->getColumnListing($this->model->getTable());
+		return $this->getModelInstance()->getConnection()->getSchemaBuilder()->getColumnListing($this->model->getTable());
+	}
+
+	public function importCustomCrudMessage()
+	{
+		return "Deixe a coluna ID em branco a não ser que seja um caso de alteração de registro, ai esta linha será alterada ao invés cadastrada";
+	}
+
+	public function importCustomMapStep()
+	{
+		return false;
 	}
 
 	public function lenses()
@@ -624,5 +635,41 @@ class Resource
 	public function loadListItemByItem()
 	{
 		return false;
+	}
+
+	public function importMethod($data, $file)
+	{
+		$config = json_decode($data["config"]);
+		$fieldlist = $config->fieldlist;
+		$file_extension = Vstack::resource_export_extension();
+		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
+		$filepath = $file->storeAs('local', $filename);
+		$user = Auth::user();
+		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $user->tenant_id;
+		$resource = $this;
+		dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
+			$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('resource', 'fieldlist', 'filepath', 'tenant_id'));
+			Excel::import($importer, $importer->getFile());
+			$result = $importer->getResult();
+			if (@$result["success"]) {
+				$message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
+			} else {
+				$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
+			}
+			DB::table("notifications")->insert([
+				"type" => 'App\Notifications\CustomerNotification',
+				"notifiable_type" => 'App\User',
+				"notifiable_id" => $user->id,
+				"alert_type" => 'vstack_alert',
+				"tenant_id" => $user->tenant_id,
+				"created_at" => carbon::now(),
+				"data" => json_encode([
+					"message" => $message,
+					"type" => @$result["success"] ? 'success' : 'error'
+				]),
+			]);
+		})->onQueue(Vstack::queue_resource_import());
+
+		return ["success" => true];
 	}
 }

@@ -2,13 +2,17 @@
     <div class="row d-flex justify-content-center mt-4" data-aos="fade-left">
         <div class="col-12">
             <el-steps :active="config.step" finish-status="success" align-center>
-                <el-step title="Upload de arquivo"></el-step>
-                <el-step title="Mapeamento de coluna"></el-step>
-                <el-step title="Importação"></el-step>
+                <el-step title="Upload de arquivo" />
+                <el-step
+                    :title="
+                        data.resource.import_custom_map_step ? data.resource.import_custom_map_step.title : 'Mapeamento de coluna'
+                    "
+                />
+                <el-step title="Importação" />
             </el-steps>
             <div class="mt-3" data-aos="fade-right">
                 <a class="link" href="#" v-if="config.step > 0" @click.prevent="reload">
-                    <span class="el-icon-caret-left mr-2 mb-2"></span>
+                    <span class="el-icon-caret-left mr-2 mb-2" />
                     Voltar
                 </a>
                 <step-0 v-if="config.step == 0" :data="data" :frm="frm" :config="config" />
@@ -20,7 +24,7 @@
 </template>
 <script>
 export default {
-    props: ['data'],
+    props: ["data"],
     data() {
         return {
             frm: {
@@ -34,17 +38,17 @@ export default {
                 },
                 fieldlist: {},
             },
-        }
+        };
     },
     components: {
-        'step-0': require('./partials/-ImportStep0').default,
-        'step-1': require('./partials/-ImportStep1').default,
-        'step-2': require('./partials/-ImportStep2').default,
+        "step-0": require("./partials/-ImportStep0").default,
+        "step-1": require("./partials/-ImportStep1").default,
+        "step-2": require("./partials/-ImportStep2").default,
     },
     methods: {
         reload() {
-            window.location.reload()
+            window.location.reload();
         },
     },
-}
+};
 </script>

@@ -15,11 +15,11 @@
                             label="{{ $resource->storeButtonLabel() }}" route="{{ route('resource.create', ['resource' => $resource->id]) }}">
                         </resource-store-btn>
                     @endif
-                    @if ($resource->canImport())
-                        <a class="ml-2 link" href="{{ route('resource.import', ['resource' => $resource->id]) }}">
-                            {!! $resource->importButtonlabel() !!}
-                        </a>
-                    @endif
+                @endif                
+                @if ($resource->canImport())
+                    <a class="ml-2 link" href="{{ route('resource.import', ['resource' => $resource->id]) }}">
+                        {!! $resource->importButtonlabel() !!}
+                    </a>
                 @endif
             @endif
             @if ($report_mode)

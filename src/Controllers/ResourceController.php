@@ -211,7 +211,7 @@ class ResourceController extends Controller
 	public function import($resource)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!($resource->canImport() && $resource->canCreate())) abort(403);
+		if (!$resource->canImport()) abort(403);
 		$data = $this->makeImportData($resource);
 		return view("vStack::resources.import", compact('data'));
 	}
@@ -219,7 +219,7 @@ class ResourceController extends Controller
 	public function importSheetTemplate($resource)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!($resource->canImport() && $resource->canCreate())) abort(403);
+		if (!$resource->canImport()) abort(403);
 		$file_extension = Vstack::resource_export_extension();
 		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . "." . $file_extension;
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
@@ -230,10 +230,15 @@ class ResourceController extends Controller
 
 	protected function getImporterCollumns($resource)
 	{
-		$columns = [];
-		foreach ($resource->getTableColumns() as $col) {
-			if (!in_array($col, ["created_at", "deleted_at", "updated_at", "email_verified_at", "confirmation_token", "recovery_token", "password", "tenant_id"])) $columns[] = $col;
-		}
+		$protected = [
+			"created_at", "deleted_at", "updated_at", "email_verified_at",
+			"confirmation_token", "recovery_token", "password", "tenant_id"
+		];
+
+		$columns = array_filter($resource->getTableColumns(), function ($c) use ($protected) {
+			return !in_array($c, $protected);
+		});
+
 		return $columns;
 	}
 
@@ -245,7 +250,9 @@ class ResourceController extends Controller
 				"label"          => $resource->label(),
 				"singular_label" => $resource->singularLabel(),
 				"route"          => $resource->route(),
-				"columns"        => $this->getImporterCollumns($resource)
+				"columns"        => $this->getImporterCollumns($resource),
+				"import_custom_crud_message" => $resource->importCustomCrudMessage(),
+				"import_custom_map_step" => $resource->importCustomMapStep()
 			]
 		];
 	}
@@ -253,7 +260,7 @@ class ResourceController extends Controller
 	public function checkFileImport($resource, Request $request)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!($resource->canImport() && $resource->canCreate())) abort(403);
+		if (!$resource->canImport()) abort(403);
 		$file = $request->file("file");
 		if (!$file) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
 		if ($file->getSize() > 137072) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
@@ -267,44 +274,21 @@ class ResourceController extends Controller
 	public function importSubmit($resource, Request $request)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!($resource->canImport() && $resource->canCreate())) abort(403);
+		if (!$resource->canImport()) {
+			abort(403);
+		}
+
 		$data = $request->all();
 		$file = $data["file"];
-		if (!$file) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
-		if ($file->getSize() > 137072) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
+		if (!$file) {
+			return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
+		}
 
-		$config = json_decode($data["config"]);
-		$fieldlist = $config->fieldlist;
-		$file_extension = Vstack::resource_export_extension();
-		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
-		$filepath = $file->storeAs('local', $filename);
-		$user = Auth::user();
-		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $user->tenant_id;
-		dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
-			$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('resource', 'fieldlist', 'filepath', 'tenant_id'));
-			Excel::import($importer, $importer->getFile());
-			$result = $importer->getResult();
-			if (@$result["success"]) {
-				$message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
-			} else {
-				$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
-			}
-			DB::table("notifications")->insert([
-				"type" => 'App\Notifications\CustomerNotification',
-				"notifiable_type" => 'App\User',
-				"notifiable_id" => $user->id,
-				"alert_type" => 'vstack_alert',
-				"tenant_id" => $user->tenant_id,
-				"created_at" => carbon::now(),
-				"data" => json_encode([
-					"message" => $message,
-					"type" => @$result["success"] ? 'success' : 'error'
-				]),
-			]);
-		})->onQueue(Vstack::queue_resource_import());
+		if ($file->getSize() > 137072) {
+			return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
+		}
 
-
-		return ["success" => true];
+		return $resource->importMethod($data, $file);
 	}
 
 	public function export($resource, Request $request)
