@@ -303,7 +303,7 @@ class ResourceController extends Controller
 			$extra_data = @$extra_data["data"];
 		}
 
-		dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
+		dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user, $extra_data) {
 			$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
 			Excel::import($importer, $importer->getFile());
 			$result = $importer->getResult();
