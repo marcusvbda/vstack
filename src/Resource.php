@@ -653,6 +653,9 @@ class Resource
 			$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('resource', 'fieldlist', 'filepath', 'tenant_id'));
 			Excel::import($importer, $importer->getFile());
 			$result = $importer->getResult();
+			unlink(storage_path("app/" . $filepath));
+
+
 			if (@$result["success"]) {
 				$message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
 			} else {
