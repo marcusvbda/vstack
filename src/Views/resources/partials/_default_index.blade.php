@@ -129,7 +129,7 @@ $filters = $resource->filters();
                     <h1 style="opacity: .3;font-size: 250px;"><span class="{{ $resource->icon() }}"></span></h1>
                 @endif
                 <div>{!! $resource->nothingStoredText() !!}</div>
-                @if ($resource->canCreate())
+                @if ($resource->canCreate() || $resource->canImport())
                     <div>{!! $resource->nothingStoredSubText() !!}</div>
                 @endif
             </h4>
