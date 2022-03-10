@@ -46,6 +46,5 @@ class GlobalImporter implements ToCollection
     {
         $this->controller = new $this->controller;
         $this->controller->{$this->class}($rows, $this->params, $this);
-        unlink(storage_path("app/" . $this->filepath));
     }
 }
