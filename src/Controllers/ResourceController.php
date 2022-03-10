@@ -14,6 +14,7 @@ use Illuminate\Support\Arr;
 use marcusvbda\vstack\Exports\{DefaultGlobalExporter, GlobalExporterQueued, GlobalExporter};
 use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
+use marcusvbda\vstack\Imports\GlobalImporter;
 use marcusvbda\vstack\Models\{Tag, TagRelation};
 use marcusvbda\vstack\Models\ResourceConfig;
 use marcusvbda\vstack\Jobs\GlobalJob;
@@ -287,7 +288,48 @@ class ResourceController extends Controller
 			return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
 		}
 
-		return $resource->importMethod($data, $file);
+		$config = json_decode($data["config"]);
+		$fieldlist = $config->fieldlist;
+		$file_extension = Vstack::resource_export_extension();
+		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
+		$filepath = $file->storeAs('local', $filename);
+		$user = Auth::user();
+		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $user->tenant_id;
+
+		$extra_data = $resource->prepareImportData($data);
+		if (!@$extra_data["success"]) {
+			return $extra_data;
+		} else {
+			$extra_data = @$extra_data["data"];
+		}
+
+		dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user) {
+			$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
+			Excel::import($importer, $importer->getFile());
+			$result = $importer->getResult();
+			unlink(storage_path("app/" . $filepath));
+
+			if (@$result["success"]) {
+				$message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
+			} else {
+				$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
+			}
+
+			DB::table("notifications")->insert([
+				"type" => 'App\Notifications\CustomerNotification',
+				"notifiable_type" => 'App\User',
+				"notifiable_id" => $user->id,
+				"alert_type" => 'vstack_alert',
+				"tenant_id" => $user->tenant_id,
+				"created_at" => carbon::now(),
+				"data" => json_encode([
+					"message" => $message,
+					"type" => @$result["success"] ? 'success' : 'error'
+				]),
+			]);
+		})->onQueue(Vstack::queue_resource_import());
+
+		return ["success" => true];
 	}
 
 	public function export($resource, Request $request)
@@ -425,13 +467,10 @@ class ResourceController extends Controller
 					if (!$value) continue;
 					$new[$field] = $value;
 				}
-				$new_model = @$new["id"] ? $resource->model->findOrFail($new["id"]) : new $resource->model;
 				if ($tenant_id) {
 					$new["tenant_id"] = $tenant_id;
 				}
-				$new_model->fill($new);
-				$new_model->save();
-				unset($new_model, $row_values, $new);
+				$resource->importMethod($new, $extra_data);
 				$qty++;
 			}
 			DB::commit();
