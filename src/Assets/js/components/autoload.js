@@ -34,6 +34,8 @@ Vue.prototype.$gsap = gsap;
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 Vue.prototype.$moment = moment;
+const debug = require("console-development");
+Vue.prototype.$debug = debug;
 import PortalVue from "portal-vue";
 Vue.use(PortalVue);
 import AOS from "aos";
