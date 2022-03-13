@@ -9,7 +9,7 @@
     :multiple='@json($multiple)'
     v-bind:class='{"withFilter" : {{"filter.$index"}} }'>
     @foreach ($options as $option) 
-        <el-option :value='{{strval($option->value)}}' label='{{$option->label}}'>
+        <el-option value='{{data_get($option,'value')}}' label='{{data_get($option,'label')}}'>
             {!! @$option->html !!}
         </el-option>
     @endforeach
