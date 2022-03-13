@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex align-items-center flex-row flex-wrap">
-        <el-tag
+        <ElTag
             class="filter-tag mb-2 ml-0 mr-2"
             size="mini"
             :closable="prevent_close == undefined"
@@ -12,67 +12,69 @@
         >
             <b class="mr-2">{{ f.label }}</b>
             : <span class="ml-2" v-html="f.content" />
-        </el-tag>
+        </ElTag>
     </div>
 </template>
 <script>
 export default {
-    props: ['get_params', 'resource_filters', 'prevent_close'],
+    props: ["get_params", "resource_filters", "prevent_close"],
     computed: {
         selected_filters() {
             return this.resource_filters
                 .map((rf) => {
                     if (this.hasContent(this.get_params, rf.index)) {
-                        let content = ''
-                        if (rf.component == 'select-filter') {
+                        let content = "";
+                        if (rf.component == "select-filter") {
                             if (!rf?.multiple) {
-                                content = rf.options.find((x) => x.value == this.get_params[rf.index]).label
+                                content = rf.options.find((x) => x.value == this.get_params[rf.index]).label;
                             } else {
-                                let ids = this.get_params[rf.index].split(',').map((x) => (x ? (!isNaN(Number(x)) ? Number(x) : '') : ''))
+                                let ids = this.get_params[rf.index]
+                                    .split(",")
+                                    .map((x) => (x ? (!isNaN(Number(x)) ? Number(x) : x) : ""));
                                 content = rf.options
                                     .filter((x) => ids.includes(x.value))
                                     .map((x) => x.label)
                                     .filter((x) => x)
-                                    .join(', <br>')
+                                    .join(", <br>");
                             }
                         } else {
-                            content = this.get_params[rf.index]
+                            content = this.get_params[rf.index];
                         }
                         return {
                             label: rf.label,
                             index: rf.index,
                             content: content,
-                        }
+                        };
                     }
                 })
-                .filter((x) => x)
+                .filter((x) => x);
         },
     },
     methods: {
         hasContent(filter, key) {
-            if (!filter) return false
+            if (!filter) return false;
             if (filter[key]) {
                 if (Array.isArray(filter[key])) {
-                    return filter[key].filter((x) => x).length > 0 ? true : false
+                    return filter[key].filter((x) => x).length > 0 ? true : false;
                 }
-                return true
+                return true;
             }
-            return false
+            return false;
         },
         handleClose(index) {
-            let params = Object.assign({}, this.get_params)
-            delete params[index]
-            if (params['page']) delete params['page']
+            let params = Object.assign({}, this.get_params);
+            delete params[index];
+            if (params["page"]) delete params["page"];
             let query = Object.keys(params)
                 .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
-                .join('&')
-            this.$loading({ text: 'Atualizando Filtros...' })
-            return (window.location.href = `${window.location.href.split('?')[0]}?${query}`)
+                .join("&");
+            this.$loading({ text: "Atualizando Filtros..." });
+            return (window.location.href = `${window.location.href.split("?")[0]}?${query}`);
         },
     },
-}
+};
 </script>
-<style lang="scss" >
+<style lang="scss">
 .filter-tag {
     .cut-text {
         text-overflow: ellipsis;
