@@ -72,7 +72,7 @@
                     </template>
                     <div class="row mt-5">
                         <div class="col-12 d-flex justify-content-end align-items-center">
-                            <button class="btn btn-primary sm-btn-block px-4">{{ running_action.run_btn }}</button>
+                            <button class="btn btn-primary btn-sm-block px-4">{{ running_action.run_btn }}</button>
                         </div>
                     </div>
                 </form>
