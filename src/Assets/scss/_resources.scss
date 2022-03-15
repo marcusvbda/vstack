@@ -318,4 +318,12 @@ ul.pagination {
   .el-drawer.rtl {
       width: 100%!important;
   }
+
+  .el-dialog__wrapper {
+      padding: 10px !important;
+
+      .el-dialog {
+          width: 100%!important;
+      }
+  }
 }
