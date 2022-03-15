@@ -102,7 +102,7 @@ $filters = $resource->filters();
                     @endif
                     @include("vStack::resources.partials._filter_btn")
                     @if ($resource->search())
-                        <resource-filter-global class="ml-2" :data="{{ json_encode($globalFilterData) }}"></resource-filter-global>
+                        <resource-filter-global class="ml-2 mb-2" :data="{{ json_encode($globalFilterData) }}"></resource-filter-global>
                     @endif
                 </div>
             </div>
