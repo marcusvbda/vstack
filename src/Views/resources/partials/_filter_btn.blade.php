@@ -7,4 +7,4 @@
         "filters"   => $filters
     ];
 ?>
-<resource-filter-btn :report_mode='@json($report_mode)' :per_page="{{json_encode($resource->resultsPerPage())}}" :data="{{json_encode($data)}}" label="{{$resource->label()}}"></resource-filter-btn>
+<resource-filter-btn class="mb-2" :report_mode='@json($report_mode)' :per_page="{{json_encode($resource->resultsPerPage())}}" :data="{{json_encode($data)}}" label="{{$resource->label()}}"></resource-filter-btn>
