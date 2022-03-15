@@ -10,19 +10,21 @@
                     </div>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-sm table-hover mb-0">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Url</th>
-                                <th>Nome</th>
-                                <th>Validade da Url</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr is="resource-export-list-row" v-for="(row, i) in report_exports" :key="i" :row="row" />
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Url</th>
+                                    <th>Nome</th>
+                                    <th>Validade da Url</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr is="resource-export-list-row" v-for="(row, i) in report_exports" :key="i" :row="row" />
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -30,9 +32,9 @@
 </template>
 <script>
 export default {
-    props: ['report_exports'],
+    props: ["report_exports"],
     components: {
-        'resource-export-list-row': require('./partials/-resource-export-list-row.vue').default,
+        "resource-export-list-row": require("./partials/-resource-export-list-row.vue").default,
     },
-}
+};
 </script>

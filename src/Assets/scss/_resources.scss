@@ -274,3 +274,44 @@ ul.pagination {
         margin-top: 0 !important;
     }
 }
+
+@media screen and (max-width: 767px) {
+.table-responsive-sm {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  .resource-pagination {
+      .pagination-content {
+        flex-wrap: wrap;
+        justify-content: flex-end!important;
+
+        .pagination-row {
+            flex-wrap: wrap;
+            justify-content: flex-end!important;
+        }
+        
+        .nav-scroller {
+            .ml-3 {
+                margin-left: 0 !important;
+            }
+            .pagination {
+                flex-wrap: wrap!important;
+            }
+        }
+    }
+  }
+
+  .sm-mt-4 {
+        margin-top: 15px !important;
+    }
+
+
+  .sm-w-100 {
+      width: 100% !important;
+  }
+
+  .resource-btn {
+    margin-left: auto!important;
+  }
+}

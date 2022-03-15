@@ -1,5 +1,5 @@
 <div class="row mb-3 mt-2">
-    <div class="col-12 d-flex flex-row align-items-center" data-aos="fade-left">
+    <div class="col-12 d-flex flex-row align-items-center sm-flex-wrap" data-aos="fade-left">
         <h4 class="mb-1">
             @if (!$report_mode)
                 {!! @$resource->indexLabel() !!}
@@ -7,11 +7,11 @@
                 {!! @$resource->reportLabel() !!}
             @endif
         </h4>
-        <div class="d-flex flex-row  flex-wrap align-items-center">
+        <div class="d-flex flex-row  flex-wrap align-items-center sm-w-100 sm-mt-4">
             @if (!$report_mode)
                 @if ($resource->canCreate())
                     @if ($resource->model->count() > 0)
-                        <resource-store-btn resource_id='{{ $resource->id }}' :crud_type='@json($resource->crudType())'
+                        <resource-store-btn class="resource-btn" resource_id='{{ $resource->id }}' :crud_type='@json($resource->crudType())'
                             label="{{ $resource->storeButtonLabel() }}" route="{{ route('resource.create', ['resource' => $resource->id]) }}">
                         </resource-store-btn>
                     @endif
@@ -34,7 +34,7 @@
                             $waiting_qty = (clone $report_export_query)->count();
                             $waiting_exporting_qty = (clone $report_export_query)->where('data->status', 'exporting')->count();
                         @endphp
-                        <resource-export-btn class="ml-2 link" id="{{ $resource->id }}" label="{{ $resource->label() }}" :export_columns='@json($resource->export_columns((object)[
+                        <resource-export-btn class="ml-2 link f-12" id="{{ $resource->id }}" label="{{ $resource->label() }}" :export_columns='@json($resource->export_columns((object)[
         "user" => \Auth::user()
        ]))' :get_params='@json($_GET)' :qty_results='@json($data->total())' :limit='@json($resource->maxRowsExportSync())'
                             :config_columns='@json($config_columns)' :waiting_qty='@json($waiting_exporting_qty)'
@@ -83,17 +83,21 @@ $filters = $resource->filters();
                 'value' => @$_GET['_'] ? $_GET['_'] : '',
             ];
             ?>
-            <div class="d-flex flex-column align-items-start justify-content-between w-100" data-aos="fade-left">
-                <div class="d-flex flex-column w-100">
-                    @if ($report_mode && $resource->canCreateReportTemplates())
+            <div class="d-flex flex-column align-items-start justify-content-between w-100 resource-pagination" data-aos="fade-left">
+                @if ($report_mode && $resource->canCreateReportTemplates())
+                    <div class="d-flex flex-column w-100">
                         @include("vStack::resources.partials._save_filter_btn")
-                    @endif
-                </div>
-                <div class="d-flex flex-row ml-auto align-items-center f-12">
+                    </div>
+                @endif
+                <div class="d-flex flex-row ml-auto align-items-center f-12 pagination-content">
                     @if ($data->total() > 0)
-                        <div class="d-flex flex-row align-items-center justify-content-center">
+                        <div class="d-flex flex-row align-items-center justify-content-center pagination-row">
                             {!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
-                            <div class="ml-3">{{ $data->appends(request()->query())->links() }}</div>
+                            <div class="nav-scroller py-1 mb-2"> 
+                                <div class="ml-3">
+                                    {{ $data->appends(request()->query())->links() }}
+                                </div>
+                            </div>
                         </div>
                     @endif
                     @include("vStack::resources.partials._filter_btn")
