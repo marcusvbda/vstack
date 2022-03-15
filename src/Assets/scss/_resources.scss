@@ -312,7 +312,12 @@ ul.pagination {
   }
 
   .resource-btn {
-    margin-left: auto!important;
+    width: 100%!important;
+    margin-left: 0!important;
+    margin-bottom: 20px!important;
+    a {
+        margin: 0!important;
+    }
   }
 
   .el-drawer.rtl {
