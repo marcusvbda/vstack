@@ -3,10 +3,13 @@
 namespace marcusvbda\vstack;
 
 use App;
+use Maatwebsite\Excel\Facades\Excel;
 use marcusvbda\vstack\Controllers\ResourceController;
 use marcusvbda\vstack\Fields\{Card, Text};
+use marcusvbda\vstack\Imports\GlobalImporter;
 use marcusvbda\vstack\Models\Migration;
 use marcusvbda\vstack\Services\Messages;
+use Auth;
 
 class Resource
 {
@@ -638,14 +641,47 @@ class Resource
 
 	public function prepareImportData($data)
 	{
-		return ["success" => true];
+		return ["success" => true, "data" => []];
 	}
 
-	public function importMethod($new, $extra_data)
+	public function importMethod($data)
 	{
+		extract($data);
+		$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
+		Excel::import($importer, $importer->getFile());
+		$result = $importer->getResult();
+		unlink(storage_path("app/" . $filepath));
+
+		$success = $result["success"];
+		$message = "";
+		if (@$result["success"]) {
+			$message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
+		} else {
+			$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
+		}
+
+		Vstack::SocketAlertUser($user_id, [
+			"type" => $success ? "success" : "error",
+			"message" => $message
+		]);
+
+		return ["success" => $success, "message" => $message];
+	}
+
+	public function importRowMethod($new, $extra_data)
+	{
+		$fill_data = array_merge($new, $extra_data ? $extra_data : []);
 		$new_model = @$new["id"] ? $this->getModelInstance()->findOrFail($new["id"]) : $this->getModelInstance();
-		$new_model->fill($new);
+		$keys = array_keys($fill_data);
+		foreach ($keys as $key) {
+			$new_model->{$key} = $fill_data[$key];
+		}
 		$new_model->save();
 		return $new_model;
+	}
+
+	public function importerColumns()
+	{
+		return false;
 	}
 }

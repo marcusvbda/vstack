@@ -57,6 +57,7 @@
                                                     :key="i"
                                                     :label="item"
                                                     :value="item"
+                                                    :disabled="columnHasSelected(item)"
                                                 />
                                             </el-select>
                                         </td>
@@ -108,6 +109,13 @@ export default {
         this.relateColumns();
     },
     methods: {
+        columnHasSelected(item) {
+            let headers = this.config.data.csv_header;
+            let selected = headers.find((header) => {
+                return this.config.fieldlist[header] == item;
+            });
+            return selected ? true : false;
+        },
         relateColumns() {
             let columns = this.headerOptions;
             let headers = this.config.data.csv_header;

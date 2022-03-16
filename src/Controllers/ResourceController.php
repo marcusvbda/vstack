@@ -235,10 +235,14 @@ class ResourceController extends Controller
 			"confirmation_token", "recovery_token", "password", "tenant_id"
 		];
 
-		$columns = array_filter($resource->getTableColumns(), function ($c) use ($protected) {
-			return !in_array($c, $protected);
-		});
-
+		$columns = [];
+		$importe_columns = $resource->importerColumns();
+		$importe_columns = $importe_columns ? $importe_columns : $resource->getTableColumns();
+		foreach ($importe_columns as $row) {
+			if (!in_array($row, $protected)) {
+				$columns[] = $row;
+			}
+		}
 		return $columns;
 	}
 
@@ -260,14 +264,28 @@ class ResourceController extends Controller
 	public function checkFileImport($resource, Request $request)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canImport()) abort(403);
+		if (!$resource->canImport()) {
+			abort(403);
+		}
+
 		$file = $request->file("file");
-		if (!$file) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
-		if ($file->getSize() > 137072) return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
+		if (!$file) {
+			return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo inválido..."]];
+		}
+
+		// 128 mb
+		if ($file->getSize() > 134217728) {
+			return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
+		}
+
 		$data = Excel::toArray(new HeadingRowImport, $file);
 		$header = @$data[0][0];
-		if (!@$data[0][0])
+		$header = array_filter($header ? $header : []);
+
+		if (!count($header)) {
 			return ["success" => false, "message" => ["type" => "error", "text" => "Cabeçalho da planilha nao encontrado"]];
+		}
+
 		return ["success" => true, "data" => $header];
 	}
 
@@ -294,6 +312,7 @@ class ResourceController extends Controller
 		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
 		$filepath = $file->storeAs('local', $filename);
 		$user = Auth::user();
+		$user_id = $user->id;
 		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $user->tenant_id;
 
 		$extra_data = $resource->prepareImportData($data);
@@ -303,30 +322,9 @@ class ResourceController extends Controller
 			$extra_data = @$extra_data["data"];
 		}
 
-		dispatch(function () use ($resource, $fieldlist, $filepath, $tenant_id, $user, $extra_data) {
-			$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
-			Excel::import($importer, $importer->getFile());
-			$result = $importer->getResult();
-			unlink(storage_path("app/" . $filepath));
-
-			if (@$result["success"]) {
-				$message = "Foi importado com sucesso sua planilha de " . $resource->label() . ". (" . $result['qty'] . " Registro" . ($result['qty'] > 1 ? 's' : '') . ")";
-			} else {
-				$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
-			}
-
-			DB::table("notifications")->insert([
-				"type" => 'App\Notifications\CustomerNotification',
-				"notifiable_type" => 'App\User',
-				"notifiable_id" => $user->id,
-				"alert_type" => 'vstack_alert',
-				"tenant_id" => $user->tenant_id,
-				"created_at" => carbon::now(),
-				"data" => json_encode([
-					"message" => $message,
-					"type" => @$result["success"] ? 'success' : 'error'
-				]),
-			]);
+		dispatch(function () use ($filepath, $resource, $user_id, $fieldlist, $tenant_id, $user, $extra_data) {
+			$importer_data = compact('filepath', 'extra_data', 'user_id', 'resource', 'fieldlist', 'filepath', 'tenant_id');
+			$resource->importMethod($importer_data);
 		})->onQueue(Vstack::queue_resource_import());
 
 		return ["success" => true];
@@ -403,7 +401,7 @@ class ResourceController extends Controller
 				$exporter = new GlobalExporter($resource, $columns, $config_id);
 				Excel::store($exporter, $full_path, "local");
 				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
-				$_data = $config->data;
+				$_data = (object)$config->data;
 				$_data->status = "ready";
 				$_data->microtime->end = microtime(true);
 				$config->data = $_data;
@@ -421,7 +419,7 @@ class ResourceController extends Controller
 			}
 		} catch (\Exception $e) {
 			$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . '  - on line ' . $e->getLine() . " )";
-			$_data = $config->data;
+			$_data = (object)$config->data;
 			$_data->status = "error";
 			$_data->error_message = $message;
 			$config->data = $_data;
@@ -458,19 +456,23 @@ class ResourceController extends Controller
 		try {
 			DB::beginTransaction();
 			foreach ($rows as $key => $row_values) {
-				if ($key == 0) continue;
+				if ($key == 0) {
+					continue;
+				}
 				$row_values = $row_values->toArray();
 				$new = [];
 				foreach ($fieldlist as $field => $row_key) {
 					if ($row_key == "_IGNORE_") continue;
 					$value = @$row_values[array_search($row_key, $importer->headers)];
-					if (!$value) continue;
+					if (!$value) {
+						continue;
+					}
 					$new[$field] = $value;
 				}
 				if ($tenant_id) {
 					$new["tenant_id"] = $tenant_id;
 				}
-				$resource->importMethod($new, $extra_data);
+				$resource->importRowMethod($new, $extra_data);
 				$qty++;
 			}
 			DB::commit();
@@ -709,20 +711,6 @@ class ResourceController extends Controller
 			}
 		}
 		return ["data" => $data];
-	}
-
-	public function metricCalculate($resource, $key, Request $request)
-	{
-		$resource = ResourcesHelpers::find($resource);
-		$metric = null;
-		foreach ($resource->metrics() as $m) {
-			if ($m->uriKey() == $key) {
-				$metric = $m;
-				break;
-			}
-		}
-		if (!$metric) abort(404);
-		return $metric->calculate($request);
 	}
 
 	public function upload(Request $request)

@@ -2,6 +2,8 @@
 
 namespace marcusvbda\vstack;
 
+use marcusvbda\vstack\Events\WebSocketEvent;
+
 class Vstack
 {
 	public static function current_version()
@@ -124,5 +126,25 @@ class Vstack
 		}
 
 		return $numbers;
+	}
+
+	public static function SocketAlert($channel, $event, $data)
+	{
+		$data["uniq_id"] = uniqid();
+		broadcast(new WebSocketEvent($channel, $event, $data));
+	}
+
+	public static function SocketAlertUser($id, $data)
+	{
+		$channel = "Alert.User." . $id;
+		$event = "notifications.user";
+		static::SocketAlert($channel, $event, $data);
+	}
+
+	public static function SocketAlertTenant($id, $data)
+	{
+		$channel = "Alert.Tenant." . $id;
+		$event = "notifications.user";
+		static::SocketAlert($channel, $event, $data);
 	}
 }

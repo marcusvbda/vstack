@@ -17,7 +17,7 @@
                     @endif
                 @endif                
                 @if ($resource->canImport())
-                    <a class="ml-2 f-12 link" href="{{ route('resource.import', ['resource' => $resource->id]) }}">
+                    <a class="ml-2 mr-4 f-12 link" href="{{ route('resource.import', ['resource' => $resource->id]) }}">
                         {!! $resource->importButtonlabel() !!}
                     </a>
                 @endif

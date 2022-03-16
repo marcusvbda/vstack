@@ -112,7 +112,7 @@ export default {
     },
     methods: {
         submit() {
-            let loading = this.$loading();
+            let loading = this.$loading({ text: "Processando ..." });
             let url = window.location.href.split("?")[0];
             this.$http
                 .post(`${url}/action/${this.running_action.id}`, { ids: this.selected_ids, ...this.form })
@@ -161,7 +161,7 @@ export default {
         initiateEventListener() {
             this.$waitForEl(".select_action_box").then(() => {
                 setTimeout(() => {
-                    const inputs = [...document.querySelectorAll(".select_action_box")].map((input) => {
+                    [...document.querySelectorAll(".select_action_box")].map((input) => {
                         input.addEventListener("change", (event) => {
                             const checkbox = event.target;
                             const id = Number(checkbox.id.replace(`${this.resource_id}_action_select_`, ""));

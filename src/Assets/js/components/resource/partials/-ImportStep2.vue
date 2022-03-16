@@ -6,7 +6,7 @@
                     <h1 style="font-size: 150px" class="text-info">
                         <span class="el-icon-info" />
                     </h1>
-                    <h4>Importação de Planilha em execução, você será notificado quando o processo for concluido.</h4>
+                    <h4>Importação de Planilha em execução, em breve será finalizado !</h4>
                 </div>
             </div>
         </div>
