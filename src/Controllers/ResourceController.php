@@ -43,7 +43,7 @@ class ResourceController extends Controller
 		if (request()->page_type == "report") {
 			$data = $resource->prepareQueryToExport($data->select("*"));
 		}
-		$list_items = $resource->listItemsContent($data);
+		$list_items = $resource->listItemsContent(clone $data);
 		$data = $data->paginate($per_page);
 		$data->map(function ($query) {
 			$query->setAppends([]);
