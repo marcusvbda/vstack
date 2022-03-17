@@ -384,7 +384,7 @@ class ResourceController extends Controller
 			"total" => $total,
 			"action" => "set_totals",
 			"current_page" => 1,
-			"last_page" => round($total / $per_page),
+			"last_page" => ceil($total / $per_page),
 			"disabled_columns" => $disabled_columns
 		];
 	}
