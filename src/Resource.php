@@ -176,7 +176,7 @@ class Resource
 				return @$row->id;
 			}],
 			["label" => "Data de Criação", "handler" => function ($row) {
-				return @$row->id;
+				return @$row->created_at;
 			}],
 		];
 	}
