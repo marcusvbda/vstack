@@ -119,9 +119,15 @@ export default {
     },
     computed: {
         formated_estimated_time() {
-            if (this.exporting.estimated_time) {
+             if(!this.exporting.estimated_time && this.percentage != 100) {
+                return "Calculando ...";
+            }
+            if (this.exporting.estimated_time !== null) {
                 return this.$moment.utc(this.exporting.estimated_time).format("HH:mm:ss");
             }
+            if(this.exporting.estimated_time < 0 || this.percentage === 100) {
+                return this.$moment.utc(0).format("HH:mm:ss");
+            }           
             return "Calculando ...";
         },
         percentage() {
@@ -184,8 +190,10 @@ export default {
                     handleAppendRowToWorkSheet(data.processed_row);
                     this.handleExport();
                 },
-                finish: () => {
-                    this.exporting.exported = this.exporting.total_results;
+                finish: (data) => {
+                    this.exporting.exported = this.exporting.total_results
+                    handleAppendRowToWorkSheet(data.processed_row);
+                    this.updateEstimatedTime();
                     clearInterval(this.exporting.estimated_timeout);
                     setTimeout(() => {
                         handleFinishWorkBook(this.fileName).then(() => {
@@ -215,11 +223,15 @@ export default {
             const total_time = now - this.exporting.started_time;
             const rest_to_import = this.exporting.total_results - this.exporting.exported;
             let estimated_ms = Math.round((rest_to_import * total_time) / this.exporting.exported);
-            this.exporting.estimated_time = estimated_ms;
+            this.exporting.estimated_time = estimated_ms < 0 ? 0 : estimated_ms;
 
             clearInterval(this.exporting.estimated_timeout);
             this.exporting.estimated_timeout = setInterval(() => {
-                this.exporting.estimated_time -= 1000;
+                if( this.exporting.estimated_time > 1000) {
+                    this.exporting.estimated_time -= 1000;
+                } else {
+                    this.exporting.estimated_time = 0;
+                }
             }, 1000);
         },
         async finishExporting() {
