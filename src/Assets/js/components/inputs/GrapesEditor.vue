@@ -7,7 +7,7 @@
             src="/vstack/grapes-editor"
             width="100%"
             frameborder="0"
-            :style="{ height }"
+            :style="{ height: `${height}px!important` }"
         />
         <div class="invalid-feedback" v-if="errors">
             <ul class="pl-3 mb-0">
