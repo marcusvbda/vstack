@@ -43,6 +43,7 @@ class ResourceController extends Controller
 		if (request()->page_type == "report") {
 			$data = $resource->prepareQueryToExport($data->select("*"));
 		}
+		$list_items = $resource->listItemsContent($data);
 		$data = $data->paginate($per_page);
 		$data->map(function ($query) {
 			$query->setAppends([]);
@@ -50,7 +51,7 @@ class ResourceController extends Controller
 		if (@$request["list_type"]) {
 			$this->storeListType($resource, $request["list_type"]);
 		}
-		return view("vStack::resources.index", compact("resource", "data", "report_mode"));
+		return view("vStack::resources.index", compact("resource", "data", "report_mode", "list_items"));
 	}
 
 	private function storeListType($resource, $type)

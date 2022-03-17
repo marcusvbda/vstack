@@ -694,4 +694,9 @@ class Resource
 	{
 		return $query;
 	}
+
+	public function listItemsContent($data)
+	{
+		return false;
+	}
 }

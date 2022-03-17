@@ -340,3 +340,29 @@ ul.pagination {
 .word-break-all {
     word-break: break-word;
 }
+
+.list-items {
+    flex-wrap: wrap;
+    .list-item {
+        margin-bottom: 10px;
+
+        .list-item--content {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #e2e2e2;
+            .list-item--title {
+                color: #444; 
+                font-weight: 700;
+                font-size: 11px;
+            }
+
+            .list-item--value {
+                font-size: 27px;
+                line-height: 32px;
+                font-weight: 500;
+            }
+        }
+        
+    }
+}

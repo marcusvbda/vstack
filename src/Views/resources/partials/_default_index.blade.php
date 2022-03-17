@@ -108,6 +108,9 @@ $filters = $resource->filters();
             </div>
         </div>
     </div>
+    @if($list_items)
+        <resource-list-items :list_items='@json($list_items)'></resource-list-items>        
+    @endif
     <div class="row">
         <div class="col-12">
             @if ($data->total() > 0)
