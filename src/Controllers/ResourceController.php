@@ -354,8 +354,14 @@ class ResourceController extends Controller
 		if ($total > 100 && $total <= 300) {
 			$per_page = 50;
 		}
-		if ($total > 300) {
+		if ($total > 300  && $total <= 500) {
 			$per_page = 100;
+		}
+		if ($total > 500  && $total <= 800) {
+			$per_page = 300;
+		}
+		if ($total > 800) {
+			$per_page = 500;
 		}
 
 		$disabled_columns = [];
