@@ -8,18 +8,11 @@ $crud_buttons = [
 ];
 
 $list_types = @$resource->listType() ? $resource->listType() : ["table"];
-$table = $resource->export_columns("teste");
+$table = $resource->export_columns();
 $table_keys = array_keys($table);
 $controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 ?>
 <div class="card" data-aos="fade-right" >
-	<div class="card-header p-0">
-		<div class="col-md-9 col-sm-12">
-			@if($resource->lenses())
-				@include("vStack::resources.partials._lenses")
-			@endif
-		</div>
-	</div>
 	<div class="card-body p-0">
 		<div class="table-responsive"  >
 			<table class="table table-sm table-hover mb-0">
@@ -51,10 +44,3 @@ $controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 		</div>
 	</div>
 </div>
-
-@if(@$waiting_qty > 0)
-	<resource-export-list
-		:report_exports='@json($exports)'
-	>
-	</resource-export-list>
-@endif

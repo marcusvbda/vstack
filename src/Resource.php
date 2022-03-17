@@ -169,7 +169,7 @@ class Resource
 		return [new Card("Informações", $fields)];
 	}
 
-	public function export_columns($cx)
+	public function export_columns()
 	{
 		return [
 			"id" => ["label" => "Código"],
@@ -226,11 +226,6 @@ class Resource
 	{
 		$aux =  explode("/", $this->route());
 		$this->id = $aux[count($aux) - 1];
-	}
-
-	public function maxRowsExportSync()
-	{
-		return 1000;
 	}
 
 	public function checkAclResource($row, $type)
@@ -683,5 +678,11 @@ class Resource
 	public function importerColumns()
 	{
 		return false;
+	}
+
+	public function exportingMessage()
+	{
+		return "O Download do seu relatório <b>iniciará automaticamente</b> após o processamento finalizar, <b>não feche
+		está aba</b>, caso contrário o processo será perdido.";
 	}
 }

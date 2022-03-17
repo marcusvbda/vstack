@@ -28,22 +28,15 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('{resource}/field/store', [ResourceController::class, 'storeField'])->name("resource.field.store");
 		Route::get('{resource}/import', [ResourceController::class, 'import'])->name("resource.import");
 		Route::post('{resource}/export', [ResourceController::class, 'export'])->name("resource.export");
-		Route::get('{resource}/export_download/{file}', [ResourceController::class, 'exportDownload'])->name("resource.export_download");
-		Route::get('{resource}/export_download_intercept/{file}', [ResourceController::class, 'exportDownloadIntercept'])->name("resource.export_download_intercept");
 		Route::get('{resource}/import/sheet_template', [ResourceController::class, 'importSheetTemplate'])->name("resource.import.check_file");
 		Route::post('{resource}/import/check_file', [ResourceController::class, 'checkFileImport'])->name("resource.import.check_file");
 		Route::post('{resource}/import/submit', [ResourceController::class, 'importSubmit'])->name("resource.import.submit");
-
 		Route::get('{resource}/{code}', [ResourceController::class, 'view'])->middleware(['hashids:code'])->name("resource.view");
 		Route::post('{resource}/{code}/clone', [ResourceController::class, 'clone'])->middleware(['hashids:code'])->name("resource.clone");
-
 		Route::get('{resource}/tags/options', [ResourceController::class, 'tagOptions'])->name("resource.optionTags");
 		Route::get('{resource}/{code}/tags', [ResourceController::class, 'getTags'])->middleware(['hashids:code'])->name("resource.getTags");
 		Route::delete('{resource}/{code}/tags/destroy/{id}', [ResourceController::class, 'destroyTag'])->middleware(['hashids:code'])->name("resource.deleteTag");
-
 		Route::post('{resource}/{code}/tags/add', [ResourceController::class, 'addTag'])->middleware(['hashids:code'])->name("resource.addTag");
-
-
 		Route::get('{resource}/{code}/edit', [ResourceController::class, 'edit'])->middleware(['hashids:code'])->name("resource.edit");
 		Route::delete('{resource}/{code}/destroy', [ResourceController::class, 'destroy'])->middleware(['hashids:code'])->name("resource.destroy");
 		Route::post('{resource}/{code}/before-destroy', [ResourceController::class, 'beforeDestroy'])->middleware(['hashids:code'])->name("resource.before_destroy");

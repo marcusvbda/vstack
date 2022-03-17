@@ -23,22 +23,20 @@
                 @endif
             @endif
             @if ($report_mode)
-                @if ($resource->canExport())
+                @if ($resource->canExport() && $data->total() > 0)
                     @if ($resource->model->count() > 0)
                         @php
                             $resource_config_query = \marcusvbda\vstack\Models\ResourceConfig::where('data->user_id', $user->id)->where('resource', $resource->id);
                             $config_columns = (clone $resource_config_query)->where('config', 'resource_export_disabled_columns')->first();
                             $config_columns = $config_columns ? $config_columns : [];
                             $report_export_query = (clone $resource_config_query)->where('config', 'like', 'report_export_%');
-                            $exports = (clone $report_export_query)->get();
-                            $waiting_qty = (clone $report_export_query)->count();
-                            $waiting_exporting_qty = (clone $report_export_query)->where('data->status', 'exporting')->count();
                         @endphp
-                        <resource-export-btn class="ml-2 link f-12" id="{{ $resource->id }}" label="{{ $resource->label() }}" :export_columns='@json($resource->export_columns((object)[
-        "user" => \Auth::user()
-       ]))' :get_params='@json($_GET)' :qty_results='@json($data->total())' :limit='@json($resource->maxRowsExportSync())'
-                            :config_columns='@json($config_columns)' :waiting_qty='@json($waiting_exporting_qty)'
-                            :waiting_limit='@json($resource->maxWaitingReportsByUser())'>
+                        <resource-export-btn class="ml-4 link f-12" id="{{ $resource->id }}" label="{{ $resource->label() }}" 
+                            :export_columns='@json($resource->export_columns((object)["user" => \Auth::user()]))' 
+                            :get_params='@json($_GET)' :qty_results='@json($data->total())' 
+                            :config_columns='@json($config_columns)' 
+                            message='{{ $resource->exportingMessage() }}'
+                        >
                             {!! $resource->exportButtonlabel() !!}
                         </resource-export-btn>
                     @endif
@@ -46,7 +44,9 @@
             @else
                 @if ($resource->canViewReport())
                     <a class="ml-2 f-12" href="/admin/relatorios/{{ $resource->id }}">
-                        <span class="el-icon-tickets mr-1"></span>Relatório de {{ $resource->label() }}</a>
+                        <span class="el-icon-tickets mr-1"></span>
+                        Relatório de {{ $resource->label() }}
+                    </a>
                 @endif
             @endif
         </div>

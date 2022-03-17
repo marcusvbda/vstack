@@ -11,13 +11,11 @@ use Auth;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use marcusvbda\vstack\Exports\{DefaultGlobalExporter, GlobalExporterQueued, GlobalExporter};
+use marcusvbda\vstack\Exports\DefaultGlobalExporter;
 use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
-use marcusvbda\vstack\Imports\GlobalImporter;
 use marcusvbda\vstack\Models\{Tag, TagRelation};
 use marcusvbda\vstack\Models\ResourceConfig;
-use marcusvbda\vstack\Jobs\GlobalJob;
 use marcusvbda\vstack\Vstack;
 
 class ResourceController extends Controller
@@ -111,25 +109,31 @@ class ResourceController extends Controller
 	public function getData($resource, Request $request, $query = null)
 	{
 		$table = $resource->model->getTable();
+
 		if ($resource->isNoModelResource()) {
 			return $resource->model->where("id", "<", 0);
 		}
+
 		$table = $resource->model->getTable() . ".";
 		$data      = $request->all();
 		$orderBy   = Arr::get($data, 'order_by', "id");
-
 		$orderType = Arr::get($data, 'order_type', "desc");
-
 		$query     = $query ? $query : $resource->model->select($table . "id")->where($table . "id", ">", 0);
 
-		foreach ($resource->filters() as $filter) $query = $filter->applyFilter($query, $data);
+		foreach ($resource->filters() as $filter) {
+			$query = $filter->applyFilter($query, $data);
+		}
+
 		$search = $resource->search();
 
 		if (@$data["_"]) {
 			$query = $query->where(function ($q) use ($search, $data, $table) {
 				foreach ($search as $s) {
-					if (is_callable($s)) $q = $s($q, @$data["_"]);
-					else  $q = $q->OrWhere($table . $s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
+					if (is_callable($s)) {
+						$q = $s($q, @$data["_"]);
+					} else {
+						$q = $q->OrWhere($table . $s, "like", "%" . (@$data["_"] ? $data["_"] : "") . "%");
+					}
 				}
 				return $q;
 			});
@@ -219,9 +223,10 @@ class ResourceController extends Controller
 	public function importSheetTemplate($resource)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canImport()) abort(403);
-		$file_extension = Vstack::resource_export_extension();
-		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . "." . $file_extension;
+		if (!$resource->canImport()) {
+			abort(403);
+		}
+		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . ".xlsx";
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
 		Excel::store($exporter, $filename, "local");
 		$full_path = storage_path("app/$filename");
@@ -308,8 +313,7 @@ class ResourceController extends Controller
 
 		$config = json_decode($data["config"]);
 		$fieldlist = $config->fieldlist;
-		$file_extension = Vstack::resource_export_extension();
-		$filename = Auth::user()->tenant_id . "_" . uniqid() . "." . $file_extension;
+		$filename = Auth::user()->tenant_id . "_" . uniqid() . ".xlsx";
 		$filepath = $file->storeAs('local', $filename);
 		$user = Auth::user();
 		$user_id = $user->id;
@@ -330,22 +334,20 @@ class ResourceController extends Controller
 		return ["success" => true];
 	}
 
-	public function export($resource, Request $request)
+	private function prepareExportSheet($originalQuery, $resource, $data)
 	{
-		request()->request->add(["page_type" => "exporting_report"]);
-		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canExport()) abort(403);
 		$user = Auth::user();
-		$data = $request->all();
-		$_request = new Request();
-		$_request->setMethod('POST');
-		$params = [];
-		foreach ($data["get_params"] as $key => $value) $params[$key] = $value;
-		$_request->request->add($params);
-		$query = $this->getData($resource, $_request);
-		$count = $query->count();
-		$file_id = md5(uniqid());
-		$path = '/public/vstack/resource_export/';
+		$total = $originalQuery->count();
+		$per_page = 1;
+		if ($total > 30 && $total <= 100) {
+			$per_page = 30;
+		}
+		if ($total > 100 && $total <= 300) {
+			$per_page = 100;
+		}
+		if ($total > 300) {
+			$per_page = 300;
+		}
 
 		$disabled_columns = [];
 		foreach ($data['columns'] as $key => $value) {
@@ -353,7 +355,12 @@ class ResourceController extends Controller
 				$disabled_columns[] = $key;
 			}
 		}
-		$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "resource_export_disabled_columns")->first();
+
+		$config = ResourceConfig::where("data->user_id", $user->id)
+			->where("resource", $resource->id)
+			->where("config", "resource_export_disabled_columns")
+			->first();
+
 		$config = @$config->id ? $config : new ResourceConfig;
 		$config->resource = $resource->id;
 		$config->config = "resource_export_disabled_columns";
@@ -362,91 +369,73 @@ class ResourceController extends Controller
 		$_data->disabled_columns = $disabled_columns;
 		$config->data = $_data;
 		$config->save();
-		return $this->exportSheetOrDispatch($user, $count, $query, $resource, $data['columns'], $path, $file_id);
-	}
 
-	public function exportSheetOrDispatch($user, $count, $query, $resource, $columns, $path, $file_id)
-	{
-		$email = $user->email;
-		$config = new ResourceConfig;
-		$config->resource = $resource->id;
-		$config->config = "report_export_$file_id";
-		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
-		$raw_sql = Vstack::toRawSql($query);
-		$file_extension = Vstack::resource_export_extension();
-		$filename =  $file_id . "." . $file_extension;
-		$full_path = "public/vstack/resource_export/$filename";
-		$config->data = [
-			"user_id" => $user->id,
-			"path" => $path,
-			"full_path" => $full_path,
-			"file_id" => $file_id,
-			"file_extension" => $file_extension,
-			"file_name" => $resource->id . '_' . Carbon::now()->format('YmdHis'),
-			"status" => 'exporting',
-			"due_date" => Carbon::now()->addDays(1),
-			"route" => $route,
-			"microtime" => [
-				"start" => microtime(true),
-				"end" => 0,
-			],
-			"raw_sql" => $raw_sql
+		return [
+			"per_page" => $per_page,
+			"total" => $total,
+			"action" => "set_totals",
+			"current_page" => 1,
+			"last_page" => round($total / $per_page),
+			"disabled_columns" => $disabled_columns
 		];
-
-		$config->save();
-		$config_id = $config->id;
-		try {
-			if ($count <= $resource->maxRowsExportSync()) {
-
-				$exporter = new GlobalExporter($resource, $columns, $config_id);
-				Excel::store($exporter, $full_path, "local");
-				$message = "Relatório de " . $resource->label() . " exportada com sucesso";
-				$_data = (object)$config->data;
-				$_data->status = "ready";
-				$_data->microtime->end = microtime(true);
-				$config->data = $_data;
-				$config->save();
-				Messages::send("success", $message);
-				$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id, 'destroy' => true]);
-				return ['success' => true, 'url' => $route];
-			} else {
-				(new GlobalExporterQueued($resource, $columns, $config_id))->queue($full_path)->allOnQueue(Vstack::queue_resource_export())->chain([
-					new GlobalJob($config_id, $resource, $file_id)
-				]);
-				$message = "Sua Relatório de " . $resource->label() . " está sendo exportado, e assim que o processo for concluido você será notificado e o arquivo será enviado em seu email (" . $email . "), isso pode levar alguns minutos.";
-				Messages::send("info", $message);
-				return ['success' => true];
-			}
-		} catch (\Exception $e) {
-			$message = "Erro na exportação de relatório de " . $resource->label() . " ( " . $e->getMessage() . '  - on line ' . $e->getLine() . " )";
-			$_data = (object)$config->data;
-			$_data->status = "error";
-			$_data->error_message = $message;
-			$config->data = $_data;
-			$config->save();
-			return ['success' => false, 'message' => $message, 'message_type' => 'error', 'message' => $message];
-		}
 	}
 
-	public function exportDownload($resource, $file_id, Request $request)
+	public function export($resource, Request $request)
 	{
-		try {
-			$resource = ResourcesHelpers::find($resource);
-			if (!$resource->canExport()) abort(403);
-			$user = Auth::user();
-			$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "report_export_$file_id")->firstOrFail();
-			if ($request->has('destroy')) $config->delete();
-			return response()->download(storage_path("app/" . $config->data->full_path), $config->data->file_name . "." . @$config->data->file_extension)->deleteFileAfterSend($request->has('destroy'));
-		} catch (\Exception $e) {
-			abort(404);
-		}
-	}
-
-	public function exportDownloadIntercept($resource, $file_id)
-	{
+		request()->request->add(["page_type" => "exporting_report"]);
 		$resource = ResourcesHelpers::find($resource);
-		$route = route('resource.export_download', ['resource' => $resource->id, 'file' => $file_id]);
-		return View("vStack::resources.email_download", compact("route", "resource"));
+
+		if (!$resource->canExport()) {
+			abort(403);
+		}
+
+		$data = $request->all();
+		$_request = new Request();
+		$_request->setMethod('POST');
+
+		$params = [];
+		foreach ($data["get_params"] as $key => $value) {
+			$params[$key] = $value;
+		}
+
+		$_request->request->add($params);
+		$query = $this->getData($resource, $_request);
+
+		$current_page = data_get($data, "exporting.current_page");
+		$query = $query->select("*");
+
+		if (!$current_page) {
+			$prepared = $this->prepareExportSheet($query, $resource, $data);
+			return response()->json($prepared);
+		}
+
+		$current_page = data_get($data, "exporting.current_page");
+		$per_page = data_get($data, "exporting.per_page");
+		$last_page = data_get($data, "exporting.last_page");
+
+		$results = $query->select("*")->paginate($per_page, ['*'], 'page', $current_page);
+
+		$processed_row = $this->processExportRow($resource, $results, $data);
+
+		$action = $current_page === $last_page ? "finish" : "next_page";
+		return response()->json(["action" => $action, "processed_row" => $processed_row]);
+	}
+
+	protected function processExportRow($resource, $results, $data)
+	{
+		$vstack_controller = new VstackController;
+		$columns = data_get($data, 'columns');
+		$processed_rows = [];
+		foreach ($results as $row) {
+			$result = (array_filter(array_map(function ($key)  use ($row, $columns, $vstack_controller, $resource) {
+				$enabled = data_get($columns, $key . ".enabled");
+				if ($enabled) {
+					return $vstack_controller->getColumnIndex($resource->export_columns(), $row, $key);
+				}
+			}, array_keys($columns))));
+			$processed_rows[] = array_values($result);
+		}
+		return $processed_rows;
 	}
 
 	public function sheetImportRow($rows, $params, $importer)
@@ -797,8 +786,9 @@ class ResourceController extends Controller
 	public function getTags($resource, $id)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		// dd($id, get_class($resource->model));
-		if (!@$resource->useTags()) abort(403);
+		if (!@$resource->useTags()) {
+			abort(403);
+		}
 		return DB::table('resource_tags_relation')
 			->select('resource_tags.*')
 			->join('resource_tags', 'resource_tags.id', 'resource_tags_relation.resource_tag_id')
@@ -811,14 +801,18 @@ class ResourceController extends Controller
 	public function tagOptions($resource)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!@$resource->useTags()) abort(403);
+		if (!@$resource->useTags()) {
+			abort(403);
+		}
 		return  Tag::where("model", get_class($resource->model))->get();
 	}
 
 	public function destroyTag($resource, $resource_id, $tag_id)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!@$resource->useTags()) abort(403);
+		if (!@$resource->useTags()) {
+			abort(403);
+		}
 		TagRelation::where("resource_tag_id", $tag_id)->where("relation_id", $resource_id)->delete();
 		if (TagRelation::where("resource_tag_id", $tag_id)->count() <= 0) Tag::where("id", $tag_id)->delete();
 		return ["success" => true];
@@ -844,7 +838,9 @@ class ResourceController extends Controller
 	{
 		$colors = $resource->tagColors();
 		$old_tag = Tag::where("model", $model_class)->where("name", $name)->first();
-		if ($old_tag) return $old_tag;
+		if ($old_tag) {
+			return $old_tag;
+		}
 		return Tag::create([
 			"model" => $model_class,
 			"name" => $name,

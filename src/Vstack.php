@@ -33,11 +33,6 @@ class Vstack
 		return config("vstack.default_import_csv_separator", ",");
 	}
 
-	public static function resource_export_extension()
-	{
-		return config("vstack.resource_export_extension", "xls");
-	}
-
 	public static function queue_resource_import()
 	{
 		return config("vstack.queue.resource-import", "resource-import");
