@@ -23,7 +23,6 @@ class ResourceController extends Controller
 	public function report($resource, Request $request)
 	{
 		request()->request->add(["page_type" => "report"]);
-		request()->request->add(["context" => (object)["user" => Auth::user()]]);
 		return $this->showIndexList($resource, $request, true);
 	}
 
@@ -41,11 +40,16 @@ class ResourceController extends Controller
 		}
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
+		if (request()->page_type == "report") {
+			$data = $resource->prepareQueryToExport($data->select("*"));
+		}
 		$data = $data->paginate($per_page);
 		$data->map(function ($query) {
 			$query->setAppends([]);
 		});
-		if (@$request["list_type"]) $this->storeListType($resource, $request["list_type"]);
+		if (@$request["list_type"]) {
+			$this->storeListType($resource, $request["list_type"]);
+		}
 		return view("vStack::resources.index", compact("resource", "data", "report_mode"));
 	}
 
