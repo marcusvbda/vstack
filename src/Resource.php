@@ -169,7 +169,7 @@ class Resource
 		return [new Card("Informações", $fields)];
 	}
 
-	public function export_columns()
+	public function exportColumns()
 	{
 		return [
 			"id" => ["label" => "Código"],
@@ -684,5 +684,10 @@ class Resource
 	{
 		return "O Download do seu relatório <b>iniciará automaticamente</b> após o processamento finalizar, <b>não feche
 		está aba</b>, caso contrário o processo será perdido.";
+	}
+
+	public function prepareQueryToExport($query)
+	{
+		return $query;
 	}
 }

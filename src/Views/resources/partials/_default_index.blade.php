@@ -32,7 +32,7 @@
                             $report_export_query = (clone $resource_config_query)->where('config', 'like', 'report_export_%');
                         @endphp
                         <resource-export-btn class="ml-4 link f-12" id="{{ $resource->id }}" label="{{ $resource->label() }}" 
-                            :export_columns='@json($resource->export_columns((object)["user" => \Auth::user()]))' 
+                            :export_columns='@json($resource->exportColumns())' 
                             :get_params='@json($_GET)' :qty_results='@json($data->total())' 
                             :config_columns='@json($config_columns)' 
                             message='{{ $resource->exportingMessage() }}'

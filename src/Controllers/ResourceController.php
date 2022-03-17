@@ -338,15 +338,20 @@ class ResourceController extends Controller
 	{
 		$user = Auth::user();
 		$total = $originalQuery->count();
-		$per_page = 1;
+		if ($total > 10 && $total <= 20) {
+			$per_page = 5;
+		}
+		if ($total > 20 && $total <= 30) {
+			$per_page = 10;
+		}
 		if ($total > 30 && $total <= 100) {
 			$per_page = 30;
 		}
 		if ($total > 100 && $total <= 300) {
-			$per_page = 100;
+			$per_page = 50;
 		}
 		if ($total > 300) {
-			$per_page = 300;
+			$per_page = 100;
 		}
 
 		$disabled_columns = [];
@@ -402,7 +407,7 @@ class ResourceController extends Controller
 		$query = $this->getData($resource, $_request);
 
 		$current_page = data_get($data, "exporting.current_page");
-		$query = $query->select("*");
+		$query = $resource->prepareQueryToExport($query->select("*"));
 
 		if (!$current_page) {
 			$prepared = $this->prepareExportSheet($query, $resource, $data);
@@ -430,7 +435,7 @@ class ResourceController extends Controller
 			$result = (array_filter(array_map(function ($key)  use ($row, $columns, $vstack_controller, $resource) {
 				$enabled = data_get($columns, $key . ".enabled");
 				if ($enabled) {
-					return $vstack_controller->getColumnIndex($resource->export_columns(), $row, $key);
+					return $vstack_controller->getColumnIndex($resource->exportColumns(), $row, $key);
 				}
 			}, array_keys($columns))));
 			$processed_rows[] = array_values($result);

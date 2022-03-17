@@ -52,10 +52,13 @@
                 </template>
                 <template v-if="exporting.current_action == 'processing'">
                     <div class="py-5">
-                        <div class="text-muted mb-2">Exportando {{ exporting.exported }}/{{ exporting.total_results }}</div>
-                        <ElProgress :text-inside="true" :stroke-width="24" :percentage="percentage" :color="customColorMethod" />
+                        <div class="d-flex flex-row justify-content-between mb-2 w-100">
+                            <div class="text-muted">Exportando {{ exporting.exported }}/{{ exporting.total_results }}</div>
+                            <div class="text-muted">Tempo estimado : {{ formated_estimated_time }}</div>
+                        </div>
+                        <ElProgress :text-inside="true" :stroke-width="24" :percentage="percentage" color="#5b5b5b" />
                         <div class="text-center mt-4">
-                            <small class="text-muted" v-html="message" />
+                            <small class="text-muted word-break-all" v-html="message" />
                         </div>
                     </div>
                 </template>
@@ -78,14 +81,16 @@ function getDefaultData(disabled_columns) {
             per_page: 0,
             total_results: 0,
             exported: 0,
+            started_time: null,
+            estimated_time: 0,
+            estimated_timeout: null,
             current_action: "waiting",
             sheet_created: false,
             new_disabled_columns: [],
             workbook: {},
             worksheet: {},
         },
-        timeout: 500,
-        humanize_timeout: 2000,
+        humanize_timeout: 1000,
     };
 }
 
@@ -113,6 +118,12 @@ export default {
         return getDefaultData(this.config_columns?.data?.disabled_columns ?? []);
     },
     computed: {
+        formated_estimated_time() {
+            if (this.exporting.estimated_time) {
+                return this.$moment.utc(this.exporting.estimated_time).format("HH:mm:ss");
+            }
+            return "Calculando ...";
+        },
         percentage() {
             const value = Math.round((this.exporting.exported / this.exporting.total_results) * 100);
             if (value < 0) {
@@ -161,22 +172,21 @@ export default {
                     this.exporting.per_page = data.per_page;
                     this.exporting.file_name = data.file_name;
                     this.exporting.new_disabled_columns = data.disabled_columns;
+                    this.updateEstimatedTime();
                     handleCreateWorkSheet(this.label, this.sheetColumns);
-                    setTimeout(() => {
-                        this.handleExport();
-                    }, this.timeout);
+                    this.handleExport();
                 },
                 next_page: (data) => {
                     this.exporting.current_action = "processing";
                     this.exporting.current_page++;
                     this.exporting.exported += data.processed_row.length;
+                    this.updateEstimatedTime();
                     handleAppendRowToWorkSheet(data.processed_row);
-                    setTimeout(() => {
-                        this.handleExport();
-                    }, this.timeout);
+                    this.handleExport();
                 },
                 finish: () => {
                     this.exporting.exported = this.exporting.total_results;
+                    clearInterval(this.exporting.estimated_timeout);
                     setTimeout(() => {
                         handleFinishWorkBook(this.fileName).then(() => {
                             this.$message({
@@ -196,19 +206,26 @@ export default {
         this.initComponent();
     },
     methods: {
+        updateEstimatedTime() {
+            if (!this.exporting.exported) {
+                this.exporting.started_time = new Date().getTime();
+                return (this.exporting.estimated_time = 0);
+            }
+            const now = new Date().getTime();
+            const total_time = now - this.exporting.started_time;
+            const rest_to_import = this.exporting.total_results - this.exporting.exported;
+            let estimated_ms = Math.round((rest_to_import * total_time) / this.exporting.exported);
+            this.exporting.estimated_time = estimated_ms;
+
+            clearInterval(this.exporting.estimated_timeout);
+            this.exporting.estimated_timeout = setInterval(() => {
+                this.exporting.estimated_time -= 1000;
+            }, 1000);
+        },
         async finishExporting() {
             const xls64 = await this.exporting.workbook.xlsx.writeBuffer({ base64: true });
             const blob = new Blob([xls64], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
             await saveAs(blob, this.fileName);
-        },
-        customColorMethod(percentage) {
-            if (percentage < 60) {
-                return "#909399";
-            } else if (percentage < 80) {
-                return "#e6a23c";
-            } else {
-                return "#67c23a";
-            }
         },
         resetData() {
             const disbled_columns = this.exporting.new_disabled_columns;
@@ -220,14 +237,12 @@ export default {
             this.initComponent();
         },
         initComponent() {
-            Object.keys(this.export_columns).map((key) => {
-                let _disabled_columns = this.disabled_columns ?? [];
-                let storage_value = !(_disabled_columns ?? []).includes(key);
-                this.$nextTick(() => {
-                    this.$set(this.columns, key, {
-                        enabled: storage_value,
-                        label: this.export_columns[key].label ? this.export_columns[key].label : this.export_columns[key],
-                    });
+            let disabled_columns = this.disabled_columns ?? [];
+            this.export_columns.map((row, key) => {
+                let storage_value = !(disabled_columns ?? []).includes(key);
+                this.$set(this.columns, key, {
+                    enabled: storage_value,
+                    label: this.export_columns[key].label ? this.export_columns[key].label : this.export_columns[key],
                 });
             });
             workbook = new Excel.Workbook();

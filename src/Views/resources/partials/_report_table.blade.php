@@ -8,7 +8,7 @@ $crud_buttons = [
 ];
 
 $list_types = @$resource->listType() ? $resource->listType() : ["table"];
-$table = $resource->export_columns();
+$table = $resource->exportColumns();
 $table_keys = array_keys($table);
 $controller  = new  \marcusvbda\vstack\Controllers\VstackController;
 ?>
