@@ -172,8 +172,12 @@ class Resource
 	public function exportColumns()
 	{
 		return [
-			"id" => ["label" => "Código"],
-			"created_at" => ["label" => "Data de Criação"],
+			["label" => "Código", "handler" => function ($row) {
+				return @$row->id;
+			}],
+			["label" => "Data de Criação", "handler" => function ($row) {
+				return @$row->id;
+			}],
 		];
 	}
 
