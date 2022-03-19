@@ -343,10 +343,7 @@ class ResourceController extends Controller
 	{
 		$user = Auth::user();
 		$total = $originalQuery->count();
-		if ($total > 10 && $total <= 20) {
-			$per_page = 5;
-		}
-		if ($total > 20 && $total <= 30) {
+		if ($total <= 30) {
 			$per_page = 10;
 		}
 		if ($total > 30 && $total <= 100) {
