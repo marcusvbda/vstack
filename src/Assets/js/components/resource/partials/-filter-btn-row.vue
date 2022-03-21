@@ -1,7 +1,7 @@
 <template>
     <tbody>
         <tr v-if="f.label" class="tr-hover">
-            <td class="px-2 tr-label" style="position: relative" @click="visible = !visible">
+            <td class="px-2 tr-label" style="position: relative" @click="visible = !visible" :id="`resource-filter-item-${index}`">
                 <span class="badge-number" v-if="index != 'per_page' && $root.$refs.tags_filter.hasContent(filter, index)" v-html="'!'" />
                 <div class="w-100">
                     <div class="d-flex flex-row justify-content-between px-3 font-weight-bold">
@@ -13,7 +13,7 @@
         </tr>
         <tr v-if="visible">
             <td class="px-2">
-                <v-runtime-template :key="k" :template="f.view" />
+                <v-runtime-template :key="k" :template="f.view" :id="`resource-filter-item-${index}-input`"/>
             </td>
         </tr>
     </tbody>

@@ -5,14 +5,14 @@
             :class="`btn-secondary btn-sm`"
             style="height: 33px"
             type="button"
-            id="dropdownMenuButton"
             @click.prevent="toggleFilters"
             v-html="`Filtrar ${label}`"
+            id="resource-btn-filter"
         />
         <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl" :before-close="confirmClose" :append-to-body="true">
             <template slot="title">
                 <div class="w-100 d-flex flex-row">
-                    <el-button class="mr-3" size="medium" type="primary" @click="makeNewRoute">
+                    <el-button class="mr-3" size="medium"  id="resource-btn-confirm" type="primary" @click="makeNewRoute">
                         <span class="el-icon-search mr-2" />
                         Confirmar Filtro
                     </el-button>
@@ -34,19 +34,20 @@
                                                 />
                                             </div>
                                             <div class="col-7 pr-0">
-                                                <el-select
+                                                <ElSelect
                                                     v-model="filter.per_page"
                                                     size="medium"
                                                     class="w-100"
                                                     @change="showConfirmBtn = true"
+                                                     id="resource-filter-per_page"
                                                 >
-                                                    <el-option
+                                                    <ElOption
                                                         :key="op"
                                                         v-for="op in per_page"
                                                         :value="Number(op)"
                                                         :label="`${op} ${Number(op) > 1 ? 'resultados' : 'resultado'}`"
                                                     />
-                                                </el-select>
+                                                </ElSelect>
                                             </div>
                                         </div>
                                     </div>

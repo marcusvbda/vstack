@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="row mt-4">
-                    <div class="col-12 padding-dialog row-dialog-export">
+                    <div class="col-12 padding-dialog row-dialog-export" id="row-dialog-export-items">
                         <ElCheckbox
                             class="no-check-mgt mx-1"
                             v-for="(f, i) in columns"
@@ -28,12 +28,17 @@
                             v-model="columns[i].enabled"
                             :label="columns[i].label"
                             border
+                            :id="`row-dialog-export-items-${columns[i].label}`"
                         />
                     </div>
                 </div>
                 <span slot="footer" class="dialog-footer d-flex flex-row justify-content-end">
-                    <ElButton @click="visible = false">Cancelar</ElButton>
-                    <ElButton type="primary" @click="confirm">Exportar Relatório</ElButton>
+                    <ElButton @click="visible = false" id="row-dialog-export-cancel">
+                        Cancelar
+                    </ElButton>
+                    <ElButton type="primary" @click="confirm" id="row-dialog-export-confirm">
+                        Exportar Relatório
+                    </ElButton>
                 </span>
             </template>
             <template v-else>
