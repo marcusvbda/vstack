@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col-12">
                             <template v-for="(card, i) in data.fields">
-                                <v-runtime-template :key="i" :template="card.view"  :id="`resource-crud-card-${card.label}`"/>
+                                <v-runtime-template :key="i" :template="card.view" :id="`resource-crud-card-${card.label}`" />
                             </template>
                         </div>
                     </div>
@@ -27,7 +27,11 @@
                                                 <div class="row" v-if="!right_card_content">
                                                     <div class="col-12">
                                                         <ul class="d-flex flex-column mb-0 pl-3">
-                                                            <li v-for="(card, i) in namedCards" :key="i" :id="`resource-card-section-list-link-${card.label}`">
+                                                            <li
+                                                                v-for="(card, i) in namedCards"
+                                                                :key="i"
+                                                                :id="`resource-card-section-list-link-${card.label}`"
+                                                            >
                                                                 <a
                                                                     class="f-12 link"
                                                                     :href="`#${card.label}`"
@@ -40,8 +44,10 @@
                                                 <v-runtime-template v-else :template="right_card_content" />
                                             </div>
                                             <div
-                                                class="card-footer flex-wrap d-flex flex-row justify-content-end 
-                                            p-2 align-items-center"
+                                                :class="[
+                                                    'card-footer flex-wrap d-flex',
+                                                    'flex-row justify-content-end p-2 align-items-center',
+                                                ]"
                                             >
                                                 <el-button-group>
                                                     <el-button
@@ -73,8 +79,8 @@
                         </div>
                     </template>
                     <template v-if="crud_type.template == 'wizard'">
-                        <div class="row"  id="resource-crud-page">
-                            <div class="col-12  col-lg-9 d-flex flex-column">
+                        <div class="row" id="resource-crud-page">
+                            <div class="col-12 col-lg-9 d-flex flex-column">
                                 <div :class="`d-flex ${wizardContentClass}`">
                                     <el-steps
                                         :active="wizard_step"
@@ -96,7 +102,7 @@
                                             </el-step>
                                         </template>
                                     </el-steps>
-                                    <div :class="`flex-grow-1 ${wizardCrudClass}`"  >
+                                    <div :class="`flex-grow-1 ${wizardCrudClass}`">
                                         <transition :name="wizardTransitionName">
                                             <v-runtime-template
                                                 :template="data.fields[wizard_step].view"
@@ -106,7 +112,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-3  fields-tab">
+                            <div class="col-12 col-lg-3 fields-tab">
                                 <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
                                     <div class="col-12">
                                         <div class="card">
@@ -128,8 +134,10 @@
                                                 <v-runtime-template v-else :template="right_card_content" />
                                             </div>
                                             <div
-                                                class="card-footer flex-wrap d-flex flex-row justify-content-end 
-                                            p-2 align-items-center"
+                                                :class="[
+                                                    'card-footer flex-wrap d-flex flex-row',
+                                                    'justify-content-end p-2 align-items-center',
+                                                ]"
                                             >
                                                 <el-button-group>
                                                     <template v-if="wizard_step == data.fields.length - 1">
@@ -214,7 +222,7 @@ export default {
         "dialog",
         "right_card_content",
         "content_id",
-        "content"
+        "content",
     ],
     data() {
         return {
@@ -225,11 +233,11 @@ export default {
             wizard_step: 0,
             wizardTransitionName: "",
             loading_wizard_next: false,
-            loading_wizard_previous: false
+            loading_wizard_previous: false,
         };
     },
     components: {
-        "v-runtime-template": VRuntimeTemplate
+        "v-runtime-template": VRuntimeTemplate,
     },
     computed: {
         ...mapGetters("resource", ["action_btn_loading"]),
@@ -270,12 +278,12 @@ export default {
             return this.raw_type.toUpperCase();
         },
         namedCards() {
-            return this.data.fields.filter(x => x.label);
+            return this.data.fields.filter((x) => x.label);
         },
         wizardContentClass() {
             let justifyClasses = {
                 left: "justify-content-start",
-                right: "flex-row-reverse"
+                right: "flex-row-reverse",
             };
             if (this.wizardDirection == "vertical") {
                 return `flex-column flex-lg-row ${justifyClasses[this.wizardStepSide]}`;
@@ -288,13 +296,13 @@ export default {
         wizardCrudClass() {
             let classes = {
                 left: "ml-4",
-                right: "mr-4"
+                right: "mr-4",
             };
             if (this.wizardDirection === "horizontal") {
                 return "mt-2";
             }
             return classes[this.crud_type.position] ?? "";
-        }
+        },
     },
     async created() {
         this.$nextTick(() => {
@@ -355,10 +363,10 @@ export default {
         },
         initWizardEvents() {
             if (this.crud_type.template == "wizard") {
-                this.$waitForEls(".resource-step").then(elements => {
+                this.$waitForEls(".resource-step").then((elements) => {
                     elements.forEach((item, index) => {
-                        [".el-step__head", ".el-step__main"].forEach(child => {
-                            item.querySelectorAll(child).forEach(attr => {
+                        [".el-step__head", ".el-step__main"].forEach((child) => {
+                            item.querySelectorAll(child).forEach((attr) => {
                                 attr.addEventListener("click", () => {
                                     this.clikedStepWizard(index);
                                 });
@@ -406,18 +414,18 @@ export default {
             const actions = {
                 tags: () => {
                     if (Array.isArray(value)) {
-                        return value.map(x => String(x));
+                        return value.map((x) => String(x));
                     }
                     return value ? value.split(",") : [];
                 },
                 check: () => String(value) == "true",
-                upload: () => (value ? (Array.isArray(value) ? value.map(x => String(x)) : value.split(",")) : []),
+                upload: () => (value ? (Array.isArray(value) ? value.map((x) => String(x)) : value.split(",")) : []),
                 daterange: () => {
                     if (Array.isArray(value)) {
-                        return value.map(x => new Date(String(x)));
+                        return value.map((x) => new Date(String(x)));
                     }
-                    return value ? value.split(",").map(x => new Date(String(x))) : [];
-                }
+                    return value ? value.split(",").map((x) => new Date(String(x))) : [];
+                },
             };
             return actions[type] ? actions[type]() : value;
         },
@@ -448,7 +456,7 @@ export default {
                 .post(`${this.data.store_route}-wizard-step-validation`, {
                     ...this.form,
                     wizard_step: this.wizard_step,
-                    page_type
+                    page_type,
                 })
                 .then(() => {
                     this.wizardTransitionName = "fade";
@@ -458,7 +466,7 @@ export default {
                         this.wizardTransitionName = "";
                     }, 500);
                 })
-                .catch(er => {
+                .catch((er) => {
                     this.makeFormValidationErrors(er);
                     this.loading_wizard_next = false;
                 });
@@ -468,44 +476,38 @@ export default {
             this.errors = errors;
             try {
                 let message = Object.keys(errors)
-                    .map(key => `<li>${errors[key][0]}</li>`)
+                    .map((key) => `<li>${errors[key][0]}</li>`)
                     .join("");
                 this.$message({
                     dangerouslyUseHTMLString: true,
                     showClose: true,
                     message: `<ul>${message}</ul>`,
-                    type: "error"
+                    type: "error",
                 });
             } catch {
                 return;
             }
         },
         submit(clicked_btn = "save_and_back") {
-            this.$confirm(`Confirma ${this.data.page_type} ?`, "Confirmação", {
-                confirmButtonText: "Sim",
-                cancelButtonText: "Não",
-                type: "warning"
-            }).then(() => {
-                let loading = this.$loading({ text: "Salvando ..." });
-                this.$http
-                    .post(this.data.store_route, { ...this.form, clicked_btn })
-                    .then(({ data }) => {
-                        if (data.success) {
-                            return (window.location.href = data.route);
-                        } else {
-                            if (data.message) {
-                                this.$message({ showClose: true, message: data.message.text, type: data.message.type });
-                            }
-                            loading.close();
+            let loading = this.$loading({ text: "Salvando ..." });
+            this.$http
+                .post(this.data.store_route, { ...this.form, clicked_btn })
+                .then(({ data }) => {
+                    if (data.success) {
+                        return (window.location.href = data.route);
+                    } else {
+                        if (data.message) {
+                            this.$message({ showClose: true, message: data.message.text, type: data.message.type });
                         }
-                    })
-                    .catch(er => {
-                        this.makeFormValidationErrors(er);
                         loading.close();
-                    });
-            });
-        }
-    }
+                    }
+                })
+                .catch((er) => {
+                    this.makeFormValidationErrors(er);
+                    loading.close();
+                });
+        },
+    },
 };
 </script>
 <style lang="scss" scoped>

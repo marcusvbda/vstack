@@ -44,6 +44,10 @@ class ResourceController extends Controller
 			$data = $resource->prepareQueryToExport($data->select("*"));
 		}
 		$list_items = $resource->listItemsContent(clone $data);
+		if (request()->is_api) {
+			$data = $data->select("*")->paginate($per_page);
+			return $data;
+		}
 		$data = $data->paginate($per_page);
 		$data->map(function ($query) {
 			$query->setAppends([]);
@@ -53,6 +57,7 @@ class ResourceController extends Controller
 		}
 		return view("vStack::resources.index", compact("resource", "data", "report_mode", "list_items"));
 	}
+
 
 	private function storeListType($resource, $type)
 	{
@@ -193,7 +198,9 @@ class ResourceController extends Controller
 		request()->request->add(["page_type" => "edit"]);
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
-		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) abort(403);
+		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) {
+			abort(403);
+		}
 		$data = $this->getResourceEditCrudContent($content, $resource, $request);
 		$params = @$request["params"] ? $request["params"] : [];
 		return $resource->editMethod($params, $data, $content);
@@ -506,7 +513,9 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
-		if (!$resource->canDeleteRow($content) || !$resource->canDelete()) abort(403);
+		if (!$resource->canDeleteRow($content) || !$resource->canDelete()) {
+			abort(403);
+		}
 		if ($content->delete()) {
 			Messages::send("success", "Registro excluido com sucesso !!");
 			return ["success" => true, "route" => $resource->route()];
@@ -529,10 +538,16 @@ class ResourceController extends Controller
 		request()->request->add(["page_type" => "view"]);
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
-		if (!$resource->canViewRow($content) || !$resource->canView()) abort(403);
+		if (!$resource->canViewRow($content) || !$resource->canView()) {
+			abort(403);
+		}
+		if (request()->is_api) {
+			return $content;
+		}
 		$data = $this->getResourceEditCrudContent($content, $resource, $request);
 		$params = @$request["params"] ? $request["params"] : [];
 		$data["page_type"] = "Visualização";
+
 		return $resource->viewMethod($params, $data, $content);
 	}
 
@@ -592,7 +607,9 @@ class ResourceController extends Controller
 	public function store(Request $request)
 	{
 		$data = $request->all();
-		if (!@$data["resource_id"]) abort(404);
+		if (!@$data["resource_id"]) {
+			abort(404);
+		}
 		$resource = ResourcesHelpers::find($data["resource_id"]);
 		if (@$data["id"]) {
 			request()->request->add(["page_type" => "edit"]);
@@ -608,7 +625,7 @@ class ResourceController extends Controller
 		$validation_custom_message =  $resource->getValidationRuleMessage();
 		$this->validate($request, $resource->getValidationRule(), @$validation_custom_message ? $validation_custom_message : []);
 		$id = @$data["id"];
-		$data = $request->except(["resource_id", "id", "redirect_back", "clicked_btn", "page_type"]);
+		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type"]);
 		$data = $this->processStoreData($resource, $data);
 		return $resource->storeMethod($id, $data);
 	}
@@ -618,8 +635,16 @@ class ResourceController extends Controller
 		$data = $request->all();
 		if (!@$data["resource_id"]) abort(404);
 		$resource = ResourcesHelpers::find($data["resource_id"]);
-		if (@$data["id"]) if (!$resource->canUpdate()) abort(403);
-		if (!@$data["id"]) if (!$resource->canCreate()) abort(403);
+		if (@$data["id"]) {
+			if (!$resource->canUpdate()) {
+				abort(403);
+			}
+		}
+		if (!@$data["id"]) {
+			if (!$resource->canCreate()) {
+				abort(403);
+			}
+		}
 		$this->validate($request, $resource->getValidationRule());
 		$target = @$data["id"] ? $resource->model->findOrFail($data["id"]) : new $resource->model();
 		$data = $request->except(["resource_id", "id", "redirect_back"]);
@@ -878,5 +903,59 @@ class ResourceController extends Controller
 		$rules = $resource->getValidationRule($request["wizard_step"]);
 		$request->validate($rules);
 		return ["success" => true];
+	}
+
+	public function getResource($resource_id, Request $request)
+	{
+		request()->request->add(["is_api" => true]);
+		$result = $this->index($resource_id, $request);
+		return response()->json($result);
+	}
+
+	public function findByCode($resource_id, $code, Request $request)
+	{
+		request()->request->add(["is_api" => true]);
+		$decoded = \Hashids::decode($code);
+		$id = @$decoded[0] ?? $code;
+		$result = $this->view($request, $resource_id, $id);
+		return response()->json($result);
+	}
+
+	public function apiStore($resource_id, $id, $type, Request $request)
+	{
+		request()->request->add(["is_api" => true, "resource_id" => $resource_id, "id" => @$id, "page_type" => $type]);
+		$result = $this->store($request);
+		return $result;
+	}
+
+	public function editResource($resource_id, $code, Request $request)
+	{
+		$id = @$decoded[0] ?? $code;
+		$result = $this->apiStore($resource_id, $id, "edit", $request);
+		return response()->json(data_get($result, "model"));
+	}
+
+	public function createResource($resource_id, Request $request)
+	{
+		$result = $this->apiStore($resource_id, null, "create", $request);
+		return response()->json(data_get($result, "model"));
+	}
+
+	public function destroyResource($resource_id, $code)
+	{
+		$id = @$decoded[0] ?? $code;
+		$result = $this->destroy($resource_id, $id);
+		return response()->json(data_get($result, "success"));
+	}
+
+	public function apiLogin(Request $request)
+	{
+		$credentials = $request->only('email', 'password');
+		if (Auth::attempt($credentials, (@$request['remember'] ? true : false))) {
+			$user = Auth::user();
+			$jwt = Vstack::encodeJWT(["id" => $user->id, "tenant_id" => $user->tenant_id, "name" => $user->name, "email" => $user->email]);
+			return response()->json(["token" => $jwt]);
+		}
+		return response()->json("Invalid credentials", 401);
 	}
 }

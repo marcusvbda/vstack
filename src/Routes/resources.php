@@ -46,3 +46,15 @@ Route::group(['prefix' => "admin"], function () {
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
 	});
 });
+
+
+Route::group(['prefix' => "api"], function () {
+	Route::post('login', [ResourceController::class, 'apiLogin']);
+	Route::group(['middleware' => ['api.vstack_jwt']], function () {
+		Route::get('{resource_id}', [ResourceController::class, 'getResource']);
+		Route::post('{resource_id}/create', [ResourceController::class, 'createResource']);
+		Route::get('{resource_id}/{code}', [ResourceController::class, 'findByCode']);
+		Route::put('{resource_id}/{code}/edit', [ResourceController::class, 'editResource']);
+		Route::delete('{resource_id}/{code}/destroy', [ResourceController::class, 'destroyResource']);
+	});
+});
