@@ -10,6 +10,7 @@
             @change="submit"
             v-bind:class="{'withFilter':filter}"
             clearable
+            id="resource-global-filter"
         >
             <i class="el-icon-search el-input__icon" slot="suffix"></i>
         </el-input>

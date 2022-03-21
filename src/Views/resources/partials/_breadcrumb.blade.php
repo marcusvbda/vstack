@@ -13,12 +13,12 @@
 @endphp
 <div class="row">
     <div class="col-12">
-        <nav aria-label="breadcrumb">
+        <nav aria-label="breadcrumb" id="breadcrumb">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     @foreach($bc as $key=>$value)
-						<li class="breadcrumb-item">
-							<a href="{{$value}}" class="link">{{$key}}</a>
+						<li class="breadcrumb-item" id="breadcrumb-item-{{ $key }}">
+							<a href="{{$value}}" class="link" id="breadcrumb-item-link">{{$key}}</a>
 						</li>
                     @endforeach
                 </ol>

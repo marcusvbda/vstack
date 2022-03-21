@@ -1,6 +1,7 @@
 <template>
     <div>
         <a
+           id="resource-btn-store"
             :class="`btn btn-primary ${big == undefined ? 'btn-sm' : ''} btn-sm-block cursor-pointer px-3 pr-2 mx-4 mb-1`"
             @click.prevent="click"
             :href="route"

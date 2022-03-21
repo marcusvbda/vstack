@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a href="#" @click.prevent="openExportModal">
+        <a href="#" @click.prevent="openExportModal" id="resource-report-btn">
             <slot />
         </a>
         <ElDialog
@@ -143,7 +143,7 @@ export default {
         titleDialog() {
             const actions = {
                 waiting: `Exportação de relatório de ${this.label}`,
-                preparing: `Agaurde, preparando exportação de relatório de ${this.label} ...`,
+                preparing: `Aguarde, preparando exportação de relatório de ${this.label} ...`,
                 processing: `Aguarde, exportando relatório de ${this.label} ...`,
             };
             return actions[this.exporting.current_action] ?? ``;
@@ -180,6 +180,7 @@ export default {
                     this.exporting.new_disabled_columns = data.disabled_columns;
                     this.updateEstimatedTime();
                     handleCreateWorkSheet(this.label, this.sheetColumns);
+                    this.initPreventClose()
                     this.handleExport();
                 },
                 next_page: (data) => {
@@ -195,6 +196,7 @@ export default {
                     handleAppendRowToWorkSheet(data.processed_row);
                     this.updateEstimatedTime();
                     clearInterval(this.exporting.estimated_timeout);
+                    window.onbeforeunload = null;
                     setTimeout(() => {
                         handleFinishWorkBook(this.fileName).then(() => {
                             this.$message({
@@ -214,6 +216,11 @@ export default {
         this.initComponent();
     },
     methods: {
+        initPreventClose() {
+            window.onbeforeunload = () => {
+                return "Exportação em andamento, se sair agora, a exportação será cancelada e o progresso será perdido.";
+            }
+        },
         updateEstimatedTime() {
             if (!this.exporting.exported) {
                 this.exporting.started_time = new Date().getTime();

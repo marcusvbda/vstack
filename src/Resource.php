@@ -449,6 +449,11 @@ class Resource
 		return "vStack::resources.partials._default_table";
 	}
 
+	public function vieReportBlade()
+	{
+		return "vStack::resources.partials._default_report_table";
+	}
+
 	public function indexBlade()
 	{
 		return "vStack::resources.partials._default_index";

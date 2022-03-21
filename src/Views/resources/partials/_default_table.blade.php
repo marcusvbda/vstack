@@ -25,43 +25,50 @@
 			@endif
 			<div class="table-responsive-sm">
 				<table class="table table-striped hovered resource-table table-hover mb-0">
-					<thead>
+					<thead id="resource-list-head">
 						<tr>
 							@if($table_after_row)
 								<th  width="1%;"></th>
 							@endif
 							@if($has_actions)
-								<th  width="1%;">
+								<th  width="1%;" id="resource-list-head-action">
 									<div class="d-flex align-items-center justify-content-center">
 										<input class='select-action-resource' type="checkbox" id="{{ $resource->id.'_action_select_all' }}"  />
 									</div>
 								</th>
 							@endif
 							@foreach($table as $key=>$value)
-							@php
-								$size =  (isset($value['size']) ? $value['size'] : 'auto');
-								$col_class = (isset($value['col_class']) ? $value['col_class'] : 'text-left');
-								$sortable_index = isset($value['sortable_index']) ? $value['sortable_index'] : $key;
-							@endphp
-							<th  width="{{$size}}" class="resource-table-col {{ $col_class }}">
-								@if(@$value["sortable"]!==false)
-									<a href="{{ResourcesHelpers::sortLink($resource->route(),request()->query(), $sortable_index,$order_type)}}"
-										class="d-flex flex-row align-items-center link-sortable">
-										<div class="link">{{isset($value["label"]) ? @$value["label"] : $value}}</div>
-										<div class="ml-auto d-flex flex-row">
-											<span
-												class="sort-icon el-icon-arrow-down @if($order_type=='asc' && $order_by==$sortable_index ) active @endif"></span>
-											<span
-												class="sort-icon el-icon-arrow-up @if($order_type=='desc' && $order_by==$sortable_index) active @endif"></span>
-										</div>
-									</a>
-								@else
-									<div class="link-sortable">{{isset($value["label"]) ? @$value["label"] : $value}}</div>
-								@endif
-							</th>
+								@php
+									$size = data_get($value,'size','auto');
+									$col_class = data_get($value,"col_class",'text-left');
+									$sortable_index = data_get($value,"sortable_index",$key);
+								@endphp
+								<th width="{{$size}}" class="resource-table-col {{ $col_class }}" id="resource-list-head-{{ $sortable_index }}">					
+									@if(@data_get($value,"sortable") !== false)
+										<a href="{{ResourcesHelpers::sortLink($resource->route(),request()->query(), $sortable_index,$order_type)}}"
+											class="d-flex flex-row align-items-center link-sortable">
+											<div class="link">{{data_get($value,"label",$value)}}</div>
+											<div class="ml-auto d-flex flex-row">
+												<span class="sort-icon el-icon-arrow-down 
+													@if($order_type=='asc' && $order_by==$sortable_index ) active @endif"
+												>
+												</span>
+												<span class="sort-icon el-icon-arrow-up 
+													@if($order_type=='desc' && $order_by==$sortable_index) active @endif"
+												>
+											</span>
+											</div>
+										</a>
+									@else
+										<div class="link-sortable">{{isset($value["label"]) ? @$value["label"] : $value}}</div>
+									@endif
+								</th>
 							@endforeach
 							@if($show_right_actions_column)
-								<th  style="max-width: 210px;width: 210px;"></th>
+								<th style="max-width: 210px;width: 210px;" 
+									id="resource-list-head-actions"
+								>
+								</th>
 							@endif
 						</tr>
 					</thead>
@@ -75,7 +82,11 @@
 									$code = \Hashids::encode($row->id);
 									$columns_count = count($resource->table())+($has_actions ? 1 : 0)+($table_after_row ? 2 : 0);
 								@endphp
-								<tr is="get-resource-content" :cols={{count($table_keys)}} row_code="{{$code}}" :raw_content='@json($row)'
+								<tr 
+									is="get-resource-content" 
+									:cols={{count($table_keys)}} 
+									row_code="{{$code}}" 
+									:raw_content='@json($row)'
 									resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
 									:show_right_actions_column='@json($show_right_actions_column)'
 									type="resourceTableContent"

@@ -8,5 +8,6 @@
     description='{{$description}}'                                                       
     :errors='{{"errors.$field ? errors.$field : false"}}'  
 	maxlength="{{ $maxlength }}"   
+    id="resource-input-textarea-{{ $field }}" 
     {!! $eval !!}              
 />

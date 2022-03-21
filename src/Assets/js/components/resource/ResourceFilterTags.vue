@@ -9,6 +9,7 @@
             effect="dark"
             @close="handleClose(f.index)"
             style="height: auto"
+            :id="`resource-filter-tag-${f.index}`"
         >
             <b class="mr-2">{{ f.label }}</b>
             : <span class="ml-2" v-html="f.content" />

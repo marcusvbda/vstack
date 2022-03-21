@@ -17,6 +17,7 @@
                 <resource-crud-buttons
                     :resource_id="resource_id"
                     :data="{
+                        id: row.content.id,
                         code: row.content.code,
                         route: `${resource_route}/${row.content.code}`,
                         can_view: row.acl.can_view,
@@ -29,7 +30,6 @@
                         resource_icon: row.acl.resource_icon,
                         resource_singular_label: row.acl.resource_singular_label,
                     }"
-                    :id="row.content.id"
                 />
             </template>
         </template>

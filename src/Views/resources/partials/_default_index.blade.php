@@ -1,6 +1,6 @@
 <div class="row mb-3 mt-2">
     <div class="col-12 d-flex flex-row align-items-center sm-flex-wrap" data-aos="fade-left">
-        <h4 class="mb-1">
+        <h4 class="mb-1" id="resource-label">
             @if (!$report_mode)
                 {!! @$resource->indexLabel() !!}
             @else
@@ -17,7 +17,7 @@
                     @endif
                 @endif                
                 @if ($resource->canImport())
-                    <a class="ml-2 mr-4 f-12 link" href="{{ route('resource.import', ['resource' => $resource->id]) }}">
+                    <a class="ml-2 mr-4 f-12 link" id="resource-import-link" href="{{ route('resource.import', ['resource' => $resource->id]) }}">
                         {!! $resource->importButtonlabel() !!}
                     </a>
                 @endif
@@ -43,7 +43,7 @@
                 @endif
             @else
                 @if ($resource->canViewReport())
-                    <a class="ml-2 f-12" href="/admin/relatorios/{{ $resource->id }}">
+                    <a class="ml-2 f-12" href="/admin/relatorios/{{ $resource->id }}" id="resource-report-btn">
                         <span class="el-icon-tickets mr-1"></span>
                         Relatório de {{ $resource->label() }}
                     </a>
@@ -65,24 +65,28 @@
         @endif
     @endif
 </div>
-<?php
+@php
 $model_count = $resource->model->count();
 $filters = $resource->filters();
-?>
+@endphp
 @if ($model_count > 0)
     <div class="row d-flex align-items-end mb-2">
         <div class="col-12 d-flex align-items-end justify-content-start flex-column">
             <div class="w-100 mt-2">
-                <resource-filter-tags ref="tags_filter" :resource_filters="{{ json_encode($filters) }}" :get_params="{{ json_encode($_GET) }}">
+                <resource-filter-tags 
+                    id="resource-filter-tags" 
+                    ref="tags_filter" :resource_filters="{{ json_encode($filters) }}" 
+                    :get_params="{{ json_encode($_GET) }}"
+                >
                 </resource-filter-tags>
             </div>
-            <?php
+            @php
             $globalFilterData = [
                 'filter_route' => request()->url(),
                 'query' => request()->query(),
                 'value' => @$_GET['_'] ? $_GET['_'] : '',
             ];
-            ?>
+            @endphp
             <div class="d-flex flex-column align-items-start justify-content-between w-100 resource-pagination" data-aos="fade-left">
                 @if ($report_mode && $resource->canCreateReportTemplates())
                     <div class="d-flex flex-column w-100">
@@ -94,7 +98,7 @@ $filters = $resource->filters();
                         <div class="d-flex flex-row align-items-center justify-content-center pagination-row">
                             {!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
                             <div class="nav-scroller py-1 mb-2"> 
-                                <div class="ml-3">
+                                <div class="ml-3" id="resource-pagination">
                                     {{ $data->appends(request()->query())->links() }}
                                 </div>
                             </div>
@@ -102,7 +106,11 @@ $filters = $resource->filters();
                     @endif
                     @include("vStack::resources.partials._filter_btn")
                     @if ($resource->search())
-                        <resource-filter-global class="ml-2 mb-2" :data="{{ json_encode($globalFilterData) }}"></resource-filter-global>
+                        <resource-filter-global 
+                            class="ml-2 mb-2" 
+                            :data="{{ json_encode($globalFilterData) }}"
+                        >
+                        </resource-filter-global>
                     @endif
                 </div>
             </div>
@@ -123,7 +131,9 @@ $filters = $resource->filters();
                 @if ($resource->lenses())
                     @include("vStack::resources.partials._lenses")
                 @endif
-                <h4 class="text-center my-4">{{ $resource->noResultsFoundText() }}</h4>
+                <h4 class="text-center my-4">
+                    {{ $resource->noResultsFoundText() }}
+                </h4>
             @endif
         </div>
     </div>

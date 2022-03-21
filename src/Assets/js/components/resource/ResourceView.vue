@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col-12">
                             <template v-for="(card, i) in data.fields">
-                                <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
+                                <v-runtime-template :key="i" :template="card.view" :id="`resource-view-card-${card.label}`" />
                             </template>
                         </div>
                     </div>
@@ -16,7 +16,7 @@
                         <div class="row">
                             <div class="col-12 col-lg-9">
                                 <template v-for="(card, i) in data.fields">
-                                    <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
+                                    <v-runtime-template :key="i" :template="card.view" :id="`resource-view-card-${card.label}`" />
                                 </template>
                             </div>
                             <div class="col-12 col-lg-3 fields-tab">
@@ -26,12 +26,13 @@
                                             <div class="card-body d-none d-md-block d-lg-block" v-if="showPills">
                                                 <div class="row" v-if="!right_card_content">
                                                     <div class="col-12">
-                                                        <ul class="d-flex flex-column mb-0 pl-3">
+                                                        <ul class="d-flex flex-column mb-0 pl-3" id="resource-section-list">
                                                             <li v-for="(card, i) in namedCards" :key="i">
                                                                 <a
                                                                     class="f-12 link"
                                                                     :href="`#${card.label}`"
                                                                     v-html="card.label"
+                                                                    :id="`resource-section-list-${card.label}`"
                                                                 />
                                                             </li>
                                                         </ul>
@@ -49,6 +50,7 @@
                                                         :size="first_btn.size"
                                                         :type="first_btn.type"
                                                         @click="submit(first_btn.field)"
+                                                        id="resource-view-btn-first"
                                                     >
                                                         <span v-html="first_btn.content" />
                                                     </el-button>
@@ -57,6 +59,7 @@
                                                         :size="second_btn.size"
                                                         :type="second_btn.type"
                                                         @click="submit(second_btn.field)"
+                                                        id="resource-view-btn-second"
                                                     >
                                                         <span v-html="second_btn.content" />
                                                     </el-button>

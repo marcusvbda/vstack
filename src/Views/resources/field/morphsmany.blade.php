@@ -7,5 +7,6 @@
     :unique='{{$unique}}'                    
     placeholder='{{$placeholder}}' 
     :errors='{{"errors.$field ? errors.$field : false"}}' 
+    id="resource-input-morphstomany-{{ $field }}" 
     {!! $eval !!}      
 />

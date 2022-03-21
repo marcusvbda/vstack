@@ -1,5 +1,5 @@
 <template>
-    <tr :id="row_id">
+    <tr :id="`resource-body-${row_id}`">
         <template v-if="loading">
             <td :colspan="colspan">
                 <div

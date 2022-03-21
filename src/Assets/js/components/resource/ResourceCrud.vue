@@ -6,20 +6,20 @@
                     <div class="row">
                         <div class="col-12">
                             <template v-for="(card, i) in data.fields">
-                                <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
+                                <v-runtime-template :key="i" :template="card.view"  :id="`resource-crud-card-${card.label}`"/>
                             </template>
                         </div>
                     </div>
                 </template>
                 <template v-else>
                     <template v-if="crud_type.template == 'page'">
-                        <div class="row">
+                        <div class="row" id="resource-crud-page">
                             <div class="col-12 col-lg-9">
                                 <template v-for="(card, i) in data.fields">
-                                    <v-runtime-template :key="i" :template="card.view" :id="`${card.label}`" />
+                                    <v-runtime-template :key="i" :template="card.view" :id="`resource-crud-card-${card.label}`" />
                                 </template>
                             </div>
-                            <div class="col-12 col-lg-3 fields-tab">
+                            <div class="col-12 col-lg-3 fields-tab" id="resource-card-section-list">
                                 <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
                                     <div class="col-12">
                                         <div class="card">
@@ -27,7 +27,7 @@
                                                 <div class="row" v-if="!right_card_content">
                                                     <div class="col-12">
                                                         <ul class="d-flex flex-column mb-0 pl-3">
-                                                            <li v-for="(card, i) in namedCards" :key="i">
+                                                            <li v-for="(card, i) in namedCards" :key="i" :id="`resource-card-section-list-link-${card.label}`">
                                                                 <a
                                                                     class="f-12 link"
                                                                     :href="`#${card.label}`"
@@ -50,6 +50,7 @@
                                                         :type="first_btn.type"
                                                         @click="submit(first_btn.field)"
                                                         :loading="action_btn_loading"
+                                                        id="resource-crud-btn-first"
                                                     >
                                                         <span v-html="first_btn.content" />
                                                     </el-button>
@@ -59,6 +60,7 @@
                                                         :type="second_btn.type"
                                                         @click="submit(second_btn.field)"
                                                         :loading="action_btn_loading"
+                                                        id="resource-crud-btn-second"
                                                     >
                                                         <span v-html="second_btn.content" />
                                                     </el-button>
@@ -71,7 +73,7 @@
                         </div>
                     </template>
                     <template v-if="crud_type.template == 'wizard'">
-                        <div class="row">
+                        <div class="row"  id="resource-crud-page">
                             <div class="col-12  col-lg-9 d-flex flex-column">
                                 <div :class="`d-flex ${wizardContentClass}`">
                                     <el-steps
@@ -80,11 +82,13 @@
                                         :direction="wizardDirection"
                                         class="step-resource-crud py-0"
                                         :simple="isSimple"
+                                        id="resource-wizard-steps"
                                     >
                                         <template v-for="(step, i) in data.fields">
                                             <el-step
                                                 :key="`step_wizard_${i}`"
                                                 :class="`resource-step ${getResourceStepStatus(i)}`"
+                                                :id="`resource-wizard-steps-${step.label}`"
                                             >
                                                 <div slot="icon" v-html="step.icon ? step.icon : i + 1" />
                                                 <div slot="title" v-if="step.label" v-html="step.label" />
@@ -92,11 +96,11 @@
                                             </el-step>
                                         </template>
                                     </el-steps>
-                                    <div :class="`flex-grow-1 ${wizardCrudClass}`">
+                                    <div :class="`flex-grow-1 ${wizardCrudClass}`"  >
                                         <transition :name="wizardTransitionName">
                                             <v-runtime-template
                                                 :template="data.fields[wizard_step].view"
-                                                :id="`${data.fields[wizard_step].label}`"
+                                                :id="`resource-crud-card-${data.fields[wizard_step].label}`"
                                             />
                                         </transition>
                                     </div>
@@ -168,6 +172,7 @@
                                                             type="primary"
                                                             @click="nextStep"
                                                             :loading="loading_wizard_next || action_btn_loading"
+                                                            id="resource-btn-next-step"
                                                         >
                                                             <span>
                                                                 <div class="d-flex flex-row">

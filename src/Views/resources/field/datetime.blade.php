@@ -14,6 +14,7 @@
     value_format='{{$value_format}}'   
     format='{{$format}}'   
     v-show='{{$visible}}'                                                    
-    :errors='{{"errors.$field ? errors.$field : false"}}'    
+    :errors='{{"errors.$field ? errors.$field : false"}}'   
+    id="resource-input-datetime-{{ $field }}"  
     {!! $eval !!}                
 />

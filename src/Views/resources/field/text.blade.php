@@ -12,5 +12,6 @@
     placeholder='{{$placeholder}}'   
     v-show='{{$visible}}'                                                    
     :errors='{{"errors.$field ? errors.$field : false"}}'  
+    id="resource-input-text-{{ $field }}"
     {!! $eval !!}                  
 />

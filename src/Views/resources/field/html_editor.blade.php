@@ -8,5 +8,6 @@
     mode='{{$mode}}'  
     :blocks='@json($blocks)'       
     :settings='@json($settings)'       
-    :height='{{ $height }}'       
+    :height='{{ $height }}'   
+    id="resource-input-html-editor-{{ $field }}"     
 />

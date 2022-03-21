@@ -1,7 +1,7 @@
 <template>
     <tbody>
         <template v-if="loading">
-            <tr v-for="(id, i) in ids" :key="i" :id="id">
+            <tr v-for="(id, i) in ids" :key="i">
                 <td :colspan="columns.length">
                     <div
                         class="shimmer"
@@ -15,8 +15,8 @@
         </template>
         <template v-else>
             <template v-for="(row, i) in rows">
-                <tr :key="i" :id="row.content.id">
-                    <td v-for="(col, y) in columns" :key="`${i}_${y}`">
+                <tr :key="i" :id="`resource-body-${row.content.id}`">
+                    <td v-for="(col, y) in columns" :key="`${i}_${y}`" :id="`resource-body-${col}`">
                         <resource-tablelist-allinone-item
                             :virtual_indexes="virtual_indexes"
                             :row="row"
@@ -50,7 +50,7 @@
                         </resource-tablelist-allinone-item>
                     </td>
                 </tr>
-                <tr class="table-row after" v-if="table_after_row" :key="`table_after_row_${i}`">
+                <tr class="table-row after" v-if="table_after_row" :key="`table_after_row_${i}`" :id="`resource-body-${row.content.id}-after-row`" >
                     <td :colspan="columns.length">
                         <portal-target :key="`portal_${i}`" :name="`resource_after_row_arrow_${row.content.id}`" />
                         <div class="spacer" />
