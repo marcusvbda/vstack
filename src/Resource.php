@@ -9,7 +9,6 @@ use marcusvbda\vstack\Fields\{Card, Text};
 use marcusvbda\vstack\Imports\GlobalImporter;
 use marcusvbda\vstack\Models\Migration;
 use marcusvbda\vstack\Services\Messages;
-use Auth;
 
 class Resource
 {
@@ -544,7 +543,7 @@ class Resource
 		];
 	}
 
-	public function serialize($page_type)
+	public function serialize($page_type = null)
 	{
 		return [
 			"label" => $this->label(),
@@ -553,7 +552,14 @@ class Resource
 			"breadcrumb_labels" => $this->breadcrumbLabels(),
 			"first_btn" => $this->firstCrudBtn(),
 			"second_btn" => $this->secondCrudBtn(),
-			"acl" => ["can_update" => $this->canUpdate()],
+			"icon" => $this->icon(),
+			"acl" => [
+				"can_view" => $this->canView(),
+				"can_viewlist" => $this->canViewList(),
+				"can_update" => $this->canUpdate(),
+				"can_destroy" => $this->canDelete(),
+				"can_create" => $this->canCreate(),
+			],
 			"after_create_slot" => $this->afterCreateSlot(),
 			"after_edit_slot" => $this->afterEditSlot(),
 			"before_edit_slot" => $this->beforeEditSlot(),

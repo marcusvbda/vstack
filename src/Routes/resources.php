@@ -2,7 +2,8 @@
 
 use marcusvbda\vstack\Controllers\{
 	VstackController,
-	ResourceController
+	ResourceController,
+	ApiResourceController
 };
 
 Route::group(['prefix' => "vstack"], function () {
@@ -49,12 +50,13 @@ Route::group(['prefix' => "admin"], function () {
 
 
 Route::group(['prefix' => "api"], function () {
-	Route::post('login', [ResourceController::class, 'apiLogin']);
+	Route::post('login', [ApiResourceController::class, 'login']);
 	Route::group(['middleware' => ['api.vstack_jwt']], function () {
-		Route::get('{resource_id}', [ResourceController::class, 'getResource']);
-		Route::post('{resource_id}/create', [ResourceController::class, 'createResource']);
-		Route::get('{resource_id}/{code}', [ResourceController::class, 'findByCode']);
-		Route::put('{resource_id}/{code}/edit', [ResourceController::class, 'editResource']);
-		Route::delete('{resource_id}/{code}/destroy', [ResourceController::class, 'destroyResource']);
+		Route::get('get-resource/{resource_id}', [ApiResourceController::class, 'getResource']);
+		Route::get('{resource_id}', [ApiResourceController::class, 'get']);
+		Route::post('{resource_id}/create', [ApiResourceController::class, 'create']);
+		Route::get('{resource_id}/{code}', [ApiResourceController::class, 'find']);
+		Route::put('{resource_id}/{code}/edit', [ApiResourceController::class, 'edit']);
+		Route::delete('{resource_id}/{code}/destroy', [ApiResourceController::class, 'destroy']);
 	});
 });

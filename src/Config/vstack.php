@@ -6,6 +6,9 @@ return [
 	"animation" => [
 		"enabled" => true,
 	],
+	"api" => [
+		"token_expiration" => "1 day",
+	],
 	"queue" => [
 		"resource-export" => "resource-export",
 		"resource-import" => "resource-import",

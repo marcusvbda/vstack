@@ -2,6 +2,7 @@
 
 namespace marcusvbda\vstack;
 
+use Carbon\Carbon;
 use marcusvbda\vstack\Events\WebSocketEvent;
 
 class Vstack
@@ -143,25 +144,35 @@ class Vstack
 		static::SocketAlert($channel, $event, $data);
 	}
 
-	public static function encodeJWT($data)
+	public static function encodeJWT($data, $expiration = null)
 	{
-		$header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
+		$expiration = $expiration ? $expiration : Carbon::now()->add(config("vstack.api.token_expiration"))->toDateTimeString();
+		$header = json_encode(['typ' => 'JWT', 'alg' => 'HS256', 'expiration' => $expiration]);
 		$payload = json_encode($data);
 		$base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
 		$base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
 		$signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, config("app.key"), true);
 		$base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 		$jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
-		return $jwt;
+		return [
+			"token" => $jwt,
+			"expiration_date" => $expiration,
+		];
 	}
 
 	public static function decodeJWT($token)
 	{
 		$splited = explode(".", $token);
-		$signature = @$splited[1];
+		$header = data_get($splited, '0', '');
+		$header = str_replace(['-', '_'], ['+', '/'], $header) . "=";
+		$expiration_str = data_get(json_decode(base64_decode($header)), 'expiration', '0');
+		$signature = data_get($splited, '1', '');
 		$signature = str_replace(['-', '_'], ['+', '/'], $signature) . "=";
 		$result = json_decode(base64_decode($signature));
-		$test = static::encodeJWT($result);
+		if (Carbon::parse($expiration_str)->lte(Carbon::now())) {
+			return false;
+		}
+		$test = data_get(static::encodeJWT($result, $expiration_str), 'token');
 		return $test === $token ? $result : false;
 	}
 }

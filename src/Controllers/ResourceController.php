@@ -14,9 +14,11 @@ use Illuminate\Support\Arr;
 use marcusvbda\vstack\Exports\DefaultGlobalExporter;
 use Maatwebsite\Excel\HeadingRowImport;
 use Excel;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use marcusvbda\vstack\Models\{Tag, TagRelation};
 use marcusvbda\vstack\Models\ResourceConfig;
 use marcusvbda\vstack\Vstack;
+use Validator;
 
 class ResourceController extends Controller
 {
@@ -623,7 +625,12 @@ class ResourceController extends Controller
 			}
 		}
 		$validation_custom_message =  $resource->getValidationRuleMessage();
-		$this->validate($request, $resource->getValidationRule(), @$validation_custom_message ? $validation_custom_message : []);
+		$validator = Validator::make($request->all(), $resource->getValidationRule(), @$validation_custom_message ?? []);
+
+		if ($validator->fails()) {
+			throw new HttpResponseException(response()->json(["errors" => $validator->errors()], 422));
+		}
+
 		$id = @$data["id"];
 		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type"]);
 		$data = $this->processStoreData($resource, $data);

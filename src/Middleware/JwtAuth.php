@@ -13,8 +13,9 @@ class JwtAuth
     {
         $auth = $request->header('Authorization');
         $splited = explode(" ", $auth);
+        $type = data_get($splited, "0", false);
         $token = data_get($splited, "1", false);
-        if (!$token) {
+        if (!$token || $type != "Bearer") {
             abort(401, 'Unauthorized');
         }
 
