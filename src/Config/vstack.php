@@ -4,7 +4,7 @@ return [
 	"default_upload_route" => "/admin/upload_file",
 	"extra_javascript_global_variables" => [],
 	"animation" => [
-		"enabled" => true,
+		"enabled" => false,
 	],
 	"api" => [
 		"token_expiration" => "1 hour",
