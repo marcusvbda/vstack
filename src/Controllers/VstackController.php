@@ -97,8 +97,9 @@ class VstackController extends Controller
 			return $clean_text;
 		};
 		$value = "";
-		if (@$columns[$key]["handler"]) {
-			$value =  $removeEmoji(@trim(@$columns[$key]["handler"] !== null ? $columns[$key]["handler"]($row) : $placeholder));
+		$handler = data_get($columns, $key . ".handler");
+		if ($handler) {
+			$value = $removeEmoji(trim($handler($row)));
 		}
 		if (@trim($value) === "") {
 			$value = null;
@@ -109,7 +110,9 @@ class VstackController extends Controller
 	public function getJson(Request $request)
 	{
 		$model = @$request["model"];
-		if (!$model) abort(400);
+		if (!$model) {
+			abort(400);
+		}
 		$per_page = @$request["per_page"];
 		$includes = @$request["includes"] ?? [];
 		$fields = @$request["fields"] ?? ["*"];
