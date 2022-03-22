@@ -97,14 +97,7 @@ class VstackController extends Controller
 			return $clean_text;
 		};
 		$value = "";
-		if (!@$columns[$key]["handler"]) {
-			$value = $row;
-			$_runner = explode("->", $key);
-			foreach ($_runner as $idx) {
-				$value = @$value->{$idx};
-			}
-			$value = $removeEmoji(@trim($value) !== null ? $value : $placeholder);
-		} else {
+		if (@$columns[$key]["handler"]) {
 			$value =  $removeEmoji(@trim(@$columns[$key]["handler"] !== null ? $columns[$key]["handler"]($row) : $placeholder));
 		}
 		if (@trim($value) === "") {
