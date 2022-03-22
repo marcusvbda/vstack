@@ -146,7 +146,7 @@ class Vstack
 
 	public static function encodeJWT($data, $expiration = null)
 	{
-		$expiration = $expiration ? $expiration : Carbon::now()->add(config("vstack.api.token_expiration"))->toDateTimeString();
+		$expiration = $expiration ? $expiration : Carbon::now()->add(config("vstack.api.token_expiration","1 day"))->toDateTimeString();
 		$header = json_encode(['typ' => 'JWT', 'alg' => 'HS256', 'expiration' => $expiration]);
 		$payload = json_encode($data);
 		$base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
