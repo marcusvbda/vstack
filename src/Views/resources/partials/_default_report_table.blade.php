@@ -20,8 +20,8 @@
 					@foreach($data as $row)
 						<tr id="resource-body-{{ $row->id }}">
 							@foreach($table_keys as $key)
-								<td id="resource-report-body-{{ $row->id }}-{{ data_get($table[$key],"label",$key) }}">									
-									{{ $controller->getColumnIndex($table,$resource->model->find($row->id),$key) }}
+								<td id="resource-report-body-{{ $row->id }}-{{ data_get($table[$key],"label",$key) }}">		
+									{{ $controller->getColumnIndex($table,$row,$key) }}
 								</td>
 							@endforeach
 						</tr>
