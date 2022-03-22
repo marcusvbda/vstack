@@ -7,7 +7,7 @@ return [
 		"enabled" => true,
 	],
 	"api" => [
-		"token_expiration" => "1 day",
+		"token_expiration" => "1 hour",
 	],
 	"queue" => [
 		"resource-export" => "resource-export",
