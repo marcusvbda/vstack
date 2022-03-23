@@ -6,6 +6,11 @@ return [
 	"animation" => [
 		"enabled" => false,
 	],
+	"socket_service" => [
+		"uri" => "https://ezcore-socket-server.herokuapp.com",
+		"username" => "user",
+		"password" => "pass"
+	],
 	"api" => [
 		"token_expiration" => "1 hour",
 	],

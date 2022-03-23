@@ -229,7 +229,9 @@ class ResourceController extends Controller
 	public function import($resource)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canImport()) abort(403);
+		if (!$resource->canImport()) {
+			abort(403);
+		}
 		$data = $this->makeImportData($resource);
 		return view("vStack::resources.import", compact('data'));
 	}
@@ -275,7 +277,7 @@ class ResourceController extends Controller
 				"route"          => $resource->route(),
 				"columns"        => $this->getImporterCollumns($resource),
 				"import_custom_crud_message" => $resource->importCustomCrudMessage(),
-				"import_custom_map_step" => $resource->importCustomMapStep()
+				"import_custom_map_step" => $resource->importCustomMapStep(),
 			]
 		];
 	}
@@ -330,7 +332,7 @@ class ResourceController extends Controller
 		$filename = Auth::user()->tenant_id . "_" . uniqid() . ".xlsx";
 		$filepath = $file->storeAs('local', $filename);
 		$user = Auth::user();
-		$user_id = $user->id;
+		$user_code = $user->code;
 		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $user->tenant_id;
 
 		$extra_data = $resource->prepareImportData($data);
@@ -340,10 +342,10 @@ class ResourceController extends Controller
 			$extra_data = @$extra_data["data"];
 		}
 
-		dispatch(function () use ($filepath, $resource, $user_id, $fieldlist, $tenant_id, $user, $extra_data) {
-			$importer_data = compact('filepath', 'extra_data', 'user_id', 'resource', 'fieldlist', 'filepath', 'tenant_id');
-			$resource->importMethod($importer_data);
-		})->onQueue(Vstack::queue_resource_import());
+		// dispatch(function () use ($filepath, $resource, $user_code, $fieldlist, $tenant_id, $user, $extra_data) {
+		$importer_data = compact('filepath', 'extra_data', 'user_code', 'resource', 'fieldlist', 'filepath', 'tenant_id');
+		$resource->importMethod($importer_data);
+		// })->onQueue(Vstack::queue_resource_import());
 
 		return ["success" => true];
 	}

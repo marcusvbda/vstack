@@ -3,7 +3,7 @@
 namespace marcusvbda\vstack;
 
 use Carbon\Carbon;
-use marcusvbda\vstack\Events\WebSocketEvent;
+use \GuzzleHttp\Client as GuzzleCLient;
 
 class Vstack
 {
@@ -124,29 +124,43 @@ class Vstack
 		return $numbers;
 	}
 
-	public static function SocketAlert($channel, $event, $data)
+	public static function SocketAlert($event, $code, $data = [])
 	{
-		$data["uniq_id"] = uniqid();
-		broadcast(new WebSocketEvent($channel, $event, $data));
+		try {
+			$socket_service = config('vstack.socket_service');
+			$username = data_get($socket_service, 'username');
+			$password = data_get($socket_service, 'password');
+			$uri = data_get($socket_service, 'uri');
+			$uid = data_get($socket_service, 'uid');
+			$data = [
+				"event" => $event,
+				"socket_id" => $uid . "#" . $code,
+				"data" => $data
+			];
+			$client = new GuzzleCLient();
+			$client->post($uri . "/socket-emit", [
+				'auth' => [$username, $password],
+				'json' => $data,
+			]);
+			return true;
+		} catch (\Exception $e) {
+			return false;
+		}
 	}
 
-	public static function SocketAlertUser($id, $data)
+	public static function SocketAlertUser($code, $data, $event = "Alert.User")
 	{
-		$channel = "Alert.User." . $id;
-		$event = "notifications.user";
-		static::SocketAlert($channel, $event, $data);
+		return static::SocketAlert($event, "user@" . $code, $data);
 	}
 
-	public static function SocketAlertTenant($id, $data)
+	public static function SocketAlertTenant($code, $data, $event = "Alert.Tenant")
 	{
-		$channel = "Alert.Tenant." . $id;
-		$event = "notifications.user";
-		static::SocketAlert($channel, $event, $data);
+		return static::SocketAlert($event, "tenant@" . $code, $data);
 	}
 
 	public static function encodeJWT($data, $expiration = null)
 	{
-		$expiration = $expiration ? $expiration : Carbon::now()->add(config("vstack.api.token_expiration","1 day"))->toDateTimeString();
+		$expiration = $expiration ? $expiration : Carbon::now()->add(config("vstack.api.token_expiration", "1 day"))->toDateTimeString();
 		$header = json_encode(['typ' => 'JWT', 'alg' => 'HS256', 'expiration' => $expiration]);
 		$payload = json_encode($data);
 		$base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
