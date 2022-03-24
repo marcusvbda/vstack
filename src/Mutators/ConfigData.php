@@ -14,6 +14,7 @@ class ConfigData extends BaseMutator
 			"debug"  => $app["debug"],
 			"timezone"  => $app["timezone"],
 			"locale"  => $app["locale"],
+			"socket_service" => config("vstack.socket_service")
 		];
 
 		return $content;
