@@ -670,7 +670,7 @@ class Resource
 			$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
 		}
 
-		Vstack::SocketAlertUser($user_code, [
+		Vstack::SocketEmitUser($user_code, [
 			"type" => $success ? "success" : "error",
 			"message" => $message
 		]);

@@ -124,7 +124,7 @@ class Vstack
 		return $numbers;
 	}
 
-	public static function SocketAlert($event, $code, $data = [])
+	public static function SocketEmit($event, $code, $data = [])
 	{
 		try {
 			$socket_service = config('vstack.socket_service');
@@ -148,12 +148,12 @@ class Vstack
 		}
 	}
 
-	public static function SocketAlertUser($code, $data, $event = "Alert.User")
+	public static function SocketEmitUser($code, $data, $event = "Alert.User")
 	{
-		return static::SocketAlert($event, "user@" . $code, $data);
+		return static::SocketEmit($event, "user@" . $code, $data);
 	}
 
-	public static function SocketAlertTenant($code, $data, $event = "Alert.Tenant")
+	public static function SocketEmitTenant($code, $data, $event = "Alert.Tenant")
 	{
 		return static::SocketAlert($event, "tenant@" . $code, $data);
 	}
