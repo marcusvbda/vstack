@@ -520,12 +520,8 @@ class ResourceController extends Controller
 		if (!$resource->canDeleteRow($content) || !$resource->canDelete()) {
 			abort(403);
 		}
-		if ($content->delete()) {
-			Messages::send("success", "Registro excluido com sucesso !!");
-			return ["success" => true, "route" => $resource->route()];
-		}
-		Messages::send("error", " Erro ao excluir com " . $resource->singularLabel() . " !!");
-		return ["success" => false,  "route" => $resource->route()];
+		$result = $resource->destroyMethod($content);
+		return $result;
 	}
 
 	public function destroyField($resource, $code)
