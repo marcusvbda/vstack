@@ -259,6 +259,16 @@ class Resource
 		return [];
 	}
 
+	public function destroyMethod($content)
+	{
+		if ($content->delete()) {
+			Messages::send("success", "Registro excluido com sucesso !!");
+			return ["success" => true, "route" => $this->route()];
+		}
+		Messages::send("error", " Erro ao excluir com " . $this->singularLabel() . " !!");
+		return ["success" => false,  "route" => $this->route()];
+	}
+
 	public function canCloneRow($row)
 	{
 		return true;
