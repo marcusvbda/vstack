@@ -9,10 +9,6 @@
             "email": "bassalobre.vinicius@gmail.com"
         }
     ],
-    "require": {
-        "spatie/laravel-permission": "^3.3",
-        "vinkla/hashids": "^7.0"
-    },
     "autoload": {
         "classmap": [
             "src/Helpers/Menu.php",
