@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use marcusvbda\vstack\Commands\{createResource, createFilter, createAction, clearResourceExport};
 use marcusvbda\vstack\Middleware\HashIds;
 use Illuminate\Routing\Router;
-use marcusvbda\vstack\Middleware\{JwtAuth, SendJSVarsToView};
+use marcusvbda\vstack\Middleware\{JwtAuth};
 
 class vStackServiceProvider extends ServiceProvider
 {

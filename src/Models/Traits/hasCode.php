@@ -2,7 +2,8 @@
 
 namespace marcusvbda\vstack\Models\Traits;
 
-use Hashids;
+use marcusvbda\vstack\Hashids;
+
 
 trait hasCode
 {
@@ -18,11 +19,11 @@ trait hasCode
 
 	public static function findByCode($code)
 	{
-		return static::find(@\Hashids::decode($code)[0]);
+		return static::find(@Hashids::decode($code)[0]);
 	}
 
 	public static function findByCodeOrFail($code)
 	{
-		return static::findOrFail(@\Hashids::decode($code)[0]);
+		return static::findOrFail(@Hashids::decode($code)[0]);
 	}
 }

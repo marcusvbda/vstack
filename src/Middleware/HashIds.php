@@ -2,6 +2,8 @@
 
 namespace marcusvbda\vstack\Middleware;
 
+use marcusvbda\vstack\Hashids as Hids;
+
 use Closure;
 
 class HashIds
@@ -10,7 +12,7 @@ class HashIds
     {
         try {
             foreach ($ids as $requestKey) {
-                $decoded = \Hashids::decode($request->route($requestKey));
+                $decoded = Hids::decode($request->route($requestKey));
                 $request->route()->setParameter($requestKey, $decoded[0]);
             }
         } catch (\Exception $e) {
