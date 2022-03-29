@@ -53,33 +53,11 @@ const vue_settings = {
     },
     methods: {
         init() {
-            this.$aos.init({
-                once: true,
-                disable: !laravel.vstack.animation_enabled,
-                duration: 200,
-            });
-            let body = document.querySelector("body");
-            body.style.display = "block";
-
-            if (laravel.user) {
-                if (laravel.user.code) {
-                    this.$http
-                        .post(`${laravel.general.root_url}/admin/vstack/notifications/${laravel.user.code}`, {})
-                        .then((res) => {
-                            res = res.data;
-                            res.notifications
-                                .filter((not) => not.alert_type == "vstack_alert")
-                                .map((not) => {
-                                    setTimeout(() => {
-                                        this.$message({
-                                            showClose: true,
-                                            message: not.data.message,
-                                            type: not.data.type,
-                                        });
-                                    });
-                                });
-                        });
-                }
+            if(laravel.vstack.animation_enabled) {
+                this.$aos.init({
+                    once: true,
+                    duration: 200,
+                });
             }
         },
     },
