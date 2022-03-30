@@ -25,6 +25,7 @@ export default {
                 .map((rf) => {
                     if (this.hasContent(this.get_params, rf.index)) {
                         let content = "";
+                        console.log(rf)
                         if (rf.component == "select-filter") {
                             if (!rf?.multiple) {
                                 content = rf.options.find((x) => x.value == this.get_params[rf.index]).label;
@@ -39,7 +40,7 @@ export default {
                                     .join(", <br>");
                             }
                         } else {
-                            content = this.get_params[rf.index];
+                            content = this.processWithOptions(rf);
                         }
                         return {
                             label: rf.label,
@@ -52,6 +53,13 @@ export default {
         },
     },
     methods: {
+        processWithOptions(rf) {
+            const value = this.get_params[rf.index];
+            if(rf._options && rf._options[value]){
+                return rf._options[value][0]
+            }
+            return value
+        },
         hasContent(filter, key) {
             if (!filter) return false;
             if (filter[key]) {
