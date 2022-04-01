@@ -2,14 +2,13 @@
 
 namespace marcusvbda\vstack\Mutators;
 
-use Illuminate\Support\Arr;
-
 class SetChatData extends BaseMutator
 {
     protected $needsAuth = false;
     public function process($content)
     {
-        $content["chat"] = config("vstack.socket_service");
+        // dd(json_decode(base64_decode("*************************")));
+        $content["chat"] = base64_encode(json_encode(config("vstack.socket_service")));
         return $content;
     }
 }
