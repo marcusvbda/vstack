@@ -13,7 +13,6 @@ require("jquery-ui-dist/jquery-ui");
 require("bootstrap");
 require("./libs/axios");
 require("./libs/element");
-require("./libs/echo");
 require("./libs/loadash");
 require("./libs/pace");
 require("./libs/helpers");
