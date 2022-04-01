@@ -30,6 +30,7 @@ class Upload extends Field
         $limit     = @$this->options["limit"] ? ($multiple == "true" ? $this->options["limit"] : 1) : ($multiple == "true" ? 5 : 1);
         $uploadroute    = @$this->options["upload_route"] ? $this->options["upload_route"] : Config("vstack.default_upload_route");
         $label = $this->options["label"];
+        $description = @$this->options["description"] ?? "";
         $sizelimit = @$this->options["file_size_limit"] ? $this->options["file_size_limit"] : 0;
         $eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
 
@@ -42,6 +43,7 @@ class Upload extends Field
             "preview",
             "limit",
             "accept",
+            "description",
             "sizelimit",
             "eval"
         ))->render();
