@@ -1,5 +1,6 @@
 <v-upload class='mb-3'                                                                     
     label='{{$label}}'        
+    description='{{$description}}'        
     uploadroute='{{$uploadroute}}'                                                    
     v-model='{{'form.'.$field}}'   
     :multiple='{{$multiple}}'   
