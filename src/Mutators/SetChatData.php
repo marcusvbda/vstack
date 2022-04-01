@@ -1,16 +1,15 @@
-<?php 
+<?php
 
 namespace marcusvbda\vstack\Mutators;
 
 use Illuminate\Support\Arr;
 
-class SetChatData extends BaseMutator{
+class SetChatData extends BaseMutator
+{
     protected $needsAuth = false;
-    public function process($content){
-        $content["chat"] = [
-            "pusher_key"     => config("broadcasting.connections.pusher.key"),
-            "pusher_cluster" => config("broadcasting.connections.pusher.options.cluster")
-        ];
+    public function process($content)
+    {
+        $content["chat"] = config("vstack.socket_service");
         return $content;
     }
 }
