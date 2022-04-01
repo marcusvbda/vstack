@@ -7,8 +7,15 @@ class SetChatData extends BaseMutator
     protected $needsAuth = false;
     public function process($content)
     {
-        // dd(json_decode(base64_decode("*************************")));
-        $content["chat"] = base64_encode(json_encode(config("vstack.socket_service")));
+        $config = config("vstack.socket_service");
+        $content["chat"] = [
+            "uri" => data_get($config, "uri",""),
+            "uid" => data_get($config, "uid",""),
+            "token" => base64_encode(json_encode([
+                "username" => data_get($config, "username",""),
+                "password" => data_get($config, "password",""),
+            ]))
+        ];
         return $content;
     }
 }
