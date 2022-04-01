@@ -32,6 +32,9 @@
                             <i class="el-icon-unlock" v-else />
                         </el-button>
                     </template>
+                    <template v-else-if="type == 'slider'">
+                        <el-slider v-model="val" show-input :step="step" :max="maxlength" />
+                    </template>
                     <template v-else>
                         <currency-input
                             v-if="type == 'currency'"
@@ -101,7 +104,7 @@ export default {
         "description",
         "maxlength",
         "value",
-        "step"
+        "step",
     ],
     data() {
         return {
@@ -122,3 +125,16 @@ export default {
     },
 };
 </script>
+<style>
+.el-slider.el-slider--with-input {
+    width: 100%;
+}
+
+.el-input-number__decrease,
+.el-input-number__increase {
+    height: 96%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
