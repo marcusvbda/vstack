@@ -31,6 +31,7 @@ class BelongsTo extends Field
 		$placeholder = $model ? $this->options["placeholder"] : null;
 		$options     = @$this->options["options"] ? json_encode($this->options["options"]) : "[]";
 		$description = $this->options["description"];
+		$model_fields = @$this->options["model_fields"] ?? ["id" => "id", "name" => "name"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
 		$all_options_label = @$this->options["all_options_label"] ? $this->options["all_options_label"] : 'Todos(as)';
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
@@ -47,7 +48,8 @@ class BelongsTo extends Field
 			"options",
 			"multiple",
 			"all_options_label",
-			"eval"
+			"eval",
+			"model_fields"
 		))->render();
 	}
 }

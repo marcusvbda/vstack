@@ -8,61 +8,61 @@
 
 <script>
 export default {
-    name: 'ElSelectAll',
+    name: "ElSelectAll",
     props: {
         value: {
             type: Array,
             default: () => {
-                return []
+                return [];
             },
         },
         options: {
             type: Array,
             default: () => {
-                return []
+                return [];
             },
         },
         label: {
             type: String,
-            default: 'Todos(as)',
+            default: "Todos(as)",
         },
     },
     data() {
-        const selected = this.value || []
+        const selected = this.value || [];
         return {
             selected,
             mdoptionsValue: [],
             oldMdoptionsValue: [],
             mdoptionsList: [],
-        }
+        };
     },
     computed: {
         $attrsAll() {
             const result = {
                 ...this.$attrs,
-            }
-            return result
+            };
+            return result;
         },
         $listenserAll() {
-            const _this = this
+            const _this = this;
             return Object.assign({}, this.$listeners, {
                 change: () => {
                     this.$emit(
-                        'change',
+                        "change",
                         (_this.selected || []).filter((v) => {
-                            return v !== 'all'
+                            return v !== "all";
                         })
-                    )
+                    );
                 },
                 input: () => {
                     this.$emit(
-                        'input',
+                        "input",
                         (_this.selected || []).filter((v) => {
-                            return v !== 'all'
+                            return v !== "all";
                         })
-                    )
+                    );
                 },
-            })
+            });
         },
     },
     watch: {
@@ -71,11 +71,11 @@ export default {
             deep: true,
             handler(val) {
                 this.$emit(
-                    'input',
+                    "input",
                     (val || []).filter((v) => {
-                        return v !== 'all'
+                        return v !== "all";
                     })
-                )
+                );
             },
         },
         options: {
@@ -83,39 +83,43 @@ export default {
             deep: true,
             handler(val) {
                 if (!val || val.length === 0) {
-                    this.mdoptionsList = []
+                    this.mdoptionsList = [];
                 } else {
                     this.mdoptionsList = [
                         {
-                            key: 'all',
-                            value: 'all',
+                            key: "all",
+                            value: "all",
                             label: this.label,
                         },
                         ...val,
-                    ]
+                    ];
                 }
             },
         },
     },
     mounted() {
-        this.onChange(this.selected)
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.onChange(this.selected);
+            }
+        });
     },
     methods: {
         onChange(val) {
-            const allValues = this.mdoptionsList.map((x) => x.value)
-            const oldVal = this.oldMdoptionsValue.length === 1 ? [] : this.oldMdoptionsValue[1] || []
-            if (val.includes('all')) this.selected = allValues
-            if (oldVal.includes('all') && !val.includes('all')) this.selected = []
-            if (oldVal.includes('all') && val.includes('all')) {
-                const index = val.indexOf('all')
-                val.splice(index, 1)
-                this.selected = val
+            const allValues = this.mdoptionsList.map((x) => x.value);
+            const oldVal = this.oldMdoptionsValue.length === 1 ? [] : this.oldMdoptionsValue[1] || [];
+            if (val.includes("all")) this.selected = allValues;
+            if (oldVal.includes("all") && !val.includes("all")) this.selected = [];
+            if (oldVal.includes("all") && val.includes("all")) {
+                const index = val.indexOf("all");
+                val.splice(index, 1);
+                this.selected = val;
             }
-            if (!oldVal.includes('all') && !val.includes('all')) {
-                if (val.length === allValues.length - 1) this.selected = ['all'].concat(val)
+            if (!oldVal.includes("all") && !val.includes("all")) {
+                if (val.length === allValues.length - 1) this.selected = ["all"].concat(val);
             }
-            this.oldMdoptionsValue[1] = this.selected
+            this.oldMdoptionsValue[1] = this.selected;
         },
     },
-}
+};
 </script>

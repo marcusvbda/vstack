@@ -710,8 +710,12 @@ class ResourceController extends Controller
 
 	public function option_list(Request $request)
 	{
+		$model_fields = @$request->model_fields ?? [];
 		try {
 			$model = app()->make($request["model"]);
+			$select_raw = data_get($model_fields, "id", "") . " as id," . data_get($model_fields, "name", "") . " as name";
+			$model = $model->selectRaw($select_raw);
+			$model = $model->orderBy(data_get($model_fields, "name", ""), "asc");
 			return ["success" => true, "data" => $model->get()];
 		} catch (\Exception $e) {
 			return ["success" => false, "data" => []];

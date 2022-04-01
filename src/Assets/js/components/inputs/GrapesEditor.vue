@@ -77,16 +77,20 @@ export default {
     },
     methods: {
         onLoadIframe() {
-            this.initiVariables();
-            this.setGrapesOptions();
-            Promise.all([
-                this.setTheme(),
-                this.startEditor(),
-                this.createExtraBlocks(),
-                this.setInitialValues(),
-                this.createModel(),
-            ]).then(() => {
-                this.started = true;
+            setTimeout(() => {
+                if (!this._isDestroyed) {
+                    this.initiVariables();
+                    this.setGrapesOptions();
+                    Promise.all([
+                        this.setTheme(),
+                        this.startEditor(),
+                        this.createExtraBlocks(),
+                        this.setInitialValues(),
+                        this.createModel(),
+                    ]).then(() => {
+                        this.started = true;
+                    });
+                }
             });
         },
         setGrapesOptions() {

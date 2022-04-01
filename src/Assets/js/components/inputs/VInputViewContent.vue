@@ -19,12 +19,16 @@ export default {
     data() {
         return {
             loading: true,
-            option_list: []
+            option_list: [],
         };
     },
     created() {
-        this.$nextTick(() => {
-            this.init();
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.$nextTick(() => {
+                    this.init();
+                });
+            }
         });
     },
     computed: {
@@ -33,7 +37,7 @@ export default {
                 belongsTo: () => {
                     if (this.option_list.length) {
                         if (typeof this.option_list[1] == "object") {
-                            let found = this.option_list.find(option => option.id.toString() == this.value.toString());
+                            let found = this.option_list.find((option) => option.id.toString() == this.value.toString());
                             if (!found) {
                                 return "";
                             }
@@ -54,7 +58,7 @@ export default {
                 },
                 datetimerange: () => {
                     return (Array.isArray(this.value) ? this.value : [])
-                        .map(date => {
+                        .map((date) => {
                             return this.formatDate(this.value);
                         })
                         .join(" - ");
@@ -67,20 +71,20 @@ export default {
                 },
                 upload: () => {
                     let images = (Array.isArray(this.value) ? this.value : [])
-                        .map(image => {
+                        .map((image) => {
                             return `<img src='${image.url}' />'`;
                         })
                         .join("");
                     return `<div class='upload-image-preview'>${images}</div>`;
-                }
+                },
             };
             return actions[this.type] ? actions[this.type]() : this.value;
-        }
+        },
     },
     methods: {
         formatDate(dt) {
-            let date = this.$moment(dt)
-            if(!date.isValid()) {
+            let date = this.$moment(dt);
+            if (!date.isValid()) {
                 return "";
             }
             return date.format(this.format);
@@ -90,7 +94,7 @@ export default {
                 if (this.model) {
                     let { data } = await this.$http.post("/vstack/json-api", {
                         model: this.model,
-                        order_by: ["id", "desc"]
+                        order_by: ["id", "desc"],
                     });
                     this.option_list = data;
                 } else {
@@ -98,8 +102,8 @@ export default {
                 }
             }
             this.loading = false;
-        }
-    }
+        },
+    },
 };
 </script>
 <style lang="scss">

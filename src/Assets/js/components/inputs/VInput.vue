@@ -33,7 +33,7 @@
                         </el-button>
                     </template>
                     <template v-else-if="type == 'slider'">
-                        <el-slider v-model="val" show-input :step="step" :max="maxlength" />
+                        <el-slider v-model="val" show-input :step="step" :max="parseInt(maxlength)" />
                     </template>
                     <template v-else>
                         <currency-input
@@ -120,8 +120,12 @@ export default {
             this.val = val;
         },
     },
-    async created() {
-        this.val = this.value;
+    created() {
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.val = this.value;
+            }
+        });
     },
 };
 </script>

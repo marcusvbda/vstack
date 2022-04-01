@@ -43,19 +43,23 @@
 </template>
 <script>
 export default {
-    props: ['label', 'type', 'placeholder', 'errors', 'prepend', 'append', 'disabled', 'rows', 'description','maxlength'],
+    props: ["label", "type", "placeholder", "errors", "prepend", "append", "disabled", "rows", "description", "maxlength"],
     data() {
         return {
             val: null,
-        }
+        };
     },
     watch: {
         val(val) {
-            return this.$emit('input', val)
+            return this.$emit("input", val);
         },
     },
-    async created() {
-        this.val = this.$attrs.value
+    created() {
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.val = this.$attrs.value;
+            }
+        });
     },
-}
+};
 </script>

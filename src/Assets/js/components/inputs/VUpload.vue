@@ -9,7 +9,7 @@
             </div>
         </td>
         <td>
-            <div class="d-flex flex-column upload-resource-field  input-group">
+            <div class="d-flex flex-column upload-resource-field input-group">
                 <el-upload
                     multiple
                     :limit="!multiple ? 1 : limit"
@@ -18,7 +18,7 @@
                     v-bind:class="{
                         disabled: fileList.length >= limit_value,
                         'hide-input': loading || fileList.length >= limit_value,
-                        'is-invalid': errors
+                        'is-invalid': errors,
                     }"
                     :action="uploadroute"
                     list-type="picture-card"
@@ -83,16 +83,20 @@ export default {
             loading: false,
             limit_value: this.multiple ? this.limit : 1,
             renderComponent: true,
-            file_upload_limit_size: this.sizelimit ? this.sizelimit : laravel.vstack.file_upload_limit_size ?? 0
+            file_upload_limit_size: this.sizelimit ? this.sizelimit : laravel.vstack.file_upload_limit_size ?? 0,
         };
     },
     mounted() {
-        this.init();
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.init();
+            }
+        });
     },
     watch: {
         loading(val) {
             this.setActionBtnLoading(val);
-        }
+        },
     },
     methods: {
         ...mapMutations("resource", ["setActionBtnLoading"]),
@@ -100,16 +104,16 @@ export default {
             let value = this.$attrs.value ? this.$attrs.value : [];
             let items = [];
             value
-                .filter(x => x)
-                .forEach(item => {
+                .filter((x) => x)
+                .forEach((item) => {
                     if (typeof item == "string") {
                         items.push({
                             name: new Date().getTime(),
                             uid: new Date().getTime(),
                             response: {
-                                path: item
+                                path: item,
                             },
-                            url: item
+                            url: item,
                         });
                     } else {
                         items.push(item);
@@ -152,7 +156,7 @@ export default {
         },
         handleRemove(file) {
             let files = this.$refs.uploader.uploadFiles;
-            files = files.filter(f => {
+            files = files.filter((f) => {
                 return f.uid != file.uid;
             });
             this.setInputFiles(files);
@@ -160,8 +164,8 @@ export default {
         handlePictureCardPreview(file) {
             this.dialogImageUrl = file.response ? file.response.path : file.url;
             this.dialogVisible = true;
-        }
-    }
+        },
+    },
 };
 </script>
 <style lang="scss">

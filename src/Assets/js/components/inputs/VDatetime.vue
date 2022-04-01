@@ -47,32 +47,36 @@
 <script>
 export default {
     props: [
-        'label',
-        'type',
-        'format',
-        'value_format',
-        'start_placeholder',
-        'end_placeholder',
-        'placeholder',
-        'errors',
-        'prepend',
-        'append',
-        'disabled',
-        'mask',
-        'description',
+        "label",
+        "type",
+        "format",
+        "value_format",
+        "start_placeholder",
+        "end_placeholder",
+        "placeholder",
+        "errors",
+        "prepend",
+        "append",
+        "disabled",
+        "mask",
+        "description",
     ],
     data() {
         return {
             val: null,
-        }
+        };
     },
     watch: {
         val(val) {
-            return this.$emit('input', val)
+            return this.$emit("input", val);
         },
     },
-    async created() {
-        this.val = this.$attrs.value
+    created() {
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.val = this.$attrs.value;
+            }
+        });
     },
-}
+};
 </script>

@@ -34,16 +34,20 @@ export default {
     props: ["label", "errors", "disabled", "option_list", "description"],
     data() {
         return {
-            val: null
+            val: null,
         };
     },
     watch: {
         val(val) {
             return this.$emit("input", val);
-        }
+        },
     },
-    async created() {
-        this.val = this.$attrs.value;
-    }
+    created() {
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.val = this.$attrs.value;
+            }
+        });
+    },
 };
 </script>

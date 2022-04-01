@@ -70,14 +70,14 @@ export default {
         "allowcreate",
         "unique",
         "description",
-        "extraValidator"
+        "extraValidator",
     ],
     data() {
         return {
             dynamicTags: [],
             inputVisible: false,
             started: false,
-            inputValue: ""
+            inputValue: "",
         };
     },
     watch: {
@@ -85,10 +85,14 @@ export default {
             if (this.started) {
                 return this.$emit("input", val);
             }
-        }
+        },
     },
     mounted() {
-        this.dynamicTags = this.$attrs.value ? this.$attrs.value : [];
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.dynamicTags = this.$attrs.value ? this.$attrs.value : [];
+            }
+        });
     },
     methods: {
         handleClose(tag) {
@@ -105,7 +109,7 @@ export default {
         handleInputConfirm() {
             if (!this.inputVisible) return;
             if (this.unique) {
-                if (this.dynamicTags.find(x => x == this.inputValue))
+                if (this.dynamicTags.find((x) => x == this.inputValue))
                     return this.$message({ showClose: true, message: `${this.inputValue} já existe`, type: "error" });
             }
             let inputValue = this.inputValue;
@@ -118,8 +122,8 @@ export default {
             }
             this.inputVisible = false;
             this.inputValue = "";
-        }
-    }
+        },
+    },
 };
 </script>
 <style>
