@@ -29,6 +29,7 @@ class Text extends Field
 		$field          = $this->options["field"];
 		$mask           = json_encode($this->options["mask"]);
 		$placeholder    = $this->options["placeholder"];
+		$step           = @$this->options["step"] ?? 1;
 		$disabled       = @$this->options["disabled"] ? "true" : "false";
 		$description    = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
@@ -44,6 +45,7 @@ class Text extends Field
 			"mask",
 			"description",
 			"type",
+			"step",
 			"field",
 			"placeholder",
 			"visible",
