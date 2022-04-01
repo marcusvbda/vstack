@@ -6,10 +6,11 @@
     append='{{$append}}' 
     :mask='{{$mask}}'                                                              
     description='{{$description}}'
-	maxlength="{{ $maxlength }}"                                                              
+    maxlength="{{ $maxlength }}"                                                              
     type='{{$type}}'                                                                     
     v-model='{{"form.$field"}}'                                                            
-    placeholder='{{$placeholder}}'   
+    placeholder='{{$placeholder}}' 
+    :step='{{$step}}'  
     v-show='{{$visible}}'                                                    
     :errors='{{"errors.$field ? errors.$field : false"}}'  
     id="resource-input-text-{{ $field }}"
