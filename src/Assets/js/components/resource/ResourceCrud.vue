@@ -34,7 +34,7 @@
                                                             >
                                                                 <a
                                                                     class="f-12 link"
-                                                                    :href="`#${card.label}`"
+                                                                    :href="`#resource-crud-card-${card.label}`"
                                                                     v-html="card.label"
                                                                 />
                                                             </li>
