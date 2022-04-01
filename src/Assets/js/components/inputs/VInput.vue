@@ -67,6 +67,7 @@
                                 :placeholder="placeholder ? placeholder : ''"
                                 :maxlength="maxlength"
                                 :type="type ? type : 'text'"
+                                :step="step"
                                 @blur="$emit('blur', val)"
                             />
                         </template>
@@ -100,6 +101,7 @@ export default {
         "description",
         "maxlength",
         "value",
+        "step"
     ],
     data() {
         return {
