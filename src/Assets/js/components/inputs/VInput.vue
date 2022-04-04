@@ -32,8 +32,23 @@
                             <i class="el-icon-unlock" v-else />
                         </el-button>
                     </template>
-                    <template v-else-if="type == 'slider'">
-                        <el-slider v-model="val" show-input :step="step" :max="parseInt(maxlength)" />
+                    <template v-else-if="type == 'percentage'">
+                        <div class="progress-section">
+                            <ElProgress type="circle" :percentage="val" />
+                            <input
+                                :disabled="disabled"
+                                class="form-control"
+                                v-model="val"
+                                v-bind:class="{ 'is-invalid': errors }"
+                                :placeholder="placeholder ? placeholder : ''"
+                                :min="min"
+                                @change="validMinMax"
+                                :max="maxlength"
+                                type="number"
+                                :step="step"
+                                @blur="$emit('blur', val)"
+                            />
+                        </div>
                     </template>
                     <template v-else>
                         <currency-input
@@ -69,6 +84,9 @@
                                 v-bind:class="{ 'is-invalid': errors }"
                                 :placeholder="placeholder ? placeholder : ''"
                                 :maxlength="maxlength"
+                                @change="validMinMax"
+                                :min="min"
+                                :max="maxlength"
                                 :type="type ? type : 'text'"
                                 :step="step"
                                 @blur="$emit('blur', val)"
@@ -103,6 +121,7 @@ export default {
         "mask",
         "description",
         "maxlength",
+        "min",
         "value",
         "step",
     ],
@@ -123,22 +142,48 @@ export default {
     created() {
         setTimeout(() => {
             if (!this._isDestroyed) {
-                this.val = this.value;
+                if (this.type === "slider") {
+                    this.val = parseInt(this.value ?? 0);
+                } else {
+                    this.val = this.value;
+                }
             }
         });
     },
+    methods: {
+        validMinMax() {
+            if (this.val < this.min) {
+                this.val = this.min;
+            }
+            if (this.val > this.maxlength) {
+                this.val = this.maxlength;
+            }
+        },
+    },
 };
 </script>
-<style>
+<style lang="scss">
 .el-slider.el-slider--with-input {
     width: 100%;
 }
 
 .el-input-number__decrease,
 .el-input-number__increase {
-    height: 96%;
+    height: 93%;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.progress-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    input {
+        position: absolute;
+        width: 80%;
+    }
 }
 </style>

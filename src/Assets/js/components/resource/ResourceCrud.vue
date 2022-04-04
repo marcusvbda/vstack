@@ -304,10 +304,12 @@ export default {
             return classes[this.crud_type.position] ?? "";
         },
     },
-    async created() {
-        this.$nextTick(() => {
-            this.getScreenSize();
-            this.initForm();
+    created() {
+        setTimeout(() => {
+            if (!this._isDestroyed) {
+                this.getScreenSize();
+                this.initForm();
+            }
         });
     },
     methods: {
@@ -387,7 +389,12 @@ export default {
             for (let i in fields) {
                 if (fields[i].options) {
                     let field_name = fields[i].options.field;
+                    let field_type = fields[i].options.type;
                     let field_value = this.processFieldValue(field_name, fields[i].options);
+                    if (field_type === "slider") {
+                        field_value = parseInt(field_value);
+                        console.log(field_value);
+                    }
                     if (field_name) {
                         this.$set(
                             fields[i].options.type == "resource-field" ? this.resourceData : this.form,

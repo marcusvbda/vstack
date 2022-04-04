@@ -34,6 +34,7 @@ class Text extends Field
 		$description    = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
 		$maxlength      = $this->options["maxlength"] ?  $this->options["maxlength"] : 255;
+		$min      = $this->options["min"] ?  $this->options["min"] : 0;
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
 
 
@@ -51,6 +52,7 @@ class Text extends Field
 			"visible",
 			"field",
 			"maxlength",
+			"min",
 			"eval"
 		))->render();
 	}
