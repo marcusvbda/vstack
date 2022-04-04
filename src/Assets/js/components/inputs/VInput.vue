@@ -34,7 +34,7 @@
                     </template>
                     <template v-else-if="type == 'percentage'">
                         <div class="progress-section">
-                            <ElProgress type="circle" :percentage="val" />
+                            <ElProgress type="circle" :percentage="parseInt(!val ? '0' : val)" />
                             <input
                                 :disabled="disabled"
                                 class="form-control"
@@ -43,7 +43,7 @@
                                 :placeholder="placeholder ? placeholder : ''"
                                 :min="min"
                                 @change="validMinMax"
-                                :max="maxlength"
+                                :max="max"
                                 type="number"
                                 :step="step"
                                 @blur="$emit('blur', val)"
@@ -86,7 +86,7 @@
                                 :maxlength="maxlength"
                                 @change="validMinMax"
                                 :min="min"
-                                :max="maxlength"
+                                :max="max"
                                 :type="type ? type : 'text'"
                                 :step="step"
                                 @blur="$emit('blur', val)"
@@ -139,6 +139,11 @@ export default {
             this.val = val;
         },
     },
+    computed: {
+        max() {
+            return parseInt(this.maxlength ? this.maxlength : 0);
+        },
+    },
     created() {
         setTimeout(() => {
             if (!this._isDestroyed) {
@@ -155,8 +160,8 @@ export default {
             if (this.val < this.min) {
                 this.val = this.min;
             }
-            if (this.val > this.maxlength) {
-                this.val = this.maxlength;
+            if (this.val > this.max) {
+                this.val = this.max;
             }
         },
     },
