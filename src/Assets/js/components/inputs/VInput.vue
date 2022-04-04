@@ -34,7 +34,7 @@
                     </template>
                     <template v-else-if="type == 'percentage'">
                         <div class="progress-section">
-                            <ElProgress type="circle" :percentage="parseInt(!val ? '0' : val)" />
+                            <ElProgress type="dashboard" :percentage="parseInt(!val ? '0' : val)" />
                             <input
                                 :disabled="disabled"
                                 class="form-control"
