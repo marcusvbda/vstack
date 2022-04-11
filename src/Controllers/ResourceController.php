@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use ResourcesHelpers;
 use Illuminate\Http\Request;
 use Storage;
-use marcusvbda\vstack\Services\Messages;
 use Auth;
 use DB;
 use Carbon\Carbon;
@@ -966,5 +965,60 @@ class ResourceController extends Controller
 			return response()->json(["token" => $jwt]);
 		}
 		return response()->json("Invalid credentials", 401);
+	}
+
+	public function resource_tree(Request $request)
+	{
+		$resource = ResourcesHelpers::find($request->parent_resource);
+		$field = null;
+		$cards = $resource->fields();
+		foreach ($cards as $card) {
+			foreach ($card->inputs as $input) {
+				if (data_get($input, 'options.type') == "resource-tree" && data_get($input, 'options.resource') == $request->resource) {
+					$field = $input;
+					break;
+				}
+			}
+		}
+
+		$resource_field = ResourcesHelpers::find(data_get($field, "options.resource"));
+		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id);
+		return $tree;
+	}
+
+	private function makeRecursiveTree($resource, $options, $parent_resource)
+	{
+		$children = [];
+		$cards = $resource->fields();
+		$children = [];
+		foreach ($cards as $card) {
+			foreach ($card->inputs as $input) {
+				if (data_get($input, 'options.type') == "resource-tree") {
+					$resource_id = data_get($input, "options.resource");
+					$resource_input = ResourcesHelpers::find($resource_id);
+					$children = $this->makeRecursiveTree($resource_input, data_get($input, "options"), data_get($input, "options.parent_resource"));
+				}
+			}
+		}
+
+		$fields[] = [
+			"parent_resource" => $parent_resource,
+			"relation" => data_get($options, "relation"),
+			"label" => $resource->label(),
+			"singular_label" => $resource->singularLabel(),
+			"children" => $children
+		];
+
+		return $fields;
+	}
+
+	public function resource_tree_items(Request $request)
+	{
+		$parent_resource = ResourcesHelpers::find($request->parent_resource);
+		$parent_model = $parent_resource->getModelInstance();
+		$parent = $parent_model->find($request->parent_id);
+		$items = $parent->{$request->relation}->toArray();
+		$items = !$items ? [] : (is_array($items) ? $items : [$items]);
+		return  $items;
 	}
 }

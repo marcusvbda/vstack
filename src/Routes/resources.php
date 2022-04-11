@@ -43,6 +43,8 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('{resource}/{code}/before-destroy', [ResourceController::class, 'beforeDestroy'])->middleware(['hashids:code'])->name("resource.before_destroy");
 		Route::delete('{resource}/{id}/field/destroy', [ResourceController::class, 'destroyField'])->name("resource.field.destroy");
 		Route::post('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
+		Route::post('inputs/resource-tree', [ResourceController::class, 'resource_tree'])->name("resource.inputs.resource_tree");
+		Route::post('inputs/resource-tree/load-items', [ResourceController::class, 'resource_tree_items'])->name("resource.inputs.resource_tree_items");
 		Route::post('globalsearch', [ResourceController::class, 'globalSearch'])->name("resource.globalsearch");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
 	});

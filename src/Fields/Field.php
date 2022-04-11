@@ -28,6 +28,7 @@ class Field
 		@$this->options["visible"]              = @$this->options["visible"] ?? true;
 		@$this->options["multiple"]             = @$this->options["multiple"] ?? false;
 		@$this->options["_uid"]             	= @$this->options["_uid"] ? $this->options["_uid"] : uniqid();
+		@$this->options["resource"]             = @$this->options["resource"] ? $this->options["resource"] : null;
 		$this->checkRequired();
 	}
 

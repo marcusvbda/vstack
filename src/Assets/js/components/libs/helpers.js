@@ -1,16 +1,16 @@
-String.prototype.currency = function() {
+String.prototype.currency = function () {
     let decimal = Number(this).toFixed(2);
     return Intl.NumberFormat("pt-BR", {
         style: "currency",
-        currency: "BRL"
+        currency: "BRL",
     }).format(decimal);
 };
 
-Number.prototype.currency = function() {
+Number.prototype.currency = function () {
     return this.toString().currency();
 };
 
-Number.prototype.pad = function(size) {
+Number.prototype.pad = function (size) {
     var s = String(this);
     while (s.length < (size || 2)) {
         s = "0" + s;
@@ -24,7 +24,7 @@ Vue.prototype.$today = () => {
     return date.getFullYear() + "-" + Number(date.getMonth() + 1).pad(2) + "-" + Number(date.getDay()).pad(2) + "T00:00:00.000Z";
 };
 
-String.prototype.toSlug = function() {
+String.prototype.toSlug = function () {
     let str = this;
     str = str.replace(/^\s+|\s+$/g, "");
     str = str.toLowerCase();
@@ -37,15 +37,15 @@ String.prototype.toSlug = function() {
         .replace(/-+/g, "-");
     return str != "undefined" ? str : "";
 };
-String.prototype.toClipboard = function(callback = () => {}) {
+String.prototype.toClipboard = function (callback = () => {}) {
     const copy = require("copy-to-clipboard");
     copy(this);
     callback();
 };
 
-String.prototype.isValidDoc = function() {
+String.prototype.isValidDoc = function () {
     let value = this.replace(/[^0-9]/g, "");
-    const validCpf = cpf => {
+    const validCpf = (cpf) => {
         if (
             !cpf ||
             cpf.length != 11 ||
@@ -76,7 +76,7 @@ String.prototype.isValidDoc = function() {
         return true;
     };
 
-    const validCnpj = cnpj => {
+    const validCnpj = (cnpj) => {
         if (
             !cnpj ||
             cnpj.length != 14 ||
@@ -118,12 +118,12 @@ String.prototype.isValidDoc = function() {
     return value.length <= 11 ? validCpf(value) : validCnpj(value);
 };
 
-String.prototype.isValidCep = function() {
-    const Trim = strTexto => {
+String.prototype.isValidCep = function () {
+    const Trim = (strTexto) => {
         return strTexto.replace(/^s+|s+$/g, "");
     };
 
-    const IsCEP = strCEP => {
+    const IsCEP = (strCEP) => {
         var objER = /^[0-9]{5}-[0-9]{3}$/;
         strCEP = Trim(strCEP);
         if (strCEP.length > 0) {
@@ -135,32 +135,28 @@ String.prototype.isValidCep = function() {
     return IsCEP(this);
 };
 
-Vue.prototype.$validationErrorMessage = function(er) {
+Vue.prototype.$validationErrorMessage = function (er) {
     er = er.response.data.errors;
     let message = Object.keys(er)
-        .map(x => `<p class='mb-0'>${er[x]}</p>`)
+        .map((x) => `<p class='mb-0'>${er[x]}</p>`)
         .join("");
     this.$message({ dangerouslyUseHTMLString: true, showClose: true, message, type: "error" });
 };
 
-Vue.prototype.$validationErrorMessageDurantion = function(er, durationVal) {
+Vue.prototype.$validationErrorMessageDurantion = function (er, durationVal) {
     er = er.response.data.errors;
     let message = Object.keys(er)
-        .map(x => `<p class='mb-0'>${er[x]}</p>`)
+        .map((x) => `<p class='mb-0'>${er[x]}</p>`)
         .join("");
     this.$message({ dangerouslyUseHTMLString: true, showClose: true, message, type: "error", duration: durationVal });
 };
 
-String.prototype.html = function() {
-    return String(this)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+String.prototype.html = function () {
+    return String(this).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 };
 
-window.sleep = ms => {
-    return new Promise(resolve => setTimeout(resolve, ms));
+window.sleep = (ms) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 Vue.prototype.$insertParam = (key, value) => {
@@ -178,19 +174,19 @@ Vue.prototype.$percentage = (partialValue, totalValue, string = true) => {
     return string ? `${value}%` : Number(value);
 };
 
-Vue.prototype.$debug = content => {
+Vue.prototype.$debug = (content) => {
     if (laravel.config.debug) {
         console.log(content);
     }
 };
 
-Vue.prototype.$getEnabledIcons = function(enabled) {
+Vue.prototype.$getEnabledIcons = function (enabled) {
     const icons = { true: "🟢", false: "🔴" };
     return icons[enabled ? "true" : "false"];
 };
 
-Vue.prototype.$waitForEls = selector => {
-    return new Promise(resolve => {
+Vue.prototype.$waitForEls = (selector) => {
+    return new Promise((resolve) => {
         let els = document.querySelectorAll(selector);
         if (els) {
             return resolve(els);
@@ -207,13 +203,13 @@ Vue.prototype.$waitForEls = selector => {
 
         observer.observe(document.body, {
             childList: true,
-            subtree: true
+            subtree: true,
         });
     });
 };
 
-Vue.prototype.$waitForEl = selector => {
-    return new Promise(resolve => {
+Vue.prototype.$waitForEl = (selector) => {
+    return new Promise((resolve) => {
         let el = document.querySelector(selector);
         if (el) {
             return resolve(el);
@@ -230,7 +226,7 @@ Vue.prototype.$waitForEl = selector => {
 
         observer.observe(document.body, {
             childList: true,
-            subtree: true
+            subtree: true,
         });
     });
 };
@@ -239,7 +235,7 @@ Vue.prototype.$getUrlParams = () => {
     return Object.fromEntries(new URLSearchParams(location.search));
 };
 
-Vue.prototype.$niceBytes = x => {
+Vue.prototype.$niceBytes = (x) => {
     const units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     let l = 0,
         n = parseInt(x, 10) || 0;
@@ -253,7 +249,10 @@ Vue.prototype.$niceBytes = x => {
 
 Vue.prototype.$avoidNaN = (value, fallback = 0) => (isNaN(value) ? fallback : value);
 
-
 Vue.prototype.$paramsToObject = () => {
-    return  Object.fromEntries(new URLSearchParams(location.search));
-}
+    return Object.fromEntries(new URLSearchParams(location.search));
+};
+
+Vue.prototype.$randomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+};

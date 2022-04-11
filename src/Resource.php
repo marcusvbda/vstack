@@ -553,6 +553,17 @@ class Resource
 		];
 	}
 
+	public function makeAclResource()
+	{
+		return [
+			"can_view" => $this->canView(),
+			"can_viewlist" => $this->canViewList(),
+			"can_update" => $this->canUpdate(),
+			"can_destroy" => $this->canDelete(),
+			"can_create" => $this->canCreate(),
+		];
+	}
+
 	public function serialize($page_type = null)
 	{
 		return [
@@ -563,13 +574,7 @@ class Resource
 			"first_btn" => $this->firstCrudBtn(),
 			"second_btn" => $this->secondCrudBtn(),
 			"icon" => $this->icon(),
-			"acl" => [
-				"can_view" => $this->canView(),
-				"can_viewlist" => $this->canViewList(),
-				"can_update" => $this->canUpdate(),
-				"can_destroy" => $this->canDelete(),
-				"can_create" => $this->canCreate(),
-			],
+			"acl" => $this->makeAclResource(),
 			"after_create_slot" => $this->afterCreateSlot(),
 			"after_edit_slot" => $this->afterEditSlot(),
 			"before_edit_slot" => $this->beforeEditSlot(),
