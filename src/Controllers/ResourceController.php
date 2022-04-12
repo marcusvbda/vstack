@@ -603,7 +603,7 @@ class ResourceController extends Controller
 		return $cards;
 	}
 
-	public function store(Request $request)
+        public function store(Request $request)
 	{
 		$data = $request->all();
 		if (!@$data["resource_id"]) {
@@ -621,6 +621,11 @@ class ResourceController extends Controller
 				abort(403);
 			}
 		}
+		$id = @$data["id"];
+		if ($id) {
+			$content = $resource->getModelInstance()->findOrFail($id);
+			request()->request->add(["content" => @$content]);
+		}
 		$validation_custom_message =  $resource->getValidationRuleMessage();
 		$validator = Validator::make($request->all(), $resource->getValidationRule(), @$validation_custom_message ?? []);
 
@@ -628,11 +633,11 @@ class ResourceController extends Controller
 			throw new HttpResponseException(response()->json(["errors" => $validator->errors()], 422));
 		}
 
-		$id = @$data["id"];
-		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type"]);
+		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content"]);
 		$data = $this->processStoreData($resource, $data);
 		return $resource->storeMethod($id, $data);
 	}
+
 
 	public function storeField(Request $request)
 	{
