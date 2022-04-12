@@ -1004,6 +1004,9 @@ class ResourceController extends Controller
 		$fields[] = [
 			"parent_resource" => $parent_resource,
 			"relation" => data_get($options, "relation"),
+			"resource" => data_get($options, "resource"),
+			"label_index" => data_get($options, "label_index"),
+			"template" => data_get($options, "template"),
 			"label" => $resource->label(),
 			"singular_label" => $resource->singularLabel(),
 			"children" => $children

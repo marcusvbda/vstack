@@ -1,15 +1,15 @@
 <template>
-    <div :class="['tree-view-item', parent_resource]">
+    <div :class="['tree-view-item group', resource]">
         <div :class="['tree-view-label hoverable gray', visible && 'opened']" @click="visible = !visible">
             <i :class="['icon', visible ? 'el-icon-caret-bottom' : 'icon el-icon-caret-right']" />
-            {{ label }} - {{ parent_resource }}
+            {{ label }}
         </div>
-        <div class="tree-view-children" v-show="visible"><slot /></div>
+        <div class="tree-view-children" v-if="visible"><slot /></div>
     </div>
 </template>
 <script>
 export default {
-    props: ["label", "default_visible", "parent_resource"],
+    props: ["label", "default_visible", "resource"],
     data() {
         return {
             visible: this.default_visible ? true : false,

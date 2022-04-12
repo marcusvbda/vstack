@@ -11,10 +11,13 @@
                             :key="i"
                             :label="resource.label"
                             :parent_resource="resource.parent_resource"
+                            :resource="resource.resource"
                             :singular_label="resource.singular_label"
                             :children="resource.children"
                             :route_load="route_load"
                             :input="resource"
+                            :label_index="resource.label_index ? resource.label_index : 'name'"
+                            :template="resource.template"
                             :parent_id="form.id"
                             :default_visible="true"
                         />
@@ -74,9 +77,11 @@ export default {
     flex-direction: column;
 
     .tree-view-item {
+        &.group {
+            border: 1px solid #ededed;
+            border-radius: 5px;
+        }
         cursor: pointer;
-        border-radius: 5px;
-
         .btn-link {
             font-weight: 600;
             font-size: 12px;
@@ -92,6 +97,8 @@ export default {
 
             &.item {
                 font-weight: 400;
+                padding-left: 31px;
+                margin-bottom: 0;
             }
 
             .icon {
@@ -107,6 +114,9 @@ export default {
                 &.opened {
                     background-color: #ededed;
                     transition: 0.4s;
+                    &.item {
+                        background-color: #ecf0ff;
+                    }
                 }
             }
         }
