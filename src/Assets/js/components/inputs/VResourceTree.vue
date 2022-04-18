@@ -8,6 +8,7 @@
                 <div class="tree-view">
                     <template v-for="(resource, i) in tree">
                         <tree-view
+                            :disabled="disabled"
                             :key="i"
                             :label="resource.label"
                             :parent_resource="resource.parent_resource"
@@ -94,6 +95,7 @@ export default {
             color: #444;
             display: flex;
             align-items: center;
+            min-height: 39px;
 
             &.item {
                 font-weight: 400;
@@ -103,6 +105,10 @@ export default {
 
             .icon {
                 margin-right: 5px;
+            }
+
+            .show-on-hover {
+                display: none;
             }
 
             &.gray {
@@ -116,6 +122,11 @@ export default {
                     transition: 0.4s;
                     &.item {
                         background-color: #ecf0ff;
+                    }
+
+                    .show-on-hover {
+                        transition: 0.4s;
+                        display: block;
                     }
                 }
             }

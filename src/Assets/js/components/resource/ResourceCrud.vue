@@ -393,7 +393,6 @@ export default {
                     let field_value = this.processFieldValue(field_name, fields[i].options);
                     if (field_type === "slider") {
                         field_value = parseInt(field_value);
-                        console.log(field_value);
                     }
                     if (field_name) {
                         this.$set(
