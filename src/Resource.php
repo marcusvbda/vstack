@@ -735,7 +735,7 @@ class Resource
 
 	public function resourceTreeLoadItemsFilter(Request $request, $query)
 	{
-		$query = $query->where($request->label_index, "like", "%{$request->filter}%");
+		$query = $query->where(@$request->label_index ?? "name", "like", "%{$request->filter}%");
 		return  $query;
 	}
 }
