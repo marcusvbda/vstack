@@ -1,11 +1,9 @@
 <template>
     <div :class="['tree-view-item group', resource]">
-        <div :class="['tree-view-label hoverable gray', visible && 'opened']">
-            <div class="w-75" @click="visible = !visible">
-                <i :class="['icon', visible ? 'el-icon-caret-bottom' : 'icon el-icon-caret-right']" />
-                {{ label }}
-            </div>
-            <div class="ml-auto w-25">
+        <div :class="['tree-view-label hoverable gray py-0', visible && 'opened']" @click="visible = !visible">
+            <i :class="['icon', visible ? 'el-icon-caret-bottom' : 'icon el-icon-caret-right']" />
+            {{ label }}
+            <div class="ml-auto w-25" v-on:click.stop.prevent="false">
                 <el-input
                     clearable
                     :placeholder="`Encontrar  ${singular_label} ...`"
