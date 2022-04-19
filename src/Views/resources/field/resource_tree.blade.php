@@ -4,7 +4,6 @@
     :form="form"
     relation="{{ $relation }}"
     resource='{{ $resource }}'
-    route_load='{{ $route_load }}'
     parent_resource="{{ $parent_resource }}"
     {!! $eval !!}                                  
 />
