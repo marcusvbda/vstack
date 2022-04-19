@@ -1,5 +1,12 @@
 <template>
-    <tree-view-item :label="label" @opened="loadItems" :default_visible="default_visible" :resource="resource">
+    <tree-view-item
+        :label="label"
+        @opened="loadItems"
+        :default_visible="default_visible"
+        :resource="resource"
+        :singular_label="singular_label"
+        @filter-changed="filterChanged"
+    >
         <template v-if="loading_items">
             <div class="tree-view-item py-0" v-for="(i, ix) in $randomInt(3, 5)" :key="i">
                 <div class="tree-view-label">
@@ -18,12 +25,12 @@
             </div>
         </template>
         <template v-else>
-            <div class="tree-view-label">
-                <a href="#" class="btn-link" v-if="!disabled">
+            <div class="tree-view-label" v-if="!disabled">
+                <a href="#" class="btn-link">
                     <i class="el-icon-plus mr-1" />
                     Selecionar {{ label }}
                 </a>
-                <div class="ml-auto w-25">
+                <!-- <div class="ml-auto w-25">
                     <el-input
                         v-if="parent_id"
                         clearable
@@ -32,7 +39,7 @@
                         v-model="filter"
                         size="mini"
                     />
-                </div>
+                </div> -->
             </div>
             <template v-if="items.data.length">
                 <div class="tree-view-item py-0" v-for="(item, i) in items.data" :key="`_${i}`">
@@ -101,7 +108,7 @@
                 </div>
             </template>
             <template v-else>
-                <div class="mt-2 mb-4 d-flex align-items-center justify-content-center">
+                <div class="my-4 d-flex align-items-center justify-content-center">
                     <small class="text-muted">
                         {{ filter ? "Nada encontrado, revise seu filtro ..." : `Nada relacionado ...` }}
                     </small>
@@ -140,19 +147,8 @@ export default {
                 data: [],
             },
             loading_items: true,
-            filter: "",
-            interval: null,
             current_page: 1,
         };
-    },
-    watch: {
-        filter() {
-            clearInterval(this.interval);
-            this.interval = setInterval(() => {
-                this.loadItems(true);
-                clearInterval(this.interval);
-            }, 400);
-        },
     },
     created() {
         if (this.visible && !this.loaded) {
@@ -160,11 +156,14 @@ export default {
         }
     },
     methods: {
+        filterChanged(val) {
+            this.loadItems(true, val);
+        },
         handleCurrentChange(page) {
             this.current_page = page;
             this.loadItems(true);
         },
-        loadItems(ignore_loaded = false) {
+        loadItems(ignore_loaded = false, filter = "") {
             if (!ignore_loaded && this.loaded) {
                 return;
             }
@@ -174,7 +173,7 @@ export default {
                 this.loading_items = false;
                 return;
             }
-            const dataset = { parent_id: this.parent_id, ...this.input, filter: this.filter, page: this.current_page };
+            const dataset = { parent_id: this.parent_id, ...this.input, filter, page: this.current_page };
             this.$http.post(`${this.route_load}/load-items`, dataset).then(({ data }) => {
                 this.loaded = true;
                 this.items = data;
