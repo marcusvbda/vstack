@@ -27,7 +27,7 @@ class ResourceTree extends Field
         $relation = @$this->options['relation'];
         $parent_resource = @$this->options['parent_resource'];
         $eval = @$this->options["eval"]  ? $this->options["eval"] : '';
-        $route_load = route('resource.inputs.resource_tree');
+        $route_load = @$this->options["route_load"]  ? $this->options["route_load"] : route('resource.inputs.resource_tree');
 
         return $this->view = view("vStack::resources.field.resource_tree", compact(
             "resource",
