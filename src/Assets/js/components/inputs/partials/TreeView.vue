@@ -30,16 +30,6 @@
                     <i class="el-icon-plus mr-1" />
                     Selecionar {{ label }}
                 </a>
-                <!-- <div class="ml-auto w-25">
-                    <el-input
-                        v-if="parent_id"
-                        clearable
-                        :placeholder="`Encontrar ${singular_label} ...`"
-                        prefix-icon="el-icon-search"
-                        v-model="filter"
-                        size="mini"
-                    />
-                </div> -->
             </div>
             <template v-if="items.data.length">
                 <div class="tree-view-item py-0" v-for="(item, i) in items.data" :key="`_${i}`">
