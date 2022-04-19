@@ -1011,7 +1011,7 @@ class ResourceController extends Controller
 			"relation" => data_get($options, "relation"),
 			"resource" => data_get($options, "resource"),
 			"template_code" => data_get($options, "template_code"),
-			"label_index" => data_get($options, "label_index"),
+			"label_index" => data_get($options, "label_index", "name"),
 			"template" => data_get($options, "template"),
 			"label" => $resource->label(),
 			"singular_label" => $resource->singularLabel(),
