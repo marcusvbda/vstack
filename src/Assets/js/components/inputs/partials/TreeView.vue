@@ -148,6 +148,7 @@ export default {
             },
             loading_items: true,
             current_page: 1,
+            filter: "",
         };
     },
     created() {
@@ -157,13 +158,14 @@ export default {
     },
     methods: {
         filterChanged(val) {
-            this.loadItems(true, val);
+            this.filter = val;
+            this.loadItems(true);
         },
         handleCurrentChange(page) {
             this.current_page = page;
             this.loadItems(true);
         },
-        loadItems(ignore_loaded = false, filter = "") {
+        loadItems(ignore_loaded = false) {
             if (!ignore_loaded && this.loaded) {
                 return;
             }
@@ -173,7 +175,7 @@ export default {
                 this.loading_items = false;
                 return;
             }
-            const dataset = { parent_id: this.parent_id, ...this.input, filter, page: this.current_page };
+            const dataset = { parent_id: this.parent_id, ...this.input, filter: this.filter, page: this.current_page };
             this.$http.post(`${this.route_load}/load-items`, dataset).then(({ data }) => {
                 this.loaded = true;
                 this.items = data;
