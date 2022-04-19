@@ -39,26 +39,24 @@
                     <ul class="tree-view-label hoverable item striped-list">
                         <li class="w-100">
                             <div class="d-flex align-items-center w-100 no-margin">
-                                <span class="mr-4">
-                                    <v-runtime-template
-                                        v-if="template_code"
-                                        :key="i"
-                                        :template="`<div>${template_code}</div>`"
-                                        :templateProps="{ item }"
-                                    />
-                                    <b class="text-muted" v-else>{{ item.code }}</b>
-                                </span>
                                 <v-runtime-template
-                                    v-if="label_index && !template"
-                                    :key="i"
-                                    :template="`<span>${item[label_index]}</span>`"
-                                />
-                                <v-runtime-template
-                                    v-else-if="template"
+                                    v-if="template"
                                     :key="i"
                                     :template="`<div>${template}</div>`"
                                     :templateProps="{ item }"
                                 />
+                                <template v-else>
+                                    <span class="mr-4">
+                                        <v-runtime-template
+                                            v-if="template_code"
+                                            :key="i"
+                                            :template="`<div>${template_code}</div>`"
+                                            :templateProps="{ item }"
+                                        />
+                                        <b class="text-muted" v-else>{{ item.code }}</b>
+                                    </span>
+                                    <v-runtime-template :key="i" :template="`<span>${item[label_index]}</span>`" />
+                                </template>
                                 <el-tooltip class="item" effect="dark" content="Ver em detalhes" placement="top" v-if="!disabled">
                                     <el-button
                                         class="show-on-hover ml-auto"
