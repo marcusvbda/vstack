@@ -20,6 +20,7 @@
                             :label_index="resource.label_index ? resource.label_index : 'name'"
                             :template="resource.template"
                             :parent_id="form.id"
+                            :template_code="resource.template_code"
                             :default_visible="true"
                         />
                     </template>
@@ -96,6 +97,12 @@ export default {
             display: flex;
             align-items: center;
             min-height: 39px;
+
+            .no-margin {
+                p {
+                    margin-bottom: 0 !important;
+                }
+            }
 
             &.item {
                 font-weight: 400;

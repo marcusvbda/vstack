@@ -603,7 +603,7 @@ class ResourceController extends Controller
 		return $cards;
 	}
 
-        public function store(Request $request)
+	public function store(Request $request)
 	{
 		$data = $request->all();
 		if (!@$data["resource_id"]) {
@@ -1010,6 +1010,7 @@ class ResourceController extends Controller
 			"parent_resource" => $parent_resource,
 			"relation" => data_get($options, "relation"),
 			"resource" => data_get($options, "resource"),
+			"template_code" => data_get($options, "template_code"),
 			"label_index" => data_get($options, "label_index"),
 			"template" => data_get($options, "template"),
 			"label" => $resource->label(),
@@ -1022,11 +1023,13 @@ class ResourceController extends Controller
 
 	public function resource_tree_items(Request $request)
 	{
+		$resource = ResourcesHelpers::find($request->resource);
 		$parent_resource = ResourcesHelpers::find($request->parent_resource);
 		$parent_model = $parent_resource->getModelInstance();
 		$parent = $parent_model->find($request->parent_id);
-		$items = $parent->{$request->relation}->toArray();
-		$items = !$items ? [] : (is_array($items) ? $items : [$items]);
+		$query = $parent->{$request->relation}();
+		$query = $resource->resourceTreeLoadItemsFilter($request, $query);
+		$items = $query->paginate($resource->resourceTreePerPage());
 		return  $items;
 	}
 }

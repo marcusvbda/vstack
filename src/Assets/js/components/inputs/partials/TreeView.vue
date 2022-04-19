@@ -9,9 +9,11 @@
                     </div>
                 </div>
             </div>
-            <div class="tree-view-item ml-5 mb-4 mr-2" v-for="i in $randomInt(1, 2)" :key="`secondary_${i}`">
+            <div class="tree-view-item py-0">
                 <div class="tree-view-label">
-                    <div class="shimmer resource-tree-item" :style="{ width: `${$randomInt(10, 50)}%` }" />
+                    <div class="ml-auto w-25">
+                        <div class="shimmer resource-tree-item" :style="{ width: '100%' }" />
+                    </div>
                 </div>
             </div>
         </template>
@@ -23,6 +25,7 @@
                 </a>
                 <div class="ml-auto w-25">
                     <el-input
+                        v-if="parent_id"
                         clearable
                         :placeholder="`Encontrar ${singular_label} ...`"
                         prefix-icon="el-icon-search"
@@ -31,11 +34,20 @@
                     />
                 </div>
             </div>
-            <template v-if="filtered_items.length">
-                <div class="tree-view-item py-0" v-for="(item, i) in filtered_items" :key="`_${i}`">
+            <template v-if="items.data.length">
+                <div class="tree-view-item py-0" v-for="(item, i) in items.data" :key="`_${i}`">
                     <ul class="tree-view-label hoverable item striped-list">
                         <li class="w-100">
-                            <div class="d-flex align-items-center w-100">
+                            <div class="d-flex align-items-center w-100 no-margin">
+                                <span class="mr-4">
+                                    <v-runtime-template
+                                        v-if="template_code"
+                                        :key="i"
+                                        :template="`<div>${template_code}</div>`"
+                                        :templateProps="{ item }"
+                                    />
+                                    <b class="text-muted" v-else>{{ item.code }}</b>
+                                </span>
                                 <v-runtime-template
                                     v-if="label_index && !template"
                                     :key="i"
@@ -44,10 +56,10 @@
                                 <v-runtime-template
                                     v-else-if="template"
                                     :key="i"
-                                    :template="template"
+                                    :template="`<div>${template}</div>`"
                                     :templateProps="{ item }"
                                 />
-                                <el-tooltip class="item" effect="dark" content="Ver em detalhes" placement="top">
+                                <el-tooltip class="item" effect="dark" content="Ver em detalhes" placement="top" v-if="!disabled">
                                     <el-button
                                         class="show-on-hover ml-auto"
                                         plain
@@ -59,7 +71,7 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="mt-3" v-for="(child, i) in children" :key="i">
+                    <div class="my-3" v-for="(child, i) in children" :key="i">
                         <tree-view
                             :label="child.label"
                             :singular_label="child.singular_label"
@@ -70,16 +82,31 @@
                             :default_visible="false"
                             :resource="child.resource"
                             :parent_resource="child.parent_resource"
+                            :template_code="child.template_code"
                             :label_index="child.label_index ? child.label_index : 'name'"
                             :template="child.template"
                             class="ml-5 mb-4 mr-2"
                         />
                     </div>
                 </div>
+                <div class="my-3 d-flex align-items-center justify-content-end" v-if="items.last_page > 1">
+                    <el-pagination
+                        v-if="parent_id"
+                        @current-change="handleCurrentChange"
+                        small
+                        background
+                        layout="prev, pager, next"
+                        :total="items.total"
+                        :page-size="items.per_page"
+                        :current-page="current_page"
+                    />
+                </div>
             </template>
-            <template v-else-if="filter">
-                <div class="my-4 d-flex align-items-center justify-content-center">
-                    <small class="text-muted">Nada encontrado ...</small>
+            <template v-else>
+                <div class="mt-2 mb-4 d-flex align-items-center justify-content-center">
+                    <small class="text-muted">
+                        {{ filter ? "Nada encontrado, revise seu filtro ..." : `Nada relacionado ...` }}
+                    </small>
                 </div>
             </template>
         </template>
@@ -102,6 +129,7 @@ export default {
         "template",
         "disabled",
         "resource",
+        "template_code",
     ],
     components: {
         "v-runtime-template": VRuntimeTemplate,
@@ -110,35 +138,45 @@ export default {
     data() {
         return {
             loaded: false,
-            items: [],
+            items: {
+                data: [],
+            },
             loading_items: true,
             filter: "",
+            interval: null,
+            current_page: 1,
         };
+    },
+    watch: {
+        filter() {
+            clearInterval(this.interval);
+            this.interval = setInterval(() => {
+                this.loadItems(true);
+                clearInterval(this.interval);
+            }, 400);
+        },
     },
     created() {
         if (this.visible && !this.loaded) {
             this.loadItems();
         }
     },
-    computed: {
-        filtered_items() {
-            return this.items.filter((item) => {
-                return item[this.label_index].toLowerCase().indexOf(this.filter.toLowerCase()) !== -1;
-            });
-        },
-    },
     methods: {
+        handleCurrentChange(page) {
+            this.current_page = page;
+            this.loadItems(true);
+        },
         loadItems(ignore_loaded = false) {
             if (!ignore_loaded && this.loaded) {
                 return;
             }
+            this.loading_items = true;
             if (!this.parent_id) {
                 this.loaded = true;
                 this.loading_items = false;
-                return (this.items = []);
+                return;
             }
-            this.loading_items = true;
-            const dataset = { parent_id: this.parent_id, ...this.input };
+            const dataset = { parent_id: this.parent_id, ...this.input, filter: this.filter, page: this.current_page };
             this.$http.post(`${this.route_load}/load-items`, dataset).then(({ data }) => {
                 this.loaded = true;
                 this.items = data;

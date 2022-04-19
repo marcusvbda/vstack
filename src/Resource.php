@@ -3,12 +3,14 @@
 namespace marcusvbda\vstack;
 
 use App;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use marcusvbda\vstack\Controllers\ResourceController;
 use marcusvbda\vstack\Fields\{Card, Text};
 use marcusvbda\vstack\Imports\GlobalImporter;
 use marcusvbda\vstack\Models\Migration;
 use marcusvbda\vstack\Services\Messages;
+use ResourcesHelpers;
 
 class Resource
 {
@@ -724,5 +726,16 @@ class Resource
 	public function listItemsContent($data)
 	{
 		return false;
+	}
+
+	public function resourceTreePerPage()
+	{
+		return 10;
+	}
+
+	public function resourceTreeLoadItemsFilter(Request $request, $query)
+	{
+		$query = $query->where($request->label_index, "like", "%{$request->filter}%");
+		return  $query;
 	}
 }
