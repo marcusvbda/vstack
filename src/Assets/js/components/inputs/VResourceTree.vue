@@ -31,11 +31,12 @@
 </template>
 <script>
 export default {
-    props: ["resource", "disabled", "route_load", "form", "relation", "parent_resource"],
+    props: ["resource", "disabled", "form", "relation", "parent_resource"],
     data() {
         return {
             loading: true,
             tree: [],
+            route_load: "/admin/inputs/resource-tree",
         };
     },
     created() {
