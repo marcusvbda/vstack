@@ -50,7 +50,7 @@
                                             :template="`<div>${template_code}</div>`"
                                             :templateProps="{ item }"
                                         />
-                                        <b class="text-muted" v-else>{{ item.code }}</b>
+                                        <b class="text-muted" v-else>#{{ item.code }}</b>
                                     </span>
                                     <v-runtime-template :key="i" :template="`<span>${item[label_index]}</span>`" />
                                 </template>
