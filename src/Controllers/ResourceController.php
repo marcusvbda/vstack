@@ -987,11 +987,14 @@ class ResourceController extends Controller
 		}
 
 		$resource_field = ResourcesHelpers::find(data_get($field, "options.resource"));
-		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id);
+		$inputOptions = data_get($field, "options");
+		$inputDisabled = data_get($inputOptions, "disabled");
+		$inputFieldsTemplate = !$inputDisabled ? $resource_field->fields() : "";
+		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id, $inputFieldsTemplate);
 		return $tree;
 	}
 
-	private function makeRecursiveTree($resource, $options, $parent_resource)
+	private function makeRecursiveTree($resource, $options, $parent_resource, $inputFieldsTemplate)
 	{
 		$children = [];
 		$cards = $resource->fields();
@@ -1001,7 +1004,11 @@ class ResourceController extends Controller
 				if (data_get($input, 'options.type') == "resource-tree") {
 					$resource_id = data_get($input, "options.resource");
 					$resource_input = ResourcesHelpers::find($resource_id);
-					$children = $this->makeRecursiveTree($resource_input, data_get($input, "options"), data_get($input, "options.parent_resource"));
+					$inputOptions = data_get($input, "options");
+					$inputParentResource = data_get($input, "options.parent_resource");
+					$inputDisabled = data_get($inputOptions, "disabled");
+					$inputFieldsTemplate = !$inputDisabled ? $resource_input->fields() : "";
+					$children = $this->makeRecursiveTree($resource_input, $inputOptions, $inputParentResource, $inputFieldsTemplate);
 				}
 			}
 		}
@@ -1013,6 +1020,7 @@ class ResourceController extends Controller
 			"template_code" => data_get($options, "template_code"),
 			"label_index" => data_get($options, "label_index", "name"),
 			"template" => data_get($options, "template"),
+			"fields_template" => $inputFieldsTemplate,
 			"label" => $resource->label(),
 			"singular_label" => $resource->singularLabel(),
 			"children" => $children

@@ -7,7 +7,7 @@
             <template v-else>
                 <div class="tree-view">
                     <template v-for="(resource, i) in tree">
-                        <tree-view
+                        <TreeView
                             :disabled="disabled"
                             :key="i"
                             :label="resource.label"

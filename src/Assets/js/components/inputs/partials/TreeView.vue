@@ -1,5 +1,5 @@
 <template>
-    <tree-view-item
+    <TreeViewItem
         :label="label"
         @opened="loadItems"
         :default_visible="default_visible"
@@ -28,7 +28,7 @@
             <div class="tree-view-label" v-if="!disabled">
                 <a href="#" class="btn-link">
                     <i class="el-icon-plus mr-1" />
-                    Selecionar {{ label }}
+                    Adicionar {{ label }}
                 </a>
             </div>
             <template v-if="items.data.length">
@@ -36,7 +36,7 @@
                     <ul class="tree-view-label hoverable item striped-list">
                         <li class="w-100">
                             <div class="d-flex align-items-center w-100 no-margin">
-                                <v-runtime-template
+                                <VRuntimeTemplate
                                     v-if="template"
                                     :key="i"
                                     :template="`<div>${template}</div>`"
@@ -44,30 +44,37 @@
                                 />
                                 <template v-else>
                                     <span class="mr-4">
-                                        <v-runtime-template
+                                        <VRuntimeTemplate
                                             v-if="template_code"
                                             :key="i"
                                             :template="`<div>${template_code}</div>`"
                                             :templateProps="{ item }"
                                         />
-                                        <b class="text-muted" v-else>#{{ item.code }}</b>
+                                        <b class="text-muted" v-else>{{ item.code }}</b>
                                     </span>
-                                    <v-runtime-template :key="i" :template="`<span>${item[label_index]}</span>`" />
+                                    <VRuntimeTemplate :key="i" :template="`<span>${item[label_index]}</span>`" />
                                 </template>
-                                <el-tooltip class="item" effect="dark" content="Ver em detalhes" placement="top" v-if="!disabled">
-                                    <el-button
+                                <ElTooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="Ver em detalhes"
+                                    placement="right"
+                                    v-if="!disabled"
+                                >
+                                    <ElButton
                                         class="show-on-hover ml-auto"
                                         plain
                                         size="mini"
                                         type="success"
                                         icon="el-icon-search"
+                                        @click="showDetail(item)"
                                     />
-                                </el-tooltip>
+                                </ElTooltip>
                             </div>
                         </li>
                     </ul>
                     <div class="my-3" v-for="(child, i) in children" :key="i">
-                        <tree-view
+                        <TreeView
                             :label="child.label"
                             :singular_label="child.singular_label"
                             :children="child.children"
@@ -85,7 +92,7 @@
                     </div>
                 </div>
                 <div class="my-3 d-flex align-items-center justify-content-end" v-if="items.last_page > 1">
-                    <el-pagination
+                    <ElPagination
                         v-if="parent_id"
                         @current-change="handleCurrentChange"
                         small
@@ -105,11 +112,11 @@
                 </div>
             </template>
         </template>
-    </tree-view-item>
+    </TreeViewItem>
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
-
+import TreeViewItem from "./-TreeViewItem.vue";
 export default {
     props: [
         "label",
@@ -127,8 +134,8 @@ export default {
         "template_code",
     ],
     components: {
-        "v-runtime-template": VRuntimeTemplate,
-        "tree-view-item": require("./-TreeViewItem.vue").default,
+        VRuntimeTemplate,
+        TreeViewItem,
     },
     data() {
         return {
@@ -147,6 +154,9 @@ export default {
         }
     },
     methods: {
+        showDetail(item) {
+            console.log("showDetail", item);
+        },
         filterChanged(val) {
             this.filter = val;
             this.loadItems(true);

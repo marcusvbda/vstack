@@ -4,7 +4,7 @@
             <i :class="['icon', visible ? 'el-icon-caret-bottom' : 'icon el-icon-caret-right']" />
             {{ label }}
             <div class="ml-auto w-25" v-on:click.stop.prevent="false">
-                <el-input
+                <ElInput
                     clearable
                     :placeholder="`Encontrar  ${singular_label} ...`"
                     prefix-icon="el-icon-search"
