@@ -80,7 +80,7 @@
                             :template_code="child.template_code"
                             :label_index="child.label_index ? child.label_index : 'name'"
                             :template="child.template"
-                            class="ml-5 mb-4 mr-2"
+                            class="ml-5 mb-5 mr-2"
                         />
                     </div>
                 </div>
