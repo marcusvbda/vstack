@@ -25,7 +25,6 @@ export default {
                 .map((rf) => {
                     if (this.hasContent(this.get_params, rf.index)) {
                         let content = "";
-                        console.log(rf)
                         if (rf.component == "select-filter") {
                             if (!rf?.multiple) {
                                 content = rf.options.find((x) => x.value == this.get_params[rf.index]).label;
