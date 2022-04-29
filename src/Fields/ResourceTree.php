@@ -33,7 +33,7 @@ class ResourceTree extends Field
             "disabled",
             "eval",
             "relation",
-            "parent_resource",
+            "parent_resource"
         ))->render();
     }
 }
