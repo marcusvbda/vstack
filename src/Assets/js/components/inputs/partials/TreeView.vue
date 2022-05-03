@@ -22,6 +22,7 @@
                 :label="input.singular_label"
                 @close="show_detail = false"
                 :qtyfields="input.qty_fields"
+                @saved="savedDetail"
             />
         </ElDialog>
 
@@ -136,6 +137,19 @@
 import VRuntimeTemplate from "v-runtime-template";
 import TreeViewItem from "./-TreeViewItem.vue";
 import TreeViewDialogCrud from "./-TreeViewDialogCrud.vue";
+
+const initialState = () => ({
+    loaded: false,
+    items: {
+        data: [],
+    },
+    loading_items: true,
+    current_page: 1,
+    filter: "",
+    show_detail: false,
+    selected: null,
+});
+
 export default {
     props: [
         "label",
@@ -158,17 +172,7 @@ export default {
         TreeViewDialogCrud,
     },
     data() {
-        return {
-            loaded: false,
-            items: {
-                data: [],
-            },
-            loading_items: true,
-            current_page: 1,
-            filter: "",
-            show_detail: false,
-            selected: null,
-        };
+        return initialState();
     },
     created() {
         if (this.visible && !this.loaded) {
@@ -176,6 +180,12 @@ export default {
         }
     },
     methods: {
+        savedDetail() {
+            this.$message({ showClose: true, message: "Registro salvo com sucesso !!", type: "success" });
+            this.show_detail = false;
+            Object.assign(this.$data, initialState());
+            this.loadItems();
+        },
         showDetail(item) {
             this.show_detail = true;
             this.selected = item;

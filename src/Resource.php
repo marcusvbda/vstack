@@ -527,13 +527,17 @@ class Resource
 		$target->save();
 		$controller = new ResourceController;
 		$controller->storeUploads($target, $data["upload"]);
-		Messages::send("success", "Registro salvo com sucesso !!");
-		if (request("clicked_btn") == "save") {
-			$route = route('resource.edit', ["resource" => $this->id, "code" => $target->code]);
+		if(!request("input_origin")) {
+			Messages::send("success", "Registro salvo com sucesso !!");
+			if (request("clicked_btn") == "save") {
+				$route = route('resource.edit', ["resource" => $this->id, "code" => $target->code]);
+			} else {
+				$route = route('resource.index', ["resource" => $this->id]);
+			}
+			return ["success" => true, "route" => $route, "model" => $target];
 		} else {
-			$route = route('resource.index', ["resource" => $this->id]);
+			return ["success" => true];
 		}
-		return ["success" => true, "route" => $route, "model" => $target];
 	}
 
 	public function cloneMethod($id)

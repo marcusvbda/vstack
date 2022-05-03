@@ -2,7 +2,7 @@
     <div class="card" v-loading="card_loading" :element-loading-text="loading_text">
         <div class="card-header">
             <div class="d-flex flex-row align-items-center">
-                <b>{{ form.id ? "Edição" : "Cadastro" }} de {{ label }}</b>
+                <b>{{ selected.id ? "Edição" : "Cadastro" }} de {{ label }}</b>
                 <a href="#" class="close-icon" @click.prevent="close">
                     <i class="el-icon-close" />
                 </a>
@@ -18,7 +18,7 @@
             </div>
             <div class="card-footer">
                 <div class="d-flex flex-row justify-content-between">
-                    <div class="shimmer btn-crud-item delete w-25" v-if="form.id" />
+                    <div class="shimmer btn-crud-item delete w-25" v-if="selected.id" />
                     <div class="shimmer btn-crud-item w-25 ml-auto" />
                 </div>
             </div>
@@ -38,13 +38,13 @@
             </div>
             <div class="card-footer">
                 <div class="d-flex flex-row justify-content-between">
-                    <button class="btn btn-danger btn-crud-item px-5" v-if="form.id">
+                    <button class="btn btn-danger btn-crud-item px-5" v-if="selected.id">
                         <i class="el-icon-delete mr-2" />
                         Excluir
                     </button>
                     <button class="btn btn-secondary btn-crud-item px-5 ml-auto" @click="submit">
                         <i class="el-icon-check mr-2" />
-                        {{ form.id ? "Salvar" : "Cadastrar" }}
+                        {{ selected.id ? "Salvar" : "Cadastrar" }}
                     </button>
                 </div>
             </div>
@@ -107,7 +107,6 @@ export default {
             this.$http
                 .post(`/admin/${this.resource}/store`, {
                     ...this.form,
-                    clicked_btn: "resource_tree_save",
                     resource_id: this.resource,
                     input_origin: "resource-tree",
                 })
