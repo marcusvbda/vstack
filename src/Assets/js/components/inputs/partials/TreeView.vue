@@ -25,6 +25,7 @@
                 @saved="savedDetail"
                 :fk_index="input.foreign_key"
                 :fk_value="parent_id"
+                :acl="input.acl"
             />
         </ElDialog>
 
@@ -83,6 +84,7 @@
                                     v-if="!disabled"
                                 >
                                     <ElButton
+                                        v-if="input.acl.delete || input.acl.update"
                                         class="show-on-hover ml-auto"
                                         plain
                                         size="mini"

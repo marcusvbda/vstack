@@ -18,8 +18,11 @@
             </div>
             <div class="card-footer">
                 <div class="d-flex flex-row justify-content-between">
-                    <div class="shimmer btn-crud-item delete w-25" v-if="selected.id" />
-                    <div class="shimmer btn-crud-item w-25 ml-auto" />
+                    <div class="shimmer btn-crud-item delete w-25" v-if="selected.id && acl.delete" />
+                    <div
+                        class="shimmer btn-crud-item w-25 ml-auto"
+                        v-if="(selected.id && acl.update) || (!selected.id && acl.create)"
+                    />
                 </div>
             </div>
         </template>
@@ -38,11 +41,15 @@
             </div>
             <div class="card-footer">
                 <div class="d-flex flex-row justify-content-between">
-                    <button class="btn btn-danger btn-crud-item px-5" v-if="selected.id" @click="destroy">
+                    <button class="btn btn-danger btn-crud-item px-5" v-if="selected.id && acl.delete" @click="destroy">
                         <i class="el-icon-delete mr-2" />
                         Excluir
                     </button>
-                    <button class="btn btn-secondary btn-crud-item px-5 ml-auto" @click="submit">
+                    <button
+                        class="btn btn-secondary btn-crud-item px-5 ml-auto"
+                        @click="submit"
+                        v-if="(selected.id && acl.update) || (!selected.id && acl.create)"
+                    >
                         <i class="el-icon-check mr-2" />
                         {{ selected.id ? "Salvar" : "Cadastrar" }}
                     </button>
@@ -55,7 +62,7 @@
 import VRuntimeTemplate from "v-runtime-template";
 
 export default {
-    props: ["resource", "selected", "label", "qtyfields", "fk_value", "fk_index"],
+    props: ["resource", "selected", "label", "qtyfields", "fk_value", "fk_index", "acl"],
     data() {
         return {
             loading: true,
@@ -103,8 +110,6 @@ export default {
                         this.$set(this.form, key, this.selected[key]);
                     }
                 });
-            } else {
-                console.log("TIPO CADASTRO");
             }
             this.$set(this.form, this.fk_index, this.fk_value);
         },

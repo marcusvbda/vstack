@@ -1008,6 +1008,7 @@ class ResourceController extends Controller
 
 	private function makeRecursiveTree($resource, $options, $parent_resource, $qty_fields)
 	{
+		request()->request->add(["input_origin" => "resource-tree"]);
 		$children = [];
 		$cards = $resource->fields();
 		$children = [];
@@ -1024,8 +1025,12 @@ class ResourceController extends Controller
 				}
 			}
 		}
-
 		$fields[] = [
+			"acl" => [
+				"delete" => $resource->canDelete(),
+				"create" => $resource->canCreate(),
+				"update" => $resource->canUpdate(),
+			],
 			"parent_resource" => $parent_resource,
 			"relation" => data_get($options, "relation"),
 			"foreign_key" => data_get($options, "foreign_key",$parent_resource."_id"),
@@ -1044,7 +1049,11 @@ class ResourceController extends Controller
 
 	public function resource_tree_items(Request $request)
 	{
+		request()->request->add(["input_origin" => "resource-tree"]);
 		$resource = ResourcesHelpers::find($request->resource);
+		if(!$resource->canViewList()) {
+			abort(404);
+		}
 		$parent_resource = ResourcesHelpers::find($request->parent_resource);
 		$parent_model = $parent_resource->getModelInstance();
 		$parent = $parent_model->find($request->parent_id);
