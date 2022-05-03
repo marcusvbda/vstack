@@ -512,14 +512,14 @@ class ResourceController extends Controller
 		return response()->json($result);
 	}
 
-	public function destroy($resource, $code,Request $request)
+	public function destroy($resource, $code, Request $request)
 	{
 		$method = $request->method();
-		if(!in_array($method,['DELETE','POST'],$method)) {
+		if (!in_array($method, ['DELETE', 'POST'], $method)) {
 			abort(404);
 		}
-		if($method == "POST") {
-			if($request->input_origin) {
+		if ($method == "POST") {
+			if ($request->input_origin) {
 				request()->request->add(["input_origin" => $request->input_origin]);
 			}
 		}
@@ -614,7 +614,7 @@ class ResourceController extends Controller
 
 	public function store(Request $request)
 	{
-		if($request->input_origin) {
+		if ($request->input_origin) {
 			request()->request->add(["input_origin" => $request->input_origin]);
 		}
 		$data = $request->all();
@@ -645,7 +645,7 @@ class ResourceController extends Controller
 			throw new HttpResponseException(response()->json(["errors" => $validator->errors()], 422));
 		}
 
-		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content","input_origin"]);
+		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content", "input_origin"]);
 		$data = $this->processStoreData($resource, $data);
 		return $resource->storeMethod($id, $data);
 	}
@@ -966,10 +966,10 @@ class ResourceController extends Controller
 		return response()->json(data_get($result, "model"));
 	}
 
-	public function destroyResource($resource_id, $code)
+	public function destroyResource($resource_id, $code, Request $request)
 	{
 		$id = @$decoded[0] ?? $code;
-		$result = $this->destroy($resource_id, $id);
+		$result = $this->destroy($resource_id, $id, $request);
 		return response()->json(data_get($result, "success"));
 	}
 
@@ -986,6 +986,8 @@ class ResourceController extends Controller
 
 	public function resource_tree(Request $request)
 	{
+		request()->request->add(["input_origin" => "resource-tree"]);
+
 		$resource = ResourcesHelpers::find($request->parent_resource);
 		$field = null;
 		$cards = $resource->fields();
@@ -1000,13 +1002,13 @@ class ResourceController extends Controller
 
 		$resource_field = ResourcesHelpers::find(data_get($field, "options.resource"));
 		$inputOptions = data_get($field, "options");
-		$inputDisabled = data_get($inputOptions, "disabled");
+		$inputDisabled = data_get($inputOptions, "disabled", false);
 		$inputFieldsQtyFields = count($resource_field->tree_fields());
-		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id, $inputFieldsQtyFields);
+		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id, $inputFieldsQtyFields, $inputDisabled);
 		return $tree;
 	}
 
-	private function makeRecursiveTree($resource, $options, $parent_resource, $qty_fields)
+	private function makeRecursiveTree($resource, $options, $parent_resource, $qty_fields, $disabled)
 	{
 		request()->request->add(["input_origin" => "resource-tree"]);
 		$children = [];
@@ -1019,9 +1021,9 @@ class ResourceController extends Controller
 					$resource_input = ResourcesHelpers::find($resource_id);
 					$inputOptions = data_get($input, "options");
 					$inputParentResource = data_get($input, "options.parent_resource");
-					$inputDisabled = data_get($inputOptions, "disabled");
+					$inputDisabled = data_get($inputOptions, "disabled", false);
 					$inputFieldsQtyFields = count($resource_input->tree_fields());
-					$children = $this->makeRecursiveTree($resource_input, $inputOptions, $inputParentResource, $inputFieldsQtyFields);
+					$children = $this->makeRecursiveTree($resource_input, $inputOptions, $inputParentResource, $inputFieldsQtyFields, $inputDisabled);
 				}
 			}
 		}
@@ -1031,9 +1033,10 @@ class ResourceController extends Controller
 				"create" => $resource->canCreate(),
 				"update" => $resource->canUpdate(),
 			],
+			"disabled" => $disabled,
 			"parent_resource" => $parent_resource,
 			"relation" => data_get($options, "relation"),
-			"foreign_key" => data_get($options, "foreign_key",$parent_resource."_id"),
+			"foreign_key" => data_get($options, "foreign_key", $parent_resource . "_id"),
 			"resource" => data_get($options, "resource"),
 			"template_code" => data_get($options, "template_code"),
 			"label_index" => data_get($options, "label_index", "name"),
@@ -1051,7 +1054,7 @@ class ResourceController extends Controller
 	{
 		request()->request->add(["input_origin" => "resource-tree"]);
 		$resource = ResourcesHelpers::find($request->resource);
-		if(!$resource->canViewList()) {
+		if (!$resource->canViewList()) {
 			abort(404);
 		}
 		$parent_resource = ResourcesHelpers::find($request->parent_resource);
@@ -1067,7 +1070,7 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($request->resource);
 		$fields = $resource->tree_fields();
-		foreach($fields as $field) {
+		foreach ($fields as $field) {
 			$field->view = $field->getView();
 		}
 		return  $fields;
