@@ -33,11 +33,11 @@ class Text extends Field
 		$disabled       = @$this->options["disabled"] ? "true" : "false";
 		$description    = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
-		$maxlength      = $this->options["maxlength"] ?  $this->options["maxlength"] : 255;
+		$maxlength      = $this->options["maxlength"] ?  $this->options["maxlength"] : $this->getDefaultMaxlength(255);
 		$min      = $this->options["min"] ?  $this->options["min"] : 0;
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
-
-
+		$show_value_length = (@$this->options["show_value_length"] !== null) ? $this->options["show_value_length"] : in_array($type,["text","textarea"]);
+		$show_value_length = $show_value_length ? 'true' : 'false';
 		return $this->view = view("vStack::resources.field.text", compact(
 			"disabled",
 			"label",
@@ -53,7 +53,8 @@ class Text extends Field
 			"field",
 			"maxlength",
 			"min",
-			"eval"
+			"eval",
+			"show_value_length"
 		))->render();
 	}
 }

@@ -37,6 +37,7 @@
                         </ul>
                     </div>
                 </div>
+                <small class="mt-1 text-muted" v-html="limitText" />
             </div>
         </td>
     </tr>
@@ -48,6 +49,21 @@ export default {
         return {
             val: null,
         };
+    },
+    computed: {
+        rest() {
+            return this.max - (this.val || "").length;
+        },
+        limitText() {
+            const { rest } = this;
+            if (rest == 1) {
+                return `1 caracter ${rest < 0 ? "excedent" : "restante"}`;
+            }
+            return `${rest < 0 ? rest * -1 : rest} caracteres ${rest < 0 ? "excedentes" : "restantes"}`;
+        },
+        max() {
+            return parseInt(this.maxlength ? this.maxlength : 0);
+        },
     },
     watch: {
         val(val) {

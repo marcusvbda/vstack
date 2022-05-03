@@ -116,7 +116,7 @@ export default {
             }
 
             .show-on-hover {
-                display: none;
+                visibility: hidden;
             }
 
             &.gray {
@@ -134,7 +134,7 @@ export default {
 
                     .show-on-hover {
                         transition: 0.4s;
-                        display: block;
+                        visibility: visible;
                     }
                 }
             }

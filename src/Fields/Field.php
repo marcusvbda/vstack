@@ -94,4 +94,16 @@ class Field
 			"eval"
 		))->render();
 	}
+
+	public function getDefaultMaxlength($default) 
+	{
+		$rules = data_get($this->options,'rules',[]);
+		foreach($rules as $rule) {
+			if(strpos($rule,"max") !== false) {
+				$number = data_get(explode(":",$rule),'1',$default);
+				return $number;
+			}
+		}
+		return "255";
+	}
 }

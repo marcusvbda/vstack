@@ -4,7 +4,8 @@
     prepend='{{$prepend}}'                                                               
     append='{{$append}}'                                                               
     append='{{$append}}' 
-    :mask='{{$mask}}'                                                              
+    :mask='{{$mask}}'  
+    :show_value_length='{{$show_value_length}}'                                                            
     description='{{$description}}'
     min="{{ $min }}"                                                              
     maxlength="{{ $maxlength }}"                                                              

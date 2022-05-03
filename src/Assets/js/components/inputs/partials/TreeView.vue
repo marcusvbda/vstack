@@ -74,7 +74,10 @@
                                         />
                                         <b class="text-muted" v-else>{{ item.code }}</b>
                                     </span>
-                                    <VRuntimeTemplate :key="i" :template="`<span>${item[label_index]}</span>`" />
+                                    <VRuntimeTemplate
+                                        :key="i"
+                                        :template="`<span class='word-break-all mr-3'>${item[label_index]}</span>`"
+                                    />
                                 </template>
                                 <ElTooltip
                                     class="item"
