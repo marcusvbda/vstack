@@ -605,6 +605,9 @@ class ResourceController extends Controller
 
 	public function store(Request $request)
 	{
+		if($request->input_origin) {
+			request()->request->add(["input_origin" => $request->input_origin]);
+		}
 		$data = $request->all();
 		if (!@$data["resource_id"]) {
 			abort(404);
@@ -633,7 +636,7 @@ class ResourceController extends Controller
 			throw new HttpResponseException(response()->json(["errors" => $validator->errors()], 422));
 		}
 
-		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content"]);
+		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content","input_origin"]);
 		$data = $this->processStoreData($resource, $data);
 		return $resource->storeMethod($id, $data);
 	}
@@ -989,12 +992,12 @@ class ResourceController extends Controller
 		$resource_field = ResourcesHelpers::find(data_get($field, "options.resource"));
 		$inputOptions = data_get($field, "options");
 		$inputDisabled = data_get($inputOptions, "disabled");
-		$inputFieldsTemplate = !$inputDisabled ? $resource_field->fields() : "";
-		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id, $inputFieldsTemplate);
+		$inputFieldsQtyFields = count($resource_field->tree_fields());
+		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id, $inputFieldsQtyFields);
 		return $tree;
 	}
 
-	private function makeRecursiveTree($resource, $options, $parent_resource, $inputFieldsTemplate)
+	private function makeRecursiveTree($resource, $options, $parent_resource, $qty_fields)
 	{
 		$children = [];
 		$cards = $resource->fields();
@@ -1007,8 +1010,8 @@ class ResourceController extends Controller
 					$inputOptions = data_get($input, "options");
 					$inputParentResource = data_get($input, "options.parent_resource");
 					$inputDisabled = data_get($inputOptions, "disabled");
-					$inputFieldsTemplate = !$inputDisabled ? $resource_input->fields() : "";
-					$children = $this->makeRecursiveTree($resource_input, $inputOptions, $inputParentResource, $inputFieldsTemplate);
+					$inputFieldsQtyFields = count($resource_input->tree_fields());
+					$children = $this->makeRecursiveTree($resource_input, $inputOptions, $inputParentResource, $inputFieldsQtyFields);
 				}
 			}
 		}
@@ -1020,7 +1023,7 @@ class ResourceController extends Controller
 			"template_code" => data_get($options, "template_code"),
 			"label_index" => data_get($options, "label_index", "name"),
 			"template" => data_get($options, "template"),
-			"fields_template" => $inputFieldsTemplate,
+			"qty_fields" => $qty_fields,
 			"label" => $resource->label(),
 			"singular_label" => $resource->singularLabel(),
 			"children" => $children
@@ -1039,5 +1042,15 @@ class ResourceController extends Controller
 		$query = $resource->resourceTreeLoadItemsFilter($request, $query);
 		$items = $query->paginate($resource->resourceTreePerPage());
 		return  $items;
+	}
+
+	public function resource_tree_items_crud(Request $request)
+	{
+		$resource = ResourcesHelpers::find($request->resource);
+		$fields = $resource->tree_fields();
+		foreach($fields as $field) {
+			$field->view = $field->getView();
+		}
+		return  $fields;
 	}
 }

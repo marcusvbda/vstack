@@ -45,6 +45,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
 		Route::post('inputs/resource-tree', [ResourceController::class, 'resource_tree'])->name("resource.inputs.resource_tree");
 		Route::post('inputs/resource-tree/load-items', [ResourceController::class, 'resource_tree_items'])->name("resource.inputs.resource_tree_items");
+		Route::post('inputs/resource-tree/load-crud', [ResourceController::class, 'resource_tree_items_crud'])->name("resource.inputs.resource_tree_crud");
 		Route::post('globalsearch', [ResourceController::class, 'globalSearch'])->name("resource.globalsearch");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
 	});

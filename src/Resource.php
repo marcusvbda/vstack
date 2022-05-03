@@ -170,6 +170,19 @@ class Resource
 		return [new Card("Informações", $fields)];
 	}
 
+	public function tree_fields() {
+		$cards = $this->fields();
+		$fields = [];
+		foreach($cards as $card) {
+			foreach($card->inputs as $input) {
+				if(data_get($input,"options.type") != "resource-tree") {
+					$fields[] = $input;
+				}
+			}
+		}
+		return $fields;
+	}
+
 	public function exportColumns()
 	{
 		return [

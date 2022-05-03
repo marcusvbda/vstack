@@ -7,6 +7,24 @@
         :singular_label="singular_label"
         @filter-changed="filterChanged"
     >
+        <ElDialog
+            custom-class="tree-view-details"
+            :visible.sync="show_detail"
+            width="60%"
+            :close-on-click-modal="false"
+            :close-on-press-escape="false"
+            :destroy-on-close="true"
+        >
+            <TreeViewDialogCrud
+                v-if="show_detail"
+                :resource="input.resource"
+                :selected="selected"
+                :label="input.singular_label"
+                @close="show_detail = false"
+                :qtyfields="input.qty_fields"
+            />
+        </ElDialog>
+
         <template v-if="loading_items">
             <div class="tree-view-item py-0" v-for="(i, ix) in $randomInt(3, 5)" :key="i">
                 <div class="tree-view-label">
@@ -117,6 +135,7 @@
 <script>
 import VRuntimeTemplate from "v-runtime-template";
 import TreeViewItem from "./-TreeViewItem.vue";
+import TreeViewDialogCrud from "./-TreeViewDialogCrud.vue";
 export default {
     props: [
         "label",
@@ -136,6 +155,7 @@ export default {
     components: {
         VRuntimeTemplate,
         TreeViewItem,
+        TreeViewDialogCrud,
     },
     data() {
         return {
@@ -146,6 +166,8 @@ export default {
             loading_items: true,
             current_page: 1,
             filter: "",
+            show_detail: false,
+            selected: null,
         };
     },
     created() {
@@ -155,7 +177,8 @@ export default {
     },
     methods: {
         showDetail(item) {
-            console.log("showDetail", item);
+            this.show_detail = true;
+            this.selected = item;
         },
         filterChanged(val) {
             this.filter = val;
