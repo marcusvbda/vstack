@@ -372,3 +372,19 @@ ul.pagination {
 .el-upload-list--picture-card .el-upload-list__item {
     width: auto;
 }
+
+
+.vstack-hasmany {
+    .el-checkbox-button {
+        border: 1px solid #b6b6b6;
+
+        &.is-checked {
+            border-color: #007bff;
+        }
+
+        .el-checkbox-button__inner {            
+            border-radius: 0;
+            border: unset!important;
+        }
+    }
+}

@@ -11,12 +11,23 @@
         <td>
             <div class="d-flex flex-column">
                 <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
-                    <div class="shimmer select" v-if="loading" />
-                    <template v-else>
-                        <ElSelectAll
+                    <template v-if="multiple">
+                        <template v-if="loading">
+                            <div class="shimmer select mb-3" />
+                            <div class="shimmer select mb-3" />
+                            <div class="shimmer select mb-3" />
+                        </template>
+                        <el-checkbox-group class="vstack-hasmany" v-model="value" v-else>
+                            <el-checkbox-button v-for="(op, i) in options" :label="op.id" :key="i">
+                                {{ op.name }}
+                            </el-checkbox-button>
+                        </el-checkbox-group>
+                    </template>
+                    <!-- <ElSelectAll
                             :allow-create="allowcreate"
                             :disabled="disabled"
                             :multiple="multiple ? true : false"
+                            :popper-append-to-body="true"
                             :size="size ? size : 'large'"
                             class="w-100"
                             clearable
@@ -28,7 +39,9 @@
                             :options="options.map((x) => ({ label: x.name, value: String(x.id) }))"
                             :label="all_options_label"
                             v-if="multiple"
-                        />
+                        /> -->
+                    <template v-else>
+                        <div class="shimmer select" v-if="loading" />
                         <el-select
                             :allow-create="allowcreate"
                             :disabled="disabled"
