@@ -1,20 +1,42 @@
 <template>
-    <div class="d-flex flex-row flex-wrap cursor-pointer align-items-center justify-content-center"
-        style="min-height: 25px" 
+    <div
+        class="d-flex flex-row flex-wrap cursor-pointer align-items-center justify-content-center"
+        style="min-height: 25px"
         :id="`resource-crud-btns-${data.id}`"
     >
         <el-button-group>
             <el-tooltip class="item" effect="dark" content="Clonar" placement="top" v-if="data.can_clone">
-                <el-button size="small" plain type="secondary" icon="el-icon-document-copy" @click="clickedClone" id="resource-btn-copy" />
+                <el-button
+                    size="small"
+                    plain
+                    type="secondary"
+                    icon="el-icon-document-copy"
+                    @click="clickedClone"
+                    id="resource-btn-copy"
+                />
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Visualizar" placement="top" v-if="data.can_view">
-                <el-button size="small" plain type="info" icon="el-icon-search" @click="goTo(data.route)"  id="resource-btn-view" />
+                <el-button
+                    size="small"
+                    plain
+                    type="info"
+                    icon="el-icon-search"
+                    @click="goTo(data.route)"
+                    id="resource-btn-view"
+                />
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Editar" placement="top" v-if="data.can_update">
-                <el-button size="small" plain type="primary" icon="el-icon-edit" @click="goToEdit()"  id="resource-btn-edit" />
+                <el-button size="small" plain type="primary" icon="el-icon-edit" @click="goToEdit()" id="resource-btn-edit" />
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Excluir" placement="top" v-if="data.can_delete">
-                <el-button size="small" plain type="danger" icon="el-icon-delete" @click.prevent="destroy"  id="resource-btn-delete" />
+                <el-button
+                    size="small"
+                    plain
+                    type="danger"
+                    icon="el-icon-delete"
+                    @click.prevent="destroy"
+                    id="resource-btn-delete"
+                />
             </el-tooltip>
         </el-button-group>
         <resource-crud-dialog :resource_id="resource_id" ref="dialog" :row_id="id" />
@@ -25,7 +47,7 @@ export default {
     props: ["data", "id", "resource_id"],
     data() {
         return {
-            loading: null
+            loading: null,
         };
     },
     methods: {
@@ -45,22 +67,22 @@ export default {
                 {
                     confirmButtonText: "Sim",
                     cancelButtonText: "Não",
-                    type: "error"
+                    type: "error",
                 }
             )
                 .then(() => {
-                    this.loading = this.$loading();
+                    this.loading = this.$loading({ text: "Aguarde ..." });
                     this.$http
                         .delete(this.data.route + "/destroy", {})
-                        .then(res => {
+                        .then((res) => {
                             res = res.data;
                             return (window.location.href = res.route);
                         })
-                        .catch(er => {
+                        .catch((er) => {
                             this.loading.close();
                             this.$message({
                                 message: er.response.data.message,
-                                type: "error"
+                                type: "error",
                             });
                         });
                 })
@@ -74,7 +96,7 @@ export default {
                     await this.$confirm(action.confirm.message, action.confirm.title, {
                         confirmButtonText: "Sim",
                         cancelButtonText: "Não",
-                        type: "error"
+                        type: "error",
                     });
                 }
                 let response = await this.$http.post(this.data.route + "/before-destroy", { index: i });
@@ -82,13 +104,13 @@ export default {
                     await this.$confirm(response.data.confirm.message, response.data.confirm.title, {
                         confirmButtonText: "Sim",
                         cancelButtonText: "Não",
-                        type: "error"
+                        type: "error",
                     });
                 } else {
                     if (!response.data.success) {
                         throw this.$message({
                             message: response.data?.message ?? "Erro",
-                            type: "error"
+                            type: "error",
                         });
                     }
                 }
@@ -102,7 +124,7 @@ export default {
                 {
                     confirmButtonText: "Sim",
                     cancelButtonText: "Não",
-                    type: "error"
+                    type: "error",
                 }
             ).then(() => {
                 this.$loading({ text: "Clonando ..." });
@@ -112,7 +134,7 @@ export default {
                     }
                 });
             });
-        }
-    }
+        },
+    },
 };
 </script>

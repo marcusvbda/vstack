@@ -23,6 +23,8 @@
                 @close="show_detail = false"
                 :qtyfields="input.qty_fields"
                 @saved="savedDetail"
+                :fk_index="input.foreign_key"
+                :fk_value="parent_id"
             />
         </ElDialog>
 
@@ -45,7 +47,7 @@
         </template>
         <template v-else>
             <div class="tree-view-label" v-if="!disabled">
-                <a href="#" class="btn-link">
+                <a href="#" class="btn-link" @click.prevent="showDetail({})">
                     <i class="el-icon-plus mr-1" />
                     Adicionar {{ label }}
                 </a>
@@ -180,8 +182,8 @@ export default {
         }
     },
     methods: {
-        savedDetail() {
-            this.$message({ showClose: true, message: "Registro salvo com sucesso !!", type: "success" });
+        savedDetail(message) {
+            this.$message({ showClose: true, message, type: "success" });
             this.show_detail = false;
             Object.assign(this.$data, initialState());
             this.loadItems();

@@ -38,7 +38,7 @@
             </div>
             <div class="card-footer">
                 <div class="d-flex flex-row justify-content-between">
-                    <button class="btn btn-danger btn-crud-item px-5" v-if="selected.id">
+                    <button class="btn btn-danger btn-crud-item px-5" v-if="selected.id" @click="destroy">
                         <i class="el-icon-delete mr-2" />
                         Excluir
                     </button>
@@ -55,7 +55,7 @@
 import VRuntimeTemplate from "v-runtime-template";
 
 export default {
-    props: ["resource", "selected", "label", "qtyfields"],
+    props: ["resource", "selected", "label", "qtyfields", "fk_value", "fk_index"],
     data() {
         return {
             loading: true,
@@ -81,16 +81,32 @@ export default {
         close() {
             this.$emit("close");
         },
+        destroy() {
+            this.$confirm("Deseja excluir este registro ?", "Confirmação", {
+                closeOnClickModal: false,
+            }).then(() => {
+                this.loading_text = "Excluindo ...";
+                this.card_loading = true;
+                this.$http
+                    .post(`/admin/${this.resource}/${this.selected.code}/destroy`, {
+                        input_origin: "resource-tree",
+                    })
+                    .then(() => {
+                        this.$emit("saved", "Registro excluido com sucesso !!");
+                    });
+            });
+        },
         initFields() {
-            Object.keys(this.selected).forEach((key) => {
-                if (this.selected.id) {
+            if (this.selected.id) {
+                Object.keys(this.selected).forEach((key) => {
                     if (this.inputFieldsIndexes.includes(key) || key == "id") {
                         this.$set(this.form, key, this.selected[key]);
                     }
-                } else {
-                    console.log("TIPO CADASTRO");
-                }
-            });
+                });
+            } else {
+                console.log("TIPO CADASTRO");
+            }
+            this.$set(this.form, this.fk_index, this.fk_value);
         },
         init() {
             this.$http.post("/admin/inputs/resource-tree/load-crud", { resource: this.resource }).then(({ data }) => {
@@ -112,7 +128,7 @@ export default {
                 })
                 .then(({ data }) => {
                     if (data.success) {
-                        return this.$emit("saved");
+                        return this.$emit("saved", "Registro salvo com sucesso !!");
                     } else {
                         if (data.message) {
                             this.$message({ showClose: true, message: data.message.text, type: data.message.type });

@@ -512,8 +512,17 @@ class ResourceController extends Controller
 		return response()->json($result);
 	}
 
-	public function destroy($resource, $code)
+	public function destroy($resource, $code,Request $request)
 	{
+		$method = $request->method();
+		if(!in_array($method,['DELETE','POST'],$method)) {
+			abort(404);
+		}
+		if($method == "POST") {
+			if($request->input_origin) {
+				request()->request->add(["input_origin" => $request->input_origin]);
+			}
+		}
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
 		if (!$resource->canDeleteRow($content) || !$resource->canDelete()) {
@@ -1019,6 +1028,7 @@ class ResourceController extends Controller
 		$fields[] = [
 			"parent_resource" => $parent_resource,
 			"relation" => data_get($options, "relation"),
+			"foreign_key" => data_get($options, "foreign_key",$parent_resource."_id"),
 			"resource" => data_get($options, "resource"),
 			"template_code" => data_get($options, "template_code"),
 			"label_index" => data_get($options, "label_index", "name"),
