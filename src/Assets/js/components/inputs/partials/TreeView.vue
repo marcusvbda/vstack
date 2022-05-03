@@ -11,6 +11,7 @@
             custom-class="tree-view-details"
             :visible.sync="show_detail"
             width="60%"
+            top="20px"
             :close-on-click-modal="false"
             :close-on-press-escape="false"
             :destroy-on-close="true"
