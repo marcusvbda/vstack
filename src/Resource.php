@@ -277,10 +277,14 @@ class Resource
 	public function destroyMethod($content)
 	{
 		if ($content->delete()) {
-			Messages::send("success", "Registro excluido com sucesso !!");
+			if(request("input_origin") != "resource-tree") {
+				Messages::send("success", "Registro excluido com sucesso !!");
+			}
 			return ["success" => true, "route" => $this->route()];
 		}
-		Messages::send("error", " Erro ao excluir com " . $this->singularLabel() . " !!");
+		if(request("input_origin") != "resource-tree") {
+			Messages::send("error", " Erro ao excluir com " . $this->singularLabel() . " !!");
+		}
 		return ["success" => false,  "route" => $this->route()];
 	}
 
