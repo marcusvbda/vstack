@@ -104,7 +104,7 @@
                         </ul>
                     </div>
                 </div>
-                <small class="mt-1 text-muted" v-html="limitText" v-if="show_value_length" />
+                <small class="text-muted text-right" v-html="limitText" v-if="show_value_length" />
             </div>
         </td>
     </tr>
@@ -146,11 +146,7 @@ export default {
             return this.max - (this.val || "").length;
         },
         limitText() {
-            const { rest } = this;
-            if (rest == 1) {
-                return `1 caracter ${rest < 0 ? "excedent" : "restante"}`;
-            }
-            return `${rest < 0 ? rest * -1 : rest} caracteres ${rest < 0 ? "excedentes" : "restantes"}`;
+            return `${this.rest}/${this.max}`;
         },
         max() {
             return parseInt(this.maxlength ? this.maxlength : 0);
