@@ -44,7 +44,7 @@
 </template>
 <script>
 export default {
-    props: ["label", "type", "placeholder", "errors", "prepend", "append", "disabled", "rows", "description", "maxlength"],
+    props: ["label", "type", "placeholder", "errors", "prepend", "append", "disabled", "rows", "description", "maxlength","show_value_length"],
     data() {
         return {
             val: null,
