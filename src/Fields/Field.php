@@ -98,6 +98,10 @@ class Field
 	public function getDefaultMaxlength($default) 
 	{
 		$rules = data_get($this->options,'rules',[]);
+		if(!is_array($rules)) {
+		    $rules = explode("|",$rules);
+		}
+		$rules = array_filter($rules);
 		foreach($rules as $rule) {
 			if(strpos($rule,"max") !== false) {
 				$number = data_get(explode(":",$rule),'1',$default);
