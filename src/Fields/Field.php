@@ -95,17 +95,19 @@ class Field
 		))->render();
 	}
 
-	public function getDefaultMaxlength($default) 
+	public function getDefaultMaxlength($default)
 	{
-		$rules = data_get($this->options,'rules',[]);
-		if(!is_array($rules)) {
-		    $rules = explode("|",$rules);
+		$rules = data_get($this->options, 'rules', []);
+		if (!is_array($rules)) {
+			$rules = explode("|", $rules);
 		}
 		$rules = array_filter($rules);
-		foreach($rules as $rule) {
-			if(strpos($rule,"max") !== false) {
-				$number = data_get(explode(":",$rule),'1',$default);
-				return $number;
+		foreach ($rules as $rule) {
+			if (gettype($rule) == "string") {
+				if (strpos($rule, "max") !== false) {
+					$number = data_get(explode(":", $rule), '1', $default);
+					return $number;
+				}
 			}
 		}
 		return "255";
