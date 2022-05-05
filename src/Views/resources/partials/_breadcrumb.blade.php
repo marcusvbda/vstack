@@ -1,9 +1,10 @@
 @php 
 	$breadcrumbs = $resource->breadcrumbLabels();
+	$prepend = config("vstack.prepend_breadcrumb",["Dashboard" => "/admin"]);
 	$bc = [
-		"Dashboard" => "/admin",
 		$breadcrumbs["list"] => @$resource->route()
 	];
+	$bc = array_merge($prepend,$bc);
 	if(@$report_mode) {
 		$bc[$breadcrumbs["report"]] = @$resource->report_route();
 	}
