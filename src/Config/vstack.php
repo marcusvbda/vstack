@@ -6,6 +6,9 @@ return [
 	"animation" => [
 		"enabled" => false,
 	],
+	"prepend_breadcrumb" => [
+		"Dashboard" => "/admin",
+	],
 	"socket_service" => [
 		"uri" => "https://ezcore-socket-server.herokuapp.com",
 		"username" => "user",
