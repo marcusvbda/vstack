@@ -3,7 +3,7 @@
         <div :class="['tree-view-label hoverable gray py-0', visible && 'opened']" @click="visible = !visible">
             <i :class="['icon', visible ? 'el-icon-caret-bottom' : 'icon el-icon-caret-right']" />
             {{ label }}
-            <div class="ml-auto w-25" v-on:click.stop.prevent="false">
+            <div class="ml-auto w-25" v-on:click.stop.prevent="false" v-if="visible">
                 <ElInput
                     clearable
                     :placeholder="`Encontrar  ${singular_label} ...`"

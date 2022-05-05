@@ -38,6 +38,7 @@ class Text extends Field
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
 		$show_value_length = (@$this->options["show_value_length"] !== null) ? $this->options["show_value_length"] : false;
 		$show_value_length = $show_value_length ? 'true' : 'false';
+
 		return $this->view = view("vStack::resources.field.text", compact(
 			"disabled",
 			"label",
