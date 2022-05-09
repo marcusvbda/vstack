@@ -66,15 +66,6 @@
                                     :templateProps="{ item }"
                                 />
                                 <template v-else>
-                                    <span class="mr-4">
-                                        <VRuntimeTemplate
-                                            v-if="template_code"
-                                            :key="i"
-                                            :template="`<div>${template_code}</div>`"
-                                            :templateProps="{ item }"
-                                        />
-                                        <b class="text-muted" v-else>{{ item.code }}</b>
-                                    </span>
                                     <VRuntimeTemplate
                                         :key="i"
                                         :template="`<span class='word-break-all mr-3'>${item[label_index]}</span>`"
