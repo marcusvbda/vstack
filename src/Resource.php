@@ -170,12 +170,13 @@ class Resource
 		return [new Card("Informações", $fields)];
 	}
 
-	public function tree_fields() {
+	public function tree_fields()
+	{
 		$cards = $this->fields();
 		$fields = [];
-		foreach($cards as $card) {
-			foreach($card->inputs as $input) {
-				if(data_get($input,"options.type") != "resource-tree") {
+		foreach ($cards as $card) {
+			foreach ($card->inputs as $input) {
+				if (data_get($input, "options.type") != "resource-tree") {
 					$fields[] = $input;
 				}
 			}
@@ -277,12 +278,12 @@ class Resource
 	public function destroyMethod($content)
 	{
 		if ($content->delete()) {
-			if(request("input_origin") != "resource-tree") {
+			if (request("input_origin") != "resource-tree") {
 				Messages::send("success", "Registro excluido com sucesso !!");
 			}
 			return ["success" => true, "route" => $this->route()];
 		}
-		if(request("input_origin") != "resource-tree") {
+		if (request("input_origin") != "resource-tree") {
 			Messages::send("error", " Erro ao excluir com " . $this->singularLabel() . " !!");
 		}
 		return ["success" => false,  "route" => $this->route()];
@@ -531,7 +532,7 @@ class Resource
 		$target->save();
 		$controller = new ResourceController;
 		$controller->storeUploads($target, $data["upload"]);
-		if(!request("input_origin")) {
+		if (!request("input_origin")) {
 			Messages::send("success", "Registro salvo com sucesso !!");
 			if (request("clicked_btn") == "save") {
 				$route = route('resource.edit', ["resource" => $this->id, "code" => $target->code]);

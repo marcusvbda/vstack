@@ -767,25 +767,28 @@ class ResourceController extends Controller
 
 	public function upload(Request $request)
 	{
+		$disk = config("filesystems.default");
 		if (@$request['file']) {
 			$url = $request['file'];
 			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
-			Storage::put(
+			Storage::disk($disk)->put(
 				"public/$name",
 				file_get_contents($url)
 			);
-			return ["path" => asset("public/storage/$name")];
+			$path = Storage::disk($disk)->url($name);
+			return ["path" => $path];
 		}
 		if (@$request['files']) {
 			$url = $request['files'][0];
 			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
-			Storage::put(
+			Storage::disk($disk)->put(
 				"public/$name",
 				file_get_contents($url)
 			);
+			$path = Storage::disk($disk)->url($name);
 			return [
 				"data" => [
-					asset("public/storage/$name")
+					$path
 				]
 			];
 		}
