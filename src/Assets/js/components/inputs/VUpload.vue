@@ -17,7 +17,7 @@
                         :limit="!multiple ? 1 : limit"
                         ref="uploader"
                         :on-preview="handlePreview"
-                        :disabled="is_image ? fileList.length >= limit : false"
+                        :disabled="disabled"
                         v-bind:class="{
                             disabled: fileList.length >= limit_value,
                             'hide-input': loading || fileList.length >= limit_value,
@@ -81,10 +81,21 @@
 <script>
 import { mapMutations } from "vuex";
 export default {
-    props: ["label", "field", "preview", "multiple", "disabled", "limit", "uploadroute", "description", "sizelimit", "errors"],
+    props: [
+        "label",
+        "field",
+        "preview",
+        "multiple",
+        "disabled",
+        "limit",
+        "uploadroute",
+        "description",
+        "sizelimit",
+        "errors",
+        "is_image",
+    ],
     data() {
         return {
-            is_image: false,
             dialogImageUrl: "",
             dialogVisible: false,
             fileList: [],

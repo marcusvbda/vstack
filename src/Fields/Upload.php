@@ -33,7 +33,8 @@ class Upload extends Field
         $description = @$this->options["description"] ?? "";
         $sizelimit = @$this->options["file_size_limit"] ? $this->options["file_size_limit"] : 0;
         $eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
-
+        $is_image = !@$this->options["style"] ? true : $this->options["style"] == "gallery";
+        $is_image = $is_image ? 'true' : 'false';
 
         return $this->view = view("vStack::resources.field.upload", compact(
             "label",
@@ -45,7 +46,8 @@ class Upload extends Field
             "accept",
             "description",
             "sizelimit",
-            "eval"
+            "eval",
+            "is_image"
         ))->render();
     }
 }

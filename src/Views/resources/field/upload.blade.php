@@ -5,7 +5,8 @@
     v-model='{{'form.'.$field}}'   
     :multiple='{{$multiple}}'   
     :preview='{{$preview}}'   
-    :limit='{{$limit}}'                                                      
+    :limit='{{$limit}}'    
+    :is_image="{{ $is_image }}"                                                  
     accept='{{$accept}}'                        
     :sizelimit='{{ $sizelimit }}'                              
     :errors='{{"errors.$field ? errors.$field : false"}}'    
