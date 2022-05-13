@@ -767,7 +767,7 @@ class ResourceController extends Controller
 
 	public function upload(Request $request)
 	{
-		$default_disk = config("filesystems.default");
+		$default_disk = config("vstack.upload_disk", "local");
 		$disk = Storage::disk($default_disk);
 		if (@$request['file']) {
 			$file = $request->file('file');

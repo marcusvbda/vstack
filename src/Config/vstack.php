@@ -6,6 +6,7 @@ return [
 	"animation" => [
 		"enabled" => false,
 	],
+	"upload_disk" => "local",
 	"prepend_breadcrumb" => [
 		"Dashboard" => "/admin",
 	],
