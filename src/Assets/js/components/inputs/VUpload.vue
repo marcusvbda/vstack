@@ -212,6 +212,8 @@ export default {
 }
 
 .el-upload-list__item {
+    min-width: 148px;
+
     .el-icon-close {
         margin-top: 3px;
     }
