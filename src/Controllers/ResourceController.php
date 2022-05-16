@@ -635,7 +635,7 @@ class ResourceController extends Controller
 		}
 		$id = @$data["id"];
 		if ($id) {
-			$content = $resource->getModelInstance()->findOrFail($id);
+			$content = $resource->getModelInstance()->find($id);
 			request()->request->add(["content" => @$content]);
 		}
 		$validation_custom_message =  $resource->getValidationRuleMessage();
@@ -767,27 +767,25 @@ class ResourceController extends Controller
 
 	public function upload(Request $request)
 	{
-		$default_disk = config("vstack.upload_disk", "local");
-		$disk = Storage::disk($default_disk);
 		if (@$request['file']) {
-			$file = $request->file('file');
-			$name = $file->getClientOriginalName();
-			$file_name = ($default_disk == "local" ? "public/$name" : $name);
-			$contents = file_get_contents($file->getRealPath());
-			$disk->put($file_name, $contents);
-			$path = $disk->url($name);
-			return ["path" => $path];
+			$url = $request['file'];
+			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
+			Storage::put(
+				"public/$name",
+				file_get_contents($url)
+			);
+			return ["path" => asset("public/storage/$name")];
 		}
 		if (@$request['files']) {
-			$file = $request['files'][0];
-			$name = $file->getClientOriginalName();
-			$file_name = ($default_disk == "local" ? "public/$name" : $name);
-			$contents = file_get_contents($file->getRealPath());
-			$disk->put($file_name, $contents);
-			$path = $disk->url($name);
+			$url = $request['files'][0];
+			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
+			Storage::put(
+				"public/$name",
+				file_get_contents($url)
+			);
 			return [
 				"data" => [
-					$path
+					asset("public/storage/$name")
 				]
 			];
 		}
