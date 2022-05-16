@@ -46,7 +46,7 @@
                                         <span
                                             class="el-upload-list__item-preview"
                                             v-if="preview != undefined"
-                                            @click="handlePictureCardPreview(file)"
+                                            @click="handlePreview(file)"
                                         >
                                             <i class="el-icon-zoom-in"></i>
                                         </span>
@@ -61,9 +61,6 @@
                             </div>
                         </template>
                     </el-upload>
-                    <el-dialog :visible.sync="dialogVisible" v-if="preview != undefined">
-                        <img width="100%" :src="dialogImageUrl" alt="" />
-                    </el-dialog>
                     <small class="mt-2 text-muted text-size-alert">
                         {{ multiple ? "Os arquivos devem conter no máximo" : "O arquivo deve conter no máximo" }}
                         {{ $niceBytes(file_upload_limit_size) }}
@@ -96,8 +93,6 @@ export default {
     ],
     data() {
         return {
-            dialogImageUrl: "",
-            dialogVisible: false,
             fileList: [],
             header: { "X-CSRF-TOKEN": laravel.general.csrf_token ? laravel.general.csrf_token : "" },
             loading: false,
@@ -121,7 +116,9 @@ export default {
     methods: {
         ...mapMutations("resource", ["setActionBtnLoading"]),
         handlePreview(file) {
-            window.open(file.response.path, "_blank");
+            if (this.preview) {
+                window.open(file.response.path, "_blank");
+            }
         },
         beforeRemove(file) {
             return this.$confirm(`Remover o arquivo ${file.name} ?`);
@@ -186,10 +183,6 @@ export default {
                 return f.uid != file.uid;
             });
             this.setInputFiles(files);
-        },
-        handlePictureCardPreview(file) {
-            this.dialogImageUrl = file.response ? file.response.path : file.url;
-            this.dialogVisible = true;
         },
     },
 };
