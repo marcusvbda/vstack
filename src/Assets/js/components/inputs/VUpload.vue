@@ -116,6 +116,7 @@ export default {
     methods: {
         ...mapMutations("resource", ["setActionBtnLoading"]),
         handlePreview(file) {
+            console.log(file, this.preview);
             if (this.preview) {
                 window.open(file.response.path, "_blank");
             }

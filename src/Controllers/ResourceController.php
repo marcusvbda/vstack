@@ -676,17 +676,21 @@ class ResourceController extends Controller
 		return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
 	}
 
+	private function isClass($target, $index)
+	{
+		try {
+			return class_exists(get_class(@$target->{$index}));
+		} catch (\Exception $e) {
+			return false;
+		}
+	}
+
 	public function storeUploads($target, $relations)
 	{
-		$target->refresh();
 		foreach ($relations as $key => $values) {
-			if (is_callable($target->{$key})) {
-				$target->{$key}()->delete();
-				if ($values) {
-					foreach ($values as $value) {
-						$target->{$key}()->create(["value" => $value]);
-					}
-				}
+			$target->refresh();
+			if ($this->isClass(@$target, $key)) {
+				@$target->{"create" . ucfirst($key)}($values);
 			} else {
 				$target->{$key} = $values;
 				$target->save();
