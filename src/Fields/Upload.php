@@ -36,6 +36,10 @@ class Upload extends Field
         $is_image = !@$this->options["style"] ? true : $this->options["style"] == "gallery";
         $is_image = $is_image ? 'true' : 'false';
 
+        $auto_set_name = @$this->options["auto_set_name"] !== null ? $this->options["auto_set_name"] : true;
+        $auto_set_name = $auto_set_name ? 'true' : 'false';
+
+
         return $this->view = view("vStack::resources.field.upload", compact(
             "label",
             "uploadroute",
@@ -47,7 +51,8 @@ class Upload extends Field
             "description",
             "sizelimit",
             "eval",
-            "is_image"
+            "is_image",
+            "auto_set_name"
         ))->render();
     }
 }
