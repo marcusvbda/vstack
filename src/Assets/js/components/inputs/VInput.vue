@@ -166,11 +166,13 @@ export default {
     methods: {
         validMinMax() {
             if (["number", "slider"].includes(this.type)) {
-                if (this.val < this.min) {
-                    this.val = this.min;
-                }
-                if (this.val > this.max) {
-                    this.val = this.max;
+                if( this.min !== undefined) { 
+                    if (this.val < this.min) {
+                        this.val = this.min;
+                    }
+                    if (this.val > this.max) {
+                        this.val = this.max;
+                    }
                 }
             }
         },
