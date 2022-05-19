@@ -81,20 +81,26 @@
 <script>
 import { mapMutations } from "vuex";
 export default {
-    props: [
-        "label",
-        "field",
-        "preview",
-        "multiple",
-        "disabled",
-        "limit",
-        "uploadroute",
-        "description",
-        "sizelimit",
-        "errors",
-        "is_image",
-        "auto_set_name",
-    ],
+    props: {
+        is_image: {
+            type: Boolean,
+            default: true,
+        },
+        auto_set_name: {
+            type: Boolean,
+            default: true,
+        },
+        label: String,
+        field: String,
+        preview: Boolean,
+        multiple: Boolean,
+        disabled: Boolean,
+        limit: Number,
+        uploadroute: String,
+        description: String,
+        sizelimit: Number,
+        errors: Array,
+    },
     data() {
         return {
             initialized: false,
