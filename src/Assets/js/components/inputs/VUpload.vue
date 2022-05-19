@@ -99,7 +99,7 @@ export default {
         uploadroute: String,
         description: String,
         sizelimit: Number,
-        errors: Array,
+        errors: [Array, Boolean],
     },
     data() {
         return {
