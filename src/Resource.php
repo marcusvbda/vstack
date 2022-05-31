@@ -523,6 +523,13 @@ class Resource
 		return $this->canView() || $this->canUpdate() || $this->canDelete() || $this->canClone();
 	}
 
+	public function beforeStore($data)
+	{
+		return [
+			"success" => true,
+		];
+	}
+
 	public function storeMethod($id, $data)
 	{
 		$target = @$id ? $this->getModelInstance()->findOrFail($id) : $this->getModelInstance();

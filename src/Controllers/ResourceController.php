@@ -566,6 +566,7 @@ class ResourceController extends Controller
 			"id"          => @$content->id,
 			"fields"      => $this->makeCrudDataFields($content, $resource->fields()),
 			"store_route" => route('resource.store', ["resource" => $resource->id]),
+			"checkout_route" => route('resource.check', ["resource" => $resource->id]),
 			"list_route"  => route('resource.index', ["resource" => $resource->id]),
 			"resource_id" => $resource->id
 		];
@@ -610,6 +611,13 @@ class ResourceController extends Controller
 			}
 		}
 		return $cards;
+	}
+
+	public function checkStore(Request $request)
+	{
+		$resource = ResourcesHelpers::find($request->resource_id);
+		$data = $resource->beforeStore($request->all());
+		return $data;
 	}
 
 	public function store(Request $request)

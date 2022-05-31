@@ -234,6 +234,7 @@ export default {
             wizardTransitionName: "",
             loading_wizard_next: false,
             loading_wizard_previous: false,
+            checked: false,
         };
     },
     components: {
@@ -494,7 +495,33 @@ export default {
                 return;
             }
         },
+        checkStore(clicked_btn) {
+            this.$http.post(this.data.checkout_route, { ...this.form, clicked_btn }).then(({ data }) => {
+                if (data.success === false) {
+                    this.$message.error(data.message);
+                }
+
+                if (data.success === true) {
+                    this.checked = true;
+                    this.submit(clicked_btn);
+                }
+
+                if (data.confirm) {
+                    this.$confirm(data.confirm?.message || "Confirmar ?", data.confirm?.title || "Confirmação", {
+                        confirmButtonText: data.confirm?.buttons?.yes || "Sim",
+                        cancelButtonText: data.confirm?.buttons?.no || "Não",
+                        type: data.confirm?.type || "warning",
+                    }).then(() => {
+                        this.checked = true;
+                        this.submit(clicked_btn);
+                    });
+                }
+            });
+        },
         submit(clicked_btn = "save_and_back") {
+            if (!this.checked) {
+                return this.checkStore(clicked_btn);
+            }
             let loading = this.$loading({ text: "Salvando ..." });
             this.$http
                 .post(this.data.store_route, { ...this.form, clicked_btn })
