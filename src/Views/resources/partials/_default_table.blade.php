@@ -14,14 +14,7 @@
 				@endif
 			</div>
 		</template>
-    <template slot="content">
-		@php
-			$rows_data = [];
-			foreach ($data as $row) {
-				$row_data = (new marcusvbda\vstack\Controllers\VstackController())->resourceTableContent($resource, null, $row, true, true);
-				$rows_data[] = $row_data;
-			}
-		@endphp	
+    <template slot="content">		
 		@if($list_type == "table")
 			@php
 				$table_after_row = @$resource->tableAfterRow(@$data[0]) !== false;
@@ -86,6 +79,13 @@
 							@endif
 						</tr>
 					</thead>
+					@php
+						$rows_data = [];
+						foreach ($data as $row) {
+							$row_data = (new marcusvbda\vstack\Controllers\VstackController())->resourceTableContent($resource, null, $row, true, true);
+							$rows_data[] = $row_data;
+						}
+					@endphp	
 					<tbody is="resource-tablelist-allinone" 
 						:rows='@json($rows_data)'
 						:table_keys='@json($table_keys)'
@@ -101,18 +101,19 @@
         @else
 			<div class="p-4">
 				@foreach($data->chunk(3) as $chunk)
-				<div class="row">
-					@foreach($chunk as $row)
-					<div class="col-lg-4 col-sm-12 mb-3  d-flex align-items-stretch">
-						@php
-							$code = \Hashids::encode($row->id);
-							$crud_buttons['code'] = $code;
-							$crud_buttons['route'] = $resource->route()."/".$code;
-						@endphp
-						@include($resource->listCardView())
+					<div class="row">
+						@foreach($chunk as $row)
+							<div class="col-lg-4 col-sm-12 mb-3  d-flex align-items-stretch">
+								@php
+									$code = \Hashids::encode($row->id);
+									$crud_buttons['code'] = $code;
+									$crud_buttons['route'] = $resource->route()."/".$code;
+									$row_data = (new marcusvbda\vstack\Controllers\VstackController())->resourceTableContent($resource, null, $row, true, true);
+								@endphp
+								@include($resource->listCardView())
+							</div>
+						@endforeach
 					</div>
-					@endforeach
-				</div>
 				@endforeach
 			</div>
         @endif

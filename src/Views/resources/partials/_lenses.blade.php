@@ -1,13 +1,13 @@
 <div class="d-flex flex-row my-1" style="font-size:14px;" id="resource-lenses">
     @php
-        $current_len = @$_GET["current_len"] ? @$_GET["current_len"] : "all";
+        $current_len = @$_data["current_len"] ? @$_data["current_len"] : "all";
         $lenses = $resource->lenses(); 
     @endphp
     @if($current_len=="all")   
         <b>Todos</b>
     @else 
         @php
-            $query = request()->query();
+            $query = request()->all();
             foreach($lenses as $len_key=>$len_value) {
                 if(isset($query[$len_value["field"]])) {
                     unset($query[$len_value["field"]]);

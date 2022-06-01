@@ -29,12 +29,14 @@
   
 .shimmer {
     cursor: wait;
-    background: linear-gradient(to right, #d9dfe4 0%, #edeef1 20%, #f1f1f1 40%, #cbd8e4 100%);
+    background: linear-gradient(to right, #f4f4f4 0%, #dfe1e7 20%, #e8e8e8 40%, #c9c9c9 100%);
     background-size: 400% 400%;
     -webkit-animation: animationGradient 3s ease infinite;
     -moz-animation: animationGradient 3s ease infinite;
     animation: animationGradient 3s ease infinite;
     background-color: #e5e5e5;
+    border:1px solid #e5e5e5;
     height: 100%;
     width: 100%;
+    border-radius: 5px;
 }

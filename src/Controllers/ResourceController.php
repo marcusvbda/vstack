@@ -47,6 +47,7 @@ class ResourceController extends Controller
 		// }
 		$list_items = $resource->listItemsContent(clone $data);
 		$data = $data->select("*")->paginate($per_page);
+		$data->setPath($resource->route());
 		if (@$request["list_type"]) {
 			$this->storeListType($resource, $request["list_type"]);
 		}

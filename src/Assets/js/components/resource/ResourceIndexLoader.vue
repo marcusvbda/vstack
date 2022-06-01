@@ -1,6 +1,17 @@
 <template>
     <div>
-        <template v-if="loading">Loading ...</template>
+        <template v-if="loading">
+            <div class="row d-flex justify-content-end" :style="{ marginTop: 57 }">
+                <div class="col-sm-12 col-md-5">
+                    <div class="shimmer" :style="{ height: 33, width: '100%' }" />
+                </div>
+            </div>
+            <div class="row d-flex justify-content-end" :style="{ marginTop: 26 }">
+                <div class="col-12">
+                    <div class="shimmer" :style="{ height: 1000, width: '100%' }" />
+                </div>
+            </div>
+        </template>
         <template v-else>
             <VRuntimeTemplate :template="template" />
         </template>
