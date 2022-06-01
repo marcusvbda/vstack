@@ -8,7 +8,8 @@
     :limit='{{$limit}}'    
     :is_image="{{ $is_image }}"                                                  
     accept='{{$accept}}'                        
-    :sizelimit='{{ $sizelimit }}'                              
+    :sizelimit='{{ $sizelimit }}'             
+    :auto_set_name='{{ $auto_set_name }}'                 
     :errors='{{"errors.$field ? errors.$field : false"}}'    
     id="resource-input-upload-{{ $field }}" 
     {!! $eval !!}                          

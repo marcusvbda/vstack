@@ -601,6 +601,7 @@ class ResourceController extends Controller
 			"id"          => @$content->id,
 			"fields"      => $this->makeCrudDataFields($content, $resource->fields()),
 			"store_route" => route('resource.store', ["resource" => $resource->id]),
+			"checkout_route" => route('resource.check', ["resource" => $resource->id]),
 			"list_route"  => route('resource.index', ["resource" => $resource->id]),
 			"resource_id" => $resource->id
 		];
@@ -645,6 +646,13 @@ class ResourceController extends Controller
 			}
 		}
 		return $cards;
+	}
+
+	public function checkStore(Request $request)
+	{
+		$resource = ResourcesHelpers::find($request->resource_id);
+		$data = $resource->beforeStore($request->all());
+		return $data;
 	}
 
 	public function store(Request $request)
@@ -711,17 +719,21 @@ class ResourceController extends Controller
 		return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
 	}
 
+	private function isClass($target, $index)
+	{
+		try {
+			return class_exists(get_class(@$target->{$index}));
+		} catch (\Exception $e) {
+			return false;
+		}
+	}
+
 	public function storeUploads($target, $relations)
 	{
-		$target->refresh();
 		foreach ($relations as $key => $values) {
-			if (is_callable($target->{$key})) {
-				$target->{$key}()->delete();
-				if ($values) {
-					foreach ($values as $value) {
-						$target->{$key}()->create(["value" => $value]);
-					}
-				}
+			$target->refresh();
+			if ($this->isClass(@$target, $key)) {
+				@$target->{"create" . ucfirst($key)}($values);
 			} else {
 				$target->{$key} = $values;
 				$target->save();
@@ -803,25 +815,27 @@ class ResourceController extends Controller
 
 	public function upload(Request $request)
 	{
+		$default_disk = config("vstack.upload_disk", "local");
+		$disk = Storage::disk($default_disk);
 		if (@$request['file']) {
-			$url = $request['file'];
-			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
-			Storage::put(
-				"public/$name",
-				file_get_contents($url)
-			);
-			return ["path" => asset("public/storage/$name")];
+			$file = $request->file('file');
+			$name = $file->getClientOriginalName();
+			$file_name = ($default_disk == "local" ? "public/$name" : $name);
+			$contents = file_get_contents($file->getRealPath());
+			$disk->put($file_name, $contents);
+			$path = $disk->url($name);
+			return ["path" => $path];
 		}
 		if (@$request['files']) {
-			$url = $request['files'][0];
-			$name = pathinfo($url, PATHINFO_FILENAME) . ".jpg";
-			Storage::put(
-				"public/$name",
-				file_get_contents($url)
-			);
+			$file = $request['files'][0];
+			$name = $file->getClientOriginalName();
+			$file_name = ($default_disk == "local" ? "public/$name" : $name);
+			$contents = file_get_contents($file->getRealPath());
+			$disk->put($file_name, $contents);
+			$path = $disk->url($name);
 			return [
 				"data" => [
-					asset("public/storage/$name")
+					$path
 				]
 			];
 		}

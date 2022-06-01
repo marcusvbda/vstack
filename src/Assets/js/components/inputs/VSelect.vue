@@ -55,6 +55,7 @@
                             v-loading="loading"
                             :loading="loading"
                             loading-text="Carregando..."
+                            :popper-append-to-body="false"
                         >
                             <el-option v-for="(item, i) in options" :key="i" :label="item.name" :value="String(item.id)">
                                 <div class="w-100 d-flex" v-html="item.name"></div>

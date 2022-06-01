@@ -30,8 +30,11 @@
                         :before-upload="handleBeforeUpload"
                         :on-remove="handleRemove"
                         :before-remove="beforeRemove"
+                        :on-change="handleChange"
+                        :auto-upload="auto_set_name"
                         :headers="header"
                         v-if="renderComponent"
+                        @input.native="handleInput"
                     >
                         <template v-if="!is_image">
                             <el-button icon="el-icon-upload" type="primary" v-if="fileList.length < limit">
@@ -78,21 +81,30 @@
 <script>
 import { mapMutations } from "vuex";
 export default {
-    props: [
-        "label",
-        "field",
-        "preview",
-        "multiple",
-        "disabled",
-        "limit",
-        "uploadroute",
-        "description",
-        "sizelimit",
-        "errors",
-        "is_image",
-    ],
+    props: {
+        is_image: {
+            type: Boolean,
+            default: true,
+        },
+        auto_set_name: {
+            type: Boolean,
+            default: true,
+        },
+        label: String,
+        field: String,
+        preview: Boolean,
+        multiple: Boolean,
+        disabled: Boolean,
+        limit: Number,
+        uploadroute: String,
+        description: String,
+        sizelimit: Number,
+        errors: [Array, Boolean, Object],
+    },
     data() {
         return {
+            initialized: false,
+            new_filename: null,
             fileList: [],
             header: { "X-CSRF-TOKEN": laravel.general.csrf_token ? laravel.general.csrf_token : "" },
             loading: false,
@@ -120,8 +132,8 @@ export default {
                 window.open(file.response.path, "_blank");
             }
         },
-        beforeRemove(file) {
-            return this.$confirm(`Remover o arquivo ${file.name} ?`);
+        beforeRemove() {
+            return this.$confirm(`Remover este arquivo ?`);
         },
         init() {
             let value = this.$attrs.value ? this.$attrs.value : [];
@@ -143,6 +155,7 @@ export default {
                     }
                 });
             this.setInputFiles(items);
+            this.initialized = true;
         },
         setInputFiles(items) {
             this.fileList = items;
@@ -156,8 +169,28 @@ export default {
                 this.renderComponent = true;
             });
         },
+        handleInput(event) {
+            if (!this.auto_set_name && this.initialized) {
+                this.loading = true;
+                this.$prompt("Como deseja nomear este arquivo ?", "Nome", {
+                    confirmButtonText: "Continuar",
+                    cancelButtonText: "Cancelar",
+                    inputPattern: /^.{1,}$/,
+                    inputErrorMessage: "Digite um nome válido",
+                })
+                    .then(({ value }) => {
+                        this.new_filename = value;
+                        this.$refs.uploader.submit();
+                    })
+                    .catch(() => {
+                        const filename = event.target.value.split("\\").reverse()[0];
+                        this.handleRemove(filename);
+                        this.loading = false;
+                    });
+            }
+        },
         handleChange() {
-            this.emitChanges();
+            return this.emitChanges();
         },
         emitChanges() {
             let files = this.$refs.uploader.uploadFiles;
@@ -172,6 +205,7 @@ export default {
         },
         handleAvatarSuccess(response, file) {
             file.url = response.path;
+            file.name = this.new_filename;
             let files = this.fileList;
             files.push(file);
             this.setInputFiles(files);
@@ -180,7 +214,11 @@ export default {
         handleRemove(file) {
             let files = this.$refs.uploader.uploadFiles;
             files = files.filter((f) => {
-                return f.uid != file.uid;
+                if (typeof file == "string") {
+                    return f.name != file;
+                } else {
+                    return f.uid != file.uid;
+                }
             });
             this.setInputFiles(files);
         },
