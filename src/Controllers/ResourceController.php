@@ -27,6 +27,34 @@ class ResourceController extends Controller
 		return $this->showIndexList($resource, $request, true);
 	}
 
+	public function getListData($resource, $type, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		$report_mode = $type == "report";
+		if ($report_mode) {
+			if (!$resource->canViewReport()) {
+				abort(403);
+			}
+		} else {
+			if (!$resource->canViewList()) {
+				abort(403);
+			}
+		}
+		$data = $this->getData($resource, $request);
+		$per_page = $this->getPerPage($resource);
+		// if (request()->page_type == "report") {
+		// 	$data = $resource->prepareQueryToExport($data->select("*"));
+		// }
+		$list_items = $resource->listItemsContent(clone $data);
+		$data = $data->select("*")->paginate($per_page);
+		if (@$request["list_type"]) {
+			$this->storeListType($resource, $request["list_type"]);
+		}
+		$user = Auth::user();
+		$template = "<div>" . view("vStack::resources.index_loader", compact("resource", "data", "list_items", "report_mode", "user"))->render() . "</div>";
+		return ['template' => ResourcesHelpers::minify($template)];
+	}
+
 	protected function showIndexList($resource, Request $request, $report_mode = false)
 	{
 		$resource = ResourcesHelpers::find($resource);
@@ -39,24 +67,31 @@ class ResourceController extends Controller
 				abort(403);
 			}
 		}
-		$data = $this->getData($resource, $request);
-		$per_page = $this->getPerPage($resource);
-		if (request()->page_type == "report") {
-			$data = $resource->prepareQueryToExport($data->select("*"));
-		}
-		$list_items = $resource->listItemsContent(clone $data);
+		// $data = $this->getData($resource, $request);
+		// $per_page = $this->getPerPage($resource);
+		// if (request()->page_type == "report") {
+		// 	$data = $resource->prepareQueryToExport($data->select("*"));
+		// }
+		// $list_items = $resource->listItemsContent(clone $data);
+		// if (request()->is_api) {
+		// 	$data = $data->select("*")->paginate($per_page);
+		// 	return $data;
+		// }
+		// $data = $data->paginate($per_page);
+		// $data->map(function ($query) {
+		// 	$query->setAppends([]);
+		// });
+		// if (@$request["list_type"]) {
+		// 	$this->storeListType($resource, $request["list_type"]);
+		// }
+
 		if (request()->is_api) {
+			$data = $this->getData($resource, $request);
+			$per_page = $this->getPerPage($resource);
 			$data = $data->select("*")->paginate($per_page);
 			return $data;
 		}
-		$data = $data->paginate($per_page);
-		$data->map(function ($query) {
-			$query->setAppends([]);
-		});
-		if (@$request["list_type"]) {
-			$this->storeListType($resource, $request["list_type"]);
-		}
-		return view("vStack::resources.index", compact("resource", "data", "report_mode", "list_items"));
+		return view("vStack::resources.index", compact("resource", "report_mode"));
 	}
 
 
@@ -719,8 +754,9 @@ class ResourceController extends Controller
 
 	public function getPerPage($resource)
 	{
+		$per_page = @request()->per_page;
 		$results_per_page = $resource->resultsPerPage();
-		$per_page = is_array($results_per_page) ? ((in_array(@$_GET['per_page'] ? $_GET['per_page'] : [], $results_per_page)) ? $_GET['per_page'] : $results_per_page[0]) : $results_per_page;
+		$per_page = is_array($results_per_page) ? ((in_array($per_page ? $per_page : [], $results_per_page)) ? $per_page : $results_per_page[0]) : $results_per_page;
 		return $per_page;
 	}
 

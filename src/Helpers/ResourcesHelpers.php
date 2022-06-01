@@ -1,6 +1,20 @@
 <?php
 class ResourcesHelpers
 {
+    static function minify($htmlString)
+    {
+        $replace = [
+            '<!--(.*?)-->' => '', //remove comments
+            "/<\?php/" => '<?php ',
+            "/\n([\S])/" => '$1',
+            "/\r/" => '', // remove carriage return
+            "/\n/" => '', // remove new lines
+            "/\t/" => '', // remove tab
+            "/\s+/" => ' ', // remove spaces
+        ];
+        return preg_replace(array_keys($replace), array_values($replace), $htmlString);
+    }
+
     static function all()
     {
         $path = app_path("Http/Resources/");
@@ -52,7 +66,9 @@ class ResourcesHelpers
         $str_query = "";
         $query["order_by"] = $field;
         $query["order_type"] = $type;
-        foreach ($query as $key => $value) $str_query .= $key . "=" . $value . "&";
+        foreach ($query as $key => $value) {
+            $str_query .= $key . "=" . $value . "&";
+        }
         $str_query = substr($str_query, 0, -1);
         return $route . "?" . $str_query;
     }

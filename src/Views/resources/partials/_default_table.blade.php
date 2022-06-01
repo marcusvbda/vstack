@@ -1,3 +1,10 @@
+@php
+	$_data = request()->all();
+	$order_by   = Arr::get($_data, 'order_by', "id");
+	$current_order_type = Arr::get($_data, 'order_type', "desc");
+	$order_type = $current_order_type == "desc" ? "asc" : "desc";
+@endphp
+
 <select-table-style data-aos="fade-right" id="{{$resource->id}}" :list_type="{{json_encode($list_types)}}" :has_lenses="{{json_encode(count($resource->lenses())>0)}}"
 	selected_list_type="{{$list_type}}">
 		<template slot="lenses">
@@ -8,6 +15,13 @@
 			</div>
 		</template>
     <template slot="content">
+		@php
+			$rows_data = [];
+			foreach ($data as $row) {
+				$row_data = (new marcusvbda\vstack\Controllers\VstackController())->resourceTableContent($resource, null, $row, true, true);
+				$rows_data[] = $row_data;
+			}
+		@endphp	
 		@if($list_type == "table")
 			@php
 				$table_after_row = @$resource->tableAfterRow(@$data[0]) !== false;
@@ -45,7 +59,7 @@
 								@endphp
 								<th width="{{$size}}" class="resource-table-col {{ $col_class }}" id="resource-list-head-{{ $sortable_index }}">					
 									@if(@data_get($value,"sortable") !== false)
-										<a href="{{ResourcesHelpers::sortLink($resource->route(),request()->query(), $sortable_index,$order_type)}}"
+										<a href="{{ResourcesHelpers::sortLink($resource->route(),request()->all(), $sortable_index,$order_type)}}"
 											class="d-flex flex-row align-items-center link-sortable">
 											<div class="link">{{data_get($value,"label",$value)}}</div>
 											<div class="ml-auto d-flex flex-row">
@@ -72,69 +86,16 @@
 							@endif
 						</tr>
 					</thead>
-					@php
-						$load_list_item_by_item = $resource->loadListItemByItem();
-					@endphp
-					@if($load_list_item_by_item)
-						<tbody>
-							@foreach($data as $row)
-								@php 
-									$code = \Hashids::encode($row->id);
-									$columns_count = count($resource->table())+($has_actions ? 1 : 0)+($table_after_row ? 2 : 0);
-								@endphp
-								<tr 
-									is="get-resource-content" 
-									:cols={{count($table_keys)}} 
-									row_code="{{$code}}" 
-									:raw_content='@json($row)'
-									resource_route="{{$resource->route()}}" resource_id="{{$resource->id}}" row_id="{{$row->id}}"
-									:show_right_actions_column='@json($show_right_actions_column)'
-									type="resourceTableContent"
-									:has_actions='@json($has_actions)'
-									>
-									@if($table_after_row)
-										<template slot="first-column">
-											<td  style="width:1%;padding-bottom: 10px!important;height: 1px;">
-												<portal-target class="h-100 d-flex justify-content-center" name="resource_after_row_arrow_{{ $row->id }}"></portal-target>
-											</td>
-										</template>
-									@endif
-									@if($has_actions)
-										<template slot="first-column">
-											<td  width="1%;" >
-												<div class="d-flex align-items-center justify-content-center">
-													<input class="select-action-resource select_action_box" type="checkbox" id="{{ $resource->id.'_action_select_'.$row->id }}" />
-												</div>
-											</td>
-										</template>
-									@endif
-								</tr>
-								@if($table_after_row)
-									<tr class="table-row after">
-										<td  colspan="{{ $columns_count }}" >
-											<after-row-resource row_id="{{  $row->id }}">
-												{!! $resource->tableAfterRow($row) !!}
-											</after-row-resource>
-										</td>
-									</tr>
-								@endif
-							@endforeach
-						</tbody>
-					@else
-						@php
-							$item_ids = $data->pluck("id")->toArray();
-						@endphp
-						<tbody is="resource-tablelist-allinone" 
-							:ids='@json($item_ids)'
-							:table_keys='@json($table_keys)'
-							:table_after_row='@json($table_after_row)'
-							:has_actions='@json($has_actions)'
-							:show_right_actions_column='@json($show_right_actions_column)'	
-							resource_id="{{$resource->id}}"			
-							resource_route="{{$resource->route()}}"			
-						>
-						</tbody>
-					@endif
+					<tbody is="resource-tablelist-allinone" 
+						:rows='@json($rows_data)'
+						:table_keys='@json($table_keys)'
+						:table_after_row='@json($table_after_row)'
+						:has_actions='@json($has_actions)'
+						:show_right_actions_column='@json($show_right_actions_column)'	
+						resource_id="{{$resource->id}}"			
+						resource_route="{{$resource->route()}}"			
+					>
+					</tbody>
 				</table>
 			</div>
         @else
@@ -143,11 +104,11 @@
 				<div class="row">
 					@foreach($chunk as $row)
 					<div class="col-lg-4 col-sm-12 mb-3  d-flex align-items-stretch">
-						<?php
+						@php
 							$code = \Hashids::encode($row->id);
 							$crud_buttons['code'] = $code;
 							$crud_buttons['route'] = $resource->route()."/".$code;
-						?>
+						@endphp
 						@include($resource->listCardView())
 					</div>
 					@endforeach

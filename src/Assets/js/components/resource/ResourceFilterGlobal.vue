@@ -8,7 +8,7 @@
             class="filter"
             v-model="filter"
             @change="submit"
-            v-bind:class="{'withFilter':filter}"
+            v-bind:class="{ withFilter: filter }"
             clearable
             id="resource-global-filter"
         >
@@ -18,39 +18,39 @@
 </template>
 <script>
 export default {
-    props: ['data'],
+    props: ["data"],
     data() {
         return {
             filter: this.data.value,
-            timeout: null
-        }
+            timeout: null,
+        };
     },
     watch: {
-        filter(val) {
-            clearTimeout(this.timeout)
-            this.timeout = setTimeout(_ => {
-                this.submit()
-                clearTimeout(this.timeout)
-            }, 1500)
-        }
+        filter() {
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => {
+                this.submit();
+                clearTimeout(this.timeout);
+            }, 1500);
+        },
     },
     methods: {
         submit() {
-            this.makeNewRoute()
+            this.makeNewRoute();
         },
         makeNewRoute() {
-            let str_query = ""
+            let str_query = "";
             for (let i in this.data.query) {
-                if ((i != "page") && (i != "_")) {
+                if (i != "page" && i != "_") {
                     if (!["null", null].includes(this.data.query[i])) {
-                        str_query += `${i}=${this.data.query[i]}&`
+                        str_query += `${i}=${this.data.query[i]}&`;
                     }
                 }
             }
-            str_query = str_query.slice(0, -1)
-            str_query += `${str_query ? "&" : ""}_=${this.filter}`
-            window.location.href = `${this.data.filter_route}?${str_query}`
-        }
-    }
-}
+            str_query = str_query.slice(0, -1);
+            str_query += `${str_query ? "&" : ""}_=${this.filter}`;
+            window.location.href = `${this.data.filter_route}?${str_query}`;
+        },
+    },
+};
 </script>

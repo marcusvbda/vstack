@@ -54,10 +54,10 @@ export default {
     methods: {
         processWithOptions(rf) {
             const value = this.get_params[rf.index];
-            if(rf._options && rf._options[value]){
-                return rf._options[value][0]
+            if (rf._options && rf._options[value]) {
+                return rf._options[value][0];
             }
-            return value
+            return value;
         },
         hasContent(filter, key) {
             if (!filter) return false;

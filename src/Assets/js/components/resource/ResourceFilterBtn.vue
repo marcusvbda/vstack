@@ -12,7 +12,7 @@
         <el-drawer :with-header="true" :visible.sync="drawer" direction="rtl" :before-close="confirmClose" :append-to-body="true">
             <template slot="title">
                 <div class="w-100 d-flex flex-row">
-                    <el-button class="mr-3" size="medium"  id="resource-btn-confirm" type="primary" @click="makeNewRoute">
+                    <el-button class="mr-3" size="medium" id="resource-btn-confirm" type="primary" @click="makeNewRoute">
                         <span class="el-icon-search mr-2" />
                         Confirmar Filtro
                     </el-button>
@@ -39,7 +39,7 @@
                                                     size="medium"
                                                     class="w-100"
                                                     @change="showConfirmBtn = true"
-                                                     id="resource-filter-per_page"
+                                                    id="resource-filter-per_page"
                                                 >
                                                     <ElOption
                                                         :key="op"
@@ -99,7 +99,7 @@ export default {
         qty_filters() {
             const qty = Object.keys(this.filter)
                 .filter((y) => y != "per_page")
-                .map((key) => this.$root.$refs.tags_filter.hasContent(this.filter, key))
+                .map((key) => this.hasContent(this.filter, key))
                 .filter((x) => x).length;
             return qty || 0;
         },
@@ -116,6 +116,18 @@ export default {
         el.addEventListener("click", (event) => event.stopPropagation());
     },
     methods: {
+        hasContent(filter, key) {
+            if (!filter) {
+                return false;
+            }
+            if (filter[key]) {
+                if (Array.isArray(filter[key])) {
+                    return filter[key].filter((x) => x).length > 0 ? true : false;
+                }
+                return true;
+            }
+            return false;
+        },
         confirmClose() {
             if (this.showConfirmBtn) {
                 this.$confirm("Deseja confirmar o filtro selecionado ?", "Confirmação", { closeOnClickModal: false }).then(() =>

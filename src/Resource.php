@@ -683,11 +683,6 @@ class Resource
 		];
 	}
 
-	public function loadListItemByItem()
-	{
-		return false;
-	}
-
 	public function prepareImportData($data)
 	{
 		return ["success" => true, "data" => []];

@@ -20,6 +20,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::get('relatorios/{resource}', [ResourceController::class, 'report'])->name("resource.report");
 		Route::post('relatorios/{resource}/create-report-template', [ResourceController::class, 'createReportTemplate'])->name("resource.create.report.template");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
+		Route::post('{resource}/{type}/get-list-data', [ResourceController::class, 'getListData'])->name("resource.getlistdata");
 		Route::post('{resource}/field-data', [ResourceController::class, 'fieldData'])->name("resource.fielddata");
 		Route::get('{resource}/create', [ResourceController::class, 'create'])->name("resource.create");
 		Route::post('{resource}/action/{id}', [ResourceController::class, 'handlerAction'])->name("resource.action.submit");
