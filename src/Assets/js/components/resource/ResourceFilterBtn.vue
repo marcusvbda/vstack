@@ -143,8 +143,15 @@ export default {
         },
         makeNewRoute() {
             let str_query = "";
-            let filter_keys = Object.keys(this.filter);
+            let filter_keys = Object.keys(this.filter).filter((x) => !x.includes(["page_type"]));
             filter_keys.forEach((key) => (this.data.query[key] = this.filter[key]));
+            let new_data = this.data.query;
+            if (new_data.page_type) {
+                delete new_data.page_type;
+            }
+            if (new_data.per_page) {
+                delete new_data.per_page;
+            }
             Object.keys(this.data.query).forEach((key) => {
                 if (!this.ignore_vstack_filters_index.includes(key)) {
                     if (!["null", null].includes(this.data.query[key])) {
@@ -166,7 +173,8 @@ export default {
 
             str_query = str_query.slice(0, -1);
             this.$loading({ text: "Atualizando Filtros..." });
-            window.location.href = `${this.route}?${str_query}`;
+            const route = `${this.route}?${str_query}`;
+            window.location.href = route;
         },
         setFormValue(index, value, filter) {
             if (filter.component == "text-filter") value = String(value);

@@ -32,6 +32,11 @@ class ResourceController extends Controller
 		$resource = ResourcesHelpers::find($resource);
 		$report_mode = $type == "report";
 		if ($report_mode) {
+			request()->request->add(["page_type" => "report"]);
+		} else {
+			request()->request->add(["page_type" => "list"]);
+		}
+		if ($report_mode) {
 			if (!$resource->canViewReport()) {
 				abort(403);
 			}
@@ -42,12 +47,13 @@ class ResourceController extends Controller
 		}
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
-		// if (request()->page_type == "report") {
-		// 	$data = $resource->prepareQueryToExport($data->select("*"));
-		// }
 		$list_items = $resource->listItemsContent(clone $data);
 		$data = $data->select("*")->paginate($per_page);
-		$data->setPath($resource->route());
+		if ($report_mode) {
+			$data->setPath(route('resource.report', ["resource" => $resource->id]));
+		} else {
+			$data->setPath(route('resource.index', ["resource" => $resource->id]));
+		}
 		if (@$request["list_type"]) {
 			$this->storeListType($resource, $request["list_type"]);
 		}

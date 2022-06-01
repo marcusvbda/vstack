@@ -21,7 +21,7 @@
 import VRuntimeTemplate from "v-runtime-template";
 
 export default {
-    props: ["resource_id"],
+    props: ["resource_id", "report_mode"],
     components: {
         VRuntimeTemplate,
     },
@@ -47,7 +47,7 @@ export default {
         init() {
             this.loading = true;
             this.$http
-                .post(`/admin/${this.resource_id}/list/get-list-data`, this.query_params)
+                .post(`/admin/${this.resource_id}/${this.report_mode ? "report" : "list"}/get-list-data`, this.query_params)
                 .then(({ data }) => {
                     this.loading = false;
                     this.template = data.template;

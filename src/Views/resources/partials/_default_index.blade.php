@@ -22,18 +22,19 @@
                     </a>
                 @endif
             @endif
-            @if ($report_mode)
-                @if ($resource->canExport() && $data->total() > 0)
+            @if ($report_mode) 
+                @if ($resource->canExport())
                     @if ($resource->model->count() > 0)
                         @php
                             $resource_config_query = \marcusvbda\vstack\Models\ResourceConfig::where('data->user_id', $user->id)->where('resource', $resource->id);
                             $config_columns = (clone $resource_config_query)->where('config', 'resource_export_disabled_columns')->first();
                             $config_columns = $config_columns ? $config_columns : [];
                             $report_export_query = (clone $resource_config_query)->where('config', 'like', 'report_export_%');
+                            $total = (@$data && @$data->total()) || 0;
                         @endphp
                         <resource-export-btn class="ml-4 link f-12" id="{{ $resource->id }}" label="{{ $resource->label() }}" 
                             :export_columns='@json($resource->exportColumns())' 
-                            :get_params='@json($_GET)' :qty_results='@json($data->total())' 
+                            :get_params='@json($_GET)' :qty_results='@json($total)' 
                             :config_columns='@json($config_columns)' 
                             message='{{ $resource->exportingMessage() }}'
                         >
@@ -66,6 +67,7 @@
     @endif
 </div>
 <resource-index-loader
+    :report_mode='@json($report_mode)'
     resource_id='{{ $resource->id }}'
 >
 </resource-index-loader>
