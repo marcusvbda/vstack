@@ -65,6 +65,7 @@ class ResourceController extends Controller
 	protected function showIndexList($resource, Request $request, $report_mode = false)
 	{
 		$resource = ResourcesHelpers::find($resource);
+
 		if ($report_mode) {
 			if (!$resource->canViewReport()) {
 				abort(403);
@@ -74,24 +75,6 @@ class ResourceController extends Controller
 				abort(403);
 			}
 		}
-		// $data = $this->getData($resource, $request);
-		// $per_page = $this->getPerPage($resource);
-		// if (request()->page_type == "report") {
-		// 	$data = $resource->prepareQueryToExport($data->select("*"));
-		// }
-		// $list_items = $resource->listItemsContent(clone $data);
-		// if (request()->is_api) {
-		// 	$data = $data->select("*")->paginate($per_page);
-		// 	return $data;
-		// }
-		// $data = $data->paginate($per_page);
-		// $data->map(function ($query) {
-		// 	$query->setAppends([]);
-		// });
-		// if (@$request["list_type"]) {
-		// 	$this->storeListType($resource, $request["list_type"]);
-		// }
-
 		if (request()->is_api) {
 			$data = $this->getData($resource, $request);
 			$per_page = $this->getPerPage($resource);
@@ -100,7 +83,6 @@ class ResourceController extends Controller
 		}
 		return view("vStack::resources.index", compact("resource", "report_mode"));
 	}
-
 
 	private function storeListType($resource, $type)
 	{

@@ -39,4 +39,52 @@
     height: 100%;
     width: 100%;
     border-radius: 5px;
+
+    .el-loading-mask {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: wait;
+      background: linear-gradient(to right, #f4f4f4 0%, #dfe1e7 20%, #e8e8e8 40%, #c9c9c9 100%);
+      background-size: 400% 400%;
+      -webkit-animation: animationGradient 3s ease infinite;
+      -moz-animation: animationGradient 3s ease infinite;
+      animation: animationGradient 3s ease infinite;
+      background-color: #e5e5e5;
+      border:1px solid #e5e5e5;
+      height: 100%;
+      width: 100%;
+      border-radius: 5px;
+
+      
+      .el-loading-spinner {
+        top: unset;
+        margin: unset;
+        width: unset;
+        text-align: unset;
+        position: unset;
+        .el-icon-loading {
+          font-size: 80px;
+          color: #b9b9b9;
+        }
+
+        
+        .el-loading-text {
+          font-size: 18px;
+          color: #b9b9b9;
+          font-weight: 500;
+        }
+      }
+
+    }
+
+
+    
+    &.small-spinner {
+      .el-loading-mask {
+        .el-icon-loading {
+          font-size: 12px;
+        }
+      }
+    }
 }

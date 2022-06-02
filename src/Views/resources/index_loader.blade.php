@@ -2,6 +2,12 @@
 $model_count = $resource->model->count();
 $filters = $resource->filters();
 $_data =  request()->all();
+if(@$_data["page"]) {
+    unset($_data['page']);
+}
+if(@$_data["page_type"]) {
+    unset($_data['page_type']);
+}
 @endphp
 @if ($model_count > 0)
     <div class="row d-flex align-items-end mb-2">
@@ -33,7 +39,7 @@ $_data =  request()->all();
                             {!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
                             <div class="nav-scroller py-1 mb-2"> 
                                 <div class="ml-3" id="resource-pagination">
-                                    {{ $data->appends(request()->query())->links() }}
+                                    {{ $data->appends($_data)->links() }}
                                 </div>
                             </div>
                         </div>
