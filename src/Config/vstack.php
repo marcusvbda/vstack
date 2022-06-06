@@ -11,7 +11,8 @@ return [
 		"Dashboard" => "/admin",
 	],
 	"socket_service" => [
-		"uri" => "https://ezcore-socket-server.herokuapp.com",
+		"port" => env('SOCKET_PORT_SERVER_PORT'),
+		"uri" => env("APP_URL"),
 		"username" => "user",
 		"password" => "pass"
 	],

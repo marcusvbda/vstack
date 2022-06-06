@@ -52,12 +52,12 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
+// import io from "socket.io-client";
 
 export default {
     props: ["rows", "table_keys", "table_after_row", "has_actions", "show_right_actions_column", "resource_id", "resource_route"],
     data() {
         return {
-            pusher_initialized: false,
             first_key: this.table_keys[0],
             virtual_indexes: {
                 action_col: "action_checkbox_index",
@@ -69,6 +69,20 @@ export default {
     components: {
         "resource-tablelist-allinone-item": require("./partials/-resource-list-allinone-row.vue").default,
         "v-runtime-template": VRuntimeTemplate,
+    },
+    created() {
+        // const socket = io(`${laravel.chat.uri}:${laravel.chat.port}`, {
+        //     reconnection: true,
+        //     reconnectionDelay: 500,
+        //     reconnectionAttempts: 10,
+        //     withCredentials: true,
+        //     pingInterval: 3600000,
+        //     pingTimeout: 3600000,
+        //     transports: ["websocket"],
+        // });
+        // socket.on("connected", (data) => {
+        //     console.log("connected", data);
+        // });
     },
     computed: {
         ids() {
@@ -87,30 +101,6 @@ export default {
                 columns.push(this.virtual_indexes.right_actions_column);
             }
             return columns;
-        },
-    },
-    created() {
-        if (!this.pusher_initialized) {
-            this.initPusher();
-            this.pusher_initialized = true;
-        }
-    },
-    methods: {
-        subscribeToChannel(id) {
-            this.$echo
-                .private(`App.Tenant.${laravel.tenant.id}`)
-                .listen(`.notifications.resource.${this.resource_id}.${id}`, (resp) => {
-                    if (resp.event == "reload") {
-                        this.getResourceTableContent();
-                    }
-                });
-        },
-        initPusher() {
-            if (laravel.tenant.id && laravel.chat.pusher_key) {
-                this.ids.map((id) => {
-                    this.subscribeToChannel(id);
-                });
-            }
         },
     },
 };
