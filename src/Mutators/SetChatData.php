@@ -9,13 +9,9 @@ class SetChatData extends BaseMutator
     {
         $config = config("vstack.socket_service");
         $content["chat"] = [
+            "enabled" => data_get($config, "enabled", false),
             "uri" => data_get($config, "uri", ""),
-            "uid" => data_get($config, "uid", ""),
             "port" => data_get($config, "port", ""),
-            "token" => base64_encode(json_encode([
-                "username" => data_get($config, "username", ""),
-                "password" => data_get($config, "password", ""),
-            ]))
         ];
         return $content;
     }

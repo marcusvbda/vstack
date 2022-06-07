@@ -52,8 +52,6 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
-// import io from "socket.io-client";
-
 export default {
     props: ["rows", "table_keys", "table_after_row", "has_actions", "show_right_actions_column", "resource_id", "resource_route"],
     data() {
@@ -69,20 +67,6 @@ export default {
     components: {
         "resource-tablelist-allinone-item": require("./partials/-resource-list-allinone-row.vue").default,
         "v-runtime-template": VRuntimeTemplate,
-    },
-    created() {
-        // const socket = io(`${laravel.chat.uri}:${laravel.chat.port}`, {
-        //     reconnection: true,
-        //     reconnectionDelay: 500,
-        //     reconnectionAttempts: 10,
-        //     withCredentials: true,
-        //     pingInterval: 3600000,
-        //     pingTimeout: 3600000,
-        //     transports: ["websocket"],
-        // });
-        // socket.on("connected", (data) => {
-        //     console.log("connected", data);
-        // });
     },
     computed: {
         ids() {

@@ -1,44 +1,60 @@
-require("dotenv").config({ path: "../../../../../.env" });
-
-require("module-alias").addAliases({
-    "~": __dirname,
-    "@src": `${__dirname}/src`,
-});
+require("dotenv").config({ path: "./.env" });
+const origin = process.env.APP_URL || "http://localhost";
 const express = require("express");
-
-const app = express();
-const http = require("http").createServer(app);
-
 const SocketIo = require("socket.io");
+const http = require("http");
+const app = express();
+const bodyParser = require("body-parser");
 const cors = require("cors");
-
 app.use(cors());
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-    res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
-    next();
-});
 
-const io = SocketIo(http, {
+server = http.createServer(app);
+const io = SocketIo(server, {
     allowEIO3: true,
     cors: {
-        origin: "*",
+        origin: origin,
     },
 });
 
-io.sockets.on("connection", async (socket) => {
-    // console.log("connected", { id: socket.id });
-    socket.emit("connected", { id: socket.id });
-});
+const clients = {};
 
 const port = process.env.SOCKET_PORT_SERVER_PORT || 3003;
-const route = process.env.APP_URL || "http://localhost";
-http.listen(port, () => {
-    console.log(`${route}:${port}`);
+server.listen(port, () => {
+    console.log(`${origin}:${port}`);
 });
 
+app.use(bodyParser.json());
+
 app.get("/", (req, res) => {
-    res.json("socket server is running ...");
+    res.send("Socket server is running ...");
+});
+
+app.post("/dispatch-event/:client_id", (req, res) => {
+    const clientId = req.params.client_id;
+
+    const event = req.body.event;
+    if (!event) {
+        return res.status(505).send("Event not found");
+    }
+
+    const data = req.body.data || {};
+
+    const client = clients[clientId];
+    if (!client) {
+        return res.status(404).send("Client not found");
+    }
+
+    client.emit(event, data);
+
+    return res.json({ clientId, event, data });
+});
+
+io.on("connection", (client) => {
+    clients[client.id] = client;
+
+    client.emit("connected", { id: client.id });
+
+    client.on("disconnect", () => {
+        clients[client.id] && delete clients[client.id];
+    });
 });

@@ -49,6 +49,7 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
+// import io from "socket.io-client";
 
 export default {
     props: ["resource_id", "report_mode"],
@@ -74,18 +75,30 @@ export default {
         });
     },
     methods: {
-        init() {
-            this.loading = true;
+        requestForData(params) {
+            const route = `/admin/${this.resource_id}/${this.report_mode ? "report" : "list"}/get-list-data`;
             this.$http
-                .post(`/admin/${this.resource_id}/${this.report_mode ? "report" : "list"}/get-list-data`, this.query_params)
+                .post(route, params)
                 .then(({ data }) => {
                     this.loading = false;
-                    this.template = data.template;
+                    this.template = data.template_chunked.join("");
                 })
                 .catch((error) => {
                     console.log(error);
                     this.loading = false;
                 });
+        },
+        init() {
+            this.loading = true;
+            // if (laravel.chat.enabled) {
+            //     const route = `${laravel.chat.uri}:${laravel.chat.port}`;
+            //     const socket = io(route);
+            //     socket.on("connected", (client) => {
+            //         this.requestForData({ ...this.query_params, socket_client_id: client.id });
+            //     });
+            // } else {
+            this.requestForData(this.query_params);
+            // }
         },
     },
 };

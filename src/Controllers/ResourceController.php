@@ -59,7 +59,8 @@ class ResourceController extends Controller
 		}
 		$user = Auth::user();
 		$template = "<div>" . view("vStack::resources.index_loader", compact("resource", "data", "list_items", "report_mode", "user"))->render() . "</div>";
-		return ['template' => ResourcesHelpers::minify($template)];
+		$template_chunked = str_split(ResourcesHelpers::minify($template), 500);
+		return ['template_chunked' => $template_chunked];
 	}
 
 	protected function showIndexList($resource, Request $request, $report_mode = false)

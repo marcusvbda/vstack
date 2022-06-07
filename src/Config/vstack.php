@@ -13,8 +13,7 @@ return [
 	"socket_service" => [
 		"port" => env('SOCKET_PORT_SERVER_PORT'),
 		"uri" => env("APP_URL"),
-		"username" => "user",
-		"password" => "pass"
+		"enabled" => env('SOCKET_SERVER_ENABLED', false),
 	],
 	"api" => [
 		"token_expiration" => "1 hour",
