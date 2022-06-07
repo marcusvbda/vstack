@@ -29,30 +29,41 @@ app.get("/", (req, res) => {
     res.send("Socket server is running ...");
 });
 
-app.post("/dispatch-event/:client_id", (req, res) => {
-    const clientId = req.params.client_id;
-
+app.post("/dispatch-event/:id", (req, res) => {
     const event = req.body.event;
     if (!event) {
-        return res.status(505).send("Event not found");
+        return res.status(404).send("Event not found");
     }
 
     const data = req.body.data || {};
 
-    const client = clients[clientId];
-    if (!client) {
-        return res.status(404).send("Client not found");
+    const type = req.body.index || "client";
+    const id = req.params.id;
+
+    if (type == "room") {
+        io.to(id).emit(event, data);
+    } else if (type == "client") {
+        const client = clients[id];
+        if (!client) {
+            return res.status(404).send("Client not found");
+        } else {
+            client.emit(event, data);
+        }
     }
 
-    client.emit(event, data);
-
-    return res.json({ clientId, event, data });
+    return res.json({ id, type, event, data });
 });
 
 io.on("connection", (client) => {
     clients[client.id] = client;
 
     client.emit("connected", { id: client.id });
+
+    client.on("join", (room) => {
+        client.join(room);
+
+        client.emit("joined", { room });
+    });
 
     client.on("disconnect", () => {
         clients[client.id] && delete clients[client.id];

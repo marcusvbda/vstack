@@ -124,22 +124,21 @@ class Vstack
 		return $numbers;
 	}
 
-	public static function SocketEmit($event, $code, $data = [])
+	public static function SocketEmit($event, $room, $data = [])
 	{
 		try {
-			$socket_service = config('vstack.socket_service');
-			$username = data_get($socket_service, 'username');
-			$password = data_get($socket_service, 'password');
+			$socket_service =  config('vstack.socket_service');
 			$uri = data_get($socket_service, 'uri');
-			$uid = data_get($socket_service, 'uid');
+			$port = data_get($socket_service, 'port');
+			$urlSite =  $uri . ":" . $port;
+			$uri = $urlSite . "/dispatch-event/" . $room;
 			$data = [
 				"event" => $event,
-				"socket_id" => $uid . "#" . $code,
+				"index" => "room",
 				"data" => $data
 			];
 			$client = new GuzzleCLient();
-			$client->post($uri . "/socket-emit", [
-				'auth' => [$username, $password],
+			$client->post($uri, [
 				'json' => $data,
 			]);
 			return true;
