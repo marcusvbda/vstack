@@ -124,7 +124,7 @@ class Vstack
 		return $numbers;
 	}
 
-	public static function SocketEmit($event, $room, $data = [])
+	public static function SocketEmit($event, $room, $data = [], $index = "room")
 	{
 		try {
 			$socket_service =  config('vstack.socket_service');
@@ -134,7 +134,7 @@ class Vstack
 			$uri = $urlSite . "/dispatch-event/" . $room;
 			$data = [
 				"event" => $event,
-				"index" => "room",
+				"index" => $index,
 				"data" => $data
 			];
 			$client = new GuzzleCLient();

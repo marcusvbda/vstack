@@ -1,49 +1,57 @@
 <template>
     <div>
-        <template v-if="loading">
-            <div class="row d-flex justify-content-start" :style="{ marginTop: 26 }">
-                <div class="col-sm-12 col-md-5 d-flex flex-row" style="gap: 11px">
-                    <div class="shimmer" :style="{ height: 19, width: 170 }" />
-                    <div class="shimmer" :style="{ height: 19, width: 150 }" />
-                    <div class="shimmer" :style="{ height: 19, width: 180 }" />
+        <template v-if="(!loading.top && !loading.table) || !template.no_data">
+            <template v-if="loading.top">
+                <div class="row d-flex justify-content-start" :style="{ marginTop: 26 }">
+                    <div class="col-sm-12 col-md-5 d-flex flex-row" style="gap: 11px">
+                        <div class="shimmer" :style="{ height: 19, width: 170 }" />
+                        <div class="shimmer" :style="{ height: 19, width: 150 }" />
+                        <div class="shimmer" :style="{ height: 19, width: 180 }" />
+                    </div>
                 </div>
-            </div>
-            <div class="row d-flex justify-content-start" :style="{ marginTop: 26 }">
-                <div class="col-sm-12 col-md-5 d-flex flex-row" style="gap: 11px">
-                    <div class="shimmer" :style="{ height: 41, width: 100 }" />
-                    <div class="shimmer" :style="{ height: 41, width: 120 }" />
+                <div class="row d-flex justify-content-start" :style="{ marginTop: 26 }">
+                    <div class="col-sm-12 col-md-5 d-flex flex-row" style="gap: 11px">
+                        <div class="shimmer" :style="{ height: 41, width: 100 }" />
+                        <div class="shimmer" :style="{ height: 41, width: 120 }" />
+                    </div>
                 </div>
-            </div>
-            <div class="row d-flex justify-content-end" :style="{ marginTop: 26 }">
-                <div class="col-sm-12 col-md-2 d-flex align-items-end">
-                    <div class="shimmer" :style="{ height: 17, width: '100%' }" />
+                <div class="row d-flex justify-content-end" :style="{ marginTop: 26 }">
+                    <div class="col-sm-12 col-md-2 d-flex align-items-end">
+                        <div class="shimmer" :style="{ height: 17, width: '100%' }" />
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        <div class="shimmer" :style="{ height: 33, width: '100%' }" />
+                    </div>
                 </div>
-                <div class="col-sm-12 col-md-3">
-                    <div class="shimmer" :style="{ height: 33, width: '100%' }" />
+                <div class="row d-flex justify-content-start" :style="{ marginTop: 26, marginBottom: 18 }">
+                    <div class="col-md-2 col-sm-12">
+                        <div class="shimmer" :style="{ height: 70, width: '100%' }" />
+                    </div>
+                    <div class="col-md-3 col-sm-12">
+                        <div class="shimmer" :style="{ height: 70, width: '100%' }" />
+                    </div>
                 </div>
-            </div>
-            <div class="row d-flex justify-content-start" :style="{ marginTop: 26 }">
-                <div class="col-md-2 col-sm-12">
-                    <div class="shimmer" :style="{ height: 70, width: '100%' }" />
-                </div>
-                <div class="col-md-3 col-sm-12">
-                    <div class="shimmer" :style="{ height: 70, width: '100%' }" />
-                </div>
-            </div>
-            <div class="row d-flex justify-content-end" :style="{ marginTop: 26 }">
+            </template>
+            <template v-else>
+                <VRuntimeTemplate v-if="template.top" :template="template.top" />
+            </template>
+            <div class="row d-flex justify-content-end" :style="{ marginTop: 18 }" v-if="loading.table">
                 <div class="col-12">
                     <div class="shimmer" :style="{ height: 450, width: '100%' }" />
                 </div>
             </div>
+            <template v-else>
+                <VRuntimeTemplate v-if="template.table" :template="template.table" />
+            </template>
         </template>
         <template v-else>
-            <VRuntimeTemplate :template="template" />
+            <VRuntimeTemplate v-if="template.no_data" :template="template.no_data" />
         </template>
     </div>
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
-// import io from "socket.io-client";
+import io from "socket.io-client";
 
 export default {
     props: ["resource_id", "report_mode"],
@@ -52,8 +60,15 @@ export default {
     },
     data() {
         return {
-            loading: true,
-            template: "",
+            loading: {
+                top: true,
+                table: true,
+                no_data: true,
+            },
+            template: {
+                no_data: "",
+                top: "",
+            },
         };
     },
     computed: {
@@ -74,26 +89,43 @@ export default {
             this.$http
                 .post(route, params)
                 .then(({ data }) => {
-                    this.loading = false;
-                    const template = data.template_chunked.join("");
-                    this.template = template;
+                    if (!params.socket_client_id) {
+                        if (data.type == "no_data") {
+                            this.template.no_data = data.no_data;
+                            const template = data.template_chunked.join("");
+                            this.template.no_data = template;
+                        } else {
+                            const top_template = data.top.join("");
+                            this.template.top = top_template;
+                            this.loading.top = false;
+
+                            const table_template = data.table.join("");
+                            this.template.table = table_template;
+                            this.loading.table = false;
+                        }
+                    }
                 })
                 .catch((error) => {
                     console.log(error);
-                    this.loading = false;
                 });
         },
         init() {
-            this.loading = true;
-            // if (laravel.chat.enabled) {
-            //     const route = `${laravel.chat.uri}:${laravel.chat.port}`;
-            //     const socket = io(route);
-            //     socket.on("connected", (client) => {
-            //         this.requestForData({ ...this.query_params, socket_client_id: client.id });
-            //     });
-            // } else {
-            this.requestForData(this.query_params);
-            // }
+            if (laravel.chat.enabled) {
+                const route = `${laravel.chat.uri}:${laravel.chat.port}`;
+                const socket = io(route);
+                socket.on("connected", (client) => {
+                    this.requestForData({ ...this.query_params, socket_client_id: client.id });
+                });
+
+                socket.on("template", (data) => {
+                    this.template[data.type] = data[data.type];
+                    const template = data.template.join("");
+                    this.template[data.type] = template;
+                    this.loading[data.type] = false;
+                });
+            } else {
+                this.requestForData(this.query_params);
+            }
         },
     },
 };

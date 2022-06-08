@@ -19,6 +19,7 @@ use marcusvbda\vstack\Models\ResourceConfig;
 use marcusvbda\vstack\Vstack;
 use Validator;
 
+
 class ResourceController extends Controller
 {
 	public function report($resource, Request $request)
@@ -45,6 +46,7 @@ class ResourceController extends Controller
 				abort(403);
 			}
 		}
+		$socket_client_id = @$request->socket_client_id;
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
 		$list_items = $resource->listItemsContent(clone $data);
@@ -58,10 +60,60 @@ class ResourceController extends Controller
 			$this->storeListType($resource, $request["list_type"]);
 		}
 		$user = Auth::user();
-		$template = "<div>" . view("vStack::resources.index_loader", compact("resource", "data", "list_items", "report_mode", "user"))->render() . "</div>";
-		$minified_template = ResourcesHelpers::minify($template);
-		$template_chunked = str_split($minified_template, 500);
-		return json_encode(['template_chunked' => $template_chunked], JSON_INVALID_UTF8_IGNORE);
+
+		$model_count = $resource->model->count();
+		if (!$model_count) {
+			$template = "<div>" . view("vStack::resources.loader.no_data", compact("resource", "model_count"))->render() . "</div>";
+			$minified_template = ResourcesHelpers::minify($template);
+			$template_chunked = str_split($minified_template, 100);
+			$response = ['template_chunked' => $template_chunked, "type" => "no_data"];
+			if (!$socket_client_id) {
+				return json_encode($response, JSON_INVALID_UTF8_IGNORE);
+			} else {
+				Vstack::SocketEmit('template', $socket_client_id, $response, "client");
+				return ["success" => true, "message" => "response with socket"];
+			}
+		} else {
+			$filters = $resource->filters();
+			$_data =  request()->all();
+			if (@$_data["page"]) {
+				unset($_data['page']);
+			}
+			if (@$_data["page_type"]) {
+				unset($_data['page_type']);
+			}
+
+			if (@$_data["socket_client_id"]) {
+				unset($_data['socket_client_id']);
+			}
+
+			$topGetter = function () use ($filters, $_data, $resource, $data, $list_items, $report_mode, $user) {
+				$template = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "list_items", "report_mode", "user"))->render() . "</div>";
+				$template = ResourcesHelpers::minify($template);
+				$template = str_split($template, 500);
+				return $template;
+			};
+
+			$tableGetter = function () use ($filters, $_data, $resource, $data, $list_items, $report_mode, $user) {
+				$template = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "list_items", "report_mode", "user"))->render() . "</div>";
+				$template = ResourcesHelpers::minify($template);
+				$template = str_split($template, 500);
+				return $template;
+			};
+
+			if ($socket_client_id) {
+				$template = $tableGetter();
+				Vstack::SocketEmit('template', $socket_client_id, ['template' => $template, "type" => "table"], "client");
+
+				$template = $topGetter();
+				Vstack::SocketEmit('template', $socket_client_id, ['template' => $template, "type" => "top"], "client");
+				return ["success" => true, "message" => "response with socket"];
+			} else {
+				$top = $topGetter();
+				$table = $tableGetter();
+				return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
+			}
+		}
 	}
 
 	protected function showIndexList($resource, Request $request, $report_mode = false)

@@ -118,7 +118,7 @@ class Resource
 
 	public function nothingStoredText()
 	{
-		return "<h4>Nada cadastrado ainda...<h4>";
+		return "<h4>Nada cadastrado ainda...</h4>";
 	}
 
 	public function secondCrudBtn()
