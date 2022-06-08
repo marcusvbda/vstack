@@ -32,13 +32,7 @@
             </div>
             <div class="row d-flex justify-content-end" :style="{ marginTop: 26 }">
                 <div class="col-12">
-                    <div
-                        class="shimmer"
-                        :style="{ height: 450, width: '100%' }"
-                        v-loading="true"
-                        element-loading-text="Aguarde ..."
-                        element-loading-spinner="el-icon-loading"
-                    />
+                    <div class="shimmer" :style="{ height: 450, width: '100%' }" />
                 </div>
             </div>
         </template>
@@ -81,7 +75,8 @@ export default {
                 .post(route, params)
                 .then(({ data }) => {
                     this.loading = false;
-                    this.template = data.template_chunked.join("");
+                    const template = data.template_chunked.join("");
+                    this.template = template;
                 })
                 .catch((error) => {
                     console.log(error);

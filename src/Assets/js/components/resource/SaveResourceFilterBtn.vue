@@ -46,7 +46,6 @@ export default {
             if (filters?.page_type) {
                 delete filters.page_type;
             }
-            console.log(filters);
             return Object.keys(filters).length > 0 ?? false;
         },
     },
