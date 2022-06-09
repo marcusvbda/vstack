@@ -66,7 +66,7 @@ class ResourceController extends Controller
 			$template = "<div>" . view("vStack::resources.loader.no_data", compact("resource", "model_count"))->render() . "</div>";
 			$minified_template = ResourcesHelpers::minify($template);
 			$template_chunked = str_split($minified_template, 100);
-			$response = ['template_chunked' => $template_chunked, "type" => "no_data"];
+			$response = ['template' => $template_chunked, "type" => "no_data"];
 			if (!$socket_client_id) {
 				return json_encode($response, JSON_INVALID_UTF8_IGNORE);
 			} else {
@@ -83,10 +83,6 @@ class ResourceController extends Controller
 				unset($_data['page_type']);
 			}
 
-			if (@$_data["socket_client_id"]) {
-				unset($_data['socket_client_id']);
-			}
-
 			$topGetter = function () use ($filters, $_data, $resource, $data, $list_items, $report_mode, $user) {
 				$template = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "list_items", "report_mode", "user"))->render() . "</div>";
 				$template = ResourcesHelpers::minify($template);
@@ -101,18 +97,9 @@ class ResourceController extends Controller
 				return $template;
 			};
 
-			if ($socket_client_id) {
-				$template = $tableGetter();
-				Vstack::SocketEmit('template', $socket_client_id, ['template' => $template, "type" => "table"], "client");
-
-				$template = $topGetter();
-				Vstack::SocketEmit('template', $socket_client_id, ['template' => $template, "type" => "top"], "client");
-				return ["success" => true, "message" => "response with socket"];
-			} else {
-				$top = $topGetter();
-				$table = $tableGetter();
-				return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
-			}
+			$top = $topGetter();
+			$table = $tableGetter();
+			return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
 		}
 	}
 

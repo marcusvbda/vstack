@@ -23,7 +23,8 @@ server.listen(port, () => {
     console.log(`${origin}:${port}`);
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 
 app.get("/", (req, res) => {
     res.send("Socket server is running ...");
@@ -69,3 +70,16 @@ io.on("connection", (client) => {
         clients[client.id] && delete clients[client.id];
     });
 });
+
+//call on client
+// if (laravel.chat.enabled) {
+//     const route = `${laravel.chat.uri}:${laravel.chat.port}`;
+//     const socket = io(route);
+//     socket.on("connected", (client) => {
+//         this.requestForData({ ...this.query_params, socket_client_id: client.id });
+//     });
+
+//     socket.on("event", (data) => {
+//         console.log(data)
+//     });
+// }

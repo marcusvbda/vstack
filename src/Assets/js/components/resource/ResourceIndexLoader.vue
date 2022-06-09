@@ -84,48 +84,30 @@ export default {
         });
     },
     methods: {
-        requestForData(params) {
+        init() {
+            this.requestFor;
+            const params = this.query_params;
             const route = `/admin/${this.resource_id}/${this.report_mode ? "report" : "list"}/get-list-data`;
             this.$http
                 .post(route, params)
                 .then(({ data }) => {
-                    if (!params.socket_client_id) {
-                        if (data.type == "no_data") {
-                            this.template.no_data = data.no_data;
-                            const template = data.template_chunked.join("");
-                            this.template.no_data = template;
-                        } else {
-                            const top_template = data.top.join("");
-                            this.template.top = top_template;
-                            this.loading.top = false;
+                    if (data.type == "no_data") {
+                        this.template.no_data = data.no_data;
+                        const template = data.template_chunked.join("");
+                        this.template.no_data = template;
+                    } else {
+                        const top_template = data.top.join("");
+                        this.template.top = top_template;
+                        this.loading.top = false;
 
-                            const table_template = data.table.join("");
-                            this.template.table = table_template;
-                            this.loading.table = false;
-                        }
+                        const table_template = data.table.join("");
+                        this.template.table = table_template;
+                        this.loading.table = false;
                     }
                 })
                 .catch((error) => {
                     console.log(error);
                 });
-        },
-        init() {
-            if (laravel.chat.enabled) {
-                const route = `${laravel.chat.uri}:${laravel.chat.port}`;
-                const socket = io(route);
-                socket.on("connected", (client) => {
-                    this.requestForData({ ...this.query_params, socket_client_id: client.id });
-                });
-
-                socket.on("template", (data) => {
-                    this.template[data.type] = data[data.type];
-                    const template = data.template.join("");
-                    this.template[data.type] = template;
-                    this.loading[data.type] = false;
-                });
-            } else {
-                this.requestForData(this.query_params);
-            }
         },
     },
 };
