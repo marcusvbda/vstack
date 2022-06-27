@@ -25,7 +25,8 @@ trait CascadeOrRestrictSoftdeletes
 		$relations = $model->restrictDeletes;
 		foreach ($relations as $key => $relation) {
 			$isCompound = !is_integer($key);
-			if ($model->{($isCompound) ? $key : $relation}()->exists()) {
+			$relation_index = $isCompound ? $key : $relation;
+			if (@$model->{$relation_index}()->exists() || @$model->{$relation_index}()->count()) {
 				abort(500, ($isCompound) ? $relation : "Não pode ser excluído pois está em uso");
 			}
 		}

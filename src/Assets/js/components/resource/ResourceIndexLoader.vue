@@ -93,7 +93,7 @@ export default {
                 .then(({ data }) => {
                     if (data.type == "no_data") {
                         this.template.no_data = data.no_data;
-                        const template = data.template_chunked.join("");
+                        const template = data.template.join("");
                         this.template.no_data = template;
                     } else {
                         const top_template = data.top.join("");

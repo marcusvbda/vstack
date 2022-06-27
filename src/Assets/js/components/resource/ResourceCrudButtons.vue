@@ -74,9 +74,10 @@ export default {
                     this.loading = this.$loading({ text: "Aguarde ..." });
                     this.$http
                         .delete(this.data.route + "/destroy", {})
-                        .then((res) => {
-                            res = res.data;
-                            return (window.location.href = res.route);
+                        .then(({ data }) => {
+                            if (data.success) {
+                                return (window.location.href = data.route);
+                            }
                         })
                         .catch((er) => {
                             this.loading.close();
