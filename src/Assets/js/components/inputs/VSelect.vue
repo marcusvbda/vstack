@@ -17,29 +17,17 @@
                             <div class="shimmer select mb-3" />
                             <div class="shimmer select mb-3" />
                         </template>
-                        <el-checkbox-group class="vstack-hasmany" v-model="value" v-else>
-                            <el-checkbox-button v-for="(op, i) in options" :label="op.id" :key="i">
-                                {{ op.name }}
-                            </el-checkbox-button>
-                        </el-checkbox-group>
+                        <div class="d-flex flex-row" v-else>
+                            <el-checkbox-group class="vstack-hasmany" v-model="value" >
+                                <el-checkbox-button v-for="(op, i) in options" :label="op.id" :key="i">
+                                    {{ op.name }}
+                                </el-checkbox-button>
+                            </el-checkbox-group>
+                            <a class="px-3 text-center f-12" @click.prevent="toggleMarked" href="#">
+                                {{marked ?'Marcar':'Desmarcar'}} todas as opções
+                            </a>
+                        </div>
                     </template>
-                    <!-- <ElSelectAll
-                            :allow-create="allowcreate"
-                            :disabled="disabled"
-                            :multiple="multiple ? true : false"
-                            :popper-append-to-body="true"
-                            :size="size ? size : 'large'"
-                            class="w-100"
-                            clearable
-                            v-model="value"
-                            collapse-tags
-                            filterable
-                            :placeholder="placeholder"
-                            v-loading="loading"
-                            :options="options.map((x) => ({ label: x.name, value: String(x.id) }))"
-                            :label="all_options_label"
-                            v-if="multiple"
-                        /> -->
                     <template v-else>
                         <div class="shimmer select" v-if="loading" />
                         <el-select
@@ -98,6 +86,7 @@ export default {
             started: false,
             options: [],
             value: this.multiple ? [] : null,
+            marked:false
         };
     },
     created() {
@@ -115,6 +104,14 @@ export default {
         },
     },
     methods: {
+        toggleMarked() {
+            if(!this.marked) {
+                this.value = this.options.map(x=>x.id);
+            } else {
+                this.value = [];
+            }
+            this.marked = !this.marked;
+        },
         initialize() {
             if (this.list_model) {
                 this.initOptions(() => {
@@ -125,8 +122,12 @@ export default {
             } else {
                 for (let i in this.option_list) {
                     let value = this.option_list[i];
-                    if (typeof value == "string") this.options.push({ id: value, name: value });
-                    if (typeof value == "object") this.options.push({ id: String(value.id), name: value.value });
+                    if (typeof value == "string") {
+                        this.options.push({ id: value, name: value });
+                    }
+                    if (typeof value == "object") {
+                        this.options.push({ id: String(value.id), name: value.value });
+                    }
                 }
                 this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
                 this.loading = false;
