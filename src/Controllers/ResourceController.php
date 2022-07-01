@@ -756,7 +756,7 @@ class ResourceController extends Controller
 	{
 		try {
 			return class_exists(get_class(@$target->{$index}));
-		} catch (\Throwable $e) {
+		} catch (\Exception $e) {
 			return false;
 		}
 	}
