@@ -515,12 +515,15 @@ class ResourceController extends Controller
 		$columns = data_get($data, 'columns');
 		$processed_rows = [];
 		foreach ($results as $row) {
-			$result = (array_filter(array_map(function ($key)  use ($row, $columns, $vstack_controller, $resource) {
+			$result = (array_map(function ($key)  use ($row, $columns, $vstack_controller, $resource) {
 				$enabled = data_get($columns, $key . ".enabled");
 				if ($enabled) {
 					return $vstack_controller->getColumnIndex($resource->exportColumns(), $row, $key);
 				}
-			}, array_keys($columns))));
+			}, array_keys($columns)));
+			$result = array_filter($result, function ($row) {
+				return @$row !== null;
+			});
 			$processed_rows[] = array_values($result);
 		}
 		return $processed_rows;
