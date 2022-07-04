@@ -24,7 +24,7 @@
                                 </el-checkbox-button>
                             </el-checkbox-group>
                             <a class="px-3 text-center f-12" @click.prevent="toggleMarked" href="#">
-                                {{marked ?'Marcar':'Desmarcar'}} todas as opções
+                                {{!marked ?'Marcar':'Desmarcar'}} todas as opções
                             </a>
                         </div>
                     </template>
@@ -99,7 +99,10 @@ export default {
     watch: {
         value(val) {
             if (this.started) {
-                return this.$emit("input", val);
+                this.$emit("input", val);
+                if(Array.isArray(this.value)) {
+                    this.marked=this.value.length === this.options.length
+                }
             }
         },
     },
