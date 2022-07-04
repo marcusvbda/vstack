@@ -413,7 +413,11 @@ export default {
                     typeof options.value != "object" ? String(options.value) : options.value
                 );
             } else {
-                value = this.processFieldPerType(options.type, options.default);
+                value = this.content?.id ? options.value : options.default;
+                if(Array.isArray(value)) {
+                    value = value.filter(x => x);
+                }
+                value = this.processFieldPerType(options.type,value);
             }
             return value;
         },

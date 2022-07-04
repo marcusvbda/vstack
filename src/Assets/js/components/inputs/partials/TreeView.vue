@@ -63,7 +63,7 @@
                                     v-if="template"
                                     :key="i"
                                     :template="`<div>${template}</div>`"
-                                    :templateProps="{ item }"
+                                    :templateProps="{ item,counter:i+1 }"
                                 />
                                 <template v-else>
                                     <VRuntimeTemplate
