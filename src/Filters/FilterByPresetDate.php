@@ -34,6 +34,10 @@ class FilterByPresetDate extends Filter
             $this->$key = $value;
         }
 
+        if (!$this->index) {
+            $this->index = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0',  @$this->field ? @$this->field : @$this->column));
+        }
+
         $this->element = "
             <custom-preset-date-filter @on-submit='showConfirm' index='" . $this->index . "' :filter='filter' :options='" . json_encode($this->_options) . "'/>
         ";
@@ -43,7 +47,7 @@ class FilterByPresetDate extends Filter
                 if ($value == "todos") {
                     return $query;
                 }
-                return  $query->whereRaw(queryBetweenDates($this->field, $dates));
+                return  $query->whereRaw(queryBetweenDates(@$this->field ? @$this->field : @$this->column, $dates));
             };
         }
         parent::__construct();

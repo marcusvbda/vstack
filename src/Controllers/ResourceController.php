@@ -49,7 +49,7 @@ class ResourceController extends Controller
 		$socket_client_id = @$request->socket_client_id;
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
-		$list_items = $resource->listItemsContent(clone $data);
+
 		$data = $data->select("*")->paginate($per_page);
 		if ($report_mode) {
 			$data->setPath(route('resource.report', ["resource" => $resource->id]));
@@ -83,15 +83,15 @@ class ResourceController extends Controller
 				unset($_data['page_type']);
 			}
 
-			$topGetter = function () use ($filters, $_data, $resource, $data, $list_items, $report_mode, $user) {
-				$template = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "list_items", "report_mode", "user"))->render() . "</div>";
+			$topGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
+				$template = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
 				$template = ResourcesHelpers::minify($template);
 				$template = str_split($template, 500);
 				return $template;
 			};
 
-			$tableGetter = function () use ($filters, $_data, $resource, $data, $list_items, $report_mode, $user) {
-				$template = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "list_items", "report_mode", "user"))->render() . "</div>";
+			$tableGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
+				$template = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
 				$template = ResourcesHelpers::minify($template);
 				$template = str_split($template, 500);
 				return $template;
@@ -101,6 +101,14 @@ class ResourceController extends Controller
 			$table = $tableGetter();
 			return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
 		}
+	}
+
+	public function getListItem(Request $request)
+	{
+		$resource = ResourcesHelpers::find($request->resource_id);
+		$data = $this->getData($resource, $request);
+		$result = $resource->listItemsContent(clone $data);
+		return $result ? $result : [];
 	}
 
 	protected function showIndexList($resource, Request $request, $report_mode = false)
@@ -144,8 +152,12 @@ class ResourceController extends Controller
 	public function createReportTemplate($resource, Request $request)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		if (!$resource->canViewReport()) abort(403);
-		if (!$resource->canCreateReportTemplates()) abort(403);
+		if (!$resource->canViewReport()) {
+			abort(403);
+		}
+		if (!$resource->canCreateReportTemplates()) {
+			abort(403);
+		}
 		$user = Auth::user();
 		$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "report_templates")->first();
 		$config = @$config->id ? $config : new ResourceConfig;

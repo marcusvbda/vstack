@@ -9,7 +9,7 @@ class FilterByOption extends Filter
     public $component   = "select-filter";
     public $label       = "";
     public $index = "";
-    public $column = "";
+    public $field = "";
     public $placeholder = "";
     public $multiple = false;
 
@@ -19,7 +19,7 @@ class FilterByOption extends Filter
             $this->{$key} = $value;
         }
         if (!$this->index) {
-            $this->index = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $this->column));
+            $this->index = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', @$this->field ? @$this->field : @$this->column));
         }
         parent::__construct();
     }
@@ -27,6 +27,6 @@ class FilterByOption extends Filter
     public function apply($query, $value)
     {
         $ids = explode(",", $value);
-        return $query->whereIn($this->column, $ids);
+        return $query->whereIn(@$this->field ? @$this->field : @$this->column, $ids);
     }
 }

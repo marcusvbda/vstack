@@ -1,6 +1,4 @@
-@if($list_items)
-    <resource-list-items :list_items='@json($list_items)'></resource-list-items>        
-@endif
+<resource-list-items resource_id="{{ $resource->id }}" :request_data='@json(request()->all())'></resource-list-items>   
 <div class="row">
     <div class="col-12">
         @if ($data->total() > 0)
