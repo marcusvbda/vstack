@@ -119,6 +119,9 @@ export default {
             if (this.list_model) {
                 this.initOptions(() => {
                     this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
+                    if(!Array.isArray(this.value)) {
+                        this.value = String(this.value);
+                    }
                     this.loading = false;
                     this.started = true;
                 });
@@ -147,7 +150,7 @@ export default {
                 .then((res) => {
                     res = res.data;
                     this.options = res.data.map(x => {
-                        return { id: String(x.id), name: x.value };
+                        return { id: String(x.id), name: x.name };
                     });
                     callback();
                 })
