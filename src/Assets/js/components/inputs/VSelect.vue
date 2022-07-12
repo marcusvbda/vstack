@@ -146,7 +146,9 @@ export default {
                 .post(this.route_list, { model: this.list_model, model_fields: this.model_fields })
                 .then((res) => {
                     res = res.data;
-                    this.options = res.data;
+                    this.options = res.data.map(x => {
+                        return { id: String(x.id), name: x.value };
+                    });
                     callback();
                 })
                 .catch((er) => {

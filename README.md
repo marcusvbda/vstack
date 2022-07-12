@@ -388,3 +388,12 @@ new Upload([
     // "list_type" => "picture-card"//(picture,picture-card) //default picture-card
 ])
 ```
+
+
+
+Comandos
+```
+php artisan vstack:make-action {resource} {name}
+php artisan vstack:make-resource {resource} {model} {table}
+php artisan vstack:make-filter {resource} {name} {type}
+```
