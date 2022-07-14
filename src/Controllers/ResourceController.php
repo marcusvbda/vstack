@@ -24,7 +24,7 @@ class ResourceController extends Controller
 {
 	public function report($resource, Request $request)
 	{
-		request()->request->add(["page_type" => "report"]);
+		request()->merge(["page_type" => "report"]);
 		return $this->showIndexList($resource, $request, true);
 	}
 
@@ -33,9 +33,9 @@ class ResourceController extends Controller
 		$resource = ResourcesHelpers::find($resource);
 		$report_mode = $type == "report";
 		if ($report_mode) {
-			request()->request->add(["page_type" => "report"]);
+			request()->merge(["page_type" => "report"]);
 		} else {
-			request()->request->add(["page_type" => "list"]);
+			request()->merge(["page_type" => "list"]);
 		}
 		if ($report_mode) {
 			if (!$resource->canViewReport()) {
@@ -178,7 +178,7 @@ class ResourceController extends Controller
 
 	public function index($resource, Request $request)
 	{
-		request()->request->add(["page_type" => "list"]);
+		request()->merge(["page_type" => "list"]);
 		return $this->showIndexList($resource, $request);
 	}
 
@@ -273,7 +273,7 @@ class ResourceController extends Controller
 
 	public function edit($resource, $code, Request $request)
 	{
-		request()->request->add(["page_type" => "edit"]);
+		request()->merge(["page_type" => "edit"]);
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
 		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) {
@@ -294,7 +294,7 @@ class ResourceController extends Controller
 
 	public function create($resource, Request $request)
 	{
-		request()->request->add(["page_type" => "create"]);
+		request()->merge(["page_type" => "create"]);
 		$params = @$request["params"] ? $request["params"] : [];
 		$resource = ResourcesHelpers::find($resource);
 		if (!@$resource->canCreate()) abort(403);
@@ -482,7 +482,7 @@ class ResourceController extends Controller
 
 	public function export($resource, Request $request)
 	{
-		request()->request->add(["page_type" => "exporting_report"]);
+		request()->merge(["page_type" => "exporting_report"]);
 		$resource = ResourcesHelpers::find($resource);
 
 		if (!$resource->canExport()) {
@@ -600,7 +600,7 @@ class ResourceController extends Controller
 		}
 		if ($method == "POST") {
 			if ($request->input_origin) {
-				request()->request->add(["input_origin" => $request->input_origin]);
+				request()->merge(["input_origin" => $request->input_origin]);
 			}
 		}
 		$resource = ResourcesHelpers::find($resource);
@@ -623,7 +623,7 @@ class ResourceController extends Controller
 
 	public function view(Request $request, $resource, $code)
 	{
-		request()->request->add(["page_type" => "view"]);
+		request()->merge(["page_type" => "view"]);
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
 		if (!$resource->canViewRow($content) || !$resource->canView()) {
@@ -641,7 +641,7 @@ class ResourceController extends Controller
 
 	protected function makeCrudData($resource, $content = null)
 	{
-		request()->request->add(["content" => @$content]);
+		request()->merge(["content" => @$content]);
 		return [
 			"id"          => @$content->id,
 			"fields"      => $this->makeCrudDataFields($content, $resource->fields()),
@@ -703,7 +703,7 @@ class ResourceController extends Controller
 	public function store(Request $request)
 	{
 		if ($request->input_origin) {
-			request()->request->add(["input_origin" => $request->input_origin]);
+			request()->merge(["input_origin" => $request->input_origin]);
 		}
 		$data = $request->all();
 		if (!@$data["resource_id"]) {
@@ -711,12 +711,12 @@ class ResourceController extends Controller
 		}
 		$resource = ResourcesHelpers::find($data["resource_id"]);
 		if (@$data["id"]) {
-			request()->request->add(["page_type" => "edit"]);
+			request()->merge(["page_type" => "edit"]);
 			if (!$resource->canUpdate()) {
 				abort(403);
 			}
 		} else {
-			request()->request->add(["page_type" => "create"]);
+			request()->merge(["page_type" => "create"]);
 			if (!$resource->canCreate()) {
 				abort(403);
 			}
@@ -724,7 +724,7 @@ class ResourceController extends Controller
 		$id = @$data["id"];
 		if ($id) {
 			$content = $resource->getModelInstance()->find($id);
-			request()->request->add(["content" => @$content]);
+			request()->merge(["content" => @$content]);
 		}
 		$validation_custom_message =  $resource->getValidationRuleMessage();
 		$validator = Validator::make($request->all(), $resource->getValidationRule(), @$validation_custom_message ?? []);
@@ -1018,7 +1018,7 @@ class ResourceController extends Controller
 
 	public function storeWizardStepValidation(Request $request)
 	{
-		request()->request->add(["page_type" => $request["page_type"]]);
+		request()->merge(["page_type" => $request["page_type"]]);
 		$resource = ResourcesHelpers::find($request["resource_id"]);
 		$rules = $resource->getValidationRule($request["wizard_step"]);
 		$request->validate($rules);
@@ -1027,14 +1027,14 @@ class ResourceController extends Controller
 
 	public function getResource($resource_id, Request $request)
 	{
-		request()->request->add(["is_api" => true]);
+		request()->merge(["is_api" => true]);
 		$result = $this->index($resource_id, $request);
 		return response()->json($result);
 	}
 
 	public function findByCode($resource_id, $code, Request $request)
 	{
-		request()->request->add(["is_api" => true]);
+		request()->merge(["is_api" => true]);
 		$decoded = \Hashids::decode($code);
 		$id = @$decoded[0] ?? $code;
 		$result = $this->view($request, $resource_id, $id);
@@ -1043,7 +1043,7 @@ class ResourceController extends Controller
 
 	public function apiStore($resource_id, $id, $type, Request $request)
 	{
-		request()->request->add(["is_api" => true, "resource_id" => $resource_id, "id" => @$id, "page_type" => $type]);
+		request()->merge(["is_api" => true, "resource_id" => $resource_id, "id" => @$id, "page_type" => $type]);
 		$result = $this->store($request);
 		return $result;
 	}
@@ -1081,7 +1081,7 @@ class ResourceController extends Controller
 
 	public function resource_tree(Request $request)
 	{
-		request()->request->add(["input_origin" => "resource-tree"]);
+		request()->merge(["input_origin" => "resource-tree"]);
 
 		$resource = ResourcesHelpers::find($request->parent_resource);
 		$field = null;
@@ -1105,7 +1105,7 @@ class ResourceController extends Controller
 
 	private function makeRecursiveTree($resource, $options, $parent_resource, $qty_fields, $disabled)
 	{
-		request()->request->add(["input_origin" => "resource-tree"]);
+		request()->merge(["input_origin" => "resource-tree"]);
 		$children = [];
 		$cards = $resource->fields();
 		$children = [];
@@ -1147,7 +1147,7 @@ class ResourceController extends Controller
 
 	public function resource_tree_items(Request $request)
 	{
-		request()->request->add(["input_origin" => "resource-tree"]);
+		request()->merge(["input_origin" => "resource-tree"]);
 		$resource = ResourcesHelpers::find($request->resource);
 		if (!$resource->canViewList()) {
 			abort(404);

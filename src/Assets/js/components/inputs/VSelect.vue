@@ -121,7 +121,7 @@ export default {
                     this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
                     if(!Array.isArray(this.value)) {
                         this.value = String(this.value);
-                    }
+                    } 
                     this.loading = false;
                     this.started = true;
                 });
@@ -136,6 +136,9 @@ export default {
                     }
                 }
                 this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
+                if(Array.isArray(this.value)) {
+                    this.value = this.value.map(x=>String(x));
+                } 
                 this.loading = false;
                 this.started = true;
             }

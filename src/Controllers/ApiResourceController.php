@@ -31,14 +31,14 @@ class ApiResourceController extends Controller
 
     public function get($resource_id, Request $request)
     {
-        request()->request->add(["is_api" => true]);
+        request()->merge(["is_api" => true]);
         $result = (new ResourceController)->index($resource_id, $request);
         return response()->json($result);
     }
 
     public function find($resource_id, $code, Request $request)
     {
-        request()->request->add(["is_api" => true]);
+        request()->merge(["is_api" => true]);
         $id = data_get(Hashids::decode($code), 0, $code);
         $result = (new ResourceController)->view($request, $resource_id, $id);
         return response()->json($result);
@@ -46,7 +46,7 @@ class ApiResourceController extends Controller
 
     private function apiStore($resource_id, $id, $type, Request $request)
     {
-        request()->request->add(["is_api" => true, "resource_id" => $resource_id, "id" => @$id, "page_type" => $type]);
+        request()->merge(["is_api" => true, "resource_id" => $resource_id, "id" => @$id, "page_type" => $type]);
         $result = (new ResourceController)->store($request);
         return $result;
     }
