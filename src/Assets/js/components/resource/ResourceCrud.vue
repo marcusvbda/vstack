@@ -407,13 +407,15 @@ export default {
             }
         },
         processFieldValue(name, options) {
-            let value = null;
-            if (!["null", ""].includes(String(options.value))) {
+            let value = options.value;
+            
+            if (!["null", ""].includes(String(options.value))) {                
                 let option_value = value ? value : options.default;
                 if(!['object','array'].includes(typeof option_value)) {
                     option_value = String(option_value);
                 }
                 value = this.processFieldPerType(options.type,option_value);
+                
             } else {
                 value = this.content?.id ? options.value : options.default;
                 let option_value = value ? value : options.default;
