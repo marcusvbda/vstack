@@ -414,10 +414,10 @@ export default {
                 );
             } else {
                 value = this.content?.id ? options.value : options.default;
-                if(Array.isArray(value)) {
-                    value = value.filter(x => x);
+                if (Array.isArray(value)) {
+                    value = value.filter((x) => x);
                 }
-                value = this.processFieldPerType(options.type,value);
+                value = this.processFieldPerType(options.type, value ? value : options.default);
             }
             return value;
         },
