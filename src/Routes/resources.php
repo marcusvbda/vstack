@@ -10,6 +10,7 @@ Route::group(['prefix' => "vstack"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
 		Route::get('grapes-editor', [VstackController::class, 'grapesEditor']);
 		Route::post('json-api', [VstackController::class, 'getJson']);
+		Route::get('json-api', [VstackController::class, 'getJson']);
 		Route::post('{resource}/get-partial-content', [VstackController::class, 'getPartialContent'])->name("vstack.get_partials_content");
 	});
 });
