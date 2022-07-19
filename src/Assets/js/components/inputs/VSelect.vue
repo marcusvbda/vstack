@@ -119,9 +119,14 @@ export default {
             if (this.list_model) {
                 this.initOptions(() => {
                     this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
+                    if(this.multiple ) {
+                        console.log("aquiiiiiiiii",this.label,this.$attrs.value,this.multiple )
+                    }
                     if(!Array.isArray(this.value)) {
                         this.value = String(this.value);
-                    } 
+                    }  else {
+                        this.value = this.value.map(x=>String(x));
+                    }
                     this.loading = false;
                     this.started = true;
                 });

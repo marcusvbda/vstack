@@ -767,6 +767,9 @@ class ResourceController extends Controller
 	private function isClass($target, $index)
 	{
 		try {
+			if (gettype(@$target->{$index}) != "object") {
+				return false;
+			}
 			return class_exists(get_class(@$target->{$index}));
 		} catch (\Exception $e) {
 			return false;

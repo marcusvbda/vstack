@@ -235,6 +235,7 @@ export default {
             loading_wizard_next: false,
             loading_wizard_previous: false,
             checked: false,
+            loading :false
         };
     },
     components: {
@@ -408,16 +409,21 @@ export default {
         processFieldValue(name, options) {
             let value = null;
             if (!["null", ""].includes(String(options.value))) {
-                value = this.processFieldPerType(
-                    options.type,
-                    typeof options.value != "object" ? String(options.value) : options.value
-                );
+                let option_value = value ? value : options.default;
+                if(!['object','array'].includes(typeof option_value)) {
+                    option_value = String(option_value);
+                }
+                value = this.processFieldPerType(options.type,option_value);
             } else {
                 value = this.content?.id ? options.value : options.default;
-                if (Array.isArray(value)) {
-                    value = value.filter((x) => x);
+                let option_value = value ? value : options.default;
+                if (Array.isArray(option_value)) {
+                    option_value = option_value.filter((x) => x);
                 }
-                value = this.processFieldPerType(options.type, value ? value : options.default);
+                if(!['object','array'].includes(typeof option_value)) {
+                    option_value = String(option_value);
+                }
+                value = this.processFieldPerType(options.type, option_value);
             }
             return value;
         },
@@ -438,7 +444,10 @@ export default {
                     return value ? value.split(",").map((x) => new Date(String(x))) : [];
                 },
             };
-            return actions[type] ? actions[type]() : value;
+            if(actions[type]) {
+                return actions[type]();
+            }
+            return value;
         },
         loadParams() {
             let paramKeys = Object.keys(this.params);
@@ -511,6 +520,7 @@ export default {
                 }
 
                 if (data.confirm) {
+                    this.loading_confirm = false;
                     this.$confirm(data.confirm?.message || "Confirmar ?", data.confirm?.title || "Confirmação", {
                         confirmButtonText: data.confirm?.buttons?.yes || "Sim",
                         cancelButtonText: data.confirm?.buttons?.no || "Não",
@@ -523,10 +533,10 @@ export default {
             });
         },
         submit(clicked_btn = "save_and_back") {
+            this.loading = this.$loading({ text: "Salvando ..." });
             if (!this.checked) {
                 return this.checkStore(clicked_btn);
             }
-            let loading = this.$loading({ text: "Salvando ..." });
             this.$http
                 .post(this.data.store_route, { ...this.form, clicked_btn })
                 .then(({ data }) => {
@@ -536,12 +546,12 @@ export default {
                         if (data.message) {
                             this.$message({ showClose: true, message: data.message.text, type: data.message.type });
                         }
-                        loading.close();
+                        this.loading.close();
                     }
                 })
                 .catch((er) => {
                     this.makeFormValidationErrors(er);
-                    loading.close();
+                    this.loading.close();
                 });
         },
     },
