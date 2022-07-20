@@ -150,8 +150,11 @@ export default {
                 this.options = this.optionlist ? this.optionlist : [];
                 return callback();
             }
+            const payload = {
+                params : { model: this.list_model, model_fields: this.model_fields }
+            }
             this.$http
-                .post(this.route_list, { model: this.list_model, model_fields: this.model_fields })
+                .get(this.route_list, payload)
                 .then((res) => {
                     res = res.data;
                     this.options = res.data.map(x => {

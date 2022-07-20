@@ -17,12 +17,17 @@ Route::group(['prefix' => "vstack"], function () {
 
 Route::group(['prefix' => "admin"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
+		Route::get('inputs/resource-tree', [ResourceController::class, 'resource_tree'])->name("resource.inputs.resource_tree");
+		Route::get('inputs/resource-tree/load-items', [ResourceController::class, 'resource_tree_items'])->name("resource.inputs.resource_tree_items");
+		Route::get('inputs/resource-tree/load-crud', [ResourceController::class, 'resource_tree_items_crud'])->name("resource.inputs.resource_tree_crud");
+		Route::get('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
+
 		Route::post('get-list-cards', [ResourceController::class, 'getListItem'])->name("resource.get_list_item");
 		Route::post('upload', [ResourceController::class, 'upload'])->name("resource.upload");
 		Route::get('relatorios/{resource}', [ResourceController::class, 'report'])->name("resource.report");
 		Route::post('relatorios/{resource}/create-report-template', [ResourceController::class, 'createReportTemplate'])->name("resource.create.report.template");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
-		Route::post('{resource}/{type}/get-list-data', [ResourceController::class, 'getListData'])->name("resource.getlistdata");
+		Route::get('{resource}/{type}/get-list-data', [ResourceController::class, 'getListData'])->name("resource.getlistdata");
 		Route::post('{resource}/field-data', [ResourceController::class, 'fieldData'])->name("resource.fielddata");
 		Route::get('{resource}/create', [ResourceController::class, 'create'])->name("resource.create");
 		Route::post('{resource}/action/{id}', [ResourceController::class, 'handlerAction'])->name("resource.action.submit");
@@ -46,10 +51,6 @@ Route::group(['prefix' => "admin"], function () {
 		Route::any('{resource}/{code}/destroy', [ResourceController::class, 'destroy'])->middleware(['hashids:code'])->name("resource.destroy");
 		Route::post('{resource}/{code}/before-destroy', [ResourceController::class, 'beforeDestroy'])->middleware(['hashids:code'])->name("resource.before_destroy");
 		Route::delete('{resource}/{id}/field/destroy', [ResourceController::class, 'destroyField'])->name("resource.field.destroy");
-		Route::post('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
-		Route::post('inputs/resource-tree', [ResourceController::class, 'resource_tree'])->name("resource.inputs.resource_tree");
-		Route::post('inputs/resource-tree/load-items', [ResourceController::class, 'resource_tree_items'])->name("resource.inputs.resource_tree_items");
-		Route::post('inputs/resource-tree/load-crud', [ResourceController::class, 'resource_tree_items_crud'])->name("resource.inputs.resource_tree_crud");
 		Route::post('globalsearch', [ResourceController::class, 'globalSearch'])->name("resource.globalsearch");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
 	});

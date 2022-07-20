@@ -48,11 +48,14 @@ export default {
     },
     methods: {
         loadComponent() {
-            this.$http
-                .post(this.route_load, {
+            const payload = {
+                params : {
                     resource: this.resource,
                     parent_resource: this.parent_resource,
-                })
+                }
+            }
+            this.$http
+                .get(this.route_load, payload)
                 .then(({ data }) => {
                     this.tree = data;
                     this.loading = false;

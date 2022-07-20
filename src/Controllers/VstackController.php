@@ -119,11 +119,11 @@ class VstackController extends Controller
 		$order_by = @$request["order_by"];
 		$query = app()->make($model);
 		$filters  = @$request["filters"] ?? [];
-		
-		if (gettype($filters) === "string") {
+
+		if (is_string($filters)) {
 			$filters = json_decode($filters, true);
 		}
-		
+
 		$query = $this->processApiFilters($filters, $query);
 		$result = $query->select($fields)->with($includes);
 		if ($order_by) {

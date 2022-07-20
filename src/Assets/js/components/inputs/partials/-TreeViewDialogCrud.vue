@@ -114,7 +114,10 @@ export default {
             this.$set(this.form, this.fk_index, this.fk_value);
         },
         init() {
-            this.$http.post("/admin/inputs/resource-tree/load-crud", { resource: this.resource }).then(({ data }) => {
+            const payload = {
+                params : { resource: this.resource }
+            }
+            this.$http.get("/admin/inputs/resource-tree/load-crud", payload).then(({ data }) => {
                 this.inputs = data;
                 this.initFields();
                 setTimeout(() => {

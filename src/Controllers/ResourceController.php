@@ -30,6 +30,9 @@ class ResourceController extends Controller
 
 	public function getListData($resource, $type, Request $request)
 	{
+		if (!$request->wantsJson()) {
+			return response()->json(["error" => "Invalid request"], 400);
+		}
 		$resource = ResourcesHelpers::find($resource);
 		$report_mode = $type == "report";
 		if ($report_mode) {
@@ -822,7 +825,13 @@ class ResourceController extends Controller
 
 	public function option_list(Request $request)
 	{
+		if (!$request->wantsJson()) {
+			return response()->json(["error" => "Invalid request"], 400);
+		}
 		$model_fields = @$request->model_fields ?? [];
+		if (is_string($model_fields)) {
+			$model_fields = json_decode($model_fields, true);
+		}
 		try {
 			$model = app()->make($request["model"]);
 			$select_raw = data_get($model_fields, "id", "") . " as id," . data_get($model_fields, "name", "") . " as name";
@@ -1084,6 +1093,9 @@ class ResourceController extends Controller
 
 	public function resource_tree(Request $request)
 	{
+		if (!$request->wantsJson()) {
+			return response()->json(["error" => "Invalid request"], 400);
+		}
 		request()->merge(["input_origin" => "resource-tree"]);
 
 		$resource = ResourcesHelpers::find($request->parent_resource);
@@ -1150,6 +1162,10 @@ class ResourceController extends Controller
 
 	public function resource_tree_items(Request $request)
 	{
+		if (!$request->wantsJson()) {
+			return response()->json(["error" => "Invalid request"], 400);
+		}
+
 		request()->merge(["input_origin" => "resource-tree"]);
 		$resource = ResourcesHelpers::find($request->resource);
 		if (!$resource->canViewList()) {
@@ -1166,6 +1182,9 @@ class ResourceController extends Controller
 
 	public function resource_tree_items_crud(Request $request)
 	{
+		if (!$request->wantsJson()) {
+			return response()->json(["error" => "Invalid request"], 400);
+		}
 		$resource = ResourcesHelpers::find($request->resource);
 		$fields = $resource->tree_fields();
 		foreach ($fields as $field) {

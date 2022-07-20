@@ -208,7 +208,10 @@ export default {
                 return;
             }
             const dataset = { parent_id: this.parent_id, ...this.input, filter: this.filter, page: this.current_page };
-            this.$http.post(`${this.route_load}/load-items`, dataset).then(({ data }) => {
+            const payload = {
+                params : dataset
+            }
+            this.$http.get(`${this.route_load}/load-items`, payload).then(({ data }) => {
                 this.loaded = true;
                 this.items = data;
                 this.loading_items = false;

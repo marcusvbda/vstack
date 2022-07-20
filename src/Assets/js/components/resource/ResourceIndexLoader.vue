@@ -86,10 +86,12 @@ export default {
     methods: {
         init() {
             this.requestFor;
-            const params = this.query_params;
+            const payload = {
+                params : this.query_params
+            };
             const route = `/admin/${this.resource_id}/${this.report_mode ? "report" : "list"}/get-list-data`;
             this.$http
-                .post(route, params)
+                .get(route, payload)
                 .then(({ data }) => {
                     if (data.type == "no_data") {
                         this.template.no_data = data.no_data;
