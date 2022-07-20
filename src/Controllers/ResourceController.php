@@ -828,7 +828,7 @@ class ResourceController extends Controller
 		if (!$request->wantsJson()) {
 			return response()->json(["error" => "Invalid request"], 400);
 		}
-		if ($request->isMethod('post')) {
+		if ($request->isMethod('post') && $request->params) {
 			$request = new Request($request->params);
 		}
 		$model_fields = @$request->model_fields ?? [];
@@ -1099,7 +1099,7 @@ class ResourceController extends Controller
 		if (!$request->wantsJson()) {
 			return response()->json(["error" => "Invalid request"], 400);
 		}
-		if ($request->isMethod('post')) {
+		if ($request->isMethod('post') && $request->params) {
 			$request = new Request($request->params);
 		}
 		request()->merge(["input_origin" => "resource-tree"]);

@@ -105,7 +105,7 @@ class VstackController extends Controller
 		if (!$model) {
 			abort(400);
 		}
-		if ($request->isMethod('post')) {
+		if ($request->isMethod('post') && $request->params) {
 			$request = new Request($request->params);
 		}
 		$per_page = @$request["per_page"];
@@ -117,10 +117,6 @@ class VstackController extends Controller
 
 		if (is_string($filters)) {
 			$filters = json_decode($filters, true);
-		}
-
-		if ($request->isMethod('post')) {
-			$request = new Request($request->params);
 		}
 
 		$query = $this->processApiFilters($filters, $query);
