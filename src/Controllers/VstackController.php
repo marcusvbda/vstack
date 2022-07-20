@@ -14,17 +14,6 @@ class VstackController extends Controller
 		return  $this->{$request["type"]}($resource, $request);
 	}
 
-	// protected function listAllInOne($resource, Request $request)
-	// {
-	// 	$rows = $resource->getModelInstance()->whereIn("id", $request->ids)->get();
-	// 	$data = [];
-	// 	foreach ($rows as $row) {
-	// 		$row_data = $this->resourceTableContent($resource, $request, $row, true, true);
-	// 		$data[] = $row_data;
-	// 	}
-	// 	return $data;
-	// }
-
 	public function resourceTableContent($resource, $request, $row = null, $force_id = false, $include_after_row = false)
 	{
 		if (@!$row) {
@@ -110,8 +99,14 @@ class VstackController extends Controller
 	public function getJson(Request $request)
 	{
 		$model = @$request["model"];
+		if (!$request->wantsJson()) {
+			return response()->json(["error" => "Invalid request"], 400);
+		}
 		if (!$model) {
 			abort(400);
+		}
+		if ($request->isMethod('post')) {
+			$request = new Request($request->params);
 		}
 		$per_page = @$request["per_page"];
 		$includes = @$request["includes"] ?? [];
@@ -122,6 +117,10 @@ class VstackController extends Controller
 
 		if (is_string($filters)) {
 			$filters = json_decode($filters, true);
+		}
+
+		if ($request->isMethod('post')) {
+			$request = new Request($request->params);
 		}
 
 		$query = $this->processApiFilters($filters, $query);

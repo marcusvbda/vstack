@@ -154,7 +154,7 @@ export default {
                 params : { model: this.list_model, model_fields: this.model_fields }
             }
             this.$http
-                .get(this.route_list, payload)
+                .post(this.route_list, payload)
                 .then((res) => {
                     res = res.data;
                     this.options = res.data.map(x => {
