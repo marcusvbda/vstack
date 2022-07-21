@@ -98,16 +98,15 @@ class VstackController extends Controller
 
 	public function getJson(Request $request)
 	{
-		$model = @$request["model"];
-		if (!$request->wantsJson()) {
-			return response()->json(["error" => "Invalid request"], 400);
+		if ($request->isMethod('post') && ($request->params || $request->json)) {
+			$request = new Request(@$request->params ? $request->params : $request->json);
 		}
+
+		$model = @$request["model"];
 		if (!$model) {
 			abort(400);
 		}
-		if ($request->isMethod('post') && $request->params) {
-			$request = new Request($request->params);
-		}
+
 		$per_page = @$request["per_page"];
 		$includes = @$request["includes"] ?? [];
 		$fields = @$request["fields"] ?? ["*"];
