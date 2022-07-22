@@ -123,7 +123,7 @@ class ResourceController extends Controller
 				abort(403);
 			}
 		}
-		if (request()->is_api) {
+		if (request()->response_type == "json") {
 			$data = $this->getData($resource, $request);
 			$per_page = $this->getPerPage($resource);
 			$data = $data->select("*")->paginate($per_page);
@@ -628,7 +628,7 @@ class ResourceController extends Controller
 		if (!$resource->canViewRow($content) || !$resource->canView()) {
 			abort(403);
 		}
-		if (request()->is_api) {
+		if (request()->response_type == "json") {
 			return $content;
 		}
 		$data = $this->getResourceEditCrudContent($content, $resource, $request);
@@ -732,7 +732,7 @@ class ResourceController extends Controller
 			throw new HttpResponseException(response()->json(["errors" => $validator->errors()], 422));
 		}
 
-		$data = $request->except(["is_api", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content", "input_origin"]);
+		$data = $request->except(["response_type", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content", "input_origin"]);
 		$data = $this->processStoreData($resource, $data);
 		return $resource->storeMethod($id, $data);
 	}
@@ -1036,14 +1036,15 @@ class ResourceController extends Controller
 
 	public function getResource($resource_id, Request $request)
 	{
-		request()->merge(["is_api" => true]);
+		request()->merge(["response_type" => 'json']);
+
 		$result = $this->index($resource_id, $request);
 		return response()->json($result);
 	}
 
 	public function findByCode($resource_id, $code, Request $request)
 	{
-		request()->merge(["is_api" => true]);
+		request()->merge(["response_type" => 'json']);
 		$decoded = \Hashids::decode($code);
 		$id = @$decoded[0] ?? $code;
 		$result = $this->view($request, $resource_id, $id);
@@ -1052,7 +1053,7 @@ class ResourceController extends Controller
 
 	public function apiStore($resource_id, $id, $type, Request $request)
 	{
-		request()->merge(["is_api" => true, "resource_id" => $resource_id, "id" => @$id, "page_type" => $type]);
+		request()->merge(["response_type" => 'json', "resource_id" => $resource_id, "id" => @$id, "page_type" => $type]);
 		$result = $this->store($request);
 		return $result;
 	}

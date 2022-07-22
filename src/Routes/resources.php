@@ -2,8 +2,7 @@
 
 use marcusvbda\vstack\Controllers\{
 	VstackController,
-	ResourceController,
-	ApiResourceController
+	ResourceController
 };
 
 Route::group(['prefix' => "vstack"], function () {
@@ -54,18 +53,5 @@ Route::group(['prefix' => "admin"], function () {
 		Route::delete('{resource}/{id}/field/destroy', [ResourceController::class, 'destroyField'])->name("resource.field.destroy");
 		Route::post('globalsearch', [ResourceController::class, 'globalSearch'])->name("resource.globalsearch");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
-	});
-});
-
-
-Route::group(['prefix' => "api"], function () {
-	Route::post('login', [ApiResourceController::class, 'login']);
-	Route::group(['middleware' => ['api.vstack_jwt']], function () {
-		Route::get('get-resource/{resource_id}', [ApiResourceController::class, 'getResource']);
-		Route::get('{resource_id}', [ApiResourceController::class, 'get']);
-		Route::post('{resource_id}/create', [ApiResourceController::class, 'create']);
-		Route::get('{resource_id}/{code}', [ApiResourceController::class, 'find']);
-		Route::put('{resource_id}/{code}/edit', [ApiResourceController::class, 'edit']);
-		Route::delete('{resource_id}/{code}/destroy', [ApiResourceController::class, 'destroy']);
 	});
 });
