@@ -3,10 +3,9 @@
 namespace marcusvbda\vstack;
 
 use Illuminate\Support\ServiceProvider;
-use marcusvbda\vstack\Commands\{asyncHandler, createResource, createFilter, createAction, clearResourceExport};
+use marcusvbda\vstack\Commands\{createResource, createFilter, createAction, clearResourceExport};
 use marcusvbda\vstack\Middleware\HashIds;
 use Illuminate\Routing\Router;
-use marcusvbda\vstack\Middleware\{JwtAuth};
 
 class vStackServiceProvider extends ServiceProvider
 {
@@ -14,7 +13,6 @@ class vStackServiceProvider extends ServiceProvider
 	{
 		$this->loadRoutesFrom(__DIR__ . '/Routes/routes.php');
 		$this->loadViewsFrom(__DIR__ . '/Views', 'vStack');
-		$router->aliasMiddleware('api.vstack_jwt', JwtAuth::class);
 		$this->commands([
 			createResource::class,
 			createFilter::class,
