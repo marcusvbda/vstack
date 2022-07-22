@@ -235,7 +235,7 @@ export default {
             loading_wizard_next: false,
             loading_wizard_previous: false,
             checked: false,
-            loading :false
+            loading: false,
         };
     },
     components: {
@@ -408,24 +408,23 @@ export default {
         },
         processFieldValue(name, options) {
             let value = options.value;
-            
-            if (!["null", ""].includes(String(options.value))) {                
+
+            if (!["null", "", "undefined"].includes(String(options.value))) {
                 let option_value = value ? value : options.default;
-                if(!['object','array'].includes(typeof option_value)) {
+                if (!["object", "array"].includes(typeof option_value)) {
                     option_value = String(option_value);
                 }
-                value = this.processFieldPerType(options.type,option_value);
-                
+                value = this.processFieldPerType(options.type, option_value);
             } else {
                 value = this.content?.id ? options.value : options.default;
                 let option_value = value ? value : options.default;
                 if (Array.isArray(option_value)) {
                     option_value = option_value.filter((x) => x);
                 }
-                if(!['object','array'].includes(typeof option_value)) {
+                if (!["object", "array", "undefined"].includes(typeof option_value)) {
                     option_value = String(option_value);
                 }
-                value = this.processFieldPerType(options.type, option_value);
+                value = this.processFieldPerType(options.type, option_value === undefined ? null : option_value);
             }
             return value;
         },
@@ -446,7 +445,7 @@ export default {
                     return value ? value.split(",").map((x) => new Date(String(x))) : [];
                 },
             };
-            if(actions[type]) {
+            if (actions[type]) {
                 return actions[type]();
             }
             return value;
