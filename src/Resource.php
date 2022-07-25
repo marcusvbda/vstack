@@ -37,7 +37,7 @@ class Resource
 
 	public function resultsPerPage()
 	{
-		return [10, 20, 50, 100];
+		return [5, 10, 20, 50, 100];
 	}
 
 	public function menu()

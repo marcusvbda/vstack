@@ -815,7 +815,8 @@ class ResourceController extends Controller
 	{
 		$per_page = @request()->per_page;
 		$results_per_page = $resource->resultsPerPage();
-		$per_page = is_array($results_per_page) ? ((in_array($per_page ? $per_page : [], $results_per_page)) ? $per_page : $results_per_page[0]) : $results_per_page;
+		$per_page = is_array($results_per_page) ? ((in_array($per_page ? $per_page : [], $results_per_page)) ? $per_page : $results_per_page[1]) : $results_per_page;
+		request()->merge(["per_page" => $per_page]);
 		return $per_page;
 	}
 
