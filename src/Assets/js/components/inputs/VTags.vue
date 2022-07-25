@@ -135,6 +135,7 @@ export default {
     height: 32px;
     line-height: 30px;
     padding: 0 40px;
+    margin-bottom: 7px;
 }
 .input-new-tag {
     width: 160px;

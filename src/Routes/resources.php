@@ -38,7 +38,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('{resource}/field/store', [ResourceController::class, 'storeField'])->name("resource.field.store");
 		Route::get('{resource}/import', [ResourceController::class, 'import'])->name("resource.import");
 		Route::post('{resource}/export', [ResourceController::class, 'export'])->name("resource.export");
-		Route::get('{resource}/import/sheet_template', [ResourceController::class, 'importSheetTemplate'])->name("resource.import.check_file");
+		Route::get('{resource}/import/sheet_template', [ResourceController::class, 'importSheetTemplate'])->name("resource.import.sheet_template");
 		Route::post('{resource}/import/check_file', [ResourceController::class, 'checkFileImport'])->name("resource.import.check_file");
 		Route::post('{resource}/import/submit', [ResourceController::class, 'importSubmit'])->name("resource.import.submit");
 		Route::get('{resource}/{code}', [ResourceController::class, 'view'])->middleware(['hashids:code'])->name("resource.view");
