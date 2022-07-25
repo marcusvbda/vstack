@@ -390,15 +390,17 @@ export default {
             }
             for (let i in fields) {
                 if (fields[i].options) {
-                    let field_name = fields[i].options.field;
-                    let field_type = fields[i].options.type;
-                    let field_value = this.processFieldValue(field_name, fields[i].options);
+                    let field = fields[i];
+                    let field_name = field.options.field;
+                    let field_type = field.options.type;
+
+                    let field_value = this.processFieldValue(field_name, field.options);
                     if (field_type === "slider") {
                         field_value = parseInt(field_value);
                     }
                     if (field_name) {
                         this.$set(
-                            fields[i].options.type == "resource-field" ? this.resourceData : this.form,
+                            field.options.type == "resource-field" ? this.resourceData : this.form,
                             field_name,
                             field_value
                         );
@@ -409,7 +411,7 @@ export default {
         processFieldValue(name, options) {           
             let value = options.value;            
             if (!["null", "", "undefined"].includes(String(options.value))) {
-                let option_value = value ? value : options.default;
+                let option_value = this.content?.id ? value : options.default;
                 if (!["object", "array"].includes(typeof option_value)) {
                     option_value = String(option_value);
                 }
