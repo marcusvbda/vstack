@@ -120,7 +120,7 @@ export default {
                 this.initOptions(() => {
                     this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
                     if(!Array.isArray(this.value)) {
-                        this.value = String(this.value);
+                        this.value = this.value ? String(this.value) : null;
                     }  else {
                         this.value = this.value.map(x=>String(x));
                     }

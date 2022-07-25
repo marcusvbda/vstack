@@ -406,9 +406,8 @@ export default {
                 }
             }
         },
-        processFieldValue(name, options) {
-            let value = options.value;
-
+        processFieldValue(name, options) {           
+            let value = options.value;            
             if (!["null", "", "undefined"].includes(String(options.value))) {
                 let option_value = value ? value : options.default;
                 if (!["object", "array"].includes(typeof option_value)) {
@@ -417,14 +416,15 @@ export default {
                 value = this.processFieldPerType(options.type, option_value);
             } else {
                 value = this.content?.id ? options.value : options.default;
+               
                 let option_value = value ? value : options.default;
                 if (Array.isArray(option_value)) {
                     option_value = option_value.filter((x) => x);
                 }
-                if (!["object", "array", "undefined"].includes(typeof option_value)) {
+                if (!["object", "array", "undefined"].includes(typeof option_value) && ![null,false].includes) {
                     option_value = String(option_value);
                 }
-                value = this.processFieldPerType(options.type, option_value === undefined ? null : option_value);
+                value = this.processFieldPerType(options.type, [null,undefined].includes(option_value) ? null : option_value);
             }
             return value;
         },

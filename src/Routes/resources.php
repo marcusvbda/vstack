@@ -19,8 +19,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::get('inputs/resource-tree', [ResourceController::class, 'resource_tree'])->name("resource.inputs.resource_tree");
 		Route::get('inputs/resource-tree/load-items', [ResourceController::class, 'resource_tree_items'])->name("resource.inputs.resource_tree_items");
 		Route::get('inputs/resource-tree/load-crud', [ResourceController::class, 'resource_tree_items_crud'])->name("resource.inputs.resource_tree_crud");
-		Route::get('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
-		Route::post('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
+		Route::match(['get', 'post'], 'inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
 
 		Route::post('get-list-cards', [ResourceController::class, 'getListItem'])->name("resource.get_list_item");
 		Route::post('upload', [ResourceController::class, 'upload'])->name("resource.upload");
@@ -38,7 +37,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('{resource}/field/store', [ResourceController::class, 'storeField'])->name("resource.field.store");
 		Route::get('{resource}/import', [ResourceController::class, 'import'])->name("resource.import");
 		Route::post('{resource}/export', [ResourceController::class, 'export'])->name("resource.export");
-		Route::get('{resource}/import/sheet_template', [ResourceController::class, 'importSheetTemplate'])->name("resource.import.check_file");
+		Route::get('{resource}/import/sheet_template', [ResourceController::class, 'importSheetTemplate'])->name("resource.import.sheet_template");
 		Route::post('{resource}/import/check_file', [ResourceController::class, 'checkFileImport'])->name("resource.import.check_file");
 		Route::post('{resource}/import/submit', [ResourceController::class, 'importSubmit'])->name("resource.import.submit");
 		Route::get('{resource}/{code}', [ResourceController::class, 'view'])->middleware(['hashids:code'])->name("resource.view");
