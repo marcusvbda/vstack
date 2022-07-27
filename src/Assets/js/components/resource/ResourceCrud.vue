@@ -1,5 +1,5 @@
 <template>
-    <div :class="`row crud-type-${crud_type.template}`" id="crud-view">
+    <div :class="`row crud-type-${crud_type ? crud_type.template : 'page'}`" id="crud-view">
         <div class="col-12">
             <form class="needs-validation m-0" novalidate v-on:submit.prevent>
                 <template v-if="dialog">
@@ -250,8 +250,11 @@ export default {
     },
     computed: {
         ...mapGetters("resource", ["action_btn_loading"]),
+        crud_template() {
+            return this.crud_type?.template ?? 'page'
+        },
         isSimple() {
-            if (this.crud_type.template != "wizard") {
+            if (this.crud_template != "wizard") {
                 return false;
             }
             if (this.crud_type.style == "row") {
@@ -263,7 +266,7 @@ export default {
             return false;
         },
         wizardStepSide() {
-            if (this.crud_type.template != "wizard") {
+            if (this.crud_template != "wizard") {
                 return "";
             }
             if (this.crud_type.position == "top") {
@@ -272,7 +275,7 @@ export default {
             return this.crud_type.position;
         },
         wizardDirection() {
-            if (this.crud_type.template != "wizard") {
+            if (this.crud_template != "wizard") {
                 return "";
             }
             if (this.window_width <= 991) {
@@ -374,7 +377,7 @@ export default {
             }
         },
         initWizardEvents() {
-            if (this.crud_type.template == "wizard") {
+            if (this.crud_template  == "wizard") {
                 this.$waitForEls(".resource-step").then((elements) => {
                     elements.forEach((item, index) => {
                         [".el-step__head", ".el-step__main"].forEach((child) => {

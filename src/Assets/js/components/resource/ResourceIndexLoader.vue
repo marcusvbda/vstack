@@ -51,7 +51,6 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
-import io from "socket.io-client";
 
 export default {
     props: ["resource_id", "report_mode"],

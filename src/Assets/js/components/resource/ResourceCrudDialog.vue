@@ -34,6 +34,7 @@
                 :first_btn="crud_content.resource.first_btn"
                 :second_btn="crud_content.resource.second_btn"
                 :acl="crud_content.resource.acl"
+                :content="crud_content.data"
                 :dialog="true"
                 ref="crud"
             />

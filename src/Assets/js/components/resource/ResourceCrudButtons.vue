@@ -39,12 +39,12 @@
                 />
             </el-tooltip>
         </el-button-group>
-        <resource-crud-dialog :resource_id="resource_id" ref="dialog" :row_id="id" />
+        <resource-crud-dialog :resource_id="resource_id" ref="dialog" :row_id="data.id" />
     </div>
 </template>
 <script>
 export default {
-    props: ["data", "id", "resource_id"],
+    props: ["data", "resource_id"],
     data() {
         return {
             loading: null,
