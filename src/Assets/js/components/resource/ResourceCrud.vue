@@ -207,7 +207,7 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
     props: [
@@ -315,6 +315,7 @@ export default {
         });
     },
     methods: {
+        ...mapMutations("resource", ["setActionBtnLoading"]),
         getScreenSize() {
             this.window_width = window.innerWidth;
         },
@@ -408,8 +409,8 @@ export default {
                 }
             }
         },
-        processFieldValue(name, options) {           
-            let value = options.value;            
+        processFieldValue(name, options) {
+            let value = options.value;
             if (!["null", "", "undefined"].includes(String(options.value))) {
                 let option_value = this.content?.id ? value : options.default;
                 if (!["object", "array"].includes(typeof option_value)) {
@@ -418,15 +419,15 @@ export default {
                 value = this.processFieldPerType(options.type, option_value);
             } else {
                 value = this.content?.id ? options.value : options.default;
-               
+
                 let option_value = value ? value : options.default;
                 if (Array.isArray(option_value)) {
                     option_value = option_value.filter((x) => x);
                 }
-                if (!["object", "array", "undefined"].includes(typeof option_value) && ![null,false].includes) {
+                if (!["object", "array", "undefined"].includes(typeof option_value) && ![null, false].includes) {
                     option_value = String(option_value);
                 }
-                value = this.processFieldPerType(options.type, [null,undefined].includes(option_value) ? null : option_value);
+                value = this.processFieldPerType(options.type, [null, undefined].includes(option_value) ? null : option_value);
             }
             return value;
         },
@@ -512,34 +513,37 @@ export default {
             }
         },
         checkStore(clicked_btn) {
+            this.setActionBtnLoading(true);
             this.$http.post(this.data.checkout_route, { ...this.form, clicked_btn }).then(({ data }) => {
                 if (data.success === false) {
-                    this.$message.error(data.message);
+                    this.setActionBtnLoading(false);
+                    return this.$message.error(data.message);
                 }
 
                 if (data.success === true) {
                     this.checked = true;
-                    this.submit(clicked_btn);
+                    return this.submit(clicked_btn);
                 }
 
                 if (data.confirm) {
                     this.loading_confirm = false;
-                    this.$confirm(data.confirm?.message || "Confirmar ?", data.confirm?.title || "Confirmação", {
+                    return this.$confirm(data.confirm?.message || "Confirmar ?", data.confirm?.title || "Confirmação", {
                         confirmButtonText: data.confirm?.buttons?.yes || "Sim",
                         cancelButtonText: data.confirm?.buttons?.no || "Não",
                         type: data.confirm?.type || "warning",
                     }).then(() => {
                         this.checked = true;
+                        this.setActionBtnLoading(false);
                         this.submit(clicked_btn);
                     });
                 }
             });
         },
         submit(clicked_btn = "save_and_back") {
-            this.loading = this.$loading({ text: "Salvando ..." });
             if (!this.checked) {
                 return this.checkStore(clicked_btn);
             }
+            this.loading = this.$loading({ text: "Salvando ...", background: "white" });
             this.$http
                 .post(this.data.store_route, { ...this.form, clicked_btn })
                 .then(({ data }) => {
