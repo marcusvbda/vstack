@@ -27,7 +27,7 @@ class BelongsTo extends Field
 		$multiple       = @$this->options["multiple"] ? @$this->options["multiple"] : false;
 		$label       = $this->options["label"];
 		$disabled    = @$this->options["disabled"] ? "true" : "false";
-		$route_list  = secure_url(route("resource.inputs.option_list"));
+		$route_list  = route("resource.inputs.option_list");
 		$placeholder = $model ? $this->options["placeholder"] : null;
 		$options     = @$this->options["options"] ? json_encode($this->options["options"]) : "[]";
 		$description = $this->options["description"];

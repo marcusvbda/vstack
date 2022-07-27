@@ -21,7 +21,7 @@ class Vstack
 
 	public static function resource_field_route()
 	{
-		return secure_url(route('resource.fielddata', ['resource' => "%%resource%%"]));
+		return route('resource.fielddata', ['resource' => "%%resource%%"]);
 	}
 
 	public static function default_upload_route()

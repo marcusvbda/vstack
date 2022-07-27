@@ -16,7 +16,7 @@
             if(isset($query["current_len"])) {
                 unset($query["current_len"]);
             }
-            $route = secure_url(route("resource.index",array_merge(["resource"=>$resource->id],$query)));
+            $route = route("resource.index",array_merge(["resource"=>$resource->id],$query));
         @endphp
         <a href="{{$route}}">Todos</a>
     @endif
@@ -34,7 +34,7 @@
                     unset($query[$other["field"]]);
                 }
 			}
-            $route = secure_url("resource.index",array_merge(["resource"=>$resource->id],$query)));
+            $route = route("resource.index",array_merge(["resource"=>$resource->id],$query));
         @endphp
         <div class="mx-2" style="opacity:.5;">|</div>
         @if($current_len==$len_key)  

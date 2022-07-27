@@ -232,12 +232,12 @@ class Resource
 
 	public function report_route()
 	{
-		return secure_url(route("resource.report", ["resource" => strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', (new \ReflectionClass($this))->getShortName()))]));
+		return route("resource.report", ["resource" => strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', (new \ReflectionClass($this))->getShortName()))]);
 	}
 
 	public function route()
 	{
-		return secure_url(route("resource.index", ["resource" => strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', (new \ReflectionClass($this))->getShortName()))]));
+		return route("resource.index", ["resource" => strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', (new \ReflectionClass($this))->getShortName()))]);
 	}
 
 	private function makeId()
@@ -541,9 +541,9 @@ class Resource
 		if (!request("input_origin")) {
 			Messages::send("success", "Registro salvo com sucesso !!");
 			if (request("clicked_btn") == "save") {
-				$route = secure_url(route('resource.edit', ["resource" => $this->id, "code" => $target->code]));
+				$route = route('resource.edit', ["resource" => $this->id, "code" => $target->code]);
 			} else {
-				$route = secure_url(route('resource.index', ["resource" => $this->id]));
+				$route = route('resource.index', ["resource" => $this->id]);
 			}
 			return ["success" => true, "route" => $route, "model" => $target];
 		} else {
