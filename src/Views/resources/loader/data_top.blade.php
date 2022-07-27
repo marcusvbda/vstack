@@ -10,7 +10,7 @@
         </div>
         @php
         $globalFilterData = [
-            'filter_route' => route('resource.index',['resource'=>$resource->id]),
+            'filter_route' => secure_url(route('resource.index',['resource'=>$resource->id])),
             'query' => $_data,
             'value' => @$_data['_'] ? $_data['_'] : '',
         ];

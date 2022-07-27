@@ -37,7 +37,7 @@ class GlobalJob implements ShouldQueue
 	public function handle()
 	{
 		$user = User::findOrFail($this->config->data->user_id);
-		$route = route('resource.export_download_intercept', ['resource' => $this->resource->id, 'file' => $this->file_id]);
+		$route = secure_url(route('resource.export_download_intercept', ['resource' => $this->resource->id, 'file' => $this->file_id]));
 		$_data = $this->config->data;
 		$_data->status = "ready";
 		$_data->microtime->end = microtime(true);

@@ -51,9 +51,9 @@ class ResourceController extends Controller
 
 		$data = $data->select("*")->paginate($per_page);
 		if ($report_mode) {
-			$data->setPath(route('resource.report', ["resource" => $resource->id]));
+			$data->setPath(secure_url(route('resource.report', ["resource" => $resource->id])));
 		} else {
-			$data->setPath(route('resource.index', ["resource" => $resource->id]));
+			$data->setPath(secure_url(route('resource.index', ["resource" => $resource->id])));
 		}
 		if (@$request["list_type"]) {
 			$this->storeListType($resource, $request["list_type"]);
@@ -644,9 +644,9 @@ class ResourceController extends Controller
 		return [
 			"id"          => @$content->id,
 			"fields"      => $this->makeCrudDataFields($content, $resource->fields()),
-			"store_route" => route('resource.store', ["resource" => $resource->id]),
-			"checkout_route" => route('resource.check', ["resource" => $resource->id]),
-			"list_route"  => route('resource.index', ["resource" => $resource->id]),
+			"store_route" => secure_url(route('resource.store', ["resource" => $resource->id])),
+			"checkout_route" => secure_url(route('resource.check', ["resource" => $resource->id])),
+			"list_route"  => secure_url(route('resource.index', ["resource" => $resource->id])),
 			"resource_id" => $resource->id
 		];
 	}
@@ -760,7 +760,7 @@ class ResourceController extends Controller
 		$target->fill($data["data"]);
 		$target->save();
 		$this->storeUploads($target, $data["upload"]);
-		return ["success" => true, "route" => route('resource.index', ["resource" => $resource->id])];
+		return ["success" => true, "route" => secure_url(route('resource.index', ["resource" => $resource->id]))];
 	}
 
 	private function isClass($target, $index)
@@ -925,9 +925,9 @@ class ResourceController extends Controller
 			"nothing_stored_subtext" => $resource->nothingStoredSubText(),
 			"crud_fields" =>  $crud_data,
 			"params" => $params,
-			"store_route" => route('resource.field.store', ["resource" => $resource->id]),
+			"store_route" => secure_url(route('resource.field.store', ["resource" => $resource->id])),
 			"table" => $resource->table(),
-			"destroy_route" => route("resource.field.destroy", ["resource" => $resource->id, "id" => "_replace_area_"])
+			"destroy_route" => secure_url(route("resource.field.destroy", ["resource" => $resource->id, "id" => "_replace_area_"]))
 		];
 		return response()->json($rendered_data);
 	}
