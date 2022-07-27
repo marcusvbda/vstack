@@ -52,16 +52,26 @@
                         :size="crud_content.resource.first_btn.size"
                         :type="crud_content.resource.first_btn.type"
                         @click="$refs.crud.submit(crud_content.resource.first_btn.field)"
+                        :loading="action_btn_loading"
+                        class="d-flex"
+                        :disabled="action_btn_loading"
                     >
-                        <span v-html="crud_content.resource.first_btn.content" />
+                        <div class="d-flex flex-row">
+                            <span v-html="crud_content.resource.first_btn.content" />
+                        </div>
                     </el-button>
                     <el-button
                         v-if="crud_content.resource.second_btn"
                         :size="crud_content.resource.second_btn.size"
                         :type="crud_content.resource.second_btn.type"
                         @click="$refs.crud.submit(crud_content.resource.second_btn.field)"
+                        :loading="action_btn_loading"
+                        :disabled="action_btn_loading"
+                        class="d-flex"
                     >
-                        <span v-html="crud_content.resource.second_btn.content" />
+                        <div class="d-flex flex-row">
+                            <span v-html="crud_content.resource.second_btn.content" />
+                        </div>
                     </el-button>
                 </el-button-group>
             </span>
@@ -70,25 +80,27 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
+import { mapGetters } from "vuex";
 export default {
     props: ["resource_id", "row_id", "crud_type"],
     data() {
         return {
             dialog: false,
             loading: true,
-            crud_content: {}
+            crud_content: {},
         };
     },
     components: {
-        "v-runtime-template": VRuntimeTemplate
+        "v-runtime-template": VRuntimeTemplate,
     },
     computed: {
+        ...mapGetters("resource", ["action_btn_loading"]),
         title() {
             return this.crud_content?.resource?.breadcrumb_labels[this.crud_content?.resource?.page_type] ?? "";
         },
         sub_title() {
             return this.crud_content?.resource?.dialog_sub_titles[this.crud_content?.resource?.page_type] ?? "";
-        }
+        },
     },
     methods: {
         handleClose() {
@@ -99,15 +111,15 @@ export default {
             this.$http
                 .post(`/admin/${this.resource_id}/get-resource-crud-content`, {
                     type: this.row_id ? "edit" : "create",
-                    id: this.row_id
+                    id: this.row_id,
                 })
                 .then(({ data }) => {
                     this.crud_content = data;
                     this.dialog = true;
                     loading.close();
                 });
-        }
-    }
+        },
+    },
 };
 </script>
 

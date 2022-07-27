@@ -56,6 +56,7 @@
                                                         :type="first_btn.type"
                                                         @click="submit(first_btn.field)"
                                                         :loading="action_btn_loading"
+                                                        :disabled="action_btn_loading"
                                                         id="resource-crud-btn-first"
                                                     >
                                                         <span v-html="first_btn.content" />
@@ -66,6 +67,7 @@
                                                         :type="second_btn.type"
                                                         @click="submit(second_btn.field)"
                                                         :loading="action_btn_loading"
+                                                        :disabled="action_btn_loading"
                                                         id="resource-crud-btn-second"
                                                     >
                                                         <span v-html="second_btn.content" />
@@ -147,6 +149,7 @@
                                                             :type="first_btn.type"
                                                             @click="submit(first_btn.field)"
                                                             :loading="action_btn_loading"
+                                                            :disabled="action_btn_loading"
                                                         >
                                                             <span v-html="first_btn.content" />
                                                         </el-button>
@@ -156,6 +159,7 @@
                                                             :type="second_btn.type"
                                                             @click="submit(second_btn.field)"
                                                             :loading="action_btn_loading"
+                                                            :disabled="action_btn_loading"
                                                         >
                                                             <span v-html="second_btn.content" />
                                                         </el-button>
@@ -166,6 +170,7 @@
                                                             :size="first_btn.size"
                                                             type="warning"
                                                             @click="previousStep"
+                                                            :disabled="action_btn_loading"
                                                             :loading="loading_wizard_previous || action_btn_loading"
                                                         >
                                                             <span>
@@ -179,6 +184,7 @@
                                                             :size="second_btn.size"
                                                             type="primary"
                                                             @click="nextStep"
+                                                            :disabled="action_btn_loading"
                                                             :loading="loading_wizard_next || action_btn_loading"
                                                             id="resource-btn-next-step"
                                                         >
@@ -236,6 +242,7 @@ export default {
             loading_wizard_previous: false,
             checked: false,
             loading: false,
+            submitting: false,
         };
     },
     components: {
@@ -557,6 +564,7 @@ export default {
                     }
                 })
                 .catch((er) => {
+                    this.setActionBtnLoading(false);
                     this.makeFormValidationErrors(er);
                     this.loading.close();
                 });
