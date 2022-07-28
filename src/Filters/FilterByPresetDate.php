@@ -148,12 +148,12 @@ class FilterByPresetDate extends Filter
         return $date->format("Y-m-d");
     }
 
-    protected static function getAllDates()
+    public static function getAllDates()
     {
         $filter = new FilterByPresetDate;
         $options_dates = [];
         foreach ($filter->_options as $key => $value) {
-            $options_dates[$key] = $filter->{$value}();
+            $options_dates[$key] = $filter->{$value[1]}();
         }
         return $options_dates;
     }
