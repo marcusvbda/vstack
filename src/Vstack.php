@@ -3,7 +3,7 @@
 namespace marcusvbda\vstack;
 
 use Carbon\Carbon;
-use \GuzzleHttp\Client as GuzzleCLient;
+use Illuminate\Support\Facades\Http;
 
 class Vstack
 {
@@ -130,17 +130,13 @@ class Vstack
 			$socket_service =  config('vstack.socket_service');
 			$uri = data_get($socket_service, 'uri');
 			$port = data_get($socket_service, 'port');
-			$urlSite =  $uri . ":" . $port;
-			$uri = $urlSite . "/dispatch-event/" . $room;
-			$data = [
+			$url_server =  "$uri:$port";
+			$payload = [
 				"event" => $event,
 				"index" => $index,
 				"data" => $data
 			];
-			$client = new GuzzleCLient();
-			$client->post($uri, [
-				'json' => $data,
-			]);
+			Http::post("$url_server/dispatch-event/$room", $payload);
 			return true;
 		} catch (\Exception $e) {
 			return false;

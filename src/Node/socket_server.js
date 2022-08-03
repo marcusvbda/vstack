@@ -40,7 +40,6 @@ app.post("/dispatch-event/:id", (req, res) => {
 
     const type = req.body.index || "client";
     const id = req.params.id;
-
     if (type == "room") {
         io.to(id).emit(event, data);
     } else if (type == "client") {
