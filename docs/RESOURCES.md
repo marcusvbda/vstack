@@ -9,7 +9,7 @@
 - [Adicionando conteúdo em slots](#slots)
 - [Adicionando filtros ao seu resource](#filters)
 - [Relatórios de resource](#reports).
-- [Importação de planilha](#reports).
+- [Importação de planilha](#imports).
 
 <br>
 <br>
@@ -329,7 +329,7 @@ return view('slots.example')->render();
 Após a adição de conteudo nesses slots a tela ficará da seguinte forma :
 ![Slot](images/slots.png)
 
-Pode-se também adicionar slots como este na tela de visualização, cadastro, edição e relatório, da mesma forma apenas utilizando os métodos <b>beforeReportListSlot, beforeListSlot,  afterListSlot, beforeEditSlot, afterEditSlot, beforeCreateSlot, afterCreateSlot, beforeViewSlot, beforeViewSlot e afterViewSlot </b>
+Pode-se também adicionar slots como este na tela de visualização, cadastro, edição e relatório, da mesma forma apenas utilizando os métodos <b>beforeReportListSlot, afterReportListSlot, beforeListSlot,  afterListSlot, beforeEditSlot, afterEditSlot, beforeCreateSlot, afterCreateSlot, beforeViewSlot, beforeViewSlot e afterViewSlot </b>
 
 
 <br>
@@ -463,5 +463,56 @@ Para entender melhor sobre os tipos de filtros disponíveis e exemplos mais avan
 <div id="reports">
 
 ### Relatórios de resource
+
+Para habilitar o relatório para o resource é necessário que o método <b>canViewReport</b> return <b>true</b>.
+
+Você pode utilizar um rotina para capturar permissões deste usuário ou apenas retornar true diretamente como no exemplo :
+
+```
+public function canViewReport()
+{
+    // Auth::user()->hasPermission("view-cars-report");
+    return true;
+}
+```
+Um link para acessar o relatório aparecerá na listagem
+![Report](images/report_link.png)
+Clicando neste link, você terá acesso a rota <b>/admin/relatórios/NOME_DO_RESOURCE</b> e visualizará uma listagem parecido com apenas <b>id</b> e <b>created_at</b> como colunas padrão.
+![Report](images/report_default_list.png)
+
+<br>
+Para customizar estas colunas você deve editar a resposta do método <b>exportColumns</b> de maneira semelhante a que fizemos em <b>table</b>, abaixo um exemplo :
+
+```
+public function exportColumns()
+{
+    return [
+        ["label" => "Código", "handler" => function ($row) {
+            return @$row->code;
+        }],
+        ["label" => "Nome", "handler" => function ($row) {
+            return @$row->name;
+        }],
+        ["label" => "Data de Cadastro", "handler" => function ($row) {
+            return @$row->created_at->format("d/m/Y H:i:s");
+        }],
+    ];
+}
+```
+
+note que diferente de em <b>tables</b>, passamos apenas um array com <b>label</b> e o <b>handler</b> e essas colunas aparecerão no relatório na ordem que configuramos.
+
+Outra que podemos configurar e definir <b>canExport</b> retornando <b>true</b>, desta forma além de apenas listagem, temos uma exportação de planilha podendo selecionar qual das colunas queremos incluir na exportação.
+
+P.s: Os filtros da listagem comum são reaproveitados aqui no relatório.
+![Report](images/export_g.gif)
+
+
+</div>
+
+
+<div id="imports">
+
+### Importação de planilhas
 
 </div>

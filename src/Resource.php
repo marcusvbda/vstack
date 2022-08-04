@@ -186,10 +186,10 @@ class Resource
 	public function exportColumns()
 	{
 		return [
-			["label" => "Código", "handler" => function ($row) {
+			["label" => "id", "handler" => function ($row) {
 				return @$row->id;
 			}],
-			["label" => "Data de Criação", "handler" => function ($row) {
+			["label" => "created_at", "handler" => function ($row) {
 				return @$row->created_at;
 			}],
 		];
@@ -400,6 +400,11 @@ class Resource
 	}
 
 	public function beforeListSlot()
+	{
+		return false;
+	}
+
+	public function afterReportListSlot()
 	{
 		return false;
 	}
