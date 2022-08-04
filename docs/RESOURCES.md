@@ -1,12 +1,28 @@
 # Vstack Resources
 
 
+### Índice 
+
+- [Criando um resource](#creating_resource).
+- [Definindo os inputs da tela de cadastro/edição](#inputs)
+- [Definindo as colunas da tabela de listagem](#tables)
+- [Adicionando conteúdo em slots](#slots)
+- [Adicionando filtros ao seu resource](#filters)
+- [Relatórios de resource](#reports).
+
+<br>
+<br>
+<br>
+
  
 Chamamos de resource o arquivo de configuração de crud.
 <br>
 Nela podemos definir TUDO do crud em questão, desde ícones e títulos, até métodos de gravação e comportamento pré-listagem ou exportação de relatório.
 <br>
 <br>
+
+
+<div id="creating_resource">
 
 ### Criando um  Resource
 
@@ -119,6 +135,9 @@ public function canUpdateRow($item)
 ```
 <br>
 <br>
+</div>
+
+<div id="inputs">
 
 ### Definindo os inputs da tela de cadastro/edição
 
@@ -186,6 +205,10 @@ O mesmo pode-se fazer com o método <b>destroyMethod</b>, para exclusão no caso
 <br>
 <br>
 <br>
+</div>
+
+
+<div id="tables">
 
 ### Definindo as colunas da tabela de listagem
 
@@ -233,7 +256,7 @@ Note que o títula das colunas que podem ser ordenadas (Código e Nome) são lin
 
 <br>
 <br>
-
+</div>
 
 ### Definindo lentes de listagens
 Lentes são filtros pré-definidos que incrementarão ainda mais sua listagem de resource, basta adicionar o método <b>lenses</b> ao resource como no exemplo abaixo :
@@ -270,7 +293,9 @@ caso clicado na lente que configuramos <b>Apenas Inativos</b> a página recarreg
 <br>
 <br>
 
-### Adicionando conteúdo antes ou depois da listagens
+<div id="slots">
+
+### Adicionando conteúdo em slots
 
 Podemos também adicionar algum conteúdo antes ou depois da tabela de listagem apenas utilizando os métodos <b>beforeListSlot</b> e <b>afterListSlot</b>, como no exemplo :
 
@@ -309,7 +334,9 @@ Pode-se também adicionar slots como este na tela de visualização, cadastro, e
 <br>
 <br>
 <br>
+</div>
 
+<div id="filters">
 ### Adicionando filtros ao seu resource
 
 Podemos adicionar 2 tipos diferentes de filtros no seus resources, busca simples e filtros específicos.
@@ -425,3 +452,15 @@ new FilterByName(),
 
 Para entender melhor sobre os tipos de filtros disponíveis e exemplos mais avançados 
 [Leia mais sobre Filtros](FILTERS.md)
+
+
+<br>
+<br>
+<br>
+</div>
+
+<div id="reports">
+
+### Relatórios de resource
+
+</div>
