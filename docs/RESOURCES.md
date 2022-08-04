@@ -9,6 +9,7 @@
 - [Adicionando conteúdo em slots](#slots)
 - [Adicionando filtros ao seu resource](#filters)
 - [Relatórios de resource](#reports).
+- [Importação de planilha](#reports).
 
 <br>
 <br>
