@@ -62,6 +62,7 @@ class Carros extends Resource
 Nas imagens abaixo podemos ver como o crud e tela de listagem ficam inicialmente, veremos agora que com pouca customização deixamos de ser um crud simples pra algo mais avançado.
 
 ![Resource Inicial](images/resource_start.png)
+
 ![Crud Inicial](images/crud_start.png)
 
 Adicionando seguintes métodos já daremos uma nova cara a listagem do resource
@@ -478,6 +479,7 @@ public function canViewReport()
 ```
 Um link para acessar o relatório aparecerá na listagem
 ![Report](images/report_link.png)
+
 Clicando neste link, você terá acesso a rota <b>/admin/relatórios/NOME_DO_RESOURCE</b> e visualizará uma listagem parecido com apenas <b>id</b> e <b>created_at</b> como colunas padrão.
 ![Report](images/report_default_list.png)
 
