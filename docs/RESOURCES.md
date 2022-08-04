@@ -121,7 +121,6 @@ public function canUpdateRow($item)
 <br>
 
 ### Definindo os inputs da tela de cadastro/edição
-[Leia mais sobre Vstack Inputs](INPUTS.md)
 
 Adicionando poucos campos ao método fields, podemos customizar nossa tela de cadastro/edição.
 
@@ -165,3 +164,5 @@ Note que foi adicionado os campos na estrutura card -> fields e podemos adiciona
 --- FIELD
 ...
 ```
+Para saber mais sobre todos os inputs disponíveis e suas configurações 
+[Leia mais sobre Vstack Inputs](INPUTS.md)

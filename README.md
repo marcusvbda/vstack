@@ -1,5 +1,10 @@
 # Vstack Docs 
 
-Vstack é uma biblioteca baseada nas features oferecidas pelo [Laravel Nova](https://nova.laravel.com/docs/)
+Vstack é uma biblioteca desenvolvida as bases do framework LARAVEL baseada nas features oferecidas pelo [Laravel Nova](https://nova.laravel.com/docs/)
 
-- [Instalação](docs/INSTALATION.md)
+### Getting Started
+- [Instalação Via Composer](docs/INSTALATION.md)
+
+### Recursos
+- [Vstack Models](docs/MODELS.md)
+- [Vstack Resources](docs/RESOURCES.md)
