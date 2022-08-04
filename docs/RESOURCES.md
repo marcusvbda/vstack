@@ -10,6 +10,7 @@
 - [Adicionando filtros ao seu resource](#filters)
 - [Relatórios de resource](#reports).
 - [Importação de planilha](#imports).
+- [Exemplo completo de resource](#example).
 
 <br>
 <br>
@@ -514,5 +515,193 @@ P.s: Os filtros da listagem comum são reaproveitados aqui no relatório.
 <div id="imports">
 
 ### Importação de planilhas
+Para habilitar no resource a importação de planilhas, basta definir que o método <b>canImport</b> retorne true, desta forma na tela de listagem do resource aparecerá o link para direcionar para a tela de importação.
+![Report](images/import.png)
+
+</div>
+
+
+<div id="example">
+
+### Exemplo completo de resource
+
+Abaixo como ficou o resource completo e configurado que utilizamos de exemplo nesta documentação
+
+```
+<?php
+
+namespace App\Http\Resources;
+
+use marcusvbda\vstack\Fields\Card;
+use marcusvbda\vstack\Fields\Text;
+use marcusvbda\vstack\Fields\TextArea;
+use marcusvbda\vstack\Filters\FilterByOption;
+use marcusvbda\vstack\Filters\FilterByPresetDate;
+use marcusvbda\vstack\Filters\FilterByText;
+use marcusvbda\vstack\Resource;
+
+class Carros extends Resource
+{
+    public $model = \App\Http\Models\Car::class;
+
+    public function label()
+    {
+        return "Veículos";
+    }
+
+    public function singularLabel()
+    {
+        return "Veículo";
+    }
+
+    // https://element.eleme.io/#/en-US/component/icon#icon
+    public function icon()
+    {
+        return "el-icon-truck";
+    }
+
+    public function nothingStoredText()
+    {
+        return "<h4>Nenhum {$this->singularLabel()} cadastrado ainda ...</h4>";
+    }
+
+    public function nothingStoredSubText()
+    {
+        return "<span>Clique em cadastrar e efetue o primeiro cadastro !!!</span>";
+    }
+
+    public function storeButtonlabel()
+    {
+        return "<span class='el-icon-plus mr-2'></span>Cadastrar {$this->singularLabel()}";
+    }
+
+    public function table()
+    {
+        return [
+            "code" => ["label" => "Código", "sortable_index" => "id"],
+            "name" => ["label" => "Nome"],
+            "created_at" => ["label" => "Data de Cadastro", "sortable" => false, "handler" => function ($row) {
+                return $row->created_at->format("d/m/Y H:i:s");
+            }]
+        ];
+    }
+
+    public function beforeListSlot()
+    {
+        return '<el-alert
+                    title="success alert"
+                    type="success"
+                    center
+                    show-icon>
+                </el-alert>';
+    }
+
+    public function afterListSlot()
+    {
+        return '<el-alert
+                    title="warning alert"
+                    type="warning"
+                    center
+                    show-icon>
+                </el-alert>';
+    }
+
+    public function lenses()
+    {
+        return [
+            "Apenas Ativos" => ["field" => "active", "value" => true],
+            // "Apenas Inativos" => ["field" => "active", "value" => false],
+            "Apenas Inativos" => ["field" => "active", "value" => false, "handler" => function ($q) {
+                return $q->where("active", false);
+            }],
+        ];
+    }
+
+    public function fields()
+    {
+        $cards = [
+            new Card("Informações", [
+                new Text([
+                    "label" => "Nome",
+                    "field" => "name",
+                    "description" => "Nome do veículo",
+                    "rules" => ["max:255", "required"],
+                ]),
+                new TextArea([
+                    "label" => "Observação",
+                    "field" => "obs",
+                    "show_value_length" => true,
+                    "rules" => ["max:255", "required"],
+                ])
+            ])
+        ];
+        return $cards;
+    }
+
+    public function search()
+    {
+        return ['name', function ($query, $val) {
+            return $query->where("name", "like", "%{$val}%");
+        }];
+    }
+
+    public function filters()
+    {
+        return [
+            new FilterByText([
+                "column" => "name",
+                "label" => "Nome"
+            ]),
+            new FilterByText([
+                "column" => "description",
+                "label" => "Descrição"
+            ]),
+            new FilterByPresetDate([
+                "column" => "created_at",
+                "label" => "Cadastrado em"
+            ]),
+            new FilterByOption([
+                "label" => "Nível",
+                "column" => "level",
+                "multiple" => true,
+                "options" => [
+                    ["value" => 1, "label" => '⭐'],
+                    ["value" => 2, "label" => '⭐⭐'],
+                    ["value" => 3, "label" => '⭐⭐⭐'],
+                    ["value" => 4, "label" => '⭐⭐⭐⭐'],
+                    ["value" => 5, "label" => '⭐⭐⭐⭐⭐'],
+                ]
+            ]),
+        ];
+    }
+
+    public function canViewReport()
+    {
+        // Auth::user()->hasPermission("view-cars-report");
+        return true;
+    }
+
+
+    public function canImport()
+    {
+        return true;
+    }
+
+    public function exportColumns()
+    {
+        return [
+            ["label" => "Código", "handler" => function ($row) {
+                return @$row->code;
+            }],
+            ["label" => "Nome", "handler" => function ($row) {
+                return @$row->name;
+            }],
+            ["label" => "Data de Cadastro", "handler" => function ($row) {
+                return @$row->created_at->format("d/m/Y H:i:s");
+            }],
+        ];
+    }
+}
+```
 
 </div>
