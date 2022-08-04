@@ -8,3 +8,4 @@ Vstack é uma biblioteca desenvolvida as bases do framework LARAVEL baseada nas 
 ### Recursos
 - [Vstack Models](docs/MODELS.md)
 - [Vstack Resources](docs/RESOURCES.md)
+- [Vstack Inputs](docs/INPUTS.md)
