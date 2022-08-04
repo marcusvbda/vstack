@@ -6,7 +6,6 @@ class _MODEL_NAME extends DefaultModel
     protected $table = "_TABLE_NAME__";
     // public $cascadeDeletes = [];
     // public $restrictDeletes = [];
-    // public $relations = []; //add relations that you want to load in resource field (ajax)
     // public static function hasTenant() //default true
     // {
     //     return true;
