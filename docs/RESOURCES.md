@@ -339,3 +339,89 @@ public function search()
 ```
 
 Neste caso o sistema fará o filtro like para a coluna <b>name</b> e executará o handler com $val sendo o valor digitado no input.
+
+<br>
+<br>
+
+Para configurar os filtros específicos, basta definir no método <b>fielters</b> os filtros que deseja adicionar.
+
+Temos 2 formas de fazer isso.
+
+Com filtros mais básicos como, filtros que não exijam joins ou processamentos mais pesados, podemos utilizar os filtros pré-definidos, da seguinte forma :
+
+```
+public function filters()
+{
+    return [
+        new FilterByName(),
+        //new FilterByText([
+        //    "column" => "name",
+        //    "label" => "Nome"
+        //]),
+        new FilterByText([
+            "column" => "description",
+            "label" => "Descrição"
+        ]),
+        new FilterByPresetDate([
+            "column" => "created_at",
+            "label" => "Cadastrado em"
+        ]),
+        new FilterByOption([
+            "label" => "Nível",
+            "column" => "level",
+            "multiple" => true,
+            "options" => [
+                ["value" => 1, "label" => '⭐'],
+                ["value" => 2, "label" => '⭐⭐'],
+                ["value" => 3, "label" => '⭐⭐⭐'],
+                ["value" => 4, "label" => '⭐⭐⭐⭐'],
+                ["value" => 5, "label" => '⭐⭐⭐⭐⭐'],
+            ]
+        ]),
+    ];
+}
+```
+![Search](images/filter_g.gif)
+
+Para filtros mais complexos você pode executar o comando <b>php artisan vstack:make-filter {resource} {name} {type}</b>
+
+que será criado uma classe em /Http/Filters/NOME_DO_RESOURCE/NOME_DO_FILTER.php nos padrões abaixo :
+
+```
+<?php 
+// COMANDO EXECUTADO : php artisan vstack:make-filter Carros FilterByName text-filter
+namespace App\Http\Filters\Carros;
+use  marcusvbda\vstack\Filter;
+
+class FilterByName extends Filter
+{
+    
+    public $component   = "text-filter";
+    public $label       = "FilterByName";
+    public $placeholder = "";
+    public $index = "filter_by_name";
+    
+    public function apply($query, $value)
+    {
+        //filter logic here...
+        return $query;
+    }
+}
+```
+
+Note que esta classe possui variáveis de configuração e um método chamado <b>apply</b>, é neste método que será executado o filtro quando chamado.
+
+Para adiciona-lo aos filtros do resource, basta adiciona-lo em filters da seguinte forma :
+
+```
+...
+//new FilterByText([
+//    "column" => "name",
+//    "label" => "Nome"
+//]),
+new FilterByName(),
+...
+```
+
+Para entender melhor sobre os tipos de filtros disponíveis e exemplos mais avançados 
+[Leia mais sobre Filtros](FILTERS.md)
