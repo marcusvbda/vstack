@@ -9,7 +9,6 @@ Vale lembrar que todos os campos abaixo exceto o card, possuem algumas configura
  - <b>custom_message</b> (opcional), define as mensagens customizadas para regras de validação do input;
 
 
-
  <br>
  <br>
 

@@ -1,6 +1,6 @@
 # Vstack Docs 
 
-Vstack é uma biblioteca desenvolvida as bases do framework LARAVEL baseada nas features oferecidas pelo [Laravel Nova](https://nova.laravel.com/docs/)
+<b>Vstack</b> é uma biblioteca desenvolvida as bases do framework LARAVEL baseada nas features oferecidas pelo [Laravel Nova](https://nova.laravel.com/docs/)
 
 ### Getting Started
 - [Instalação Via Composer](docs/INSTALATION.md)
@@ -9,4 +9,12 @@ Vstack é uma biblioteca desenvolvida as bases do framework LARAVEL baseada nas 
 - [Vstack Models](docs/MODELS.md)
 - [Vstack Resources](docs/RESOURCES.md)
 - [Vstack Inputs](docs/INPUTS.md)
-- [Vstack Filters](docs/FILTERS.md)
+- [Vstack Socket](docs/SOCKET.md)
+
+# Queues
+Para o funcionamento completo do sistema é necessário que as filas abaixo estejam sendo executadas;
+<br>
+
+```
+php artisan queue:work --queue=resource-import,resource-export,alert-broadcasts,event-broadcasts
+```
