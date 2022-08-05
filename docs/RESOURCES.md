@@ -415,6 +415,11 @@ public function filters()
 
 Para filtros mais complexos você pode executar o comando <b>php artisan vstack:make-filter {resource} {name} {type}</b>
 
+Tipos de filtros disponíveis
+```
+text-filter, select-filter, check-filter, date-filter, rangedate-filter, custom-filter
+```
+
 que será criado uma classe em /Http/Filters/NOME_DO_RESOURCE/NOME_DO_FILTER.php nos padrões abaixo :
 
 ```
