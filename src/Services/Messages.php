@@ -16,6 +16,6 @@ class Messages
     public static function notify($type, $message, $id = null)
     {
         $user = $id ? User::findOrFail($id) : Auth::user();
-        $user->notify(new Message($message,$type));
+        $user->notify(new Message($message, $type));
     }
 }

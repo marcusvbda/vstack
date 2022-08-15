@@ -17,7 +17,7 @@ class SendMail
 		Mail::send([], [], function ($message) use ($to, $html, $subject, $file) {
 			$message->to($to)
 				->subject($subject)
-				->setBody($html, 'text/html');
+				->html($html);
 			if (@$file) {
 				$message->attach(storage_path("app/" . $file));
 			}
