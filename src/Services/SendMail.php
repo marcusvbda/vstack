@@ -22,7 +22,9 @@ class SendMail
 				$message->attach(storage_path("app/" . $file));
 			}
 		});
-		Storage::disk("local")->delete($file);
+		if (@$file) {
+			Storage::disk("local")->delete($file);
+		}
 		if ($before_send) {
 			$before_send($to, $subject, $html);
 		}
