@@ -766,4 +766,10 @@ class Resource
 		$query = $query->where(@$request->label_index ?? "name", "like", "%{$request->filter}%");
 		return  $query;
 	}
+
+	public static function getStaticMethod($method, $params = [])
+	{
+		$resource = new static();
+		return $resource->{$method}($params);
+	}
 }

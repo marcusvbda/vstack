@@ -55,7 +55,7 @@ new Text([
 ![Resource Inicial](images/input_text.png)
 
 
-- <b>Type</b>, segue a nomenclatura de [type input do HTML5](https://www.w3schools.com/html/html_form_input_types.asp);
+- <b>type</b>, segue a nomenclatura de [type input do HTML5](https://www.w3schools.com/html/html_form_input_types.asp);
 - <b>append</b>, oque aparecerá no início do input;
 - <b>prepend</b>, oque aparecerá no fim do input;
 - <b>mask</b>, array de mascaras do [VueMask](https://www.npmjs.com/package/v-mask);
@@ -280,3 +280,32 @@ new HtmlEditor([
 ![input](images/input_html.gif)
 - <b>blocks</b>, array de objetos com os atributos, label, attributes e content (html), que adicionará ao editor um bloco com as características definidas;
 
+
+
+
+
+<br>
+<br>
+
+### ResourceTree
+Input ResourceTree, abaixo um exemplo de utilização :
+```
+use marcusvbda\vstack\Fields\ResourceTree;
+
+...
+new ResourceTree([
+    'parent_resource' => 'cursos', //obrigatório
+    'resource' => 'questoes', // obrigatório
+    'relation' => 'questions',// obrigatório
+    'foreign_key' => 'courseId',// obrigatório
+    'label_index' => 'title',// opcional, default name
+    //'template' => 'seu conteúdo aqui' // opcional, default irá mostrar o valor do label_index
+]),
+...
+```
+![input](images/input_resourcetree_g.gif)
+- <b>parent_resource</b>, define para o componente qual é o nome do resource que está o iniciando;
+- <b>resource</b>, define para o componente qual é o nome do resource que ele carregará os dados ( os inputs de cadastro/edição devem ser configurados normalmente em fields do resource em questão );
+- <b>foreign_key</b>, fk do relacionamento do resource;
+- <b>label_index</b>, o input que será mostrado como label na listagem;
+- <b>template</b>, caso queira mostrar um elemento diferente e personalizado utilize este atributo
