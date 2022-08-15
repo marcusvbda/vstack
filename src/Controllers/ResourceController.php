@@ -18,6 +18,7 @@ use marcusvbda\vstack\Models\{Tag, TagRelation};
 use marcusvbda\vstack\Models\ResourceConfig;
 use marcusvbda\vstack\Vstack;
 use Validator;
+use Cache;
 
 class ResourceController extends Controller
 {
@@ -29,13 +30,10 @@ class ResourceController extends Controller
 
 	public function getListData($resource, $type, Request $request)
 	{
+		return Cache::remember(cache_key(__FUNCTION__, $request->all()), 60, function () use ($resource, $type, $request) {
 		$resource = ResourcesHelpers::find($resource);
 		$report_mode = $type == "report";
-		if ($report_mode) {
-			request()->merge(["page_type" => "report"]);
-		} else {
-			request()->merge(["page_type" => "list"]);
-		}
+			
 		if ($report_mode) {
 			if (!$resource->canViewReport()) {
 				abort(403);
@@ -45,6 +43,13 @@ class ResourceController extends Controller
 				abort(403);
 			}
 		}
+			
+			if ($report_mode) {
+				request()->request->add(["page_type" => "report"]);
+			} else {
+				request()->request->add(["page_type" => "list"]);
+			}
+
 		$socket_client_id = @$request->socket_client_id;
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
@@ -100,14 +105,17 @@ class ResourceController extends Controller
 			$table = $tableGetter();
 			return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
 		}
+		});
 	}
 
 	public function getListItem(Request $request)
 	{
+		return Cache::remember(cache_key(__FUNCTION__, $request->all()), 60, function () use ($request) {
 		$resource = ResourcesHelpers::find($request->resource_id);
 		$data = $this->getData($resource, $request);
 		$result = $resource->listItemsContent(clone $data);
 		return $result ? $result : [];
+		});
 	}
 
 	protected function showIndexList($resource, Request $request, $report_mode = false)
