@@ -6,4 +6,4 @@ axiosRetry(axios, {
     shouldResetTimeout: true,
     retryCondition: () => true,
 });
-Vue.prototype.$http = axios;
+export default axios;

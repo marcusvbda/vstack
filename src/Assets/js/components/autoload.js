@@ -11,7 +11,7 @@ require("./libs/linkPreview");
 require("./libs/pace");
 require("jquery-ui-dist/jquery-ui");
 require("bootstrap");
-require("./libs/axios");
+import axios from "./libs/axios";
 require("./libs/element");
 require("./libs/loadash");
 require("./libs/pace");
@@ -25,6 +25,10 @@ Vue.prototype.$gsap = gsap;
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 Vue.prototype.$moment = moment;
+Vue.prototype.$http = axios;
+import { Model } from 'vue-api-query'
+Model.$http = axios;
+
 const debug = require("console-development");
 Vue.prototype.$debug = debug;
 import io from "socket.io-client";

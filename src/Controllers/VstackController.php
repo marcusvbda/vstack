@@ -5,7 +5,7 @@ namespace marcusvbda\vstack\Controllers;
 use App\Http\Controllers\Controller;
 use ResourcesHelpers;
 use Illuminate\Http\Request;
-
+use Spatie\QueryBuilder\QueryBuilder;
 class VstackController extends Controller
 {
 	public function getPartialContent($resource, Request $request)
