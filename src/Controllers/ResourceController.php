@@ -663,9 +663,17 @@ class ResourceController extends Controller
 							if ($content && $content->{$input->options["field"]}) {
 								$field_value = @$content->{$input->options["field"]} ?? [];
 							}
-							$field_value = array_map(function ($row) {
-								return @$row->url;
-							}, $field_value);
+							if(is_array($field_value)){
+								$field_value = array_map(function ($row) {
+									return @$row->url;
+								}, $field_value);
+							} else {			
+								$values = [];					
+								foreach($field_value as $value) {
+									$values[]  =$value;
+								}
+								$field_value=$values;
+							}
 							$input->options["value"] = @$field_value;
 						} else {
 							$value = @$content->{$input->options["field"]};
@@ -769,7 +777,7 @@ class ResourceController extends Controller
 			if (gettype(@$target->{$index}) != "object") {
 				return false;
 			}
-			return class_exists(get_class(@$target->{$index}));
+			return is_callable($target->{$index});
 		} catch (\Exception $e) {
 			return false;
 		}
