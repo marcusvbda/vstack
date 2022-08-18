@@ -295,12 +295,12 @@ class Resource
 
 	public function canViewRow($row)
 	{
-		return true;
+		return $this->canView();
 	}
 
 	public function canView()
 	{
-		return true;
+		return false;
 	}
 
 	public function canClone()
