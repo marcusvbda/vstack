@@ -22,7 +22,7 @@ class MultipleDelete extends Action
             $ids = $request->input('ids');
             $this->model = new $this->model;
             $this->model->whereIn('id', $ids)->delete();
-            Messages::send("success", "Os leads foram excluidos");
+            Messages::send("success", $this->success_message);
             return ['success' => true];
         };
 
