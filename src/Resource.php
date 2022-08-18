@@ -320,7 +320,7 @@ class Resource
 
 	public function canExport()
 	{
-		return true;
+		return $this->canViewReport();
 	}
 
 	public function listType()
