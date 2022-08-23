@@ -151,7 +151,7 @@ class Resource
 
 	public function nothingStoredSubText()
 	{
-		return "<span>Clique no botão abaixo para adicionar o primeiro registro ...</span>";
+		return "<small>Clique no botão abaixo para adicionar o primeiro registro ...</small>";
 	}
 
 	public function fields()
