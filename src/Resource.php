@@ -529,9 +529,7 @@ class Resource
 
 	public function beforeStore($data)
 	{
-		return [
-			"success" => true,
-		];
+		return false;
 	}
 
 	public function storeMethod($id, $data)
