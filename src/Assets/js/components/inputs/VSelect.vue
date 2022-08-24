@@ -61,6 +61,7 @@
     </tr>
 </template>
 <script>
+import { mapMutations } from "vuex";
 export default {
     props: [
         "placeholder",
@@ -105,8 +106,12 @@ export default {
                 }
             }
         },
+        loading(val) {
+            this.setActionBtnLoading(val);
+        },
     },
     methods: {
+        ...mapMutations("resource", ["setActionBtnLoading"]),
         toggleMarked() {
             if(!this.marked) {
                 this.value = this.options.map(x=>x.id);
