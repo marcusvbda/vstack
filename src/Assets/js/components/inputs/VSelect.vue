@@ -121,6 +121,7 @@ export default {
             this.marked = !this.marked;
         },
         initialize() {
+            this.setActionBtnLoading(this.loading);
             if (this.list_model) {
                 this.initOptions(() => {
                     this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
