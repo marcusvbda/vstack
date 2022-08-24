@@ -229,6 +229,7 @@ export default {
         "right_card_content",
         "content_id",
         "content",
+        "has_befores_store"
     ],
     data() {
         return {
@@ -523,7 +524,12 @@ export default {
             }
         },
         checkStore(clicked_btn) {
-            this.setActionBtnLoading(true);
+            if(!this.has_befores_store) {
+                this.checked = true;
+                return this.submit(clicked_btn);
+            }
+            
+            this.setActionBtnLoading(true);          
             this.$http.post(this.data.checkout_route, { ...this.form, clicked_btn }).then(({ data }) => {
                 if (data.success === false) {
                     this.setActionBtnLoading(false);
