@@ -32,6 +32,7 @@
     :second_btn='@json($resource->secondCrudBtn())'
     :acl='@json(["can_update" => $resource->canUpdate()])'
     :crud_type='@json($resource->crudType())'
+    :has_befores_store='@json($resource->beforeStore([]) !== false)'
     >
     @if (@!$data->id && !@$data['id'])
         @if (@$resource->afterCreateSlot())
