@@ -18,34 +18,24 @@
                             <div class="shimmer select mb-3" />
                         </template>
                         <div class="d-flex flex-row" v-else>
-                            <el-checkbox-group class="vstack-hasmany" v-model="value" >
+                            <el-checkbox-group class="vstack-hasmany" v-model="value">
                                 <el-checkbox-button v-for="(op, i) in options" :label="op.id" :key="i">
                                     {{ op.name }}
                                 </el-checkbox-button>
                             </el-checkbox-group>
                             <a class="px-3 text-center f-12" @click.prevent="toggleMarked" href="#">
-                                {{!marked ?'Marcar':'Desmarcar'}} todas as opções
+                                {{ !marked ? 'Marcar' : 'Desmarcar' }} todas as opções
                             </a>
                         </div>
                     </template>
                     <template v-else>
                         <div class="shimmer select" v-if="loading" />
-                        <el-select
-                            :allow-create="allowcreate"
-                            :disabled="disabled"
-                            v-else
-                            :size="size ? size : 'large'"
-                            class="w-100"
-                            clearable
-                            v-model="value"
-                            filterable
-                            :placeholder="placeholder"
-                            v-loading="loading"
-                            :loading="loading"
-                            loading-text="Carregando..."
-                            :popper-append-to-body="false"
-                        >
-                            <el-option v-for="(item, i) in options" :key="i" :label="item.name" :value="String(item.id)">
+                        <el-select :allow-create="allowcreate" :disabled="disabled" v-else :size="size ? size : 'large'"
+                            class="w-100" clearable v-model="value" filterable :placeholder="placeholder"
+                            v-loading="loading" :loading="loading" loading-text="Carregando..."
+                            :popper-append-to-body="false">
+                            <el-option v-for="(item, i) in options" :key="i" :label="item.name"
+                                :value="String(item.id)">
                                 <div class="w-100 d-flex" v-html="item.name"></div>
                             </el-option>
                         </el-select>
@@ -61,7 +51,7 @@
     </tr>
 </template>
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 export default {
     props: [
         "placeholder",
@@ -80,6 +70,7 @@ export default {
         "description",
         "all_options_label",
         "model_fields",
+        "field_index"
     ],
     data() {
         return {
@@ -87,13 +78,14 @@ export default {
             started: false,
             options: [],
             value: this.multiple ? [] : null,
-            marked:false
+            marked: false
         };
     },
     created() {
         setTimeout(() => {
-            if (!this._isDestroyed) {
+            if (!this._isDestroyed && !this.inputs_initialized.includes(this.field_index)) {
                 this.initialize();
+                this.pushInputInitialized(this.field_index);
             }
         });
     },
@@ -101,8 +93,8 @@ export default {
         value(val) {
             if (this.started) {
                 this.$emit("input", val);
-                if(Array.isArray(this.value)) {
-                    this.marked=this.value.length === this.options.length
+                if (Array.isArray(this.value)) {
+                    this.marked = this.value.length === this.options.length
                 }
             }
         },
@@ -110,11 +102,14 @@ export default {
             this.setActionBtnLoading(val);
         },
     },
+    computed: {
+        ...mapGetters("resource", ["inputs_initialized"]),
+    },
     methods: {
-        ...mapMutations("resource", ["setActionBtnLoading"]),
+        ...mapMutations("resource", ["setActionBtnLoading", "pushInputInitialized"]),
         toggleMarked() {
-            if(!this.marked) {
-                this.value = this.options.map(x=>x.id);
+            if (!this.marked) {
+                this.value = this.options.map(x => x.id);
             } else {
                 this.value = [];
             }
@@ -125,10 +120,10 @@ export default {
             if (this.list_model) {
                 this.initOptions(() => {
                     this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
-                    if(!Array.isArray(this.value)) {
+                    if (!Array.isArray(this.value)) {
                         this.value = this.value ? String(this.value) : null;
-                    }  else {
-                        this.value = this.value.map(x=>String(x));
+                    } else {
+                        this.value = this.value.map(x => String(x));
                     }
                     this.loading = false;
                     this.started = true;
@@ -144,9 +139,9 @@ export default {
                     }
                 }
                 this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
-                if(Array.isArray(this.value)) {
-                    this.value = this.value.map(x=>String(x));
-                } 
+                if (Array.isArray(this.value)) {
+                    this.value = this.value.map(x => String(x));
+                }
                 this.loading = false;
                 this.started = true;
             }
@@ -157,7 +152,7 @@ export default {
                 return callback();
             }
             const payload = {
-                params : { model: this.list_model, model_fields: this.model_fields }
+                params: { model: this.list_model, model_fields: this.model_fields }
             }
             this.$http
                 .post(this.route_list, payload)
@@ -182,11 +177,13 @@ export default {
     width: 100%;
     border-radius: 5px;
 }
+
 .v-select {
     &.is-invalid {
         .el-select {
             border: 1px solid red;
         }
+
         .invalid-feedback {
             display: block;
         }
