@@ -13,7 +13,7 @@
             <div v-show="!loading" class="my-4">
                 <div class="d-flex flex-column upload-resource-field input-group">
                     <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :on-preview="handlePreview"
-                        :on-progress="handleProgress" :disabled="disabled" v-bind:class="{
+                        :disabled="disabled" v-bind:class="{
                             disabled: fileList.length >= limit_value,
                             'hide-input': loading || fileList.length >= limit_value,
                             'is-invalid': errors,
@@ -171,9 +171,6 @@ export default {
                 this.loading = true;
                 this.renameFile("--RENAME-FILE--", () => this.$refs.uploader.submit());
             }
-        },
-        handleProgress(event, file, fileList) {
-            console.log("on-progress", event, file, fileList)
         },
         renameFile(name, callback) {
             setTimeout(() => {
