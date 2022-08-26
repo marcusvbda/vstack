@@ -882,27 +882,27 @@ class ResourceController extends Controller
 		$disk = Storage::disk($default_disk);
 		if (@$request['file']) {
 			$file = $request->file('file');
-			$name = $file->getClientOriginalName();
-			$file_name = ($default_disk == "local" ? "public/$name" : $name);
-			$contents = file_get_contents($file->getRealPath());
-			$disk->put($file_name, $contents);
-			$path = $disk->url($name);
-			return ["path" => $path];
-		}
-		if (@$request['files']) {
+		} else {
 			$file = $request['files'][0];
-			$name = $file->getClientOriginalName();
-			$file_name = ($default_disk == "local" ? "public/$name" : $name);
-			$contents = file_get_contents($file->getRealPath());
-			$disk->put($file_name, $contents);
-			$path = $disk->url($name);
-			return [
-				"data" => [
-					$path
-				]
-			];
 		}
-		return ["path" => asset(str_replace("public", "storage", $request->file('file')->store('public')))];
+		
+		$name = $file->getClientOriginalName();
+		$ext = explode(".",$name)[1];
+		$name = str_replace(".{$ext}","",$name);
+		
+		$new_name = $name;
+		if($name == "--RENAME-FILE--") {
+			$new_name = md5(uniqid());
+		}
+
+		$new_name = "{$new_name}.{$ext}";
+		
+		$file_name = ($default_disk == "local" ? "public/$new_name" : $new_name);
+		$contents = file_get_contents($file->getRealPath());
+		$disk->put($file_name, $contents);
+		$path = $disk->url($new_name);
+
+		return ["path" => $path];
 	}
 
 	public function fieldData($resource, Request $request)
