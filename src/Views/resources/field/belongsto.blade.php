@@ -7,6 +7,7 @@
     placeholder='{{$placeholder}}' 
     :multiple='@json($multiple)' 
     route_list='{{$route_list}}' 
+    field_index="{{$field}}"
     :option_list='{{$options}}'  
     :model_fields='@json($model_fields)'
 	all_options_label="{{ $all_options_label }}"
