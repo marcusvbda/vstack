@@ -12,30 +12,15 @@
             <div v-show="loading" class="shimmer resource-tree-item" :style="{ width: '100%', height: 130 }" />
             <div v-show="!loading" class="my-4">
                 <div class="d-flex flex-column upload-resource-field input-group">
-                    <el-upload
-                        multiple
-                        :limit="!multiple ? 1 : limit"
-                        ref="uploader"
-                        :on-preview="handlePreview"
-                        :disabled="disabled"
-                        v-bind:class="{
+                    <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :on-preview="handlePreview"
+                        :on-progress="handleProgress" :disabled="disabled" v-bind:class="{
                             disabled: fileList.length >= limit_value,
                             'hide-input': loading || fileList.length >= limit_value,
                             'is-invalid': errors,
-                        }"
-                        :action="uploadroute"
-                        :list-type="`${is_image ? 'picture-card' : 'text'}`"
-                        :file-list="fileList"
-                        :on-success="handleAvatarSuccess"
-                        :before-upload="handleBeforeUpload"
-                        :on-remove="handleRemove"
-                        :before-remove="beforeRemove"
-                        :on-change="handleChange"
-                        :auto-upload="auto_set_name"
-                        :headers="header"
-                        v-if="renderComponent"
-                        @input.native="handleInput"
-                    >
+                        }" :action="uploadroute" :list-type="`${is_image ? 'picture-card' : 'text'}`"
+                        :file-list="fileList" :on-success="handleAvatarSuccess" :before-upload="handleBeforeUpload"
+                        :on-remove="handleRemove" :before-remove="beforeRemove" :on-change="handleChange"
+                        :auto-upload="false" :headers="header" v-if="renderComponent" @input.native="handleInput">
                         <template v-if="!is_image">
                             <el-button icon="el-icon-upload" type="primary" v-if="fileList.length < limit">
                                 Fazer Upload
@@ -46,11 +31,8 @@
                                 <div>
                                     <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
                                     <div class="el-upload-list__item-actions">
-                                        <span
-                                            class="el-upload-list__item-preview"
-                                            v-if="preview != undefined"
-                                            @click="handlePreview(file)"
-                                        >
+                                        <span class="el-upload-list__item-preview" v-if="preview != undefined"
+                                            @click="handlePreview(file)">
                                             <i class="el-icon-zoom-in"></i>
                                         </span>
                                         <span class="el-upload-list__item-delete" @click="handleRemove(file)">
@@ -104,7 +86,6 @@ export default {
     data() {
         return {
             initialized: false,
-            new_filename: null,
             fileList: [],
             header: { "X-CSRF-TOKEN": laravel.general.csrf_token ? laravel.general.csrf_token : "" },
             loading: false,
@@ -179,15 +160,34 @@ export default {
                     inputErrorMessage: "Digite um nome válido",
                 })
                     .then(({ value }) => {
-                        this.new_filename = value;
-                        this.$refs.uploader.submit();
+                        this.renameFile(value, () => this.$refs.uploader.submit());
                     })
                     .catch(() => {
                         const filename = event.target.value.split("\\").reverse()[0];
                         this.handleRemove(filename);
                         this.loading = false;
                     });
+            } else {
+                this.loading = true;
+                this.renameFile("--RENAME-FILE--", () => this.$refs.uploader.submit());
             }
+        },
+        handleProgress(event, file, fileList) {
+            console.log("on-progress", event, file, fileList)
+        },
+        renameFile(name, callback) {
+            setTimeout(() => {
+                const index = this.$refs.uploader.uploadFiles.length - 1;
+                const original_name = this.$refs.uploader.uploadFiles[index].raw.name;
+                const ext = original_name.split('.').pop();
+                const new_name = `${name}.${ext}`;
+                const original_file = this.$refs.uploader.uploadFiles[index].raw;
+                const new_file = new File([original_file], new_name);
+                new_file.uid = original_file.uid;
+                this.$refs.uploader.uploadFiles[index].raw = new_file;
+                this.$refs.uploader.uploadFiles[index].name;
+                setTimeout(() => callback());
+            });
         },
         handleChange() {
             return this.emitChanges();
@@ -205,7 +205,6 @@ export default {
         },
         handleAvatarSuccess(response, file) {
             file.url = response.path;
-            file.name = this.new_filename;
             let files = this.fileList;
             files.push(file);
             this.setInputFiles(files);
@@ -221,7 +220,7 @@ export default {
                 }
             });
             this.setInputFiles(files);
-        },
+        }
     },
 };
 </script>
@@ -236,6 +235,7 @@ export default {
 
 .hide-input {
     overflow: hidden;
+
     .el-upload--picture-card {
         display: none;
     }
@@ -255,6 +255,7 @@ export default {
     .el-icon-close {
         margin-top: 3px;
     }
+
     .el-icon-upload-success {
         margin-top: 8px;
     }
