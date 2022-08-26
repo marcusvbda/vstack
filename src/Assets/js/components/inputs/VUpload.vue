@@ -86,6 +86,7 @@ export default {
     data() {
         return {
             initialized: false,
+            new_filename: null,
             fileList: [],
             header: { "X-CSRF-TOKEN": laravel.general.csrf_token ? laravel.general.csrf_token : "" },
             loading: false,
@@ -181,6 +182,7 @@ export default {
                 const original_file = this.$refs.uploader.uploadFiles[index].raw;
                 const new_file = new File([original_file], new_name);
                 new_file.uid = original_file.uid;
+                this.new_filename = new_name;
                 this.$refs.uploader.uploadFiles[index].raw = new_file;
                 this.$refs.uploader.uploadFiles[index].name;
                 setTimeout(() => callback());
@@ -203,6 +205,7 @@ export default {
         handleAvatarSuccess(response, file) {
             file.url = response.path;
             let files = this.fileList;
+            file.name = this.new_filename;
             files.push(file);
             this.setInputFiles(files);
             this.loading = false;
