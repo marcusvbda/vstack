@@ -227,6 +227,10 @@ ul.pagination {
         @media (max-width: 749px) {
             width: 100% !important;
         }
+
+        small span {
+            word-break: break-word;
+        }
     }
 
     .input-title {
