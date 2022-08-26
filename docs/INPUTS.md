@@ -177,7 +177,8 @@ new Upload([
     "file_size_limit" => "1024", //opcional, default "2048"
     //"style" => "gallery", //opcional, default "gallery" ou "file"
     "rules" => ["required"], //opcional, default []
-    "custom_message" => ["required" => "Campo obrigatório."]  //opcional, default []
+    "custom_message" => ["required" => "Campo obrigatório."]  //opcional, default [],
+    //"auto_set_name" => true // opcional, default true
 ])
 ...
 ```
@@ -188,7 +189,8 @@ new Upload([
 - <b>multiple</b>, se o input aceitar multiplos arquivos/imagens;
 - <b>upload_route</b>, rota que será feito upload, por padrão o sistema utilizará a rota vinda de Config("vstack.default_upload_route");
 - <b>file_size_limit</b>, tamanho máximo aceito;
-- <b>style</b>, se o input aparecerá no modo galeria ou lista de arquivo (exemplo de cima é galeria, em baixo lista de arquivos);
+- <b>style</b>, define se o input aparecerá no modo galeria ou lista de arquivo (exemplo de cima é galeria, em baixo lista de arquivos);
+- <b>auto_set_name</b>, define se antes de efetuar o upload vai ser perguntando o nome que deseja dar ao arquivo ou se irá definir uma hash unica para o nome do arquivo 
 
 ![input](images/upload_input_file.png)
 
