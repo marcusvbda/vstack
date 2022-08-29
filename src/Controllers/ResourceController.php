@@ -838,16 +838,23 @@ class ResourceController extends Controller
 		if (is_string($model_fields)) {
 			$model_fields = json_decode($model_fields, true);
 		}
+
+		$formated_model_fields = array_map(function($key) use($model_fields) {
+			$value = data_get($model_fields,$key);
+			return "{$value} as {$key}";
+		},array_keys($model_fields));
+
 		try {
 			$model = app()->make($request["model"]);
-			$select_raw = data_get($model_fields, "id", "") . " as id," . data_get($model_fields, "name", "") . " as name";
+			$select_raw = implode(", ",$formated_model_fields);			
 			$model = $model->selectRaw($select_raw);
 			$model = $model->orderBy(data_get($model_fields, "name", ""), "asc");
 			return ["success" => true, "data" => $model->get()];
 		} catch (\Exception $e) {
-			return ["success" => false, "data" => []];
+			return ["success" => false, "data" => [], "error" => $e->getMessage()];
 		}
 	}
+
 
 	public function globalSearch(Request $request)
 	{
