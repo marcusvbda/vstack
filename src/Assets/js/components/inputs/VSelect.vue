@@ -159,7 +159,7 @@ export default {
                 .then((res) => {
                     res = res.data;
                     this.options = res.data.map(x => {
-                        return { id: String(x.id), name: x.name };
+                        return { ...x, id: String(x.id) };
                     });
                     callback();
                 })
