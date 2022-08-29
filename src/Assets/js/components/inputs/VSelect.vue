@@ -90,6 +90,9 @@ export default {
         });
     },
     watch: {
+        "$attrs.value"(val) {
+            this.value = val;
+        },
         value(val) {
             if (this.started) {
                 this.$emit("input", val);
