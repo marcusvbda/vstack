@@ -8,7 +8,17 @@ export default class Model extends BaseModel {
 
     // Implement a default request method
     request(config) {
+        config.url = this.makeUrl();
         return this.$http.request(config)
+    }
+
+    resource() {
+        return 'App\\Http\\Models\\MyModel';
+    }
+
+    makeUrl() {
+        const model = this.resource().replaceAll("\\","-");
+        return `${this.baseURL()}/${model}`
     }
 
     // Define the primary key of the model
