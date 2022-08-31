@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use ResourcesHelpers;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
+
 class VstackController extends Controller
 {
 	public function getPartialContent($resource, Request $request)
@@ -179,5 +180,15 @@ class VstackController extends Controller
 	public function grapesEditor()
 	{
 		return view("vStack::resources.field.grapes.iframe");
+	}
+
+	public function queryBuilder($model)
+	{
+		$model = app()->make("\\".str_replace("-","\\",$model));
+		return QueryBuilder::for($model)
+			->allowedFilters($model->getAllowedFilters())
+			->allowedSorts($model->getAllowedSorts())
+			->allowedIncludes($model->getAllowedIncludes())
+			->get();
 	}
 }
