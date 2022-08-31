@@ -85,7 +85,6 @@ export default {
         setTimeout(() => {
             if (!this._isDestroyed && !this.inputs_initialized.includes(this.field_index)) {
                 this.initialize();
-                this.pushInputInitialized(this.field_index);
             }
         });
     },
@@ -101,15 +100,12 @@ export default {
                 }
             }
         },
-        loading(val) {
-            this.setActionBtnLoading(val);
-        },
     },
     computed: {
         ...mapGetters("resource", ["inputs_initialized"]),
     },
     methods: {
-        ...mapMutations("resource", ["setActionBtnLoading", "pushInputInitialized"]),
+        ...mapMutations("resource", ["pushInputInitialized"]),
         toggleMarked() {
             if (!this.marked) {
                 this.value = this.options.map(x => x.id);
@@ -119,7 +115,6 @@ export default {
             this.marked = !this.marked;
         },
         initialize() {
-            this.setActionBtnLoading(this.loading);
             if (this.list_model) {
                 this.initOptions(() => {
                     this.value = this.$attrs.value ? this.$attrs.value : this.multiple ? [] : null;
@@ -128,8 +123,7 @@ export default {
                     } else {
                         this.value = this.value.map(x => String(x));
                     }
-                    this.loading = false;
-                    this.started = true;
+                    this.finishInit();
                 });
             } else {
                 for (let i in this.option_list) {
@@ -145,9 +139,13 @@ export default {
                 if (Array.isArray(this.value)) {
                     this.value = this.value.map(x => String(x));
                 }
-                this.loading = false;
-                this.started = true;
+                this.finishInit();
             }
+        },
+        finishInit() {
+            this.loading = false;
+            this.started = true;
+            this.pushInputInitialized(this.field_index);
         },
         initOptions(callback) {
             if (this.optionlist || !this.list_model) {
