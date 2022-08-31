@@ -1,42 +1,22 @@
 <template>
-    <div
-        class="d-flex flex-row flex-wrap cursor-pointer align-items-center justify-content-center"
-        style="min-height: 25px"
-        :id="`resource-crud-btns-${data.id}`"
-    >
+    <div class="d-flex flex-row flex-wrap cursor-pointer align-items-center justify-content-center"
+        style="min-height: 25px" :id="`resource-crud-btns-${data.id}`">
         <el-button-group>
             <el-tooltip class="item" effect="dark" content="Clonar" placement="top" v-if="data.can_clone">
-                <el-button
-                    size="small"
-                    plain
-                    type="secondary"
-                    icon="el-icon-document-copy"
-                    @click="clickedClone"
-                    id="resource-btn-copy"
-                />
+                <el-button size="small" plain type="secondary" icon="el-icon-document-copy" @click="clickedClone"
+                    id="resource-btn-copy" />
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Visualizar" placement="top" v-if="data.can_view">
-                <el-button
-                    size="small"
-                    plain
-                    type="info"
-                    icon="el-icon-search"
-                    @click="goTo(data.route)"
-                    id="resource-btn-view"
-                />
+                <el-button size="small" plain type="info" icon="el-icon-search" @click="goTo(data.route)"
+                    id="resource-btn-view" />
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Editar" placement="top" v-if="data.can_update">
-                <el-button size="small" plain type="primary" icon="el-icon-edit" @click="goToEdit()" id="resource-btn-edit" />
+                <el-button size="small" plain type="primary" icon="el-icon-edit" @click="goToEdit()"
+                    id="resource-btn-edit" />
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="Excluir" placement="top" v-if="data.can_delete">
-                <el-button
-                    size="small"
-                    plain
-                    type="danger"
-                    icon="el-icon-delete"
-                    @click.prevent="destroy"
-                    id="resource-btn-delete"
-                />
+                <el-button size="small" plain type="danger" icon="el-icon-delete" @click.prevent="destroy"
+                    id="resource-btn-delete" />
             </el-tooltip>
         </el-button-group>
         <resource-crud-dialog :resource_id="resource_id" ref="dialog" :row_id="data.id" />
@@ -77,6 +57,11 @@ export default {
                         .then(({ data }) => {
                             if (data.success) {
                                 return (window.location.href = data.route);
+                            } else {
+                                if (data.message) {
+                                    this.$message({ showClose: true, message: data.message.text, type: data.message.type, dangerouslyUseHTMLString: true });
+                                }
+                                this.loading.close();
                             }
                         })
                         .catch((er) => {
