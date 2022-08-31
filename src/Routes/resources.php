@@ -11,6 +11,7 @@ Route::group(['prefix' => "vstack"], function () {
 		Route::post('json-api', [VstackController::class, 'getJson']);
 		Route::get('json-api', [VstackController::class, 'getJson']);
 		Route::post('{resource}/get-partial-content', [VstackController::class, 'getPartialContent'])->name("vstack.get_partials_content");
+		Route::any('query-builder/{model}', [VstackController::class, 'queryBuilder'])->name("vstack.query_builder");
 	});
 });
 
