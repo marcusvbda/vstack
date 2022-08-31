@@ -51,7 +51,6 @@
     </tr>
 </template>
 <script>
-import { mapMutations, mapGetters } from "vuex";
 export default {
     props: [
         "placeholder",
@@ -83,7 +82,7 @@ export default {
     },
     created() {
         setTimeout(() => {
-            if (!this._isDestroyed && !this.inputs_initialized.includes(this.field_index)) {
+            if (!this._isDestroyed) {
                 this.initialize();
             }
         });
@@ -101,11 +100,7 @@ export default {
             }
         },
     },
-    computed: {
-        ...mapGetters("resource", ["inputs_initialized"]),
-    },
     methods: {
-        ...mapMutations("resource", ["pushInputInitialized"]),
         toggleMarked() {
             if (!this.marked) {
                 this.value = this.options.map(x => x.id);
@@ -145,7 +140,6 @@ export default {
         finishInit() {
             this.loading = false;
             this.started = true;
-            this.pushInputInitialized(this.field_index);
         },
         initOptions(callback) {
             if (this.optionlist || !this.list_model) {
