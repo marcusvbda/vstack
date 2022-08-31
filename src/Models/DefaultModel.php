@@ -77,4 +77,19 @@ class DefaultModel extends Model
 		if (!@$this->updated_at) return;
 		return $this->updated_at->format("d/m/Y - H:i:s");
 	}
+
+	public function getAllowedFilters()
+	{
+		return [];
+	}
+
+	public function getAllowedIncludes()
+	{
+		return [];
+	}
+
+	public function getAllowedSorts()
+	{
+		return [];
+	}
 }
