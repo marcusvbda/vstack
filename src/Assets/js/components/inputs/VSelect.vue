@@ -172,22 +172,3 @@ export default {
     },
 };
 </script>
-<style scoped lang="scss">
-.shimmer.select {
-    height: 37px;
-    width: 100%;
-    border-radius: 5px;
-}
-
-.v-select {
-    &.is-invalid {
-        .el-select {
-            border: 1px solid red;
-        }
-
-        .invalid-feedback {
-            display: block;
-        }
-    }
-}
-</style>
