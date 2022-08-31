@@ -6,7 +6,8 @@
                     <div class="row">
                         <div class="col-12">
                             <template v-for="(card, i) in data.fields">
-                                <v-runtime-template :key="i" :template="card.view" :id="`resource-crud-card-${card.label}`" />
+                                <v-runtime-template :key="i" :template="card.view"
+                                    :id="`resource-crud-card-${card.label}`" />
                             </template>
                         </div>
                     </div>
@@ -16,7 +17,8 @@
                         <div class="row" id="resource-crud-page">
                             <div class="col-12 col-lg-9">
                                 <template v-for="(card, i) in data.fields">
-                                    <v-runtime-template :key="i" :template="card.view" :id="`resource-crud-card-${card.label}`" />
+                                    <v-runtime-template :key="i" :template="card.view"
+                                        :id="`resource-crud-card-${card.label}`" />
                                 </template>
                             </div>
                             <div class="col-12 col-lg-3 fields-tab" id="resource-card-section-list">
@@ -27,49 +29,32 @@
                                                 <div class="row" v-if="!right_card_content">
                                                     <div class="col-12">
                                                         <ul class="d-flex flex-column mb-0 pl-3">
-                                                            <li
-                                                                v-for="(card, i) in namedCards"
-                                                                :key="i"
-                                                                :id="`resource-card-section-list-link-${card.label}`"
-                                                            >
-                                                                <a
-                                                                    class="f-12 link"
+                                                            <li v-for="(card, i) in namedCards" :key="i"
+                                                                :id="`resource-card-section-list-link-${card.label}`">
+                                                                <a class="f-12 link"
                                                                     :href="`#resource-crud-card-${card.label}`"
-                                                                    v-html="card.label"
-                                                                />
+                                                                    v-html="card.label" />
                                                             </li>
                                                         </ul>
                                                     </div>
                                                 </div>
                                                 <v-runtime-template v-else :template="right_card_content" />
                                             </div>
-                                            <div
-                                                :class="[
-                                                    'card-footer flex-wrap d-flex',
-                                                    'flex-row justify-content-end p-2 align-items-center',
-                                                ]"
-                                            >
+                                            <div :class="[
+                                                'card-footer flex-wrap d-flex',
+                                                'flex-row justify-content-end p-2 align-items-center',
+                                            ]">
                                                 <el-button-group>
-                                                    <el-button
-                                                        v-if="first_btn"
-                                                        :size="first_btn.size"
-                                                        :type="first_btn.type"
-                                                        @click="submit(first_btn.field)"
-                                                        :loading="action_btn_loading"
-                                                        :disabled="action_btn_loading"
-                                                        id="resource-crud-btn-first"
-                                                    >
+                                                    <el-button v-if="first_btn" :size="first_btn.size"
+                                                        :type="first_btn.type" @click="submit(first_btn.field)"
+                                                        :loading="action_btn_loading" :disabled="action_btn_loading"
+                                                        id="resource-crud-btn-first">
                                                         <span v-html="first_btn.content" />
                                                     </el-button>
-                                                    <el-button
-                                                        v-if="second_btn"
-                                                        :size="second_btn.size"
-                                                        :type="second_btn.type"
-                                                        @click="submit(second_btn.field)"
-                                                        :loading="action_btn_loading"
-                                                        :disabled="action_btn_loading"
-                                                        id="resource-crud-btn-second"
-                                                    >
+                                                    <el-button v-if="second_btn" :size="second_btn.size"
+                                                        :type="second_btn.type" @click="submit(second_btn.field)"
+                                                        :loading="action_btn_loading" :disabled="action_btn_loading"
+                                                        id="resource-crud-btn-second">
                                                         <span v-html="second_btn.content" />
                                                     </el-button>
                                                 </el-button-group>
@@ -84,32 +69,23 @@
                         <div class="row" id="resource-crud-page">
                             <div class="col-12 col-lg-9 d-flex flex-column">
                                 <div :class="`d-flex ${wizardContentClass}`">
-                                    <el-steps
-                                        :active="wizard_step"
-                                        finish-status="success"
-                                        :direction="wizardDirection"
-                                        class="step-resource-crud py-0"
-                                        :simple="isSimple"
-                                        id="resource-wizard-steps"
-                                    >
+                                    <el-steps :active="wizard_step" finish-status="success" :direction="wizardDirection"
+                                        class="step-resource-crud py-0" :simple="isSimple" id="resource-wizard-steps">
                                         <template v-for="(step, i) in data.fields">
-                                            <el-step
-                                                :key="`step_wizard_${i}`"
+                                            <el-step :key="`step_wizard_${i}`"
                                                 :class="`resource-step ${getResourceStepStatus(i)}`"
-                                                :id="`resource-wizard-steps-${step.label}`"
-                                            >
+                                                :id="`resource-wizard-steps-${step.label}`">
                                                 <div slot="icon" v-html="step.icon ? step.icon : i + 1" />
                                                 <div slot="title" v-if="step.label" v-html="step.label" />
-                                                <div v-if="step.description" slot="description" v-html="step.description" />
+                                                <div v-if="step.description" slot="description"
+                                                    v-html="step.description" />
                                             </el-step>
                                         </template>
                                     </el-steps>
                                     <div :class="`flex-grow-1 ${wizardCrudClass}`">
                                         <transition :name="wizardTransitionName">
-                                            <v-runtime-template
-                                                :template="data.fields[wizard_step].view"
-                                                :id="`resource-crud-card-${data.fields[wizard_step].label}`"
-                                            />
+                                            <v-runtime-template :template="data.fields[wizard_step].view"
+                                                :id="`resource-crud-card-${data.fields[wizard_step].label}`" />
                                         </transition>
                                     </div>
                                 </div>
@@ -122,12 +98,9 @@
                                                 <div class="row" v-if="!right_card_content">
                                                     <div class="col-12">
                                                         <el-timeline class="pl-0">
-                                                            <el-timeline-item
-                                                                v-for="(step, i) in namedCards"
-                                                                :key="i"
+                                                            <el-timeline-item v-for="(step, i) in namedCards" :key="i"
                                                                 :type="getTimelineItemColor(i)"
-                                                                :timestamp="step.description"
-                                                            >
+                                                                :timestamp="step.description">
                                                                 {{ step.label }}
                                                             </el-timeline-item>
                                                         </el-timeline>
@@ -135,44 +108,30 @@
                                                 </div>
                                                 <v-runtime-template v-else :template="right_card_content" />
                                             </div>
-                                            <div
-                                                :class="[
-                                                    'card-footer flex-wrap d-flex flex-row',
-                                                    'justify-content-end p-2 align-items-center',
-                                                ]"
-                                            >
+                                            <div :class="[
+                                                'card-footer flex-wrap d-flex flex-row',
+                                                'justify-content-end p-2 align-items-center',
+                                            ]">
                                                 <el-button-group>
                                                     <template v-if="wizard_step == data.fields.length - 1">
-                                                        <el-button
-                                                            v-if="first_btn"
-                                                            :size="first_btn.size"
-                                                            :type="first_btn.type"
-                                                            @click="submit(first_btn.field)"
+                                                        <el-button v-if="first_btn" :size="first_btn.size"
+                                                            :type="first_btn.type" @click="submit(first_btn.field)"
                                                             :loading="action_btn_loading"
-                                                            :disabled="action_btn_loading"
-                                                        >
+                                                            :disabled="action_btn_loading">
                                                             <span v-html="first_btn.content" />
                                                         </el-button>
-                                                        <el-button
-                                                            v-if="second_btn"
-                                                            :size="second_btn.size"
-                                                            :type="second_btn.type"
-                                                            @click="submit(second_btn.field)"
+                                                        <el-button v-if="second_btn" :size="second_btn.size"
+                                                            :type="second_btn.type" @click="submit(second_btn.field)"
                                                             :loading="action_btn_loading"
-                                                            :disabled="action_btn_loading"
-                                                        >
+                                                            :disabled="action_btn_loading">
                                                             <span v-html="second_btn.content" />
                                                         </el-button>
                                                     </template>
                                                     <template v-else>
-                                                        <el-button
-                                                            v-if="wizard_step != 0"
-                                                            :size="first_btn.size"
-                                                            type="warning"
-                                                            @click="previousStep"
+                                                        <el-button v-if="wizard_step != 0" :size="first_btn.size"
+                                                            type="warning" @click="previousStep"
                                                             :disabled="action_btn_loading"
-                                                            :loading="loading_wizard_previous || action_btn_loading"
-                                                        >
+                                                            :loading="loading_wizard_previous || action_btn_loading">
                                                             <span>
                                                                 <div class="d-flex flex-row">
                                                                     <i class="el-icon-back mr-2"></i>
@@ -180,14 +139,10 @@
                                                                 </div>
                                                             </span>
                                                         </el-button>
-                                                        <el-button
-                                                            :size="second_btn.size"
-                                                            type="primary"
-                                                            @click="nextStep"
-                                                            :disabled="action_btn_loading"
+                                                        <el-button :size="second_btn.size" type="primary"
+                                                            @click="nextStep" :disabled="action_btn_loading"
                                                             :loading="loading_wizard_next || action_btn_loading"
-                                                            id="resource-btn-next-step"
-                                                        >
+                                                            id="resource-btn-next-step">
                                                             <span>
                                                                 <div class="d-flex flex-row">
                                                                     <i class="el-icon-right mr-2"></i>
@@ -378,7 +333,7 @@ export default {
             }
         },
         initWizardEvents() {
-            if (this.crud_template  == "wizard") {
+            if (this.crud_template == "wizard") {
                 this.$waitForEls(".resource-step").then((elements) => {
                     elements.forEach((item, index) => {
                         [".el-step__head", ".el-step__main"].forEach((child) => {
@@ -524,12 +479,12 @@ export default {
             }
         },
         checkStore(clicked_btn) {
-            if(!this.has_befores_store) {
+            if (!this.has_befores_store) {
                 this.checked = true;
                 return this.submit(clicked_btn);
             }
-            
-            this.setActionBtnLoading(true);          
+
+            this.setActionBtnLoading(true);
             this.$http.post(this.data.checkout_route, { ...this.form, clicked_btn }).then(({ data }) => {
                 if (data.success === false) {
                     this.setActionBtnLoading(false);
@@ -567,7 +522,7 @@ export default {
                         return (window.location.href = data.route);
                     } else {
                         if (data.message) {
-                            this.$message({ showClose: true, message: data.message.text, type: data.message.type });
+                            this.$message({ showClose: true, message: data.message.text, type: data.message.type, dangerouslyUseHTMLString: true });
                         }
                         this.loading.close();
                     }
@@ -588,6 +543,7 @@ export default {
             font-size: 12px;
         }
     }
+
     .f-12 {
         font-size: 12px;
     }
@@ -600,15 +556,19 @@ export default {
     .step-resource-crud {
         .resource-step {
             opacity: 0.8;
+
             &.current {
                 cursor: default;
                 opacity: 1;
             }
+
             &.blocked {
                 cursor: no-drop;
             }
+
             &.done {
                 cursor: pointer;
+
                 &:hover {
                     transition: 0.4s;
                     opacity: 1;
