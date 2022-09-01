@@ -22,6 +22,7 @@ class BelongsTo extends Field
 		if ($type == "view") {
 			return $this->getViewOnlyValue();
 		}
+		$allow_create = @$this->options["allow_create"] ? 'true' : 'false';
 		$model       = @$this->options["model"] ? $this->options["model"] : null;
 		$field       = @$this->options["field"];
 		$multiple       = @$this->options["multiple"] ? @$this->options["multiple"] : false;
@@ -35,7 +36,6 @@ class BelongsTo extends Field
 		$visible        = $this->options["visible"] ? 'true' : 'false';
 		$all_options_label = @$this->options["all_options_label"] ? $this->options["all_options_label"] : 'Todos(as)';
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
-
 		return $this->view = view("vStack::resources.field.belongsto", compact(
 			"field",
 			"model",
@@ -49,7 +49,8 @@ class BelongsTo extends Field
 			"multiple",
 			"all_options_label",
 			"eval",
-			"model_fields"
+			"model_fields",
+			"allow_create"
 		))->render();
 	}
 }
