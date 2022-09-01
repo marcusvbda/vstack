@@ -11,7 +11,7 @@
         <td>
             <div class="d-flex flex-column">
                 <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
-                    <template v-if="multiple">
+                    <template v-if="multiple && !allow_create">
                         <template v-if="loading">
                             <div class="shimmer select mb-3" />
                             <div class="shimmer select mb-3" />
@@ -30,10 +30,11 @@
                     </template>
                     <template v-else>
                         <div class="shimmer select" v-if="loading" />
-                        <el-select :allow-create="allowcreate" :disabled="disabled" v-else :size="size ? size : 'large'"
-                            class="w-100" clearable v-model="value" filterable :placeholder="placeholder"
-                            v-loading="loading" :loading="loading" loading-text="Carregando..."
-                            :popper-append-to-body="false">
+                        <el-select :allow-create="allow_create" :disabled="disabled" v-else
+                            :size="size ? size : 'large'" :allow_create="allow_create" class="w-100" clearable
+                            v-model="value" filterable ref="select" :placeholder="placeholder" v-loading="loading"
+                            :loading="loading" @keyup.enter.native="selectCreate" loading-text="Carregando..."
+                            :multiple="multiple" :popper-append-to-body="false">
                             <el-option v-for="(item, i) in options" :key="i" :label="item.name"
                                 :value="String(item.id)">
                                 <div class="w-100 d-flex" v-html="item.name"></div>
@@ -69,7 +70,8 @@ export default {
         "description",
         "all_options_label",
         "model_fields",
-        "field_index"
+        "field_index",
+        "allow_create"
     ],
     data() {
         return {
@@ -101,6 +103,14 @@ export default {
         },
     },
     methods: {
+        selectCreate() {
+            const typed_value = this.$refs.select.query;
+            if (!this.multiple) {
+                this.value = typed_value;
+            } else {
+                this.value.push(typed_value)
+            }
+        },
         toggleMarked() {
             if (!this.marked) {
                 this.value = this.options.map(x => x.id);
