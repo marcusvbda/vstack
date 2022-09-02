@@ -27,6 +27,11 @@ class FilterByPresetDate extends Filter
         "este ano" =>  ["Este ano", "getThisYear"],
     ];
 
+    public function queryBetweenDates($column, $dates)
+	{
+		return "DATE($column) >= DATE('$dates[0]') and DATE($column) <= DATE('$dates[1]')";
+	}
+
 
     public function __construct($options = [])
     {
@@ -47,7 +52,7 @@ class FilterByPresetDate extends Filter
                 if ($value == "todos") {
                     return $query;
                 }
-                return  $query->whereRaw(queryBetweenDates(@$this->field ? @$this->field : @$this->column, $dates));
+                return  $query->whereRaw($this->queryBetweenDates(@$this->field ? @$this->field : @$this->column, $dates));
             };
         }
         parent::__construct();
