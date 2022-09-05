@@ -68,6 +68,11 @@
     @endif
     @endif
 </div>
+
+<div id="loading-section" class="d-flex align-items-center justify-content-center" >
+    <img src="{{config("vstack.loading_gif")}}" style="width: 30%;"/>
+</div>
+
 <resource-index-loader :report_mode='@json($report_mode)' resource_id='{{ $resource->id }}'>
 </resource-index-loader>
 @if ($report_mode)

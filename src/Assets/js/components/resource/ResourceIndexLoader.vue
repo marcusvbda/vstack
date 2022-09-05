@@ -78,15 +78,22 @@ export default {
     created() {
         setTimeout(() => {
             if (!this._isDestroyed) {
+                this.removeLoadingEl();
                 this.init();
             }
         });
     },
     methods: {
+        removeLoadingEl() {
+            const el = document.querySelector("#loading-section");
+            if (el) {
+                el.remove();
+            }
+        },
         init() {
             this.requestFor;
             const payload = {
-                params : this.query_params
+                params: this.query_params
             };
             const route = `/admin/${this.resource_id}/${this.report_mode ? "report" : "list"}/get-list-data`;
             this.$http

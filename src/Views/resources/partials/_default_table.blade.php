@@ -4,7 +4,6 @@
 	$current_order_type = Arr::get($_data, 'order_type', "desc");
 	$order_type = $current_order_type == "desc" ? "asc" : "desc";
 @endphp
-
 <select-table-style data-aos="fade-right" id="{{$resource->id}}" :list_type="{{json_encode($list_types)}}" :has_lenses="{{json_encode(count($resource->lenses())>0)}}"
 	selected_list_type="{{$list_type}}">
 		<template slot="lenses">

@@ -22,6 +22,10 @@
         {!! @$resource->beforeEditSlot() !!}
     @endif
 @endif
+<div id="loading-section" class="d-flex align-items-center justify-content-center" >
+    <img src="{{config("vstack.loading_gif")}}" style="width: 30%;"/>
+</div>
+
 <resource-crud :data="{{ json_encode($data) }}" :params="{{ json_encode($params) }}" redirect="{{ $current_route }}" data-aos="fade-right"
     :breadcrumb="{{ json_encode($routes) }}" @if (@$content)
     :content="{{ json_encode($content) }}"

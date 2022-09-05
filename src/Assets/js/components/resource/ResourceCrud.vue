@@ -275,6 +275,7 @@ export default {
     created() {
         setTimeout(() => {
             if (!this._isDestroyed) {
+                this.removeLoadingEl();
                 this.getScreenSize();
                 this.initForm();
             }
@@ -282,6 +283,12 @@ export default {
     },
     methods: {
         ...mapMutations("resource", ["setActionBtnLoading"]),
+        removeLoadingEl() {
+            const el = document.querySelector("#loading-section");
+            if (el) {
+                el.remove();
+            }
+        },
         getScreenSize() {
             this.window_width = window.innerWidth;
         },
