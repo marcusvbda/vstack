@@ -12,6 +12,7 @@ class FilterByOption extends Filter
     public $field = "";
     public $placeholder = "";
     public $multiple = false;
+    public $handle = null;
 
     public function __construct($options)
     {
@@ -21,12 +22,18 @@ class FilterByOption extends Filter
         if (!$this->index) {
             $this->index = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', @$this->field ? @$this->field : @$this->column));
         }
+        if (!$this->handle) {
+            $this->handle = function ($query, $value) {
+                $ids = explode(",", $value);
+                return $query->whereIn(@$this->field ? @$this->field : @$this->column, $ids);
+            };
+        }
         parent::__construct();
     }
 
     public function apply($query, $value)
     {
-        $ids = explode(",", $value);
-        return $query->whereIn(@$this->field ? @$this->field : @$this->column, $ids);
+        $handle = $this->handle;
+        return $handle($query, $value);
     }
 }
