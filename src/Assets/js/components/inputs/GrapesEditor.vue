@@ -1,14 +1,7 @@
 <template>
     <div class="grapes-preview-window" v-bind:class="{ 'is-invalid': errors }">
-        <iframe
-            v-show="started"
-            @load="onLoadIframe"
-            ref="iframe"
-            src="/vstack/grapes-editor"
-            width="100%"
-            frameborder="0"
-            :style="{ height: `${height}px!important` }"
-        />
+        <iframe v-show="started" @load="onLoadIframe" ref="iframe" src="/vstack/grapes-editor" width="100%"
+            frameborder="0" :style="{ height: `${height}px!important` }" />
         <div class="invalid-feedback" v-if="errors">
             <ul class="pl-3 mb-0">
                 <li v-for="(e, i) in errors" :key="i" v-html="e" />
@@ -40,8 +33,8 @@ export default {
             default: () => ({}),
         },
         blocks: {
-            type: Array,
-            default: () => [],
+            type: Object,
+            default: () => { },
         },
         errors: {
             type: Array,
@@ -103,7 +96,7 @@ export default {
                 allowScripts: 1,
                 assetManager: {
                     headers: { "X-CSRF-TOKEN": laravel.general.csrf_token ? laravel.general.csrf_token : "" },
-                    upload: laravel.vstack.default_upload_route,
+                    upload: laravel.vstack.default_upload_route + "?grapes=1",
                 },
                 ...this.settings,
                 i18n: {
@@ -143,11 +136,9 @@ export default {
         },
         processModel() {
             let content = this.iframeWindow.grapesEditor.getHtml();
-            if (this.mode == "webpage") {
-                let css = this.iframeWindow.grapesEditor.getCss();
-                if (content) {
-                    content = `<style>${css}</style>${content}`;
-                }
+            let css = this.iframeWindow.grapesEditor.getCss();
+            if (content && css) {
+                content = `<style>${css}</style>${content}`;
             }
             this.content = this.minify(content);
         },
@@ -175,13 +166,16 @@ export default {
 .gjs-four-color {
     color: rgb(92, 151, 235);
 }
+
 .gjs-four-color-h:hover {
     color: rgb(92, 151, 235);
 }
+
 .grapes-preview-window {
     display: flex;
     flex-direction: column;
     height: 100% !important;
+
     iframe {
         height: 100% !important;
         overflow: hidden;
@@ -193,6 +187,7 @@ export default {
         iframe {
             border: 1px solid #dc3545;
         }
+
         .invalid-feedback {
             display: block;
         }

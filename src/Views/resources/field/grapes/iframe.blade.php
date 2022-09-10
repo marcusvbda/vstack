@@ -19,7 +19,8 @@
             options.container = '#gjs';
             options.height = '100%';
            const editor = grapesjs.init(window.grapesOptions);  
-           
+
+
            window.grapesEditor = editor;
          }
          

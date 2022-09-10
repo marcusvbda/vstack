@@ -30,7 +30,7 @@ class HtmlEditor extends Field
 		$field = $this->options["field"];
 		$default = $this->options["default"];
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
-		$blocks = @$this->options["blocks"] ? $this->options["blocks"]  : [];
+		$blocks = @$this->options["blocks"] ? $this->options["blocks"]  : (object)[];
 		$settings = @$this->options["settings"] ? (object)$this->options["settings"]  : (object)[];
 		$height = @$this->options["height"] ? $this->options["height"]  : 1000;
 

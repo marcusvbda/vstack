@@ -9,6 +9,7 @@
     small {
         zoom: .9;
     }
+
     &.table-striped {
         tbody {
             tr {
@@ -280,64 +281,66 @@ ul.pagination {
 }
 
 @media screen and (max-width: 767px) {
-.table-responsive-sm {
-    overflow-x: auto;
-    max-width: 100%;
-  }
+    .table-responsive-sm {
+        overflow-x: auto;
+        max-width: 100%;
+    }
 
-  .resource-pagination {
-      .pagination-content {
-        flex-wrap: wrap;
-        justify-content: flex-end!important;
-
-        .pagination-row {
+    .resource-pagination {
+        .pagination-content {
             flex-wrap: wrap;
-            justify-content: flex-end!important;
-        }
-        
-        .nav-scroller {
-            .ml-3 {
-                margin-left: 0 !important;
+            justify-content: flex-end !important;
+
+            .pagination-row {
+                flex-wrap: wrap;
+                justify-content: flex-end !important;
             }
-            .pagination {
-                flex-wrap: wrap!important;
+
+            .nav-scroller {
+                .ml-3 {
+                    margin-left: 0 !important;
+                }
+
+                .pagination {
+                    flex-wrap: wrap !important;
+                }
             }
         }
     }
-  }
 
-  .sm-mt-4 {
+    .sm-mt-4 {
         margin-top: 15px !important;
     }
 
 
-  .sm-w-100 {
-      width: 100% !important;
-  }
-
-  .resource-btn {
-    width: 100%!important;
-    margin-left: 0!important;
-    margin-bottom: 20px!important;
-    a {
-        margin: 0!important;
+    .sm-w-100 {
+        width: 100% !important;
     }
-  }
 
-  .el-drawer.rtl {
-      width: 100%!important;
-  }
+    .resource-btn {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-bottom: 20px !important;
 
-  .el-dialog__wrapper {
-      padding: 10px !important;
+        a {
+            margin: 0 !important;
+        }
+    }
 
-      .el-dialog {
-          width: 100%!important;
-      }
-  }
-    
-   .btn-sm-block {
-     width: 100%;
+    .el-drawer.rtl {
+        width: 100% !important;
+    }
+
+    .el-dialog__wrapper {
+        padding: 10px !important;
+
+        .el-dialog {
+            width: 100% !important;
+        }
+    }
+
+    .btn-sm-block {
+        width: 100%;
     }
 }
 
@@ -347,6 +350,7 @@ ul.pagination {
 
 .list-items {
     flex-wrap: wrap;
+
     .list-item {
         margin-bottom: 10px;
 
@@ -355,8 +359,9 @@ ul.pagination {
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #e2e2e2;
+
             .list-item--title {
-                color: #444; 
+                color: #444;
                 font-weight: 700;
                 font-size: 11px;
             }
@@ -367,7 +372,7 @@ ul.pagination {
                 font-weight: 500;
             }
         }
-        
+
     }
 }
 
@@ -386,9 +391,9 @@ ul.pagination {
             border-color: #007bff;
         }
 
-        .el-checkbox-button__inner {            
+        .el-checkbox-button__inner {
             border-radius: 0;
-            border: unset!important;
+            border: unset !important;
         }
     }
 }

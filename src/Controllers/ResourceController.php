@@ -663,16 +663,16 @@ class ResourceController extends Controller
 							if ($content && $content->{$input->options["field"]}) {
 								$field_value = @$content->{$input->options["field"]} ?? [];
 							}
-							if(is_array($field_value)){
+							if (is_array($field_value)) {
 								$field_value = array_map(function ($row) {
 									return @$row->url;
 								}, $field_value);
-							} else {			
-								$values = [];					
-								foreach($field_value as $value) {
-									$values[]  =$value;
+							} else {
+								$values = [];
+								foreach ($field_value as $value) {
+									$values[]  = $value;
 								}
-								$field_value=$values;
+								$field_value = $values;
 							}
 							$input->options["value"] = @$field_value;
 						} else {
@@ -839,14 +839,14 @@ class ResourceController extends Controller
 			$model_fields = json_decode($model_fields, true);
 		}
 
-		$formated_model_fields = array_map(function($key) use($model_fields) {
-			$value = data_get($model_fields,$key);
+		$formated_model_fields = array_map(function ($key) use ($model_fields) {
+			$value = data_get($model_fields, $key);
 			return "{$value} as {$key}";
-		},array_keys($model_fields));
+		}, array_keys($model_fields));
 
 		try {
 			$model = app()->make($request["model"]);
-			$select_raw = implode(", ",$formated_model_fields);			
+			$select_raw = implode(", ", $formated_model_fields);
 			$model = $model->selectRaw($select_raw);
 			$model = $model->orderBy(data_get($model_fields, "name", ""), "asc");
 			return ["success" => true, "data" => $model->get()];
@@ -892,23 +892,30 @@ class ResourceController extends Controller
 		} else {
 			$file = $request['files'][0];
 		}
-		
+
 		$name = $file->getClientOriginalName();
-		$ext = explode(".",$name)[1];
-		$name = str_replace(".{$ext}","",$name);
-		
+		$ext = explode(".", $name)[1];
+		$name = str_replace(".{$ext}", "", $name);
+
 		$new_name = $name;
-		if($name == "--RENAME-FILE--") {
+		if ($name == "--RENAME-FILE--") {
 			$new_name = md5(uniqid());
 		}
 
 		$new_name = "{$new_name}.{$ext}";
-		
+
 		$file_name = ($default_disk == "local" ? "public/$new_name" : $new_name);
 		$contents = file_get_contents($file->getRealPath());
 		$disk->put($file_name, $contents);
 		$path = $disk->url($new_name);
 
+		if ($request->grapes) {
+			return [
+				"data" => [
+					($default_disk == "local" ? config("app.url") : "") . $path,
+				]
+			];
+		}
 		return ["path" => $path];
 	}
 
