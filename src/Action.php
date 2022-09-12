@@ -11,6 +11,11 @@ class Action
 	public $message = "action message";
 	public $run_btn = "execute";
 
+	public function __construct()
+	{
+		$this->id = strtolower(str_replace("\\", "-", static::class));
+	}
+
 	public function inputs()
 	{
 		return [];
