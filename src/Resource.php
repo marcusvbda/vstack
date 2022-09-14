@@ -290,7 +290,7 @@ class Resource
 
 	public function canCloneRow($row)
 	{
-		return true;
+		return false;
 	}
 
 	public function canViewRow($row)
@@ -305,7 +305,7 @@ class Resource
 
 	public function canClone()
 	{
-		return true;
+		return false;
 	}
 
 	public function canCreate()
