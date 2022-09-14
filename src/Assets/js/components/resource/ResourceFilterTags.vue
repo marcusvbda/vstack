@@ -1,16 +1,8 @@
 <template>
     <div class="d-flex align-items-center flex-row flex-wrap">
-        <ElTag
-            class="filter-tag mb-2 ml-0 mr-2"
-            size="mini"
-            :closable="prevent_close == undefined"
-            v-for="(f, i) in selected_filters"
-            :key="i"
-            effect="dark"
-            @close="handleClose(f.index)"
-            style="height: auto"
-            :id="`resource-filter-tag-${f.index}`"
-        >
+        <ElTag class="filter-tag mb-2 ml-0 mr-2" size="mini" :closable="prevent_close == undefined"
+            v-for="(f, i) in selected_filters" :key="i" effect="dark" @close="handleClose(f.index)" style="height: auto"
+            :id="`resource-filter-tag-${f.index}`">
             <b class="mr-2">{{ f.label }}</b>
             : <span class="ml-2" v-html="f.content" />
         </ElTag>
@@ -33,7 +25,7 @@ export default {
                                     .split(",")
                                     .map((x) => (x ? (!isNaN(Number(x)) ? Number(x) : x) : ""));
                                 content = rf.options
-                                    .filter((x) => ids.includes(x.value))
+                                    .filter((x) => ids.includes(x.value) || ids.includes(parseInt(x.value)))
                                     .map((x) => x.label)
                                     .filter((x) => x)
                                     .join(", <br>");
@@ -90,6 +82,7 @@ export default {
         max-width: 200px;
         white-space: nowrap;
     }
+
     &.filter-tag.el-tag.el-tag--mini.el-tag--dark {
         display: flex;
         align-items: center;
