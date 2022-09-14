@@ -23,7 +23,10 @@
 			@if($has_actions)
 				@php
 					$actions = array_map(function($action) {
-						$action->inputs = $action->inputs();
+						return (object)[
+							"id" => $action->id,
+							"title" => @$action->title ? $action->title : $action->id
+					];
 						return $action;
 					},$resource->actions());
 				@endphp

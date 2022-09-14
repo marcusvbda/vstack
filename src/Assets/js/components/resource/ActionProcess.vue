@@ -1,87 +1,52 @@
 <template>
     <div class="d-flex justify-content-start py-2" style="padding-left: 13px" v-if="has_ids">
         <div class="dropdown">
-            <button
-                class="btn btn-primary dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-            >
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
                 Ações
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#" v-for="(action, i) in actions" :key="i" @click.prevent="runAction(action)">{{
-                    action.title
-                }}</a>
+                <a class="dropdown-item" href="#" v-for="(action, i) in actions" :key="i"
+                    @click.prevent="runAction(action)">
+                    {{action.title}}
+                </a>
             </div>
         </div>
         <el-dialog :title="running_action.title" :visible.sync="running_action.visible" width="50%">
-            <template v-if="running_action.visible">
-                <form v-on:submit.prevent="submit">
-                    <div class="mb-4">{{ running_action.message }}</div>
-                    <template v-if="running_action.inputs.length > 0">
-                        <div class="row" v-for="(input, i) in running_action.inputs" :key="i">
-                            <div class="col-12 mb-2">
-                                <template v-if="['text', 'number'].includes(input.type)">
-                                    <label>{{ input.title }}</label>
-                                    <input class="form-control" v-model="form[input.id]" :required="input.required" />
-                                </template>
-                                <template v-if="['select'].includes(input.type)">
-                                    <label>{{ input.title }}</label>
-                                    <el-select
-                                        class="w-100"
-                                        filterable
-                                        v-model="form[input.id]"
-                                        :required="input.required"
-                                        :multiple="input.multiple"
-                                        placeholder=""
-                                    >
-                                        <el-option
-                                            v-for="(op, i) in input.options"
-                                            :label="op.label"
-                                            :value="op.value"
-                                            :key="i"
-                                            placeholder=""
-                                        />
-                                    </el-select>
-                                    <input
-                                        v-model="form[input.id]"
-                                        :required="input.required"
-                                        style="position: relative; top: -34px; z-index: -1"
-                                    />
-                                </template>
-                                <template v-if="['checkbox'].includes(input.type)">
-                                    <el-checkbox class="mt-3" v-model="form[input.id]" :label="input.title" border />
-                                </template>
-                                <template v-if="['textarea'].includes(input.type)">
-                                    <label>{{ input.title }}</label>
-                                    <textarea
-                                        class="form-control"
-                                        :rows="input.rows"
-                                        v-model="form[input.id]"
-                                        :required="input.required"
-                                    />
-                                </template>
-                                <template v-if="['custom'].includes(input.type)">
-                                    <v-runtime-template :template="input.template" :id="i" />
-                                </template>
-                            </div>
-                        </div>
-                    </template>
-                    <div class="row mt-5">
-                        <div class="col-12 d-flex justify-content-end align-items-center">
-                            <button class="btn btn-primary btn-sm-block px-4">{{ running_action.run_btn }}</button>
-                        </div>
+            <template v-if="loading">
+                <div class="row">
+                    <div class="col-12 mb-2">
+                        <div class="shimmer mb-3" :style="{ height: 50, width: '100%' }" />
+                        <div class="shimmer mb-3" :style="{ height: 40, width: '75%' }" />
+                        <div class="shimmer mb-3" :style="{ height: 100, width: '80%' }" />
+                        <div class="shimmer mb-3" :style="{ height: 20, width: '95%' }" />
+                        <div class="shimmer mb-5" :style="{ height: 30, width: '100%' }" />
+                        <div class="shimmer ml-auto" :style="{ height: 50, width: '30%' }" />
                     </div>
-                </form>
+                </div>
+            </template>
+            <template v-else>
+                <resource-crud :data="running_action.crud_data" :params="$getUrlParams()" :ids="ids"
+                    :crud_type="{template: 'page'}" raw_type="action" :content="{}" :dialog="true" ref="crud" />
+
+                <div class="w-100 d-flex justify-content-end">
+                    <el-button v-if="running_action.submit_button" :size="running_action.submit_button.size"
+                        :type="running_action.submit_button.type"
+                        @click="$refs.crud.submit(running_action.submit_button.field)" :loading="action_btn_loading"
+                        class="d-flex" :disabled="action_btn_loading">
+                        <div class="d-flex flex-row">
+                            <span v-html="running_action.submit_button.content" />
+                        </div>
+                    </el-button>
+                </div>
             </template>
         </el-dialog>
     </div>
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
+import { mapGetters } from "vuex";
+
 export default {
     props: ["resource_id", "ids", "actions"],
     data() {
@@ -91,9 +56,10 @@ export default {
                 visible: false,
                 title: "",
                 message: "",
-                inputs: [],
+                cards: [],
+                submit_button: {}
             },
-            form: {},
+            loading: true
         };
     },
     components: {
@@ -106,37 +72,32 @@ export default {
         });
     },
     computed: {
+        ...mapGetters("resource", ["action_btn_loading"]),
         has_ids() {
             return this.selected_ids.length > 0;
         },
     },
     methods: {
-        submit() {
-            let loading = this.$loading({ text: "Processando ..." });
+        getContent() {
+            console.log(this.running_action.id);
             let url = window.location.href.split("?")[0];
             this.$http
-                .post(`${url}/action/${this.running_action.id}`, { ids: this.selected_ids, ...this.form })
+                .get(`${url}/get-action-content/${this.running_action.id}`)
                 .then(({ data }) => {
-                    if (data.success) return window.location.reload();
-                    else {
-                        loading.close();
-                        if (data.message) this.$message(data.message);
-                    }
+                    this.running_action.crud_data = data.crud_data;
+                    this.running_action.message = data.message;
+                    this.running_action.run_btn = data.run_btn;
+                    this.running_action.submit_button = data.submit_button;
+
+                    this.loading = false;
                 })
-                .catch((er) => {
-                    console.log(er);
-                    loading.close();
-                    this.errors = er.response.data.errors;
-                    this.$validationErrorMessage(er);
-                });
         },
         runAction(action) {
             this.running_action.visible = true;
             this.running_action.id = action.id;
             this.running_action.title = action.title;
-            this.running_action.message = action.message;
-            this.running_action.inputs = action.inputs;
-            this.running_action.run_btn = action.run_btn;
+            this.loading = true;
+            this.getContent();
             this.form = {};
         },
         toggleSelectedId(checked_value, id) {

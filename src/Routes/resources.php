@@ -30,6 +30,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::get('{resource}/{type}/get-list-data', [ResourceController::class, 'getListData'])->name("resource.getlistdata");
 		Route::post('{resource}/field-data', [ResourceController::class, 'fieldData'])->name("resource.fielddata");
 		Route::get('{resource}/create', [ResourceController::class, 'create'])->name("resource.create");
+		Route::get('{resource}/get-action-content/{id}', [ResourceController::class, 'getActionContent']);
 		Route::post('{resource}/action/{id}', [ResourceController::class, 'handlerAction'])->name("resource.action.submit");
 		Route::post('{resource}/get-resource-crud-content', [ResourceController::class, 'getResourceCrudContent'])->name("resource.dialog_content");
 		Route::post('{resource}/store', [ResourceController::class, 'store'])->name("resource.store");

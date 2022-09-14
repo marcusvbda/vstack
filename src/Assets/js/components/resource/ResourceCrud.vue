@@ -184,6 +184,7 @@ export default {
         "right_card_content",
         "content_id",
         "content",
+        "ids",
         "has_befores_store"
     ],
     data() {
@@ -518,20 +519,33 @@ export default {
             });
         },
         submit(clicked_btn = "save_and_back") {
-            if (!this.checked) {
+            if (!this.checked && this.raw_type != "action") {
                 return this.checkStore(clicked_btn);
             }
-            this.loading = this.$loading({ text: "Salvando ...", background: "white" });
+            const loading_text = this.raw_type == "action" ? "Executando ..." : "Salvando ...";
+            this.loading = this.$loading({ text: loading_text, background: "white" });
+            const payload = { ...this.form, clicked_btn }
+            if (this.raw_type == "action") {
+                payload.ids = this.ids;
+            }
             this.$http
-                .post(this.data.store_route, { ...this.form, clicked_btn })
+                .post(this.data.store_route, payload)
                 .then(({ data }) => {
-                    if (data.success) {
-                        return (window.location.href = data.route);
-                    } else {
-                        if (data.message) {
-                            this.$message({ showClose: true, message: data.message.text, type: data.message.type, dangerouslyUseHTMLString: true });
+                    if (this.raw_type == "action") {
+                        if (data.success) return window.location.reload();
+                        else {
+                            loading.close();
+                            if (data.message) this.$message(data.message);
                         }
-                        this.loading.close();
+                    } else {
+                        if (data.success) {
+                            return (window.location.href = data.route);
+                        } else {
+                            if (data.message) {
+                                this.$message({ showClose: true, message: data.message.text, type: data.message.type, dangerouslyUseHTMLString: true });
+                            }
+                            this.loading.close();
+                        }
                     }
                 })
                 .catch((er) => {

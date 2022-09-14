@@ -1038,13 +1038,35 @@ class ResourceController extends Controller
 		]);
 	}
 
-	public function handlerAction($resource, $action_id, Request $request)
+	public function getActionContent($resource, $action_id, Request $request)
+	{
+		$action = $this->getAction($resource, $action_id);
+		$cards = $action->inputs();
+		$submit_button = $action->submitButton();
+		$crud_data =  [
+			"id"          => null,
+			"fields"      => $this->makeCrudDataFields((object)[], $cards),
+			"store_route" => route("resource.action.submit", ["resource" => $resource, "id" => $action_id]),
+			"resource_id" => $resource
+		];
+		return ["success" => true, "crud_data" => $crud_data, "run_btn" => $action->run_btn, "message" => $action->message, "submit_button" => $submit_button];
+	}
+
+	private function getAction($resource, $action_id)
 	{
 		$resource = ResourcesHelpers::find($resource);
 		$action = current(array_filter($resource->Actions(), function ($action) use ($action_id) {
 			return $action->id == $action_id;
 		}));
 		if (!@$action->id) abort(404);
+		return $action;
+	}
+
+
+	public function handlerAction($resource, $action_id, Request $request)
+	{
+		$action = $this->getAction($resource, $action_id);
+		$this->validate($request, $action->getValidationRule());
 		return $action->handler($request);
 	}
 
