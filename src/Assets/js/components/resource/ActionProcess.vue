@@ -12,7 +12,7 @@
                 </a>
             </div>
         </div>
-        <el-dialog :title="running_action.title" :visible.sync="running_action.visible" width="50%">
+        <el-dialog :title="running_action.title" :visible.sync="running_action.visible" width="85%">
             <template v-if="loading">
                 <div class="row">
                     <div class="col-12 mb-2">
