@@ -44,10 +44,25 @@ class Field
 				}
 				$this->options["label"] = $this->options["label"] . ' <small class="text-danger" style="position: relative;top: -2px;">*</small>';
 			} else {
-				$this->options["label"] = $this->options["label"] . ' <small class="text-muted" style="position: relative;top: -2px;">(opcional)</small>';
+				if ($this->hasRequiredIfRule($rules)) {
+					$this->options["label"] = $this->options["label"] . ' <small class="text-success" style="position: relative;top: -2px;">*</small>';
+				} else {
+					$this->options["label"] = $this->options["label"] . ' <small class="text-muted" style="position: relative;top: -2px;">(opcional)</small>';
+				}
 			}
 		}
 	}
+
+	private function hasRequiredIfRule($rules)
+	{
+		foreach ($rules as $rule) {
+			if (is_string($rule) && str_contains($rule, "required_if")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	private function addRequireRule($rules)
 	{
