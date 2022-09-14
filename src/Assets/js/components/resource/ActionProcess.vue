@@ -26,6 +26,7 @@
                 </div>
             </template>
             <template v-else>
+                <div class="mb-4">{{ running_action.message }}</div>
                 <resource-crud :data="running_action.crud_data" :params="$getUrlParams()" :ids="selected_ids"
                     :crud_type="{template: 'page'}" raw_type="action" :content="{}" :dialog="true" ref="crud" />
 
