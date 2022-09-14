@@ -62,7 +62,7 @@ class ResourceController extends Controller
 
 		$model_count = $resource->model->count();
 		if (!$model_count) {
-			$template = "<div>" . view("vStack::resources.loader.no_data", compact("resource", "model_count"))->render() . "</div>";
+			$template = "<div>" . view("vStack::resources.loader.no_data", compact("resource", "model_count", "report_mode"))->render() . "</div>";
 			$minified_template = ResourcesHelpers::minify($template);
 			$template_chunked = str_split($minified_template, 100);
 			$response = ['template' => $template_chunked, "type" => "no_data"];
