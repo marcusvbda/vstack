@@ -5,14 +5,18 @@
                 <h1 style="opacity: .3;font-size: 250px;"><span class="{{ $resource->icon() }}"></span></h1>
             @endif
             <div>{!! $resource->nothingStoredText() !!}</div>
-            @if ($resource->canCreate() || $resource->canImport())
-                <div>{!! $resource->nothingStoredSubText() !!}</div>
+            @if (@!$report_mode)
+                @if ($resource->canCreate() || $resource->canImport())
+                    <div>{!! $resource->nothingStoredSubText() !!}</div>
+                @endif
             @endif
         </h4>
-        @if ($resource->canCreate())
-            <resource-store-btn big class="mt-3" resource_id='{{ $resource->id }}' :crud_type='@json($resource->crudType())'
-                label="{{ $resource->storeButtonLabel() }}" route="{{ route('resource.create', ['resource' => $resource->id]) }}">
-            </resource-store-btn>
+        @if (!@$report_mode)
+            @if ($resource->canCreate())
+                <resource-store-btn big class="mt-3" resource_id='{{ $resource->id }}' :crud_type='@json($resource->crudType())'
+                    label="{{ $resource->storeButtonLabel() }}" route="{{ route('resource.create', ['resource' => $resource->id]) }}">
+                </resource-store-btn>
+            @endif
         @endif
     </div>
 </div>
