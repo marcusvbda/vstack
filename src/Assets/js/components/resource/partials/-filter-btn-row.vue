@@ -45,6 +45,9 @@ export default {
     },
     computed: {
         ...mapGetters("resource", ["filter_options"]),
+        option_model_index() {
+            return (this.f?.model ? this.f.model : this.f.index).replaceAll("\\", "_").toLowerCase();
+        }
     },
     created() {
         this.initFilter();
@@ -58,7 +61,7 @@ export default {
             if (this.f.component != "select-filter" || !this.f.model) {
                 return this.loaded = true;
             }
-            const results = this.filter_options[this.f.index] ?? [];
+            const results = this.filter_options[this.option_model_index] ?? [];
             if (results.length) {
                 return this.processOptionData(results);
             }
@@ -73,7 +76,7 @@ export default {
         },
         processOptionData(data) {
             let payload = {};
-            payload[this.f.index] = data;
+            payload[this.option_model_index] = data;
             this.addFilterOptions(payload);
             const options = data.map(x => {
                 return {

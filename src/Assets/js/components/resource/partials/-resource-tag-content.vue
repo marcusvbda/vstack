@@ -19,13 +19,16 @@ export default {
     },
     computed: {
         ...mapGetters("resource", ["filter_options"]),
+        option_model_index() {
+            return (this.filter.original?.model ? this.filter.original.model : this.filter.index).replaceAll("\\", "_").toLowerCase();
+        }
     },
     methods: {
         ...mapMutations("resource", ["addFilterOptions"]),
         processOptionData(data) {
             const values = this.filter.get_value.split(",");
             let payload = {};
-            payload[this.filter.index] = data;
+            payload[this.option_model_index] = data;
             this.addFilterOptions(payload);
 
             const filtered = data.filter(x => {
@@ -41,7 +44,7 @@ export default {
             if (!this.filter.original.model && this.content) {
                 return this.loading = false;
             } else {
-                const results = this.filter_options[this.filter.original.index] ?? [];
+                const results = this.filter_options[this.option_model_index] ?? [];
                 if (results.length) {
                     return this.processOptionData(results);
                 }
