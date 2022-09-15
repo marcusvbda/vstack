@@ -6,6 +6,9 @@ class Filter
 {
 	public $view;
 	public $options = [];
+	public $model = null;
+	public $model_fields =  ["value" => "id", "label" => "name"];
+
 	public function __construct()
 	{
 		$this->makeView();
