@@ -1,7 +1,6 @@
 <?php
 
 return [
-	"loading_gif" => "/assets/images/loading.gif",
 	"default_upload_route" => "/admin/upload_file",
 	"extra_javascript_global_variables" => [],
 	"animation" => [
