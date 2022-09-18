@@ -1,6 +1,6 @@
 <template>
     <div>
-        <template v-if="(!loading.top && !loading.table) || !template.no_data">
+        <template v-if="visible && ((!loading.top && !loading.table) || !template.no_data)">
             <template v-if="loading.top">
                 <div class="row d-flex justify-content-start" :style="{ marginTop: 26 }">
                     <div class="col-sm-12 col-md-5 d-flex flex-row" style="gap: 11px">
@@ -59,6 +59,7 @@ export default {
     },
     data() {
         return {
+            visible: false,
             loading: {
                 top: true,
                 table: true,
@@ -91,7 +92,7 @@ export default {
             }
         },
         init() {
-            this.requestFor;
+            this.visible = true;
             const payload = {
                 params: this.query_params
             };

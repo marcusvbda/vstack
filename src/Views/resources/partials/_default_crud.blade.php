@@ -52,6 +52,6 @@
 
 
 <div id="loading-section">
-    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+    <div class="loader"></div>
 </div>
 

@@ -73,7 +73,7 @@
 </resource-index-loader>
 
 <div id="loading-section">
-    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+    <div class="loader"></div>
 </div>
 
 @if ($report_mode)
