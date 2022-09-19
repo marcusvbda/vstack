@@ -435,13 +435,11 @@ ul.pagination {
         width: 11em;
         height: 11em;
         border-radius: 100%;
-        border: 10px solid white;
+        border: 10px solid #ffffff3b;
         border-right: 10px solid #cecece;
         position: relative;
         -webkit-animation: load3 1.4s infinite linear;
         animation: load3 1.4s infinite linear;
-        -webkit-transform: translateZ(0);
-        -ms-transform: translateZ(0);
         transform: translateZ(0);
     }
 
