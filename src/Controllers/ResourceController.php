@@ -417,10 +417,10 @@ class ResourceController extends Controller
 			$extra_data = @$extra_data["data"];
 		}
 
-		// dispatch(function () use ($filepath, $resource, $user_code, $fieldlist, $tenant_id, $user, $extra_data) {
-		$importer_data = compact('filepath', 'extra_data', 'user_code', 'resource', 'fieldlist', 'filepath', 'tenant_id');
-		$resource->importMethod($importer_data);
-		// })->onQueue(Vstack::queue_resource_import());
+		dispatch(function () use ($filepath, $resource, $user_code, $fieldlist, $tenant_id, $user, $extra_data) {
+			$importer_data = compact('filepath', 'extra_data', 'user_code', 'resource', 'fieldlist', 'filepath', 'tenant_id');
+			$resource->importMethod($importer_data);
+		})->onQueue(Vstack::queue_resource_import());
 
 		return ["success" => true];
 	}
