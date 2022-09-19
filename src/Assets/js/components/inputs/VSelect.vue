@@ -71,7 +71,8 @@ export default {
         "all_options_label",
         "model_fields",
         "field_index",
-        "allow_create"
+        "allow_create",
+        'model_filter'
     ],
     data() {
         return {
@@ -157,7 +158,7 @@ export default {
                 return callback();
             }
             const payload = {
-                params: { model: this.list_model, model_fields: this.model_fields }
+                params: { model: this.list_model, model_fields: this.model_fields, model_filter: this.model_filter }
             }
             this.$http
                 .post(this.route_list, payload)
