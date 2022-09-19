@@ -554,7 +554,7 @@ class ResourceController extends Controller
 				$new = [];
 				foreach ($fieldlist as $field => $row_key) {
 					if ($row_key == "_IGNORE_") continue;
-					$value = @$row_values[array_search($row_key, $importer->headers)];
+					$value = @$row_values[array_search($field, $importer->headers)];
 					if (!$value) {
 						continue;
 					}
