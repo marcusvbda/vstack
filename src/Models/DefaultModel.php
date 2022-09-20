@@ -46,9 +46,9 @@ class DefaultModel extends Model
 		return parent::getArrayableAppends();
 	}
 
-	public static function sluggable()
+	public function sluggable(): array
 	{
-		return null;
+		return [];
 	}
 
 	public static function hasTenant()
