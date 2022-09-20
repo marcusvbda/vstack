@@ -844,14 +844,15 @@ class ResourceController extends Controller
 			return "{$value} as {$key}";
 		}, array_keys($model_fields));
 
-
 		try {
 			$model = app()->make($request["model"]);
 			$select_raw = implode(", ", $formated_model_fields);
 			$model = $model->selectRaw($select_raw);
 			$filters = @$request->model_filter ?? [];
 			foreach ($filters as $key => $value) {
-				$model = $model->{$key}($value[0], @$value[1], @$value[2] ? $value[2] : null);
+				foreach ($value as $item) {
+					$model = $model->{$key}($item[0], @$item[1], @$item[2] ? $item[2] : null);
+				}
 			}
 			$model = $model->orderBy(data_get($model_fields, "name", ""), "asc");
 			return ["success" => true, "data" => $model->get()];

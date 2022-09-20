@@ -184,7 +184,7 @@ class VstackController extends Controller
 
 	public function queryBuilder($model)
 	{
-		$model = app()->make("\\".str_replace("-","\\",$model));
+		$model = app()->make("\\" . str_replace("-", "\\", $model));
 		return QueryBuilder::for($model)
 			->allowedFilters($model->getAllowedFilters())
 			->allowedSorts($model->getAllowedSorts())
