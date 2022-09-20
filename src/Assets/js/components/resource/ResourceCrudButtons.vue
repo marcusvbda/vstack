@@ -75,7 +75,7 @@ export default {
                 .catch(() => false);
         },
         async destroy() {
-            for (let i in this.data.before_delete) {
+            for (let i = 0; i < this.data.before_delete.length; i++) {
                 let action = this.data.before_delete[i];
                 let confirmed = !action.confirm ? true : false;
                 if (!confirmed) {
