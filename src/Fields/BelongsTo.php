@@ -25,12 +25,13 @@ class BelongsTo extends Field
 		$allow_create = @$this->options["allow_create"] ? 'true' : 'false';
 		$model       = @$this->options["model"] ? $this->options["model"] : null;
 		$field       = @$this->options["field"];
-		$multiple       = @$this->options["multiple"] ? @$this->options["multiple"] : false;
+		$multiple    = @$this->options["multiple"] ? @$this->options["multiple"] : false;
 		$label       = $this->options["label"];
 		$disabled    = @$this->options["disabled"] ? "true" : "false";
 		$route_list  = route("resource.inputs.option_list");
 		$placeholder = $model ? $this->options["placeholder"] : null;
 		$options     = @$this->options["options"] ? json_encode($this->options["options"]) : "[]";
+		$type     = @$this->options["type"] ? $this->options["type"] : ($multiple ? 'radio' : 'select');
 		$description = $this->options["description"];
 		$model_fields = @$this->options["model_fields"] ?? ["id" => "id", "name" => "name"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
@@ -52,7 +53,8 @@ class BelongsTo extends Field
 			"eval",
 			"model_fields",
 			"allow_create",
-			"model_filter"
+			"model_filter",
+			"type"
 		))->render();
 	}
 }

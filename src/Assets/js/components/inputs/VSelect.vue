@@ -11,7 +11,7 @@
         <td>
             <div class="d-flex flex-column">
                 <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
-                    <template v-if="multiple && !allow_create">
+                    <template v-if="multiple && !allow_create && type == 'radio'">
                         <template v-if="loading">
                             <div class="shimmer select mb-3" />
                             <div class="shimmer select mb-3" />
@@ -72,7 +72,8 @@ export default {
         "model_fields",
         "field_index",
         "allow_create",
-        'model_filter'
+        'model_filter',
+        "type"
     ],
     data() {
         return {
@@ -105,6 +106,9 @@ export default {
     },
     methods: {
         selectCreate() {
+            if (!this.allow_create) {
+                return;
+            }
             const typed_value = this.$refs.select.query;
             if (!this.multiple) {
                 this.value = typed_value;

@@ -12,6 +12,7 @@
     :model_filter='{{$model_filter}}'
     :allow_create='{{$allow_create}}'    
     :model_fields='@json($model_fields)'
+    type={{$type}}
 	all_options_label="{{ $all_options_label }}"    
 	list_model='{{$model}}'
 	:errors='{{"errors.$field ? errors.$field : false"}}' 
