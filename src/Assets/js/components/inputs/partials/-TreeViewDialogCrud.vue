@@ -19,10 +19,8 @@
             <div class="card-footer">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="shimmer btn-crud-item delete w-25" v-if="selected.id && acl.delete" />
-                    <div
-                        class="shimmer btn-crud-item w-25 ml-auto"
-                        v-if="(selected.id && acl.update) || (!selected.id && acl.create)"
-                    />
+                    <div class="shimmer btn-crud-item w-25 ml-auto"
+                        v-if="(selected.id && acl.update) || (!selected.id && acl.create)" />
                 </div>
             </div>
         </template>
@@ -45,11 +43,8 @@
                         <i class="el-icon-delete mr-2" />
                         Excluir
                     </button>
-                    <button
-                        class="btn btn-secondary btn-crud-item px-5 ml-auto"
-                        @click="submit"
-                        v-if="(selected.id && acl.update) || (!selected.id && acl.create)"
-                    >
+                    <button class="btn btn-secondary btn-crud-item px-5 ml-auto" @click="submit"
+                        v-if="(selected.id && acl.update) || (!selected.id && acl.create)">
                         <i class="el-icon-check mr-2" />
                         {{ selected.id ? "Salvar" : "Cadastrar" }}
                     </button>
@@ -107,15 +102,21 @@ export default {
             if (this.selected.id) {
                 Object.keys(this.selected).forEach((key) => {
                     if (this.inputFieldsIndexes.includes(key) || key == "id") {
+                        console.log(key)
                         this.$set(this.form, key, this.selected[key]);
                     }
                 });
             }
             this.$set(this.form, this.fk_index, this.fk_value);
+            this.inputs.forEach(input => {
+                if (input.options.default !== null) {
+                    this.$set(this.form, input.options.field, input.options.default);
+                }
+            });
         },
         init() {
             const payload = {
-                params : { resource: this.resource }
+                params: { resource: this.resource }
             }
             this.$http.get("/admin/inputs/resource-tree/load-crud", payload).then(({ data }) => {
                 this.inputs = data;
@@ -181,18 +182,21 @@ export default {
         .card {
             .card-header {
                 padding: 11px;
+
                 .close-icon {
                     margin-left: auto;
                     color: #797979;
                     font-size: 20px;
                     text-decoration: none;
                     font-weight: bold;
+
                     &:hover {
                         transition: 0.4s;
                         color: black;
                     }
                 }
             }
+
             .card-body {
                 padding: 0;
 
@@ -204,6 +208,7 @@ export default {
 
             .card-footer {
                 padding: 11px;
+
                 .btn-crud-item {
                     height: 39px;
                 }
