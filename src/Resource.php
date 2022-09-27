@@ -261,12 +261,12 @@ class Resource
 
 	public function canUpdateRow($row)
 	{
-		return true;
+		return $this->canUpdate();
 	}
 
 	public function canDeleteRow($row)
 	{
-		return true;
+		return $this->canDelete();
 	}
 
 	public function beforeDelete()
@@ -290,7 +290,7 @@ class Resource
 
 	public function canCloneRow($row)
 	{
-		return false;
+		return $this->canClone();
 	}
 
 	public function canViewRow($row)
