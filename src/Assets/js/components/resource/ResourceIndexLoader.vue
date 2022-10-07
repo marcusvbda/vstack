@@ -32,9 +32,8 @@ export default {
     },
     methods: {
         removeLoadingEl(el) {
-            const el_id = `#loading-section ${el}`;
-            this.$waitForEl(el_id).then(() => {
-                document.querySelector(el_id).remove();
+            this.$waitForEl(el).then(() => {
+                document.querySelector(el).remove();
             })
         },
         init() {
@@ -46,18 +45,17 @@ export default {
                 .get(route, payload)
                 .then(({ data }) => {
                     if (data.type == "no_data") {
-                        const template = data.no_data.join("");
-                        this.template.no_data = template;
-                        this.removeLoadingEl("#top-loader")
-                        this.removeLoadingEl("#table-loader")
+                        const no_data_template = data.template.join("");
+                        this.template.no_data = no_data_template;
+                        this.removeLoadingEl("#loading-section")
                     } else {
                         const top_template = data.top.join("");
                         this.template.top = top_template;
-                        this.removeLoadingEl("#top-loader")
+                        this.removeLoadingEl("#loading-section #top-loader")
 
                         const table_template = data.table.join("");
                         this.template.table = table_template;
-                        this.removeLoadingEl("#table-loader")
+                        this.removeLoadingEl("#loading-section #table-loader")
                     }
                 })
                 .catch((error) => {
