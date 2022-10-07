@@ -73,7 +73,7 @@
 </resource-index-loader>
 
 <div id="loading-section">
-    <div class="loader"></div>
+    @include("vStack::resources.loader.list_shimmer")    
 </div>
 
 @if ($report_mode)

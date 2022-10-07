@@ -11,12 +11,8 @@
         <td>
             <div class="d-flex flex-column">
                 <el-radio-group :disabled="disabled" v-model="val" v-bind:class="{ 'is-invalid': errors }">
-                    <el-radio-button
-                        v-for="(op, i) in option_list"
-                        :key="i"
-                        :label="op.value ? op.value : op"
-                        v-bind:class="{ 'option-selected': val == (op.value ? op.value : op) }"
-                    >
+                    <el-radio-button v-for="(op, i) in option_list" :key="i" :label="op.value ? op.value : op"
+                        v-bind:class="{ 'option-selected': val == (op.value ? op.value : op) }">
                         <div v-html="op.label ? op.label : op" />
                     </el-radio-button>
                 </el-radio-group>
@@ -43,11 +39,7 @@ export default {
         },
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.val = this.$attrs.value;
-            }
-        });
+        this.val = this.$attrs.value;
     },
 };
 </script>

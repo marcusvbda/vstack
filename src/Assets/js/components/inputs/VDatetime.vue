@@ -16,18 +16,9 @@
                             <span v-html="prepend ? prepend : ''"></span>
                         </span>
                     </div>
-                    <el-date-picker
-                        v-model="val"
-                        :type="type"
-                        class="w-100"
-                        v-bind:class="{ 'is-invalid': errors }"
-                        range-separator=" - "
-                        :start-placeholder="start_placeholder"
-                        :end-placeholder="end_placeholder"
-                        :placeholder="placeholder"
-                        :format="format"
-                        :value-format="value_format"
-                    >
+                    <el-date-picker v-model="val" :type="type" class="w-100" v-bind:class="{ 'is-invalid': errors }"
+                        range-separator=" - " :start-placeholder="start_placeholder" :end-placeholder="end_placeholder"
+                        :placeholder="placeholder" :format="format" :value-format="value_format">
                     </el-date-picker>
                     <div class="input-group-append" v-if="append">
                         <span class="input-group-text">
@@ -72,11 +63,7 @@ export default {
         },
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.val = this.$attrs.value;
-            }
-        });
+        this.val = this.$attrs.value;
     },
 };
 </script>

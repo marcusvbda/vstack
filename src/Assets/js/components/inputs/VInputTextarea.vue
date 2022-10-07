@@ -14,18 +14,10 @@
                             <span v-html="prepend ? prepend : ''"></span>
                         </span>
                     </div>
-                    <textarea
-                        :disabled="disabled"
-                        class="form-control"
-                        v-model="val"
-                        style="resize: none"
-                        v-bind:class="{ 'is-invalid': errors }"
-                        :rows="rows"
-                        :placeholder="placeholder ? placeholder : ''"
-                        name="email"
-                        :type="type ? type : 'text'"
-                        :maxlength="maxlength"
-                    ></textarea>
+                    <textarea :disabled="disabled" class="form-control" v-model="val" style="resize: none"
+                        v-bind:class="{ 'is-invalid': errors }" :rows="rows"
+                        :placeholder="placeholder ? placeholder : ''" name="email" :type="type ? type : 'text'"
+                        :maxlength="maxlength"></textarea>
                     <div class="input-group-append" v-if="append">
                         <span class="input-group-text">
                             <span v-html="append ? append : ''"></span>
@@ -44,7 +36,7 @@
 </template>
 <script>
 export default {
-    props: ["label", "type", "placeholder", "errors", "prepend", "append", "disabled", "rows", "description", "maxlength","show_value_length"],
+    props: ["label", "type", "placeholder", "errors", "prepend", "append", "disabled", "rows", "description", "maxlength", "show_value_length"],
     data() {
         return {
             val: null,
@@ -67,11 +59,7 @@ export default {
         },
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.val = this.$attrs.value;
-            }
-        });
+        this.val = this.$attrs.value;
     },
 };
 </script>

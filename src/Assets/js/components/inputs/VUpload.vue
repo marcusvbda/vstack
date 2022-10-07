@@ -95,12 +95,8 @@ export default {
             file_upload_limit_size: this.sizelimit ? this.sizelimit : laravel.vstack.file_upload_limit_size ?? 0,
         };
     },
-    mounted() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.init();
-            }
-        });
+    created() {
+        this.init();
     },
     watch: {
         loading(val) {

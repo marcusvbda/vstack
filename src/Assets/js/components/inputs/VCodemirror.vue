@@ -38,13 +38,9 @@ export default {
             },
         };
     },
-    mounted() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.text = this.$attrs.value;
-                $(".Codemirror").height(this.height);
-            }
-        });
+    created() {
+        this.text = this.$attrs.value;
+        $(".Codemirror").height(this.height);
     },
     watch: {
         text(val) {
@@ -59,6 +55,7 @@ export default {
 
 <style lang="scss">
 @import "~codemirror/lib/codemirror.css";
+
 .CodeMirror {
     &.cm-s-default {
         border: 1px solid #e4e4e4;

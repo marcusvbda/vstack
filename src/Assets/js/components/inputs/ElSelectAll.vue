@@ -97,12 +97,8 @@ export default {
             },
         },
     },
-    mounted() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.onChange(this.selected);
-            }
-        });
+    created() {
+        this.onChange(this.selected);
     },
     methods: {
         onChange(val) {

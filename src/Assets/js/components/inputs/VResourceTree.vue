@@ -7,22 +7,13 @@
             <template v-else>
                 <div class="tree-view">
                     <template v-for="(resource, i) in tree">
-                        <TreeView
-                            :disabled="disabled"
-                            :key="i"
-                            :label="resource.label"
-                            :parent_resource="resource.parent_resource"
-                            :resource="resource.resource"
-                            :singular_label="resource.singular_label"
-                            :children="resource.children"
-                            :route_load="route_load"
-                            :input="resource"
+                        <TreeView :disabled="disabled" :key="i" :label="resource.label"
+                            :parent_resource="resource.parent_resource" :resource="resource.resource"
+                            :singular_label="resource.singular_label" :children="resource.children"
+                            :route_load="route_load" :input="resource"
                             :label_index="resource.label_index ? resource.label_index : 'name'"
-                            :template="resource.template"
-                            :parent_id="form.id"
-                            :template_code="resource.template_code"
-                            :default_visible="true"
-                        />
+                            :template="resource.template" :parent_id="form.id" :template_code="resource.template_code"
+                            :default_visible="true" />
                     </template>
                 </div>
             </template>
@@ -40,16 +31,12 @@ export default {
         };
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.loadComponent();
-            }
-        });
+        this.loadComponent();
     },
     methods: {
         loadComponent() {
             const payload = {
-                params : {
+                params: {
                     resource: this.resource,
                     parent_resource: this.parent_resource,
                 }
@@ -87,7 +74,9 @@ export default {
             border: 1px solid #ededed;
             border-radius: 5px;
         }
+
         cursor: pointer;
+
         .btn-link {
             font-weight: 600;
             font-size: 12px;
@@ -127,10 +116,12 @@ export default {
             }
 
             &.hoverable {
+
                 &:hover,
                 &.opened {
                     background-color: #ededed;
                     transition: 0.4s;
+
                     &.item {
                         background-color: #ecf0ff;
                     }

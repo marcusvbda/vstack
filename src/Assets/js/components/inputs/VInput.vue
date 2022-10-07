@@ -17,16 +17,9 @@
                         </span>
                     </div>
                     <template v-if="type == 'password'">
-                        <input
-                            :disabled="disabled"
-                            class="form-control"
-                            v-model="val"
-                            v-bind:class="{ 'is-invalid': errors }"
-                            :placeholder="placeholder ? placeholder : ''"
-                            :maxlength="maxlength"
-                            :type="protected ? 'password' : 'text'"
-                            @blur="$emit('blur', val)"
-                        />
+                        <input :disabled="disabled" class="form-control" v-model="val"
+                            v-bind:class="{ 'is-invalid': errors }" :placeholder="placeholder ? placeholder : ''"
+                            :maxlength="maxlength" :type="protected ? 'password' : 'text'" @blur="$emit('blur', val)" />
                         <el-button size="small" @click.prevent="protected = !protected">
                             <i class="el-icon-lock" v-if="protected" />
                             <i class="el-icon-unlock" v-else />
@@ -35,62 +28,26 @@
                     <template v-else-if="type == 'percentage'">
                         <div class="progress-section">
                             <ElProgress type="dashboard" :percentage="parseInt(!val ? '0' : val)" />
-                            <input
-                                :disabled="disabled"
-                                class="form-control"
-                                v-model="val"
-                                v-bind:class="{ 'is-invalid': errors }"
-                                :placeholder="placeholder ? placeholder : ''"
-                                :min="min"
-                                @change="validMinMax"
-                                :max="max"
-                                type="number"
-                                :step="step"
-                                @blur="$emit('blur', val)"
-                            />
+                            <input :disabled="disabled" class="form-control" v-model="val"
+                                v-bind:class="{ 'is-invalid': errors }" :placeholder="placeholder ? placeholder : ''"
+                                :min="min" @change="validMinMax" :max="max" type="number" :step="step"
+                                @blur="$emit('blur', val)" />
                         </div>
                     </template>
                     <template v-else>
-                        <currency-input
-                            v-if="type == 'currency'"
-                            class="form-control"
-                            v-bind:class="{ 'is-invalid': errors }"
-                            currency="BRL"
-                            :placeholder="placeholder ? placeholder : ''"
-                            :auto-decimal-mode="true"
-                            v-model="val"
-                            :maxlength="maxlength"
-                            @blur="$emit('blur', val)"
-                        />
+                        <currency-input v-if="type == 'currency'" class="form-control"
+                            v-bind:class="{ 'is-invalid': errors }" currency="BRL"
+                            :placeholder="placeholder ? placeholder : ''" :auto-decimal-mode="true" v-model="val"
+                            :maxlength="maxlength" @blur="$emit('blur', val)" />
                         <template v-else>
-                            <the-mask
-                                :disabled="disabled"
-                                class="form-control"
-                                v-if="mask"
-                                :mask="mask"
-                                :masked="true"
-                                v-model="val"
-                                v-bind:class="{ 'is-invalid': errors }"
-                                :placeholder="placeholder ? placeholder : ''"
-                                :maxlength="maxlength"
-                                @blur="$emit('blur', val)"
-                                :type="type ? type : 'text'"
-                            />
-                            <input
-                                :disabled="disabled"
-                                class="form-control"
-                                v-else
-                                v-model="val"
-                                v-bind:class="{ 'is-invalid': errors }"
-                                :placeholder="placeholder ? placeholder : ''"
-                                :maxlength="maxlength"
-                                @change="validMinMax"
-                                :min="min"
-                                :max="max"
-                                :type="type ? type : 'text'"
-                                :step="step"
-                                @blur="$emit('blur', val)"
-                            />
+                            <the-mask :disabled="disabled" class="form-control" v-if="mask" :mask="mask" :masked="true"
+                                v-model="val" v-bind:class="{ 'is-invalid': errors }"
+                                :placeholder="placeholder ? placeholder : ''" :maxlength="maxlength"
+                                @blur="$emit('blur', val)" :type="type ? type : 'text'" />
+                            <input :disabled="disabled" class="form-control" v-else v-model="val"
+                                v-bind:class="{ 'is-invalid': errors }" :placeholder="placeholder ? placeholder : ''"
+                                :maxlength="maxlength" @change="validMinMax" :min="min" :max="max"
+                                :type="type ? type : 'text'" :step="step" @blur="$emit('blur', val)" />
                         </template>
                     </template>
                     <div class="input-group-append" v-if="append">
@@ -153,20 +110,16 @@ export default {
         },
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                if (this.type === "slider") {
-                    this.val = parseInt(this.value ?? 0);
-                } else {
-                    this.val = this.value;
-                }
-            }
-        });
+        if (this.type === "slider") {
+            this.val = parseInt(this.value ?? 0);
+        } else {
+            this.val = this.value;
+        }
     },
     methods: {
         validMinMax() {
             if (["number", "slider"].includes(this.type)) {
-                if( this.min !== undefined) { 
+                if (this.min !== undefined) {
                     if (this.val < this.min) {
                         this.val = this.min;
                     }

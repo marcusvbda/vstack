@@ -11,35 +11,18 @@
         <td>
             <div class="d-flex flex-column">
                 <div class="d-flex flex-row flex-wrap align-items-center">
-                    <el-tag
-                        class="ml-0 mr-2 mb-2"
-                        :key="tag"
-                        v-for="tag in dynamicTags"
-                        :closable="disabled != true ? true : false"
-                        :disable-transitions="false"
-                        @keydown="$event.keyCode === 13 ? $event.preventDefault() : false"
-                        @close="handleClose(tag)"
-                    >
+                    <el-tag class="ml-0 mr-2 mb-2" :key="tag" v-for="tag in dynamicTags"
+                        :closable="disabled != true ? true : false" :disable-transitions="false"
+                        @keydown="$event.keyCode === 13 ? $event.preventDefault() : false" @close="handleClose(tag)">
                         {{ tag }}
                     </el-tag>
                     <template v-if="disabled != true">
-                        <el-input
-                            class="input-new-tag ml-0 mr-2 mb-2"
-                            v-if="inputVisible"
-                            v-model="inputValue"
-                            ref="saveTagInput"
-                            size="medium"
-                            @keyup.enter.native="handleInputConfirm"
-                            @blur="handleInputConfirm"
-                        >
+                        <el-input class="input-new-tag ml-0 mr-2 mb-2" v-if="inputVisible" v-model="inputValue"
+                            ref="saveTagInput" size="medium" @keyup.enter.native="handleInputConfirm"
+                            @blur="handleInputConfirm">
                         </el-input>
-                        <button
-                            type="button"
-                            v-else
-                            class="ml-0 btn btn-primary btn-sm button-new-tag"
-                            size="small"
-                            @click="showInput"
-                        >
+                        <button type="button" v-else class="ml-0 btn btn-primary btn-sm button-new-tag" size="small"
+                            @click="showInput">
                             + Adicionar
                         </button>
                     </template>
@@ -87,25 +70,19 @@ export default {
             }
         },
     },
-    mounted() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.dynamicTags = this.$attrs.value ? this.$attrs.value : [];
-            }
-        });
+    created() {
+        this.dynamicTags = this.$attrs.value ? this.$attrs.value : [];
     },
     methods: {
         handleClose(tag) {
             this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
         },
-
         showInput() {
             this.inputVisible = true;
             this.$nextTick(() => {
                 this.$refs.saveTagInput.$refs.input.focus();
             });
         },
-
         handleInputConfirm() {
             if (!this.inputVisible) return;
             if (this.unique) {
@@ -127,9 +104,10 @@ export default {
 };
 </script>
 <style>
-.el-tag + .el-tag {
+.el-tag+.el-tag {
     margin-left: 10px;
 }
+
 .button-new-tag {
     margin-left: 10px;
     height: 32px;
@@ -137,6 +115,7 @@ export default {
     padding: 0 40px;
     margin-bottom: 7px;
 }
+
 .input-new-tag {
     width: 160px;
     margin-left: 10px;

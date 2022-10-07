@@ -197,7 +197,6 @@ export default {
             wizardTransitionName: "",
             loading_wizard_next: false,
             loading_wizard_previous: false,
-            checked: false,
             loading: false,
             submitting: false,
         };
@@ -274,21 +273,17 @@ export default {
         },
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.removeLoadingEl();
-                this.getScreenSize();
-                this.initForm();
-            }
-        });
+        this.removeLoadingEl();
+        this.getScreenSize();
+        this.initForm();
     },
     methods: {
         ...mapMutations("resource", ["setActionBtnLoading"]),
         removeLoadingEl() {
-            const el = document.querySelector("#loading-section");
-            if (el) {
-                el.remove();
-            }
+            const el_name = "#loading-section #cud-loader";
+            this.$waitForEl(el_name).then(() => {
+                document.querySelector(el_name).remove();
+            })
         },
         getScreenSize() {
             this.window_width = window.innerWidth;
@@ -488,42 +483,39 @@ export default {
         },
         checkStore(clicked_btn) {
             if (!this.has_befores_store) {
-                this.checked = true;
-                return this.submit(clicked_btn);
+                return this.submit(clicked_btn, true);
             }
 
             this.setActionBtnLoading(true);
             this.$http.post(this.data.checkout_route, { ...this.form, clicked_btn }).then(({ data }) => {
-                if (data.success === false) {
+                if (data?.success === false) {
                     this.setActionBtnLoading(false);
                     return this.$message.error(data.message);
                 }
 
-                if (data.success === true) {
-                    this.checked = true;
-                    return this.submit(clicked_btn);
+                if (data?.success === true) {
+                    return this.submit(clicked_btn, true);
                 }
 
-                if (data.confirm) {
+                if (data?.confirm) {
                     this.loading_confirm = false;
                     return this.$confirm(data.confirm?.message || "Confirmar ?", data.confirm?.title || "Confirmação", {
                         confirmButtonText: data.confirm?.buttons?.yes || "Sim",
                         cancelButtonText: data.confirm?.buttons?.no || "Não",
                         type: data.confirm?.type || "warning",
                     }).then(() => {
-                        this.checked = true;
                         this.setActionBtnLoading(false);
-                        this.submit(clicked_btn);
+                        this.submit(clicked_btn, true);
                     });
                 }
             });
         },
-        submit(clicked_btn = "save_and_back") {
-            if (!this.checked && this.raw_type != "action") {
+        submit(clicked_btn = "save_and_back", checked = false) {
+            if (!checked && this.raw_type != "action") {
                 return this.checkStore(clicked_btn);
             }
             const loading_text = this.raw_type == "action" ? "Executando ..." : "Salvando ...";
-            this.loading = this.$loading({ text: loading_text, background: "white" });
+            const loading = this.$loading({ text: loading_text, background: "white" });
             const payload = { ...this.form, clicked_btn }
             if (this.raw_type == "action") {
                 payload.ids = this.ids;
@@ -535,7 +527,9 @@ export default {
                         if (data.success) return window.location.reload();
                         else {
                             loading.close();
-                            if (data.message) this.$message(data.message);
+                            if (data.message) {
+                                this.$message(data.message);
+                            }
                         }
                     } else {
                         if (data.success) {
@@ -544,14 +538,14 @@ export default {
                             if (data.message) {
                                 this.$message({ showClose: true, message: data.message.text, type: data.message.type, dangerouslyUseHTMLString: true });
                             }
-                            this.loading.close();
+                            loading.close();
                         }
                     }
                 })
                 .catch((er) => {
                     this.setActionBtnLoading(false);
                     this.makeFormValidationErrors(er);
-                    this.loading.close();
+                    loading.close();
                 });
         },
     },

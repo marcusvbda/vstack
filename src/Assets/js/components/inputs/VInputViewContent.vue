@@ -8,7 +8,8 @@
                 </small>
             </div>
         </td>
-        <td class="align-middle" v-loading="loading" element-loading-text="Carregando ..." element-loading-spinner="hidden">
+        <td class="align-middle" v-loading="loading" element-loading-text="Carregando ..."
+            element-loading-spinner="hidden">
             <div v-html="processed_value" v-if="!loading" />
         </td>
     </tr>
@@ -23,13 +24,7 @@ export default {
         };
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.$nextTick(() => {
-                    this.init();
-                });
-            }
-        });
+        this.init();
     },
     computed: {
         processed_value() {
@@ -112,11 +107,13 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+
     img {
         height: 145px;
         border-radius: 6px;
         border: 1px solid #c3c3c3;
-        + img {
+
+        +img {
             margin-left: 5px;
         }
     }

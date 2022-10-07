@@ -1,52 +1,8 @@
 <template>
     <div>
-        <template v-if="visible && ((!loading.top && !loading.table) || !template.no_data)">
-            <template v-if="loading.top">
-                <div class="row d-flex justify-content-start" :style="{ marginTop: 26 }">
-                    <div class="col-sm-12 col-md-5 d-flex flex-row" style="gap: 11px">
-                        <div class="shimmer" :style="{ height: 19, width: 170 }" />
-                        <div class="shimmer" :style="{ height: 19, width: 150 }" />
-                        <div class="shimmer" :style="{ height: 19, width: 180 }" />
-                    </div>
-                </div>
-                <div class="row d-flex justify-content-start" :style="{ marginTop: 26 }">
-                    <div class="col-sm-12 col-md-5 d-flex flex-row" style="gap: 11px">
-                        <div class="shimmer" :style="{ height: 41, width: 100 }" />
-                        <div class="shimmer" :style="{ height: 41, width: 120 }" />
-                    </div>
-                </div>
-                <div class="row d-flex justify-content-end" :style="{ marginTop: 26 }">
-                    <div class="col-sm-12 col-md-2 d-flex align-items-end">
-                        <div class="shimmer" :style="{ height: 17, width: '100%' }" />
-                    </div>
-                    <div class="col-sm-12 col-md-3">
-                        <div class="shimmer" :style="{ height: 33, width: '100%' }" />
-                    </div>
-                </div>
-                <div class="row d-flex justify-content-start" :style="{ marginTop: 26, marginBottom: 18 }">
-                    <div class="col-md-2 col-sm-12">
-                        <div class="shimmer" :style="{ height: 70, width: '100%' }" />
-                    </div>
-                    <div class="col-md-3 col-sm-12">
-                        <div class="shimmer" :style="{ height: 70, width: '100%' }" />
-                    </div>
-                </div>
-            </template>
-            <template v-else>
-                <VRuntimeTemplate v-if="template.top" :template="template.top" />
-            </template>
-            <div class="row d-flex justify-content-end" :style="{ marginTop: 18 }" v-if="loading.table">
-                <div class="col-12">
-                    <div class="shimmer" :style="{ height: 450, width: '100%' }" />
-                </div>
-            </div>
-            <template v-else>
-                <VRuntimeTemplate v-if="template.table" :template="template.table" />
-            </template>
-        </template>
-        <template v-else>
-            <VRuntimeTemplate v-if="template.no_data" :template="template.no_data" />
-        </template>
+        <VRuntimeTemplate v-if="template.top" :template="template.top" />
+        <VRuntimeTemplate v-if="template.table" :template="template.table" />
+        <VRuntimeTemplate v-if="template.no_data" :template="template.no_data" />
     </div>
 </template>
 <script>
@@ -59,15 +15,10 @@ export default {
     },
     data() {
         return {
-            visible: false,
-            loading: {
-                top: true,
-                table: true,
-                no_data: true,
-            },
             template: {
                 no_data: "",
                 top: "",
+                table: "",
             },
         };
     },
@@ -77,22 +28,16 @@ export default {
         },
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.removeLoadingEl();
-                this.init();
-            }
-        });
+        this.init();
     },
     methods: {
-        removeLoadingEl() {
-            const el = document.querySelector("#loading-section");
-            if (el) {
-                el.remove();
-            }
+        removeLoadingEl(el) {
+            const el_id = `#loading-section ${el}`;
+            this.$waitForEl(el_id).then(() => {
+                document.querySelector(el_id).remove();
+            })
         },
         init() {
-            this.visible = true;
             const payload = {
                 params: this.query_params
             };
@@ -107,11 +52,11 @@ export default {
                     } else {
                         const top_template = data.top.join("");
                         this.template.top = top_template;
-                        this.loading.top = false;
+                        this.removeLoadingEl("#top-loader")
 
                         const table_template = data.table.join("");
                         this.template.table = table_template;
-                        this.loading.table = false;
+                        this.removeLoadingEl("#table-loader")
                     }
                 })
                 .catch((error) => {

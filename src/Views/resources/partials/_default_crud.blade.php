@@ -50,8 +50,6 @@
     @endif
 </resource-crud>
 
-
 <div id="loading-section">
-    <div class="loader"></div>
+    @include("vStack::resources.loader.crud_shimmer")    
 </div>
-

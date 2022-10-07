@@ -85,11 +85,7 @@ export default {
         };
     },
     created() {
-        setTimeout(() => {
-            if (!this._isDestroyed) {
-                this.initialize();
-            }
-        });
+        this.initialize();
     },
     watch: {
         "$attrs.value"(val) {
