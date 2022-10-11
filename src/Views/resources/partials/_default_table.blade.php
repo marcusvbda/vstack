@@ -76,7 +76,7 @@
 							@if($show_right_actions_column)
 								@php
 									$qty_extra_btns = $resource->qtyShowingButtons();
-									$action_size = $qty_extra_btns*30;
+									$action_size = 210 + ($qty_extra_btns*30);
 								@endphp
 								<th style="max-width: {{$action_size}}px;width: {{$action_size}}px" 
 									id="resource-list-head-actions"
