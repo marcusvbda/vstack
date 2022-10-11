@@ -7,7 +7,7 @@
                     placement="top">
                     <el-button size="small" plain :style="{
                         backgroundColor:extra.bg_color ? extra.bg_color : 'white',
-                        borderColor:extra.border_color ? extra.border_color: '#e4e4e4',
+                        borderColor:extra.border_color ? extra.border_color: '#dedede',
                         color:extra.color ? extra.color : '#606266'
                     }" :icon="extra.icon ? extra.icon : 'el-icon-more'" id="resource-btn-copy"
                         @click="clickedActionExtra(extra)" />
