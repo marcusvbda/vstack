@@ -5,7 +5,7 @@
             <template v-for="(extra,i) in data.additional_extra_buttons">
                 <el-tooltip class="item" effect="dark" :content="extra.title ? extra.title : 'Extra Action'"
                     placement="top">
-                    <el-button size="small" plain :style="{
+                    <el-button size="small" class="extra-action-btn" plain :style="{
                         backgroundColor:extra.bg_color ? extra.bg_color : 'white',
                         borderColor:extra.border_color ? extra.border_color: '#dedede',
                         color:extra.color ? extra.color : '#606266'
@@ -143,3 +143,11 @@ export default {
     },
 };
 </script>
+<style lang="scss">
+.extra-action-btn {
+    &:hover {
+        transition: .4s;
+        filter: brightness(90%);
+    }
+}
+</style>
