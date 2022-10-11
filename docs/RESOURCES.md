@@ -694,6 +694,19 @@ class Carros extends Resource
         return true;
     }
 
+    public function extraActionButtons($row)
+    {
+        $buttons[] = [
+            "title" => "Dashboard",
+            "bg_color" => "#efefef",
+            "icon" => "el-icon-pie-chart",
+            "action_type" =>  "redirect",
+            "url" => "/admin/resource/{$row->id}/dashboard"
+        ];
+
+        return $buttons;
+    }
+
     public function exportColumns()
     {
         return [

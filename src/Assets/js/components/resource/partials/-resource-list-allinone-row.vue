@@ -6,31 +6,26 @@
             </template>
             <template v-if="col == virtual_indexes.action_col">
                 <div class="d-flex align-items-center justify-content-center">
-                    <input
-                        class="select-action-resource select_action_box"
-                        type="checkbox"
-                        :id="`${resource_id}_action_select_${row.content.id}`"
-                    />
+                    <input class="select-action-resource select_action_box" type="checkbox"
+                        :id="`${resource_id}_action_select_${row.content.id}`" />
                 </div>
             </template>
             <template v-if="col == virtual_indexes.right_actions_column">
-                <resource-crud-buttons
-                    :resource_id="resource_id"
-                    :data="{
-                        id: row.content.id,
-                        code: row.content.code,
-                        route: `${resource_route}/${row.content.code}`,
-                        can_view: row.acl.can_view,
-                        can_update: row.acl.can_update,
-                        can_delete: row.acl.can_delete,
-                        can_clone: row.acl.can_clone,
-                        before_delete: row.acl.before_delete,
-                        crud_type: row.acl.crud_type,
-                        resource_label: row.acl.resource_label,
-                        resource_icon: row.acl.resource_icon,
-                        resource_singular_label: row.acl.resource_singular_label,
-                    }"
-                />
+                <resource-crud-buttons :resource_id="resource_id" :data="{
+                    id: row.content.id,
+                    code: row.content.code,
+                    route: `${resource_route}/${row.content.code}`,
+                    can_view: row.acl.can_view,
+                    can_update: row.acl.can_update,
+                    can_delete: row.acl.can_delete,
+                    can_clone: row.acl.can_clone,
+                    before_delete: row.acl.before_delete,
+                    crud_type: row.acl.crud_type,
+                    resource_label: row.acl.resource_label,
+                    resource_icon: row.acl.resource_icon,
+                    resource_singular_label: row.acl.resource_singular_label,
+                    additional_extra_buttons:row.additional_extra_buttons
+                }" />
             </template>
         </template>
         <template v-else>

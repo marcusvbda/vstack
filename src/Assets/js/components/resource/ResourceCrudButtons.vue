@@ -2,6 +2,17 @@
     <div class="d-flex flex-row flex-wrap cursor-pointer align-items-center justify-content-center"
         style="min-height: 25px" :id="`resource-crud-btns-${data.id}`">
         <el-button-group>
+            <template v-for="(extra,i) in data.additional_extra_buttons">
+                <el-tooltip class="item" effect="dark" :content="extra.title" placement="top">
+                    <el-button size="small" plain :style="{
+                        backgroundColor:extra?.bg_color ?? 'white',
+                        borderColor:extra?.bg_color ?? '#dedede',
+                        color:extra?.color ?? '#606266'
+                    }" :icon="extra?.icon ?? ''" id="resource-btn-copy" @click="clickedActionExtra(extra)" />
+                </el-tooltip>
+            </template>
+
+
             <el-tooltip class="item" effect="dark" content="Clonar" placement="top" v-if="data.can_clone">
                 <el-button size="small" plain type="secondary" icon="el-icon-document-copy" @click="clickedClone"
                     id="resource-btn-copy" />
@@ -31,6 +42,12 @@ export default {
         };
     },
     methods: {
+        clickedActionExtra(extra) {
+            if (extra.action_type == "redirect" && extra.url) {
+                window.location.href = extra.url;
+                return;
+            }
+        },
         goToEdit() {
             if (this.data.crud_type.template == "page" || this.data.crud_type.template == "wizard") {
                 return (window.location.href = `${this.data.route}/edit`);

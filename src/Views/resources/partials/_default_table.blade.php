@@ -74,10 +74,7 @@
 								</th>
 							@endforeach
 							@if($show_right_actions_column)
-								<th style="max-width: 210px;width: 210px;" 
-									id="resource-list-head-actions"
-								>
-								</th>
+								<th id="resource-list-head-actions"></th>
 							@endif
 						</tr>
 					</thead>

@@ -67,7 +67,7 @@ class VstackController extends Controller
 				return $row;
 			}, @$resource->beforeDelete() ?? [])
 		];
-		return ["content" => $content, "acl" => $acl];
+		return ["content" => $content, "acl" => $acl, "additional_extra_buttons" => $resource->extraActionButtons($row)];
 	}
 
 	public function getColumnIndex($columns, $row, $key, $placeholder = "          -          ")

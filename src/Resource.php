@@ -527,6 +527,11 @@ class Resource
 		return $this->canView() || $this->canUpdate() || $this->canDelete() || $this->canClone();
 	}
 
+	public function extraActionButtons($row)
+	{
+		return [];
+	}
+
 	public function beforeStore($data)
 	{
 		return false;
