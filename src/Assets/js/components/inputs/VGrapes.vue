@@ -7,7 +7,8 @@
                     <span v-html="description"></span>
                 </small>
             </div>
-            <GrapesEditor :errors="errors" :mode="mode" :blocks="blocks" :settings="settings" v-model="content" :height="h" />
+            <GrapesEditor :errors="errors" :mode="mode" :blocks="blocks" :settings="settings" v-model="content"
+                :height="h" />
         </td>
     </tr>
 </template>
