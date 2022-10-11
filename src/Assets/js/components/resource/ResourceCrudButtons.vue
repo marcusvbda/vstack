@@ -44,7 +44,7 @@ export default {
     methods: {
         clickedActionExtra(extra) {
             if (extra.action_type == "redirect") {
-                window.location.href = extra.?url ?? "#";
+                window.location.href = extra?.url ?? "#";
                 return;
             }
         },
