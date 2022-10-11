@@ -3,12 +3,12 @@
         style="min-height: 25px" :id="`resource-crud-btns-${data.id}`">
         <el-button-group>
             <template v-for="(extra,i) in data.additional_extra_buttons">
-                <el-tooltip class="item" effect="dark" :content="extra.title" placement="top">
+                <el-tooltip class="item" effect="dark" :content="extra?.title ?? 'Extra Action'" placement="top">
                     <el-button size="small" plain :style="{
                         backgroundColor:extra?.bg_color ?? 'white',
                         borderColor:extra?.bg_color ?? '#dedede',
                         color:extra?.color ?? '#606266'
-                    }" :icon="extra?.icon ?? ''" id="resource-btn-copy" @click="clickedActionExtra(extra)" />
+                    }" :icon="extra?.icon ?? 'el-icon-more'" id="resource-btn-copy" @click="clickedActionExtra(extra)" />
                 </el-tooltip>
             </template>
 
@@ -43,8 +43,8 @@ export default {
     },
     methods: {
         clickedActionExtra(extra) {
-            if (extra.action_type == "redirect" && extra.url) {
-                window.location.href = extra.url;
+            if (extra.action_type == "redirect") {
+                window.location.href = extra.?url ?? "#";
                 return;
             }
         },
