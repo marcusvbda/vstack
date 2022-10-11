@@ -74,7 +74,11 @@
 								</th>
 							@endforeach
 							@if($show_right_actions_column)
-								<th style="min-width: 210px;" 
+								@php
+									$qty_extra_btns = $resource->qtyShowingButtons();
+									$action_size = $qty_extra_btns*30;
+								@endphp
+								<th style="max-width: {{$action_size}}px;width: {{$action_size}}px" 
 									id="resource-list-head-actions"
 								>
 								</th>

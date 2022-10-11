@@ -775,4 +775,11 @@ class Resource
 		$resource = new static();
 		return $resource->{$method}($params);
 	}
+
+	public function qtyShowingButtons()
+	{
+		$enabled = array_filter([$this->canView(),$this->canUpdate(),$this->canDelete(),$this->canClone()]);
+		$extras = $this->extraActionButtons(null);
+		return count($enabled) + count($extras);
+	}
 }
