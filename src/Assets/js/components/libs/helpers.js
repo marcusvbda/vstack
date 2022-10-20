@@ -37,7 +37,7 @@ String.prototype.toSlug = function () {
         .replace(/-+/g, "-");
     return str != "undefined" ? str : "";
 };
-String.prototype.toClipboard = function (callback = () => {}) {
+String.prototype.toClipboard = function (callback = () => { }) {
     const copy = require("copy-to-clipboard");
     copy(this);
     callback();
@@ -256,3 +256,11 @@ Vue.prototype.$paramsToObject = () => {
 Vue.prototype.$randomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
+String.prototype.unescape = function () {
+    return this.replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'");
+}

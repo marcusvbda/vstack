@@ -420,3 +420,35 @@ ul.pagination {
         }
     }
 }
+
+.dialog-has-many {
+    .el-dialog__body {
+        padding: 0;
+    }
+
+    .el-dialog__header {
+        padding: 5px 13px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: revert;
+        background-color: rgba(0, 0, 0, 0.03);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+
+        .el-dialog__title {
+            font-size: 14px;
+            color: #444;
+        }
+    }
+
+    .el-dialog__headerbtn {
+        margin-left: auto;
+        position: unset;
+    }
+}
+
+
+.padding-10 {
+    padding: 10px;
+}

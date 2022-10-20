@@ -175,7 +175,8 @@ class Resource
 		$fields = [];
 		foreach ($cards as $card) {
 			foreach ($card->inputs as $input) {
-				if (data_get($input, "options.type") != "resource-tree") {
+				$type = data_get($input, "options.type");
+				if (!in_array($type, ["resource-tree", "has-one-many"])) {
 					$fields[] = $input;
 				}
 			}
@@ -778,7 +779,7 @@ class Resource
 
 	public function qtyShowingButtons()
 	{
-		$enabled = array_filter([$this->canView(),$this->canUpdate(),$this->canDelete(),$this->canClone()]);
+		$enabled = array_filter([$this->canView(), $this->canUpdate(), $this->canDelete(), $this->canClone()]);
 		$extras = $this->extraActionButtons(null);
 		return count($enabled) + count($extras);
 	}
