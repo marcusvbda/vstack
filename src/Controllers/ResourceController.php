@@ -1243,4 +1243,17 @@ class ResourceController extends Controller
 		$list = $this->getData($resource, $request)->select("*")->paginate(10);
 		return ["success" => true, "list" => $list];
 	}
+
+	public function preValidate($resource, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		$validation_custom_message =  $resource->getValidationRuleMessage();
+		$validator = Validator::make($request->all(), $resource->getValidationRule(), @$validation_custom_message ?? []);
+
+		if ($validator->fails()) {
+			throw new HttpResponseException(response()->json(["errors" => $validator->errors()], 422));
+		}
+
+		return ["success" => true];
+	}
 }

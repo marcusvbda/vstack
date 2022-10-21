@@ -32,7 +32,8 @@ class HasOneOrMany extends Field
         $field = data_get($this->options, "field", "");
         $eval = data_get($this->options, "eval", " ");
         $disabled = data_get($this->options, "disabled", false) ? "true" : "false";
-        $info = $this->makeFieldsList($table, $limit, $field, $resource, $children);
+        $item_label = data_get($this->options, "item_label", "");
+        $info = $this->makeFieldsList($item_label, $table, $limit, $field, $resource, $children);
         $info = json_encode($info);
 
         return $this->view = view("vStack::resources.field.hasonemany", compact(
@@ -46,10 +47,11 @@ class HasOneOrMany extends Field
         ))->render();
     }
 
-    private function makeFieldsList($table, $limit, $field, $resource, $children = [])
+    private function makeFieldsList($item_label, $table, $limit, $field, $resource, $children = [])
     {
         $mounted_resource = app()->make($resource);
         $fields = [
+            "item_label" => $item_label,
             "table" => $table,
             "limit" => $limit,
             "field" => $field,
@@ -69,7 +71,8 @@ class HasOneOrMany extends Field
             $child_respurce = data_get($child, "resource");
             $table_children = data_get($child, "table", ["name" => ["label" => "Nome"]]);
             $child_children = data_get($child, "children", []);
-            $fields["children"][] = $this->makeFieldsList($table_children, $child_limit, $child_field, $child_respurce, $child_children);
+            $child_item_label = data_get($this->options, "item_label", "");
+            $fields["children"][] = $this->makeFieldsList($child_item_label, $table_children, $child_limit, $child_field, $child_respurce, $child_children);
         }
         return $fields;
     }

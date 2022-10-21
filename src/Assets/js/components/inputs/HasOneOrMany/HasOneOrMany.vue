@@ -1,7 +1,13 @@
 <template>
-    <CustomResourceComponent :label="label" :description="description" custom_class="has-on-or-many">
-        <RenderHasManyInfo :info="initializedInfo" :disabled="disabled" />
-    </CustomResourceComponent>
+    <tr class="has-on-or-many">
+        <td colspan="2">
+            <div class="d-flex flex-column mb-3">
+                <b class="input-title" v-if="label" v-html="label" />
+                <small class="text-muted mt-1" v-if="description" v-html="description" />
+            </div>
+            <RenderHasManyInfo :info="initializedInfo" :disabled="disabled" />
+        </td>
+    </tr>
 </template>
 <script>
 
@@ -25,13 +31,10 @@ export default {
     },
     methods: {
         initInfo() {
-            console.log(this.populateChildremValue(this.initializedInfo))
+            this.initializedInfo = this.populateChildremValue(this.initializedInfo)
         },
         populateChildremValue(child) {
-            child.values = [{
-                id: 1,
-                name: "lorem ipsum"
-            }]
+            child.values = []
             for (let i in child.children) {
                 child.children[i] = this.populateChildremValue(child.children[i])
             }

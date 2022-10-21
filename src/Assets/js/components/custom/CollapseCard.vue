@@ -2,7 +2,7 @@
     <div class="row mb-3 card-collapse">
         <div class="col-12">
             <el-collapse v-model="active">
-                <el-collapse-item :disabled="disabled">
+                <el-collapse-item :disabled="disabled" :class="custom_class">
                     <template slot="title">
                         <slot name="header" />
                     </template>
@@ -19,6 +19,10 @@ export default {
         disabled: {
             type: Boolean,
             default: false
+        },
+        custom_class: {
+            type: String,
+            default: ""
         }
     },
     data() {
