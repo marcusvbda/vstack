@@ -25,13 +25,14 @@ class HasOneOrMany extends Field
         $label = data_get($this->options, "label", "");
         $description = data_get($this->options, "description", "");
         $resource = data_get($this->options, "resource", "");
-        $relation = data_get($this->options, "relation", "");
+        $field = data_get($this->options, "field", "");
         $children = data_get($this->options, "children", []);
+        $table = data_get($this->options, "table", ["name" => ["label" => "Nome"]]);
         $limit = data_get($this->options, "limit", "infinite");
         $field = data_get($this->options, "field", "");
         $eval = data_get($this->options, "eval", " ");
         $disabled = data_get($this->options, "disabled", false) ? "true" : "false";
-        $info = $this->makeFieldsList($limit, $relation, $resource, $children);
+        $info = $this->makeFieldsList($table, $limit, $field, $resource, $children);
         $info = json_encode($info);
 
         return $this->view = view("vStack::resources.field.hasonemany", compact(
@@ -45,13 +46,15 @@ class HasOneOrMany extends Field
         ))->render();
     }
 
-    private function makeFieldsList($limit, $relation, $resource, $children = [])
+    private function makeFieldsList($table, $limit, $field, $resource, $children = [])
     {
         $mounted_resource = app()->make($resource);
         $fields = [
+            "table" => $table,
             "limit" => $limit,
-            "relation" => $relation,
+            "field" => $field,
             "resource" => $resource,
+            "resource_id" => $mounted_resource->id,
             "fields" => [],
             "children" => [],
             "label" => $mounted_resource->label(),
@@ -61,11 +64,12 @@ class HasOneOrMany extends Field
             $fields["fields"][] = $field;
         }
         foreach ($children as $child) {
-            $child_relation = data_get($child, "relation", "");
+            $child_field = data_get($child, "field", "");
             $child_limit = data_get($child, "limit", "infinite");
             $child_respurce = data_get($child, "resource");
+            $table_children = data_get($child, "table", ["name" => ["label" => "Nome"]]);
             $child_children = data_get($child, "children", []);
-            $fields["children"][] = $this->makeFieldsList($child_limit, $child_relation, $child_respurce, $child_children);
+            $fields["children"][] = $this->makeFieldsList($table_children, $child_limit, $child_field, $child_respurce, $child_children);
         }
         return $fields;
     }

@@ -1235,4 +1235,12 @@ class ResourceController extends Controller
 		}
 		return  $fields;
 	}
+
+	public function getSelectList($resource, Request $request)
+	{
+		$resource = ResourcesHelpers::find($resource);
+		request()->merge(["page_type" => "has-one-or-many-input"]);
+		$list = $this->getData($resource, $request)->select("*")->paginate(10);
+		return ["success" => true, "list" => $list];
+	}
 }

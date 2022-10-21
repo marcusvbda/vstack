@@ -28,6 +28,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::post('relatorios/{resource}/create-report-template', [ResourceController::class, 'createReportTemplate'])->name("resource.create.report.template");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
 		Route::get('{resource}/{type}/get-list-data', [ResourceController::class, 'getListData'])->name("resource.getlistdata");
+		Route::get('{resource}/select-list', [ResourceController::class, 'getSelectList'])->name("resource.getSelectList");
 		Route::post('{resource}/field-data', [ResourceController::class, 'fieldData'])->name("resource.fielddata");
 		Route::get('{resource}/create', [ResourceController::class, 'create'])->name("resource.create");
 		Route::get('{resource}/get-action-content/{id}', [ResourceController::class, 'getActionContent']);
