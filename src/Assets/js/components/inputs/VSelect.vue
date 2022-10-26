@@ -170,7 +170,6 @@ export default {
             if (this.field_options[this.option_model_index] == "loading" || !this.field_options[this.option_model_index]) {
                 this.$watch(`field_options.${this.option_model_index}`, val => {
                     if (Array.isArray(val)) {
-                        console.log(val)
                         this.options = val
                         callback();
                     }
