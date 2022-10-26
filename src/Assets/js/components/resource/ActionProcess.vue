@@ -80,7 +80,6 @@ export default {
     },
     methods: {
         getContent() {
-            console.log(this.running_action.id);
             let url = window.location.href.split("?")[0];
             this.$http
                 .get(`${url}/get-action-content/${this.running_action.id}`)
