@@ -1,12 +1,22 @@
+@php
+    $right_card_content = $resource->crudRightCardBody() ;
+@endphp
 <div class="row mt-2" data-aos="fade-left">
     <div class="col-12">
-        <div class="d-flex flex-row justify-content-between mb-3">
+        <div class="d-flex flex-row justify-content-between align-items-center mb-3">
             <h4>
                 @if (@$resource->icon())
                     <span class="{{ $resource->icon() }} mr-2"></span>
                 @endif
                 {{ $resource->breadcrumbLabels()[$raw_type] }}
             </h4>
+            @if(!$right_card_content)
+                <div class="top-save">
+                    <portal-target  name="crud-btns">
+                        {{--  --}}
+                    </portal-target>
+                </div>
+            @endif
         </div>
     </div>
 </div>
@@ -27,7 +37,8 @@
     :breadcrumb="{{ json_encode($routes) }}" @if (@$content)
     :content="{{ json_encode($content) }}"
     @endif
-    right_card_content="{{ $resource->crudRightCardBody() }}"
+    :show_crud_right_card='@json($resource->showCrudRightCard())'
+    right_card_content="{{ $right_card_content }}"
     raw_type='{{ $raw_type }}'
     :first_btn='@json($resource->firstCrudBtn())'
     :second_btn='@json($resource->secondCrudBtn())'

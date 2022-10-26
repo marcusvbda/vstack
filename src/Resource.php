@@ -785,4 +785,9 @@ class Resource
 		$extras = $this->extraActionButtons(null);
 		return count($enabled) + count($extras);
 	}
+
+	public function showCrudRightCard()
+	{
+		return true;
+	}
 }

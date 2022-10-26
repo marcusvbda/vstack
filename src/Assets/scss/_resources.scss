@@ -1,5 +1,9 @@
 @import "variables";
 
+.montserrat {
+    font-family: 'Montserrat' !important;
+}
+
 .resource-tag {
     padding: 2px 5px !important;
     height: auto !important;
@@ -457,4 +461,39 @@ ul.pagination {
 
 td.w-25 {
     word-break: break-word !important;
+}
+
+h4 {
+    font-family: 'Montserrat';
+    letter-spacing: -0.9px !important;
+    font-weight: 700 !important;
+}
+
+.top-save {
+    .el-button+.el-button {
+        margin-left: 2px !important;
+    }
+
+    .el-button {
+        padding: 14px 24px;
+        font-size: 14px;
+
+        &.el-button--info {
+            background-color: #ADB5BD;
+            border-color: #ADB5BD;
+        }
+
+        &.el-button--success {
+            background-color: #37B24D;
+            border-color: #37B24D;
+        }
+
+        .d-flex.flex-row {
+            align-items: center;
+
+            i {
+                font-size: 16px;
+            }
+        }
+    }
 }

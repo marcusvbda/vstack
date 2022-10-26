@@ -15,13 +15,14 @@
                 <template v-else>
                     <template v-if="crud_type.template == 'page'">
                         <div class="row" id="resource-crud-page">
-                            <div class="col-12 col-lg-9">
+                            <div :class="`col-12 ${show_crud_right_card ? 'col-lg-9' : ''}`">
                                 <template v-for="(card, i) in data.fields">
                                     <v-runtime-template :key="i" :template="card.view"
                                         :id="`resource-crud-card-${card.label}`" />
                                 </template>
                             </div>
-                            <div class="col-12 col-lg-3 fields-tab" id="resource-card-section-list">
+                            <div :class="`col-12 col-lg-3 fields-tab ${!show_crud_right_card ? 'd-none' : ''}`"
+                                id="resource-card-section-list">
                                 <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
                                     <div class="col-12">
                                         <div class="card">
@@ -44,7 +45,8 @@
                                                 'card-footer flex-wrap d-flex',
                                                 'flex-row justify-content-end p-2 align-items-center',
                                             ]">
-                                                <el-button-group>
+                                                <portal to="crud-btns" :disabled="show_crud_right_card"
+                                                    class="ml-auto d-flex align-items-center">
                                                     <el-button v-if="first_btn" :size="first_btn.size"
                                                         :type="first_btn.type" @click="submit(first_btn.field)"
                                                         :loading="action_btn_loading" :disabled="action_btn_loading"
@@ -57,7 +59,7 @@
                                                         id="resource-crud-btn-second">
                                                         <span v-html="second_btn.content" />
                                                     </el-button>
-                                                </el-button-group>
+                                                </portal>
                                             </div>
                                         </div>
                                     </div>
@@ -185,7 +187,8 @@ export default {
         "content_id",
         "content",
         "ids",
-        "has_befores_store"
+        "has_befores_store",
+        "show_crud_right_card"
     ],
     data() {
         return {
