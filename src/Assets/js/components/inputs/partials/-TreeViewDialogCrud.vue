@@ -9,11 +9,9 @@
             </div>
         </div>
         <template v-if="loading">
-            <div class="card-body">
-                <div class="p-3">
-                    <div class="d-flex flex-column">
-                        <div v-for="(i, ix) in qtyfields" :key="ix" class="shimmer resource-tree-item-input w-100" />
-                    </div>
+            <div class="card-body" style="padding:13px">
+                <div class="d-flex flex-column">
+                    <div v-for="(i, ix) in qtyfields" :key="ix" class="shimmer resource-tree-item-input w-100" />
                 </div>
             </div>
             <div class="card-footer">
@@ -26,12 +24,18 @@
         </template>
 
         <template v-else>
-            <div class="card-body">
+            <div class="card-body" :style="{ padding: `${cards.length > 1 ? '0 13px' : '0'}` }">
                 <form class="needs-validation m-0" novalidate v-on:submit.prevent>
-                    <table class="table table-crud mb-0">
+                    <table class="table table-crud no-title mb-0">
                         <tbody>
-                            <template v-for="(input, i) in inputs">
-                                <VRuntimeTemplate :template="input.view" :key="`tree-view-detail-input-${i}`" />
+                            <el-tabs v-model="tab" v-if="cards.length > 1">
+                                <template v-for="(card, i) in cards">
+                                    <el-tab-pane :label="card.label" :key="`tab_${i}`" />
+                                </template>
+                            </el-tabs>
+                            <template v-for="(card, i) in cards">
+                                <VRuntimeTemplate v-if="tab == i" :template="card.view"
+                                    :key="`tree-view-detail-card-${i}`" />
                             </template>
                         </tbody>
                     </table>
@@ -60,8 +64,9 @@ export default {
     props: ["resource", "selected", "label", "qtyfields", "fk_value", "fk_index", "acl"],
     data() {
         return {
+            tab: 0,
             loading: true,
-            inputs: [],
+            cards: [],
             errors: [],
             form: {},
             card_loading: false,
@@ -75,6 +80,17 @@ export default {
         this.init();
     },
     computed: {
+        inputs() {
+            let inputs = []
+            for (let i in this.cards) {
+                let card = this.cards[i]
+                for (let y in card.inputs) {
+                    let input = card.inputs[y]
+                    inputs.push(input)
+                }
+            }
+            return inputs
+        },
         inputFieldsIndexes() {
             return this.inputs.map((x) => x.options.field);
         },
@@ -102,7 +118,6 @@ export default {
             if (this.selected.id) {
                 Object.keys(this.selected).forEach((key) => {
                     if (this.inputFieldsIndexes.includes(key) || key == "id") {
-                        console.log(key)
                         this.$set(this.form, key, this.selected[key]);
                     }
                 });
@@ -119,11 +134,9 @@ export default {
                 params: { resource: this.resource }
             }
             this.$http.get("/admin/inputs/resource-tree/load-crud", payload).then(({ data }) => {
-                this.inputs = data;
+                this.cards = data;
                 this.initFields();
-                setTimeout(() => {
-                    this.loading = false;
-                }, 500);
+                this.loading = false;
             });
         },
         submit() {
@@ -198,8 +211,6 @@ export default {
             }
 
             .card-body {
-                padding: 0;
-
                 .resource-tree-item-input {
                     height: 40px;
                     margin-bottom: 10px;
@@ -213,6 +224,21 @@ export default {
                     height: 39px;
                 }
             }
+        }
+    }
+}
+
+
+.table-crud {
+    &.no-title {
+        .el-tabs__header {
+            margin-bottom: 0;
+            border-bottom: unset;
+        }
+
+
+        .crud-card-header {
+            display: none;
         }
     }
 }

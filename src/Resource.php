@@ -172,16 +172,18 @@ class Resource
 	public function tree_fields()
 	{
 		$cards = $this->fields();
-		$fields = [];
 		foreach ($cards as $card) {
+			$fields = [];
 			foreach ($card->inputs as $input) {
 				$type = data_get($input, "options.type");
-				if (!in_array($type, ["resource-tree", "has-one-many"])) {
+				if (!in_array($type, ["resource-tree"])) {
 					$fields[] = $input;
 				}
 			}
+			$card->inputs = $fields;
+			$card->makeView();
 		}
-		return $fields;
+		return $cards;
 	}
 
 	public function exportColumns()

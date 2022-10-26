@@ -1163,7 +1163,7 @@ class ResourceController extends Controller
 		$resource_field = ResourcesHelpers::find(data_get($field, "options.resource"));
 		$inputOptions = data_get($field, "options");
 		$inputDisabled = data_get($inputOptions, "disabled", false);
-		$inputFieldsQtyFields = count($resource_field->tree_fields());
+		$inputFieldsQtyFields = rand(3, 7);
 		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id, $inputFieldsQtyFields, $inputDisabled);
 		return $tree;
 	}
@@ -1182,7 +1182,7 @@ class ResourceController extends Controller
 					$inputOptions = data_get($input, "options");
 					$inputParentResource = data_get($input, "options.parent_resource");
 					$inputDisabled = data_get($inputOptions, "disabled", false);
-					$inputFieldsQtyFields = count($resource_input->tree_fields());
+					$inputFieldsQtyFields =  rand(3, 7);
 					$children = $this->makeRecursiveTree($resource_input, $inputOptions, $inputParentResource, $inputFieldsQtyFields, $inputDisabled);
 				}
 			}
@@ -1229,10 +1229,7 @@ class ResourceController extends Controller
 	public function resource_tree_items_crud(Request $request)
 	{
 		$resource = ResourcesHelpers::find($request->resource);
-		$fields = $resource->tree_fields();
-		foreach ($fields as $field) {
-			$field->view = $field->getView();
-		}
-		return  $fields;
+		$cards = $resource->tree_fields();
+		return  $cards;
 	}
 }

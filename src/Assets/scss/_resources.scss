@@ -6,6 +6,7 @@
 }
 
 .resource-table {
+
     small {
         zoom: .9;
     }
@@ -451,4 +452,9 @@ ul.pagination {
 
 .padding-10 {
     padding: 10px;
+}
+
+
+td.w-25 {
+    word-break: break-word !important;
 }

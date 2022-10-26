@@ -52,6 +52,8 @@
     </tr>
 </template>
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
     props: [
         "placeholder",
@@ -100,7 +102,14 @@ export default {
             }
         },
     },
+    computed: {
+        ...mapGetters("resource", ["field_options"]),
+        option_model_index() {
+            return (this.list_model ? this.list_model : "").replaceAll("\\", "_").toLowerCase();
+        }
+    },
     methods: {
+        ...mapMutations("resource", ["addFieldOptions"]),
         selectCreate() {
             if (!this.allow_create) {
                 return;
@@ -157,22 +166,45 @@ export default {
                 this.options = this.optionlist ? this.optionlist : [];
                 return callback();
             }
-            const payload = {
-                params: { model: this.list_model, model_fields: this.model_fields, model_filter: this.model_filter }
-            }
-            this.$http
-                .post(this.route_list, payload)
-                .then((res) => {
-                    res = res.data;
-                    this.options = res.data.map(x => {
-                        return { ...x, id: String(x.id) };
-                    });
-                    callback();
-                })
-                .catch((er) => {
-                    this.loading = false;
-                    console.log(er);
+
+            if (this.field_options[this.option_model_index] == "loading" || !this.field_options[this.option_model_index]) {
+                this.$watch(`field_options.${this.option_model_index}`, val => {
+                    if (Array.isArray(val)) {
+                        console.log(val)
+                        this.options = val
+                        callback();
+                    }
                 });
+
+                if (!this.field_options[this.option_model_index]) {
+                    let field_op = {};
+                    field_op[this.option_model_index] = "loading"
+                    this.addFieldOptions(field_op);
+
+                    const payload = {
+                        params: { model: this.list_model, model_fields: this.model_fields, model_filter: this.model_filter }
+                    }
+                    return this.$http
+                        .post(this.route_list, payload)
+                        .then((res) => {
+                            res = res.data;
+                            let field_op = {};
+                            field_op[this.option_model_index] = res.data.map(x => {
+                                return { ...x, id: String(x.id) };
+                            });
+                            this.addFieldOptions(field_op);
+                        })
+                        .catch((er) => {
+                            this.loading = false;
+                            console.log(er);
+                        });
+                }
+            } else {
+                this.options = this.field_options[this.option_model_index]
+                callback();
+            }
+
+
         },
     },
 };

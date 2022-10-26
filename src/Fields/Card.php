@@ -40,7 +40,7 @@ class Card
 		return implode("", $views);
 	}
 
-	private function makeView()
+	public function makeView()
 	{
 		$index = $this->_uid;
 		$label = $this->label;
