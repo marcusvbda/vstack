@@ -100,9 +100,6 @@ export default {
                     this.marked = this.value.length === this.options.length
                 }
             }
-        },
-        options(val) {
-            console.log("val", val)
         }
     },
     computed: {
