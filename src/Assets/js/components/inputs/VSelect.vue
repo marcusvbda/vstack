@@ -173,7 +173,9 @@ export default {
                 this.$watch(`field_options.${this.option_model_index}`, val => {
                     if (Array.isArray(val)) {
                         this.options = val
-                        callback();
+                        this.$nextTick(() => {
+                            callback();
+                        });
                     }
                 });
 
@@ -202,7 +204,9 @@ export default {
                 }
             } else {
                 this.options = this.field_options[this.option_model_index]
-                callback();
+                this.$nextTick(() => {
+                    callback();
+                });
             }
 
 
