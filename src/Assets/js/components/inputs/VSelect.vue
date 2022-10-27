@@ -101,6 +101,9 @@ export default {
                 }
             }
         },
+        options(val) {
+            console.log("val", val)
+        }
     },
     computed: {
         ...mapGetters("resource", ["field_options"]),
@@ -154,7 +157,9 @@ export default {
                 if (Array.isArray(this.value)) {
                     this.value = this.value.map(x => String(x));
                 }
-                this.finishInit();
+                this.$nextTick(() => {
+                    this.finishInit();
+                })
             }
         },
         finishInit() {
