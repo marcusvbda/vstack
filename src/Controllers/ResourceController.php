@@ -272,7 +272,7 @@ class ResourceController extends Controller
 
 	public function edit($resource, $code, Request $request)
 	{
-		request()->merge(["page_type" => "edit"]);
+		request()->merge(["page_type" => "edit", "edit" => @$code]);
 		$resource = ResourcesHelpers::find($resource);
 		$content = $resource->model->findOrFail($code);
 		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) {
