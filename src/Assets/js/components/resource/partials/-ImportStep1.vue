@@ -21,9 +21,10 @@
             <div class="card-header bg-white py-4">
                 <div class="row">
                     <div class="col-12">
-                        <h3>Mapear campos da planilha para produtos {{ data.resource.label.toLowerCase() }}</h3>
+                        <h3>Mapear campos da planilha para {{ data.resource.label.toLowerCase() }}</h3>
                         <div class="mt-3">
-                            Selecione os campos da sua planilha (a esquerda) e relacione-os com os campos que deverão ser
+                            Selecione os campos da sua planilha (a esquerda) e relacione-os com os campos que deverão
+                            ser
                             importados em {{ data.resource.label.toLowerCase() }} (a direita)
                         </div>
                     </div>
@@ -44,21 +45,11 @@
                                     <template>
                                         <td class="px-5">{{ column }}</td>
                                         <td class="px-5">
-                                            <el-select
-                                                class="w-100"
-                                                clearable
-                                                v-model="config.fieldlist[column]"
-                                                filterable
-                                                placeholder="Seleciona para onde este campo será importado"
-                                            >
+                                            <el-select class="w-100" clearable v-model="config.fieldlist[column]"
+                                                filterable placeholder="Seleciona para onde este campo será importado">
                                                 <el-option label="Ignorar" value="_IGNORE_" />
-                                                <el-option
-                                                    v-for="(item, i) in headerOptions"
-                                                    :key="i"
-                                                    :label="item"
-                                                    :value="item"
-                                                    :disabled="columnHasSelected(item)"
-                                                />
+                                                <el-option v-for="(item, i) in headerOptions" :key="i" :label="item"
+                                                    :value="item" :disabled="columnHasSelected(item)" />
                                             </el-select>
                                         </td>
                                     </template>

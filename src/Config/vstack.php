@@ -10,11 +10,6 @@ return [
 	"prepend_breadcrumb" => [
 		"Dashboard" => "/admin",
 	],
-	"socket_service" => [
-		"port" => env('SOCKET_PORT_SERVER_PORT'),
-		"uri" => env("APP_URL"),
-		"enabled" => env('SOCKET_SERVER_ENABLED', false),
-	],
 	"api" => [
 		"token_expiration" => "1 hour",
 	],

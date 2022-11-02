@@ -3,12 +3,12 @@
         <div class="col-12">
             <el-steps :active="config.step" finish-status="success" align-center>
                 <el-step title="Upload de arquivo" />
-                <el-step
-                    :title="
-                        data.resource.import_custom_map_step ? data.resource.import_custom_map_step.title : 'Mapeamento de coluna'
-                    "
-                />
-                <el-step title="Importação" />
+                <el-step :title="
+                    data.resource.import_custom_map_step ? data.resource.import_custom_map_step : 'Mapeamento de coluna'
+                " />
+                <el-step :title="
+                    data.resource.import_custom_import_step ? data.resource.import_custom_import_step : 'Importação'
+                " />
             </el-steps>
             <div class="mt-3" data-aos="fade-right">
                 <a class="link" href="#" v-if="config.step > 0" @click.prevent="reload">

@@ -39,7 +39,7 @@ class GlobalImporter implements ToCollection
 
     public function getFile()
     {
-        return storage_path("app/" . $this->filepath);
+        return $this->filepath;
     }
 
     public function collection(Collection $rows)

@@ -45,7 +45,6 @@ class ResourceController extends Controller
 				abort(403);
 			}
 		}
-		$socket_client_id = @$request->socket_client_id;
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
 
@@ -66,12 +65,7 @@ class ResourceController extends Controller
 			$minified_template = ResourcesHelpers::minify($template);
 			$template_chunked = str_split($minified_template, 100);
 			$response = ['template' => $template_chunked, "type" => "no_data"];
-			if (!$socket_client_id) {
-				return json_encode($response, JSON_INVALID_UTF8_IGNORE);
-			} else {
-				Vstack::SocketEmit('template', $socket_client_id, $response, "client");
-				return ["success" => true, "message" => "response with socket"];
-			}
+			return json_encode($response, JSON_INVALID_UTF8_IGNORE);
 		} else {
 			$filters = $resource->filters();
 			$_data =  request()->all();
@@ -317,10 +311,10 @@ class ResourceController extends Controller
 		if (!$resource->canImport()) {
 			abort(403);
 		}
-		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant->name . ".xlsx";
+		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant()->first()->name . ".xlsx";
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
-		Excel::store($exporter, $filename, "local");
-		$full_path = storage_path("app/$filename");
+		Excel::store($exporter, $filename, "temp_report");
+		$full_path = storage_path("app/temp_report/$filename");
 		return response()->download($full_path)->deleteFileAfterSend(true);
 	}
 
@@ -346,6 +340,7 @@ class ResourceController extends Controller
 	{
 		return [
 			"resource" => [
+				"import_settings" => $resource->importViewSettings(),
 				"resource_id"    => $resource->id,
 				"label"          => $resource->label(),
 				"singular_label" => $resource->singularLabel(),
@@ -353,6 +348,7 @@ class ResourceController extends Controller
 				"columns"        => $this->getImporterCollumns($resource),
 				"import_custom_crud_message" => $resource->importCustomCrudMessage(),
 				"import_custom_map_step" => $resource->importCustomMapStep(),
+				"import_custom_import_step" => $resource->importCustomImportStep(),
 			]
 		];
 	}
@@ -381,8 +377,8 @@ class ResourceController extends Controller
 		if (!count($header)) {
 			return ["success" => false, "message" => ["type" => "error", "text" => "Cabeçalho da planilha nao encontrado"]];
 		}
-
-		return ["success" => true, "data" => $header];
+		
+		return $resource->importHeader($header);		
 	}
 
 	public function importSubmit($resource, Request $request)
@@ -404,11 +400,16 @@ class ResourceController extends Controller
 
 		$config = json_decode($data["config"]);
 		$fieldlist = $config->fieldlist;
-		$filename = Auth::user()->tenant_id . "_" . uniqid() . ".xlsx";
-		$filepath = $file->storeAs('local', $filename);
+		$tenant_id = Auth::user()->tenant()->first()->id;
+		$filename = $tenant_id . "_" . uniqid() . ".xlsx";
+
+		$disk = Storage::disk("local");
+		$contents = file_get_contents($file->getRealPath());
+		$disk->put($filename, $contents);
+		$filepath = storage_path("app/local/$filename");
+
 		$user = Auth::user();
-		$user_code = $user->code;
-		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $user->tenant_id;
+		$tenant_id = in_array("tenant_id", array_keys((array)$fieldlist)) ? null : $tenant_id;
 
 		$extra_data = $resource->prepareImportData($data);
 		if (!@$extra_data["success"]) {
@@ -417,13 +418,14 @@ class ResourceController extends Controller
 			$extra_data = @$extra_data["data"];
 		}
 
-		dispatch(function () use ($filepath, $resource, $user_code, $fieldlist, $tenant_id, $user, $extra_data) {
-			$importer_data = compact('filepath', 'extra_data', 'user_code', 'resource', 'fieldlist', 'filepath', 'tenant_id');
+		dispatch(function () use ($filepath, $resource, $fieldlist, $tenant_id, $user, $extra_data) {
+			$importer_data = compact('filepath', 'extra_data', 'user', 'resource', 'fieldlist', 'filepath', 'tenant_id');
 			$resource->importMethod($importer_data);
 		})->onQueue(Vstack::queue_resource_import());
 
 		return ["success" => true];
 	}
+
 
 	private function prepareExportSheet($originalQuery, $resource, $data)
 	{
@@ -988,7 +990,7 @@ class ResourceController extends Controller
 		return DB::table('resource_tags_relation')
 			->select('resource_tags.*')
 			->join('resource_tags', 'resource_tags.id', 'resource_tags_relation.resource_tag_id')
-			->where('resource_tags.tenant_id', Auth::user()->tenant_id)
+			->where('resource_tags.tenant_id', Auth::user()->tenant()->first()->id)
 			->where('resource_tags_relation.relation_id', $id)
 			->where('resource_tags.model', get_class($resource->model))
 			->get();

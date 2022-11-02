@@ -4,24 +4,21 @@ namespace marcusvbda\vstack\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class WebSocketEvent implements ShouldBroadcast
+class WebSocketEvent implements ShouldBroadcastNow
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
-	public $channel;
 	public $data;
-	public $namespace;
 	public $broadcastQueue;
 
-	public function __construct($channel, $namespace, $data)
+	public function __construct(String $channel, String $event, $data)
 	{
 		$this->broadcastQueue = config('vstack.queue.event-broadcasts', 'event-broadcasts');
 		$this->data = $data;
-		$this->namespace = $namespace;
+		$this->event = $event;
 		$this->channel = $channel;
 	}
 
@@ -37,6 +34,6 @@ class WebSocketEvent implements ShouldBroadcast
 
 	public function broadcastAs()
 	{
-		return  $this->namespace;
+		return  $this->event;
 	}
 }

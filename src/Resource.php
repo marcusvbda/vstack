@@ -6,6 +6,7 @@ use App;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use marcusvbda\vstack\Controllers\ResourceController;
+use marcusvbda\vstack\Events\WebSocketEvent;
 use marcusvbda\vstack\Fields\{Card, Text};
 use marcusvbda\vstack\Imports\GlobalImporter;
 use marcusvbda\vstack\Models\Migration;
@@ -98,6 +99,37 @@ class Resource
 	public function importButtonlabel()
 	{
 		return "<span class='el-icon-upload2 mr-2'></span>Importar Planilha de " . $this->label();
+	}
+
+	public function importViewSettings()
+    {
+		$route_example = "/admin/".$this->id."/import/sheet_template";
+
+        return [
+            "page_title" => "Importação de ".$this->label(),
+			"description" => '
+				<div class="mt-3">
+					Esta ferramenta permite importar '.$this->label().' a partir de uma
+					planilha.
+				</div>
+				<div>
+					<a class="link" href="'.$route_example.'"> Clique aqui para efetuar o download
+					</a>
+					do modelo de importação
+				</div>
+			',
+			"input_text" => "Escolha um arquivo xlsx do seu computador"
+        ];
+    }
+
+	public function importCustomImportStep()
+    {
+        return false;
+    }
+
+	public function importHeader($uploaded_header)
+	{
+		return $uploaded_header;
 	}
 
 	public function exportButtonlabel()
@@ -711,7 +743,7 @@ class Resource
 		$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
 		Excel::import($importer, $importer->getFile());
 		$result = $importer->getResult();
-		unlink(storage_path("app/" . $filepath));
+		unlink($filepath);
 
 		$success = $result["success"];
 		$message = "";
@@ -721,10 +753,10 @@ class Resource
 			$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
 		}
 
-		Vstack::SocketEmitUser($user_code, [
-			"type" => $success ? "success" : "error",
+		event(new WebSocketEvent("App.User." . $user->id,"user.notification",[
+			"type" => $success,
 			"message" => $message
-		]);
+		]));
 
 		return ["success" => $success, "message" => $message];
 	}

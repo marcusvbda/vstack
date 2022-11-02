@@ -16,7 +16,6 @@ class DefaultGlobalExporter implements FromCollection, WithHeadings, ShouldAutoS
         $this->letters = range('A', 'Z');
         $this->headers = $headers;
         $this->data = $data;
-        $this->last_collumn = $this->letters[count($this->headings()) - 1];
     }
 
 

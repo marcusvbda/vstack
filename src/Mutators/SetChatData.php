@@ -7,12 +7,9 @@ class SetChatData extends BaseMutator
     protected $needsAuth = false;
     public function process($content)
     {
-        $config = config("vstack.socket_service");
-        $content["chat"] = [
-            "enabled" => data_get($config, "enabled", false),
-            "uri" => data_get($config, "uri", ""),
-            "port" => data_get($config, "port", ""),
-        ];
+        $default = config("broadcasting.default");
+        $config_broadcasting = config("broadcasting.connections");
+        $content["broadcast"] = $config_broadcasting[$default];
         return $content;
     }
 }

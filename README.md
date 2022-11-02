@@ -9,7 +9,6 @@
 - [Vstack Models](docs/MODELS.md)
 - [Vstack Resources](docs/RESOURCES.md)
 - [Vstack Inputs](docs/INPUTS.md)
-- [Vstack Socket](docs/SOCKET.md)
 
 # Queues
 Para o funcionamento completo do sistema é necessário que as filas abaixo estejam sendo executadas;

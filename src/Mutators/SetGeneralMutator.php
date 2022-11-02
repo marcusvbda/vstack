@@ -2,8 +2,6 @@
 
 namespace marcusvbda\vstack\Mutators;
 
-use Illuminate\Support\Arr;
-
 class SetGeneralMutator extends BaseMutator{
     protected $needsAuth = false;
     public function process($content){

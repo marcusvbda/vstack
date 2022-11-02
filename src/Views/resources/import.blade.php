@@ -1,5 +1,10 @@
 @extends("templates.admin")
-@section('title',$data["resource"]["label"])
+@php
+    $page_title = $data["resource"]["import_settings"]["page_title"];
+    $label = $data["resource"]["label"];
+    $resource_route = $data["resource"]["route"];
+@endphp
+@section('title',$page_title)
 @section('breadcrumb')
 <div class="row">
     <div class="col-12">
@@ -7,8 +12,8 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{asset('admin')}}" class="link">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{$data["resource"]["route"]}}" class="link">{{$data["resource"]["label"]}}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Importação de {{$data["resource"]["label"]}}</li>
+                    <li class="breadcrumb-item"><a href="{{$resource_route}}" class="link">{{$label}}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{$page_title}}</li>
                 </ol>
             </nav>
         </nav>

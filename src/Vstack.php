@@ -124,35 +124,6 @@ class Vstack
 		return $numbers;
 	}
 
-	public static function SocketEmit($event, $room, $data = [], $index = "room")
-	{
-		try {
-			$socket_service =  config('vstack.socket_service');
-			$uri = data_get($socket_service, 'uri');
-			$port = data_get($socket_service, 'port');
-			$url_server =  "$uri:$port";
-			$payload = [
-				"event" => $event,
-				"index" => $index,
-				"data" => $data
-			];
-			Http::post("$url_server/dispatch-event/$room", $payload);
-			return true;
-		} catch (\Exception $e) {
-			return false;
-		}
-	}
-
-	public static function SocketEmitUser($code, $data, $event = "Alert.User")
-	{
-		return static::SocketEmit($event, "user@" . $code, $data);
-	}
-
-	public static function SocketEmitTenant($code, $data, $event = "Alert.Tenant")
-	{
-		return static::SocketAlert($event, "tenant@" . $code, $data);
-	}
-
 	public static function encodeJWT($data, $expiration = null)
 	{
 		$expiration = $expiration ? $expiration : Carbon::now()->add(config("vstack.api.token_expiration", "1 day"))->toDateTimeString();
