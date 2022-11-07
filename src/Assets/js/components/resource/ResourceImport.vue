@@ -4,7 +4,7 @@
             <el-steps :active="config.step" finish-status="success" align-center>
                 <el-step title="Upload de arquivo" />
                 <el-step :title="
-                    data.resource.import_custom_map_step ? data.resource.import_custom_map_step : 'Mapeamento de coluna'
+                    data.resource.import_custom_map_step ? data.resource.import_custom_map_step.title : 'Mapeamento de coluna'
                 " />
                 <el-step :title="
                     data.resource.import_custom_import_step ? data.resource.import_custom_import_step : 'Importação'

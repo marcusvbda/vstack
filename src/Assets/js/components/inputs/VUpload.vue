@@ -9,11 +9,12 @@
             </div>
         </td>
         <td>
+            <el-progress v-if="loading" :text-inside="true" :stroke-width="18" class="mb-3" :percentage="progress" />
             <div v-show="loading" class="shimmer resource-tree-item" :style="{ width: '100%', height: 130 }" />
             <div v-show="!loading" class="my-4">
                 <div class="d-flex flex-column upload-resource-field input-group">
                     <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :on-preview="handlePreview"
-                        :disabled="disabled" v-bind:class="{
+                        :onProgress="onProgress" :disabled="disabled" v-bind:class="{
                             disabled: fileList.length >= limit_value,
                             'hide-input': loading || fileList.length >= limit_value,
                             'is-invalid': errors,
@@ -85,6 +86,7 @@ export default {
     },
     data() {
         return {
+            progress: 0,
             initialized: false,
             new_filename: null,
             fileList: [],
@@ -92,7 +94,7 @@ export default {
             loading: false,
             limit_value: this.multiple ? this.limit : 1,
             renderComponent: true,
-            file_upload_limit_size: this.sizelimit ? this.sizelimit : laravel.vstack.file_upload_limit_size ?? 0,
+            file_upload_limit_size: this.sizelimit ? this.sizelimit : laravel.vstack.file_upload_limit_size ?? 0
         };
     },
     mounted() {
@@ -101,17 +103,26 @@ export default {
     watch: {
         loading(val) {
             this.setActionBtnLoading(val);
+            this.progress = 0;
         },
     },
     methods: {
         ...mapMutations("resource", ["setActionBtnLoading"]),
+        onProgress(event) {
+            if (event.lengthComputable) {
+                var percentComplete = event.loaded / event.total;
+                this.progress = parseInt( Math.round(percentComplete*100))
+            }
+        },
         handlePreview(file) {
             if (this.preview) {
                 window.open(file.response.path, "_blank");
             }
         },
         beforeRemove() {
-            return this.$confirm(`Remover este arquivo ?`);
+            if(this.ask_remove) {
+                return this.$confirm(`Remover este arquivo ?`);
+            }
         },
         init() {
             let value = this.$attrs.value ? this.$attrs.value : [];
@@ -194,9 +205,11 @@ export default {
         handleBeforeUpload(file) {
             if (file.size > this.file_upload_limit_size) {
                 this.$message.error(`O arquivo deve conter no máximo ${this.$niceBytes(this.file_upload_limit_size)}`);
-                return this.handleRemove(file);
+                this.loading = false;
+                return false;
             }
             this.loading = true;
+            return true;
         },
         handleAvatarSuccess(response, file) {
             file.url = response.path;
