@@ -1224,7 +1224,7 @@ class ResourceController extends Controller
 		$parent = $parent_model->find($request->parent_id);
 		$query = $parent->{$request->relation}();
 		$query = $resource->resourceTreeLoadItemsFilter($request, $query);
-		$items = $query->paginate($resource->resourceTreePerPage());
+		$items = $query->get();
 		return  $items;
 	}
 

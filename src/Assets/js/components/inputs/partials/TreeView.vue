@@ -1,33 +1,11 @@
 <template>
-    <TreeViewItem
-        :label="label"
-        @opened="loadItems"
-        :default_visible="default_visible"
-        :resource="resource"
-        :singular_label="singular_label"
-        @filter-changed="filterChanged"
-    >
-        <ElDialog
-            custom-class="tree-view-details"
-            :visible.sync="show_detail"
-            width="60%"
-            top="20px"
-            :close-on-click-modal="false"
-            :close-on-press-escape="false"
-            :destroy-on-close="true"
-        >
-            <TreeViewDialogCrud
-                v-if="show_detail"
-                :resource="input.resource"
-                :selected="selected"
-                :label="input.singular_label"
-                @close="show_detail = false"
-                :qtyfields="input.qty_fields"
-                @saved="savedDetail"
-                :fk_index="input.foreign_key"
-                :fk_value="parent_id"
-                :acl="input.acl"
-            />
+    <TreeViewItem :label="label" @opened="loadItems" :default_visible="default_visible" :resource="resource"
+        :singular_label="singular_label" @filter-changed="filterChanged">
+        <ElDialog custom-class="tree-view-details" :visible.sync="show_detail" width="60%" top="20px"
+            :close-on-click-modal="false" :close-on-press-escape="false" :destroy-on-close="true">
+            <TreeViewDialogCrud v-if="show_detail" :resource="input.resource" :selected="selected"
+                :label="input.singular_label" @close="show_detail = false" :qtyfields="input.qty_fields"
+                @saved="savedDetail" :fk_index="input.foreign_key" :fk_value="parent_id" :acl="input.acl" />
         </ElDialog>
 
         <template v-if="loading_items">
@@ -54,72 +32,34 @@
                     Adicionar {{ label }}
                 </a>
             </div>
-            <template v-if="items.data.length">
-                <div class="tree-view-item py-0" v-for="(item, i) in items.data" :key="`_${i}`">
+            <template v-if="items.length">
+                <div class="tree-view-item py-0" v-for="(item, i) in items" :key="`_${i}`">
                     <ul class="tree-view-label hoverable item striped-list">
                         <li class="w-100">
                             <div class="d-flex align-items-center w-100 no-margin">
-                                <VRuntimeTemplate
-                                    v-if="template"
-                                    :key="i"
-                                    :template="`<div>${template}</div>`"
-                                    :templateProps="{ item,counter:i+1 }"
-                                />
+                                <VRuntimeTemplate v-if="template" :key="i" :template="`<div>${template}</div>`"
+                                    :templateProps="{ item, counter: i + 1 }" />
                                 <template v-else>
-                                    <VRuntimeTemplate
-                                        :key="i"
-                                        :template="`<span class='word-break-all mr-3'>${item[label_index]}</span>`"
-                                    />
+                                    <VRuntimeTemplate :key="i"
+                                        :template="`<span class='word-break-all mr-3'>${item[label_index]}</span>`" />
                                 </template>
-                                <ElTooltip
-                                    class="item"
-                                    effect="dark"
-                                    content="Ver em detalhes"
-                                    placement="right"
-                                    v-if="!disabled"
-                                >
-                                    <ElButton
-                                        v-if="input.acl.delete || input.acl.update"
-                                        class="show-on-hover ml-auto"
-                                        plain
-                                        size="mini"
-                                        type="success"
-                                        icon="el-icon-search"
-                                        @click="showDetail(item)"
-                                    />
+                                <ElTooltip class="item" effect="dark" content="Ver em detalhes" placement="right"
+                                    v-if="!disabled">
+                                    <ElButton v-if="input.acl.delete || input.acl.update" class="show-on-hover ml-auto"
+                                        plain size="mini" type="success" icon="el-icon-search"
+                                        @click="showDetail(item)" />
                                 </ElTooltip>
                             </div>
                         </li>
                     </ul>
                     <div class="my-3" v-for="(child, i) in children" :key="i">
-                        <TreeView
-                            :label="child.label"
-                            :singular_label="child.singular_label"
-                            :children="child.children"
-                            :route_load="route_load"
-                            :input="child"
-                            :parent_id="item.id"
-                            :default_visible="false"
-                            :resource="child.resource"
-                            :parent_resource="child.parent_resource"
+                        <TreeView :label="child.label" :singular_label="child.singular_label" :children="child.children"
+                            :route_load="route_load" :input="child" :parent_id="item.id" :default_visible="false"
+                            :resource="child.resource" :parent_resource="child.parent_resource"
                             :template_code="child.template_code"
-                            :label_index="child.label_index ? child.label_index : 'name'"
-                            :template="child.template"
-                            class="ml-5 mb-2 mr-2"
-                        />
+                            :label_index="child.label_index ? child.label_index : 'name'" :template="child.template"
+                            class="ml-5 mb-2 mr-2" />
                     </div>
-                </div>
-                <div class="my-3 d-flex align-items-center justify-content-end" v-if="items.last_page > 1">
-                    <ElPagination
-                        v-if="parent_id"
-                        @current-change="handleCurrentChange"
-                        small
-                        background
-                        layout="prev, pager, next"
-                        :total="items.total"
-                        :page-size="items.per_page"
-                        :current-page="current_page"
-                    />
                 </div>
             </template>
             <template v-else>
@@ -139,9 +79,7 @@ import TreeViewDialogCrud from "./-TreeViewDialogCrud.vue";
 
 const initialState = () => ({
     loaded: false,
-    items: {
-        data: [],
-    },
+    items: [],
     loading_items: true,
     current_page: 1,
     filter: "",
@@ -209,7 +147,7 @@ export default {
             }
             const dataset = { parent_id: this.parent_id, ...this.input, filter: this.filter, page: this.current_page };
             const payload = {
-                params : dataset
+                params: dataset
             }
             this.$http.get(`${this.route_load}/load-items`, payload).then(({ data }) => {
                 this.loaded = true;

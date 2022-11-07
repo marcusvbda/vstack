@@ -3,7 +3,7 @@
         <div class="card-header">
             <div class="d-flex flex-row align-items-center">
                 <b>{{ selected.id ? "Edição" : "Cadastro" }} de {{ label }}</b>
-                <a href="#" class="close-icon" @click.prevent="close">
+                <a href="#" class="close-icon" @click.prevent="close" v-if="!action_btn_loading">
                     <i class="el-icon-close" />
                 </a>
             </div>
@@ -41,7 +41,7 @@
                     </table>
                 </form>
             </div>
-            <div class="card-footer">
+            <div class="card-footer" v-if="!action_btn_loading">
                 <div class="d-flex flex-row justify-content-between">
                     <button class="btn btn-danger btn-crud-item px-5" v-if="selected.id && acl.delete" @click="destroy">
                         <i class="el-icon-delete mr-2" />
@@ -59,6 +59,7 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
+import { mapGetters } from "vuex";
 
 export default {
     props: ["resource", "selected", "label", "qtyfields", "fk_value", "fk_index", "acl"],
@@ -80,6 +81,7 @@ export default {
         this.init();
     },
     computed: {
+        ...mapGetters("resource", ["action_btn_loading"]),
         inputs() {
             let inputs = []
             for (let i in this.cards) {
