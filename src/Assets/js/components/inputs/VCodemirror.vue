@@ -1,21 +1,11 @@
 <template>
-    <tr>
-        <td class="w-25">
-            <div class="d-flex flex-column">
-                <span class="input-title" v-if="label" v-html="label ? label : ''" />
-                <small v-if="description" class="mt-1 text-muted">
-                    <span v-html="description"></span>
-                </small>
+    <CustomResourceComponent :label="label" :description="description">
+        <div class="d-flex flex-column">
+            <div class="col-sm-10" v-bind:class="{ 'col-sm-10': label, 'col-sm-12': !label }">
+                <codemirror v-model="text" :options="cmOptions" />
             </div>
-        </td>
-        <td>
-            <div class="d-flex flex-column">
-                <div class="col-sm-10" v-bind:class="{ 'col-sm-10': label, 'col-sm-12': !label }">
-                    <codemirror v-model="text" :options="cmOptions" />
-                </div>
-            </div>
-        </td>
-    </tr>
+        </div>
+    </CustomResourceComponent>
 </template>
 <script>
 import { codemirror } from "vue-codemirror";

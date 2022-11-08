@@ -1,22 +1,12 @@
 <template>
-    <tr>
-        <td class="w-25">
-            <div class="d-flex flex-column">
-                <span class="input-title" v-if="label" v-html="label ? label : ''" />
-                <small v-if="description" class="mt-1 text-muted">
-                    <span v-html="description"></span>
-                </small>
+    <CustomResourceComponent :label="label" :description="description">
+        <div class="d-flex flex-column">
+            <div class="inline-editor" :style="`min-height : ${tiny_options.height}px;`">
+                <Editor :init="tiny_options" v-model="val" />
             </div>
-        </td>
-        <td>
-            <div class="d-flex flex-column">
-                <div class="inline-editor" :style="`min-height : ${tiny_options.height}px;`">
-                    <Editor :init="tiny_options" v-model="val" />
-                </div>
-                <small class="text-muted text-right" v-html="limitText" v-if="show_value_length" />
-            </div>
-        </td>
-    </tr>
+            <small class="text-muted text-right" v-html="limitText" v-if="show_value_length" />
+        </div>
+    </CustomResourceComponent>
 </template>
 <script>
 import Editor from '@tinymce/tinymce-vue'

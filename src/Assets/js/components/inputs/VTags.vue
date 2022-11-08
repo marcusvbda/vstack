@@ -1,40 +1,30 @@
 <template>
-    <tr>
-        <td class="w-25">
-            <div class="d-flex flex-column">
-                <b class="input-title" v-if="label" v-html="label ? label : ''" />
-                <small v-if="description" class="mt-1 text-muted">
-                    <span v-html="description"></span>
-                </small>
+    <CustomResourceComponent :label="label" :description="description">
+        <div class="d-flex flex-column">
+            <div class="d-flex flex-row flex-wrap align-items-center">
+                <el-tag class="ml-0 mr-2 mb-2" :key="tag" v-for="tag in dynamicTags"
+                    :closable="disabled != true ? true : false" :disable-transitions="false"
+                    @keydown="$event.keyCode === 13 ? $event.preventDefault() : false" @close="handleClose(tag)">
+                    {{ tag }}
+                </el-tag>
+                <template v-if="disabled != true">
+                    <el-input class="input-new-tag ml-0 mr-2 mb-2" v-if="inputVisible" v-model="inputValue"
+                        ref="saveTagInput" size="medium" @keyup.enter.native="handleInputConfirm"
+                        @blur="handleInputConfirm">
+                    </el-input>
+                    <button type="button" v-else class="ml-0 btn btn-primary btn-sm button-new-tag" size="small"
+                        @click="showInput">
+                        + Adicionar
+                    </button>
+                </template>
             </div>
-        </td>
-        <td>
-            <div class="d-flex flex-column">
-                <div class="d-flex flex-row flex-wrap align-items-center">
-                    <el-tag class="ml-0 mr-2 mb-2" :key="tag" v-for="tag in dynamicTags"
-                        :closable="disabled != true ? true : false" :disable-transitions="false"
-                        @keydown="$event.keyCode === 13 ? $event.preventDefault() : false" @close="handleClose(tag)">
-                        {{ tag }}
-                    </el-tag>
-                    <template v-if="disabled != true">
-                        <el-input class="input-new-tag ml-0 mr-2 mb-2" v-if="inputVisible" v-model="inputValue"
-                            ref="saveTagInput" size="medium" @keyup.enter.native="handleInputConfirm"
-                            @blur="handleInputConfirm">
-                        </el-input>
-                        <button type="button" v-else class="ml-0 btn btn-primary btn-sm button-new-tag" size="small"
-                            @click="showInput">
-                            + Adicionar
-                        </button>
-                    </template>
-                </div>
-                <div class="invalid-feedback" v-if="errors" :style="{ display: `${errors ? 'block' : 'none'}` }">
-                    <ul class="pl-3 mb-0">
-                        <li v-for="(e, i) in errors" :key="i" v-html="e" />
-                    </ul>
-                </div>
+            <div class="invalid-feedback" v-if="errors" :style="{ display: `${errors ? 'block' : 'none'}` }">
+                <ul class="pl-3 mb-0">
+                    <li v-for="(e, i) in errors" :key="i" v-html="e" />
+                </ul>
             </div>
-        </td>
-    </tr>
+        </div>
+    </CustomResourceComponent>
 </template>
 <script>
 export default {

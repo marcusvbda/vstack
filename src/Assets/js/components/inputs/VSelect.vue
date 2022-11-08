@@ -1,55 +1,44 @@
 <template>
-    <tr>
-        <td class="w-25">
-            <div class="d-flex flex-column">
-                <span class="input-title" v-if="label" v-html="label ? label : ''" />
-                <small v-if="description" class="mt-1 text-muted">
-                    <span v-html="description"></span>
-                </small>
-            </div>
-        </td>
-        <td>
-            <div class="d-flex flex-column">
-                <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
-                    <template v-if="multiple && !allow_create && type == 'radio'">
-                        <template v-if="loading">
-                            <div class="shimmer select mb-3" />
-                            <div class="shimmer select mb-3" />
-                            <div class="shimmer select mb-3" />
-                        </template>
-                        <div class="d-flex flex-row" v-else>
-                            <el-checkbox-group class="vstack-hasmany" v-model="value">
-                                <el-checkbox-button v-for="(op, i) in options" :label="op.id" :key="i">
-                                    {{ op.name }}
-                                </el-checkbox-button>
-                            </el-checkbox-group>
-                            <a class="px-3 text-center f-12" @click.prevent="toggleMarked" href="#">
-                                {{ !marked ? 'Marcar' : 'Desmarcar' }} todas as opções
-                            </a>
-                        </div>
+    <CustomResourceComponent :label="label" :description="description">
+        <div class="d-flex flex-column">
+            <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
+                <template v-if="multiple && !allow_create && type == 'radio'">
+                    <template v-if="loading">
+                        <div class="shimmer select mb-3" />
+                        <div class="shimmer select mb-3" />
+                        <div class="shimmer select mb-3" />
                     </template>
-                    <template v-else>
-                        <div class="shimmer select" v-if="loading" />
-                        <el-select :allow-create="allow_create" :disabled="disabled" v-else
-                            :size="size ? size : 'large'" :allow_create="allow_create" class="w-100" clearable
-                            v-model="value" filterable ref="select" :placeholder="placeholder" v-loading="loading"
-                            :loading="loading" @keyup.enter.native="selectCreate" loading-text="Carregando..."
-                            :multiple="multiple" :popper-append-to-body="false">
-                            <el-option v-for="(item, i) in options" :key="i" :label="item.name"
-                                :value="String(item.id)">
-                                <div class="w-100 d-flex" v-html="item.name"></div>
-                            </el-option>
-                        </el-select>
-                    </template>
-                    <div class="invalid-feedback" v-if="errors">
-                        <ul class="pl-3 mb-0">
-                            <li v-for="(e, i) in errors" :key="i" v-html="e" />
-                        </ul>
+                    <div class="d-flex flex-row" v-else>
+                        <el-checkbox-group class="vstack-hasmany" v-model="value">
+                            <el-checkbox-button v-for="(op, i) in options" :label="op.id" :key="i">
+                                {{ op.name }}
+                            </el-checkbox-button>
+                        </el-checkbox-group>
+                        <a class="px-3 text-center f-12" @click.prevent="toggleMarked" href="#">
+                            {{ !marked ? 'Marcar' : 'Desmarcar' }} todas as opções
+                        </a>
                     </div>
+                </template>
+                <template v-else>
+                    <div class="shimmer select" v-if="loading" />
+                    <el-select :allow-create="allow_create" :disabled="disabled" v-else :size="size ? size : 'large'"
+                        :allow_create="allow_create" class="w-100" clearable v-model="value" filterable ref="select"
+                        :placeholder="placeholder" v-loading="loading" :loading="loading"
+                        @keyup.enter.native="selectCreate" loading-text="Carregando..." :multiple="multiple"
+                        :popper-append-to-body="false">
+                        <el-option v-for="(item, i) in options" :key="i" :label="item.name" :value="String(item.id)">
+                            <div class="w-100 d-flex" v-html="item.name"></div>
+                        </el-option>
+                    </el-select>
+                </template>
+                <div class="invalid-feedback" v-if="errors">
+                    <ul class="pl-3 mb-0">
+                        <li v-for="(e, i) in errors" :key="i" v-html="e" />
+                    </ul>
                 </div>
             </div>
-        </td>
-    </tr>
+        </div>
+    </CustomResourceComponent>
 </template>
 <script>
 import { mapGetters, mapMutations } from "vuex";

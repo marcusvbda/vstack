@@ -1,65 +1,55 @@
 <template>
-    <tr>
-        <td class="w-25">
-            <div class="d-flex flex-column">
-                <span class="input-title" v-if="label" v-html="label ? label : ''" />
-                <small v-if="description" class="mt-1 text-muted">
-                    <span v-html="description"></span>
-                </small>
-            </div>
-        </td>
-        <td>
-            <el-progress v-if="loading" :text-inside="true" :stroke-width="18" class="mb-3" :percentage="progress" />
-            <div v-show="loading" class="shimmer resource-tree-item" :style="{ width: '100%', height: 130 }" />
-            <div v-show="!loading" class="my-4">
-                <div class="d-flex flex-column upload-resource-field input-group">
-                    <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :on-preview="handlePreview"
-                        :onProgress="onProgress" :disabled="disabled" v-bind:class="{
-                            disabled: fileList.length >= limit_value,
-                            'hide-input': loading || fileList.length >= limit_value,
-                            'is-invalid': errors,
-                        }" :action="uploadroute" :list-type="`${is_image ? 'picture-card' : 'text'}`"
-                        :file-list="fileList" :on-success="handleAvatarSuccess" :before-upload="handleBeforeUpload"
-                        :on-remove="handleRemove" :before-remove="beforeRemove" :on-change="handleChange"
-                        :auto-upload="false" :headers="header" v-if="renderComponent" @input.native="handleInput">
-                        <template v-if="!is_image">
-                            <el-button icon="el-icon-upload" type="primary" v-if="fileList.length < limit">
-                                Fazer Upload
-                            </el-button>
-                        </template>
-                        <template v-else>
-                            <div slot="file" slot-scope="{ file }">
-                                <div>
-                                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                                    <div class="el-upload-list__item-actions">
-                                        <span class="el-upload-list__item-preview" v-if="preview != undefined"
-                                            @click="handlePreview(file)">
-                                            <i class="el-icon-zoom-in"></i>
-                                        </span>
-                                        <span class="el-upload-list__item-delete" @click="handleRemove(file)">
-                                            <i class="el-icon-delete"></i>
-                                        </span>
-                                    </div>
+    <CustomResourceComponent :label="label" :description="description">
+        <el-progress v-if="loading" :text-inside="true" :stroke-width="18" class="mb-3" :percentage="progress" />
+        <div v-show="loading" class="shimmer resource-tree-item" :style="{ width: '100%', height: 130 }" />
+        <div v-show="!loading" class="my-4">
+            <div class="d-flex flex-column upload-resource-field input-group">
+                <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :on-preview="handlePreview"
+                    :onProgress="onProgress" :disabled="disabled" v-bind:class="{
+                        disabled: fileList.length >= limit_value,
+                        'hide-input': loading || fileList.length >= limit_value,
+                        'is-invalid': errors,
+                    }" :action="uploadroute" :list-type="`${is_image ? 'picture-card' : 'text'}`"
+                    :file-list="fileList" :on-success="handleAvatarSuccess" :before-upload="handleBeforeUpload"
+                    :on-remove="handleRemove" :before-remove="beforeRemove" :on-change="handleChange"
+                    :auto-upload="false" :headers="header" v-if="renderComponent" @input.native="handleInput">
+                    <template v-if="!is_image">
+                        <el-button icon="el-icon-upload" type="primary" v-if="fileList.length < limit">
+                            Fazer Upload
+                        </el-button>
+                    </template>
+                    <template v-else>
+                        <div slot="file" slot-scope="{ file }">
+                            <div>
+                                <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                                <div class="el-upload-list__item-actions">
+                                    <span class="el-upload-list__item-preview" v-if="preview != undefined"
+                                        @click="handlePreview(file)">
+                                        <i class="el-icon-zoom-in"></i>
+                                    </span>
+                                    <span class="el-upload-list__item-delete" @click="handleRemove(file)">
+                                        <i class="el-icon-delete"></i>
+                                    </span>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center justify-content-center h-100">
-                                <i class="el-icon-plus"></i>
-                            </div>
-                        </template>
-                    </el-upload>
-                    <small class="mt-2 text-muted text-size-alert">
-                        {{ multiple ? "Os arquivos devem conter no máximo" : "O arquivo deve conter no máximo" }}
-                        {{ $niceBytes(file_upload_limit_size) }}
-                    </small>
-                    <div class="invalid-feedback" v-if="errors">
-                        <ul class="pl-3 mb-0">
-                            <li v-for="(e, i) in errors" :key="i" v-html="e" />
-                        </ul>
-                    </div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <i class="el-icon-plus"></i>
+                        </div>
+                    </template>
+                </el-upload>
+                <small class="mt-2 text-muted text-size-alert">
+                    {{ multiple ? "Os arquivos devem conter no máximo" : "O arquivo deve conter no máximo" }}
+                    {{ $niceBytes(file_upload_limit_size) }}
+                </small>
+                <div class="invalid-feedback" v-if="errors">
+                    <ul class="pl-3 mb-0">
+                        <li v-for="(e, i) in errors" :key="i" v-html="e" />
+                    </ul>
                 </div>
             </div>
-        </td>
-    </tr>
+        </div>
+    </CustomResourceComponent>
 </template>
 <script>
 import { mapMutations } from "vuex";
@@ -111,7 +101,7 @@ export default {
         onProgress(event) {
             if (event.lengthComputable) {
                 var percentComplete = event.loaded / event.total;
-                this.progress = parseInt( Math.round(percentComplete*100))
+                this.progress = parseInt(Math.round(percentComplete * 100))
             }
         },
         handlePreview(file) {
@@ -120,7 +110,7 @@ export default {
             }
         },
         beforeRemove() {
-            if(this.ask_remove) {
+            if (this.ask_remove) {
                 return this.$confirm(`Remover este arquivo ?`);
             }
         },
