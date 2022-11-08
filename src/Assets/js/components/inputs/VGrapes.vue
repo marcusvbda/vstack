@@ -1,6 +1,6 @@
 <template>
     <tr>
-        <td colspan="2" :style="{ height: h }">
+        <td colspan="2" :style="{ height: h }" class="field-title">
             <div class="d-flex flex-column mb-3">
                 <span class="input-title" v-if="label" v-html="label ? label : ''" />
                 <small v-if="description" class="mt-1 text-muted">

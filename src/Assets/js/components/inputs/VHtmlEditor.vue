@@ -1,6 +1,6 @@
 <template>
     <tr>
-        <td colspan="2">
+        <td colspan="2" class="field-title">
             <div class="d-flex flex-column card-title">
                 <span class="input-title" v-if="label" v-html="label ? label : ''" />
                 <small v-if="description" class="mt-1 text-muted">
@@ -87,20 +87,11 @@
                         </el-radio-button>
                     </el-radio-group>
                 </div>
-                <div
-                    :class="`row-editor direction-${dir}`"
-                    :style="{
-                        minHeight: height * (dir == 'row' ? 1 : 2)
-                    }"
-                >
-                    <textarea
-                        class="editor"
-                        ref="editor"
-                        rows="10"
-                        v-model="markdown"
-                        :placeholder="placeholder"
-                        v-if="['editor', 'both'].includes(type)"
-                    />
+                <div :class="`row-editor direction-${dir}`" :style="{
+                    minHeight: height * (dir == 'row' ? 1 : 2)
+                }">
+                    <textarea class="editor" ref="editor" rows="10" v-model="markdown" :placeholder="placeholder"
+                        v-if="['editor', 'both'].includes(type)" />
                     <div class="preview" v-html="compiled" v-if="['html', 'both'].includes(type)" />
                 </div>
             </div>
@@ -261,6 +252,7 @@ export default {
     .row-editor {
         display: flex;
         width: 100%;
+
         &.direction-row {
             flex-direction: row;
         }
@@ -268,7 +260,9 @@ export default {
         &.direction-column {
             flex-direction: column;
         }
+
         flex-direction: row;
+
         .editor {
             flex: 1;
             border: 1px solid #ccc;
@@ -295,24 +289,29 @@ export default {
             border: 1px solid rgba(128, 128, 128, 0.33);
             border-radius: 0;
             line-break: anywhere;
+
             blockquote {
                 overflow: hidden;
                 background: #f3f6f8;
                 padding: 15px 13px 0;
                 border-radius: 3px;
             }
+
             hr {
                 border: none;
                 border-bottom: 1px solid rgba(black, 0.2);
             }
+
             img {
                 max-width: 100%;
                 height: auto;
             }
+
             ul,
             ol {
                 margin-left: 0;
                 padding-left: 20px;
+
                 li {
                     margin-left: 0;
                 }

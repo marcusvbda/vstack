@@ -239,10 +239,28 @@ ul.pagination {
         }
     }
 
-    .input-title {
-        font-weight: bold;
-        font-size: 13px;
-        color: #444;
+    .field-title {
+        .input-title {
+            font-family: "Montserrat";
+            font-style: normal;
+            font-weight: 700;
+            line-height: 148%;
+            letter-spacing: -0.02em;
+            color: #495057;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .text-muted {
+            font-family: "Montserrat";
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 144%;
+            letter-spacing: -0.01em;
+            color: #495057 !important;
+            opacity: 0.64;
+        }
     }
 }
 
