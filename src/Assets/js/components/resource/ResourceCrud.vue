@@ -69,7 +69,7 @@
                     </template>
                     <template v-if="crud_type.template == 'wizard'">
                         <div class="row" id="resource-crud-page">
-                            <div class="col-12 col-lg-9 d-flex flex-column">
+                            <div :class="`col-12 ${show_crud_right_card ? 'col-lg-9' : 'col-12'} d-flex flex-column`">
                                 <div :class="`d-flex ${wizardContentClass}`">
                                     <el-steps :active="wizard_step" finish-status="success" :direction="wizardDirection"
                                         class="step-resource-crud py-0" :simple="isSimple" id="resource-wizard-steps">
@@ -92,7 +92,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-3 fields-tab">
+                            <div :class="`col-12 col-lg-3 fields-tab ${!show_crud_right_card ? 'd-none' : ''} `">
                                 <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
                                     <div class="col-12">
                                         <div class="card">
@@ -113,8 +113,9 @@
                                             <div :class="[
                                                 'card-footer flex-wrap d-flex flex-row',
                                                 'justify-content-end p-2 align-items-center',
-                                            ]">
-                                                <el-button-group>
+                                            ]">                                                
+                                                <portal to="crud-btns-wizard" :disabled="show_crud_right_card"
+                                                    class="ml-auto d-flex align-items-center">
                                                     <template v-if="wizard_step == data.fields.length - 1">
                                                         <el-button v-if="first_btn" :size="first_btn.size"
                                                             :type="first_btn.type" @click="submit(first_btn.field)"
@@ -153,11 +154,14 @@
                                                             </span>
                                                         </el-button>
                                                     </template>
-                                                </el-button-group>
+                                                </portal>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-12 d-flex justify-content-end">
+                                <portal-target name="crud-btns-wizard" class="d-flex" />
                             </div>
                         </div>
                     </template>

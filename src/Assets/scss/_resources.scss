@@ -237,6 +237,14 @@ ul.pagination {
         small span {
             word-break: break-word;
         }
+        
+        .header-title {
+            font-size: 15px;
+            color:black;
+            &:before {
+                content : "# ";
+            }
+        }
     }
 
     .field-title {

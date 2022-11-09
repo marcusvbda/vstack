@@ -1,38 +1,11 @@
 <template>
     <div :id="label" :index="index">
         <div class="card crud-card mb-4 p-0">
-            <div class="card-header crud-card-header p-0">
-                <!-- <div class="row">
-                    <div class="col-12 d-flex align-items-center justify-content-between">
-                        <div class="d-flex flex-column label-section">
-                            <b v-html="label" class="card-title montserrat" />
-                            <b v-if="description" v-html="description" class="card-description montserrat" />
-                        </div>
-                        <div v-if="advanced">
-                            <el-checkbox v-model="showing" class="mb-1">Visualizar Informações</el-checkbox>
-                        </div>
-                    </div>
-                </div> -->
-                <div class="row-responsive-table">
-                    <table class="table table-crud mb-0">
-                        <tbody>
-                            <tr id="resource-input-text-video_id" class="mb-3">
-                                <td class="w-25">
-                                    <div class="d-flex flex-column">
-                                        <b v-html="label" class="card-title montserrat mb-0 header-title" />
-                                        <small class="mt-1 text-muted" v-if="description" v-html="description" />
-                                    </div>
-                                </td>
-                                <td>
-                                    <div v-if="advanced">
-                                        <el-checkbox v-model="showing" class="mb-1">Visualizar Informações</el-checkbox>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <CrudCardHeader :label="label" :description="description">
+                <div class="d-flex justify-content-end" v-if="advanced">
+                    <el-checkbox v-model="showing" class="mb-1">Visualizar Informações</el-checkbox>
                 </div>
-            </div>
+            </CrudCardHeader>
             <div class="card-body p-0">
                 <div class="row" v-if="real_showing">
                     <div class="col-12">
