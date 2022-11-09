@@ -1,6 +1,7 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
         <el-progress v-if="loading" :text-inside="true" :stroke-width="18" class="mb-3" :percentage="progress" />
+        <slot name="prepend-slot" />
         <div v-show="loading" class="shimmer resource-tree-item" :style="{ width: '100%', height: 130 }" />
         <div v-show="!loading" class="my-4">
             <div class="d-flex flex-column upload-resource-field input-group">
@@ -9,10 +10,10 @@
                         disabled: fileList.length >= limit_value,
                         'hide-input': loading || fileList.length >= limit_value,
                         'is-invalid': errors,
-                    }" :action="uploadroute" :list-type="`${is_image ? 'picture-card' : 'text'}`"
-                    :file-list="fileList" :on-success="handleAvatarSuccess" :before-upload="handleBeforeUpload"
-                    :on-remove="handleRemove" :before-remove="beforeRemove" :on-change="handleChange"
-                    :auto-upload="false" :headers="header" v-if="renderComponent" @input.native="handleInput">
+                    }" :action="uploadroute" :list-type="`${is_image ? 'picture-card' : 'text'}`" :file-list="fileList"
+                    :on-success="handleAvatarSuccess" :before-upload="handleBeforeUpload" :on-remove="handleRemove"
+                    :before-remove="beforeRemove" :on-change="handleChange" :auto-upload="false" :headers="header"
+                    v-if="renderComponent" @input.native="handleInput">
                     <template v-if="!is_image">
                         <el-button icon="el-icon-upload" type="primary" v-if="fileList.length < limit">
                             Fazer Upload
@@ -49,6 +50,7 @@
                 </div>
             </div>
         </div>
+        <slot name="append-slot" />
     </CustomResourceComponent>
 </template>
 <script>

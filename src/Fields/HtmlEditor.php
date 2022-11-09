@@ -33,6 +33,8 @@ class HtmlEditor extends Field
 		$blocks = @$this->options["blocks"] ? $this->options["blocks"]  : (object)[];
 		$settings = @$this->options["settings"] ? (object)$this->options["settings"]  : (object)[];
 		$height = @$this->options["height"] ? $this->options["height"]  : 1000;
+		$slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
+		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
 		return $this->view = view("vStack::resources.field.html_editor", compact(
 			"description",
@@ -43,7 +45,9 @@ class HtmlEditor extends Field
 			"eval",
 			"blocks",
 			"settings",
-			"height"
+			"height",
+			"slot_top",
+			"slot_bottom"
 		))->render();
 	}
 }

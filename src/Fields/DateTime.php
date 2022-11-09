@@ -42,6 +42,8 @@ class DateTime extends Field
 			$value_format   = @$this->options["value_format"] ? $this->options["value_format"] : 'yyyy-MM-dd HH:mm:ss';
 		}
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+		$slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
+		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
 		return $this->view = view("vStack::resources.field.datetime", compact(
 			"disabled",
@@ -59,7 +61,9 @@ class DateTime extends Field
 			"field",
 			"format",
 			"value_format",
-			"eval"
+			"eval",
+			"slot_top",
+			"slot_bottom"
 		))->render();
 	}
 }

@@ -1,6 +1,7 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
         <div class="d-flex flex-column">
+            <slot name="prepend-slot" />
             <el-radio-group :disabled="disabled" v-model="val" v-bind:class="{ 'is-invalid': errors }">
                 <el-radio-button v-for="(op, i) in option_list" :key="i" :label="op.value ? op.value : op"
                     v-bind:class="{ 'option-selected': val == (op.value ? op.value : op) }">
@@ -12,6 +13,7 @@
                     <li v-for="(e, i) in errors" :key="i" v-html="e" />
                 </ul>
             </div>
+            <slot name="append-slot" />
         </div>
     </CustomResourceComponent>
 </template>

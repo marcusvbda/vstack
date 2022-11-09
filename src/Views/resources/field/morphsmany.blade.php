@@ -9,4 +9,11 @@
     :errors='{{"errors.$field ? errors.$field : false"}}' 
     id="resource-input-morphstomany-{{ $field }}" 
     {!! $eval !!}      
-/>
+>
+<template #prepend-slot>
+    {!! $slot_top !!}
+</template>
+<template #append-slot>
+    {!! $slot_bottom !!}
+</template>
+</v-tags>

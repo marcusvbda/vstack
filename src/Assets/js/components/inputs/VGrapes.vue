@@ -7,8 +7,12 @@
                     <span v-html="description"></span>
                 </small>
             </div>
-            <GrapesEditor :errors="errors" :mode="mode" :blocks="blocks" :settings="settings" v-model="content"
-                :height="h" />
+            <div class="d-flex flex-column">
+                <slot name="prepend-slot" />
+                <GrapesEditor :errors="errors" :mode="mode" :blocks="blocks" :settings="settings" v-model="content"
+                    :height="h" />
+                <slot name="append-slot" />
+            </div>
         </td>
     </tr>
 </template>

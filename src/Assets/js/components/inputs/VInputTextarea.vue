@@ -1,6 +1,7 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
         <div class="d-flex flex-column">
+            <slot name="prepend-slot" />
             <div class="input-group">
                 <div class="input-group-prepend" v-if="prepend">
                     <span class="input-group-text">
@@ -22,6 +23,7 @@
                 </div>
             </div>
             <small class="text-muted text-right" v-html="limitText" v-if="show_value_length" />
+            <slot name="append-slot" />
         </div>
     </CustomResourceComponent>
 </template>

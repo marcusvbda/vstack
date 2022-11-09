@@ -1,6 +1,7 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
         <div class="d-flex flex-column">
+            <slot name="prepend-slot" />
             <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
                 <template v-if="multiple && !allow_create && type == 'radio'">
                     <template v-if="loading">
@@ -37,6 +38,7 @@
                     </ul>
                 </div>
             </div>
+            <slot name="append-slot" />
         </div>
     </CustomResourceComponent>
 </template>

@@ -12,7 +12,8 @@
 		</div>
 	</td>
     <td>
-        <div class='d-flex flex-column'>                                                   
+        <div class='d-flex flex-column'>    
+            {!! $slot_top !!}                                               
             <el-switch              
                 :disabled='{{$disabled}}'                               
                 class='ml-3'                          
@@ -22,6 +23,7 @@
                 active-text='{{$active_text}}'            
                 inactive-text='{{$inactive_text}}'>       
             </el-switch>
+            {!! $slot_bottom !!}
         </div>                             
     </td>                             
 </tr>

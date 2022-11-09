@@ -38,6 +38,9 @@ class BelongsTo extends Field
 		$all_options_label = @$this->options["all_options_label"] ? $this->options["all_options_label"] : 'Todos(as)';
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
 		$model_filter = @$this->options["model_filter"] ? json_encode($this->options["model_filter"]) : "[]";
+		$slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
+		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
+
 		return $this->view = view("vStack::resources.field.belongsto", compact(
 			"field",
 			"model",
@@ -54,7 +57,9 @@ class BelongsTo extends Field
 			"model_fields",
 			"allow_create",
 			"model_filter",
-			"type"
+			"type",
+			"slot_top",
+			"slot_bottom"
 		))->render();
 	}
 }

@@ -33,6 +33,9 @@ class TinyMce extends Field
 		$show_value_length = (@$this->options["show_value_length"] !== null) ? $this->options["show_value_length"] : false;
 		$show_value_length = $show_value_length ? 'true' : 'false';
 		$height = @$this->options["height"] ?  $this->options["height"] : 300;
+		$slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
+		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
+
 		return $this->view = view("vStack::resources.field.tiny", compact(
 			"disabled",
 			"label",
@@ -44,7 +47,9 @@ class TinyMce extends Field
 			"maxlength",
 			"height",
 			"eval",
-			"show_value_length"
+			"show_value_length",
+			"slot_top",
+			"slot_bottom"
 		))->render();
 	}
 }

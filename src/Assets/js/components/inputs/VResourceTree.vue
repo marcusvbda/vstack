@@ -6,6 +6,7 @@
             </template>
             <template v-else>
                 <div class="tree-view">
+                    <slot name="prepend-slot" />
                     <template v-for="(resource, i) in tree">
                         <TreeView :disabled="disabled" :key="i" :label="resource.label"
                             :parent_resource="resource.parent_resource" :resource="resource.resource"
@@ -15,6 +16,7 @@
                             :template="resource.template" :parent_id="form.id" :template_code="resource.template_code"
                             :default_visible="true" />
                     </template>
+                    <slot name="append-slot" />
                 </div>
             </template>
         </td>

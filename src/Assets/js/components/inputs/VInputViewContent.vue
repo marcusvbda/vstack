@@ -1,7 +1,9 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
         <div class="d-flex flex-column">
+            <slot name="prepend-slot" />
             <div v-html="processed_value" v-if="!loading" />
+            <slot name="append-slot" />
         </div>
     </CustomResourceComponent>
 </template>

@@ -13,4 +13,11 @@
     :errors='{{"errors.$field ? errors.$field : false"}}'    
     id="resource-input-upload-{{ $field }}" 
     {!! $eval !!}                          
-/>
+>
+<template #prepend-slot>
+    {!! $slot_top !!}
+</template>
+<template #append-slot>
+    {!! $slot_bottom !!}
+</template>
+</v-upload>

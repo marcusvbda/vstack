@@ -27,13 +27,17 @@ class ResourceTree extends Field
         $relation = @$this->options['relation'];
         $parent_resource = @$this->options['parent_resource'];
         $eval = @$this->options["eval"]  ? $this->options["eval"] : '';
+        $slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
+		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
         return $this->view = view("vStack::resources.field.resource_tree", compact(
             "resource",
             "disabled",
             "eval",
             "relation",
-            "parent_resource"
+            "parent_resource",
+            "slot_top",
+            "slot_bottom"
         ))->render();
     }
 }

@@ -1,102 +1,96 @@
 <template>
-    <tr>
-        <td colspan="2" class="field-title">
-            <div class="d-flex flex-column card-title">
-                <span class="input-title" v-if="label" v-html="label ? label : ''" />
-                <small v-if="description" class="mt-1 text-muted">
-                    <span v-html="description"></span>
-                </small>
+    <CustomResourceComponent :label="label" :description="description">
+        <slot name="prepend-slot" />
+        <div class="input-markdown">
+            <div class="row-buttons" v-if="show_btns">
+                <el-button-group>
+                    <el-button @click="handler('undo')" size="small" :disabled="position == 0">
+                        <i class="fas fa-undo" />
+                    </el-button>
+                    <el-button @click="handler('redo')" size="small" :disabled="position == hystory.length - 1">
+                        <i class="fas fa-redo" />
+                    </el-button>
+                </el-button-group>
+                <el-button-group class="spaced">
+                    <el-button @click="handler('bold')" size="small">
+                        <i class="fas fa-bold" />
+                    </el-button>
+                    <el-button @click="handler('italic')" size="small">
+                        <i class="fas fa-italic" />
+                    </el-button>
+                    <el-button @click="handler('striket')" size="small">
+                        <i class="fas fa-strikethrough" />
+                    </el-button>
+                    <el-button @click="handler('h')" size="small">
+                        <i class="fas fa-heading" />
+                    </el-button>
+                </el-button-group>
+                <el-button-group class="spaced">
+                    <el-button @click="handler('left')" size="small">
+                        <i class="fas fa-align-left" />
+                    </el-button>
+                    <el-button @click="handler('center')" size="small">
+                        <i class="fas fa-align-center" />
+                    </el-button>
+                    <el-button @click="handler('right')" size="small">
+                        <i class="fas fa-align-right" />
+                    </el-button>
+                </el-button-group>
+                <el-button-group class="spaced">
+                    <el-button @click="handler('table')" size="small">
+                        <i class="fas fa-table" />
+                    </el-button>
+                    <el-button @click="handler('image')" size="small">
+                        <i class="fas fa-images" />
+                    </el-button>
+                    <el-button @click="handler('link')" size="small">
+                        <i class="fas fa-link" />
+                    </el-button>
+                </el-button-group>
+                <el-button-group class="spaced">
+                    <el-button @click="handler('list')" size="small">
+                        <i class="fas fa-list" />
+                    </el-button>
+                    <el-button @click="handler('numberList')" size="small">
+                        <i class="fas fa-list-ol" />
+                    </el-button>
+                    <el-button @click="handler('code')" size="small">
+                        <i class="fas fa-code" />
+                    </el-button>
+                    <el-button @click="handler('quotes')" size="small">
+                        <i class="fas fa-quote-right" />
+                    </el-button>
+                </el-button-group>
+                <el-radio-group v-model="type" class="ml-auto spaced" size="small">
+                    <el-radio-button label="editor">
+                        <i class="fas fa-code" />
+                    </el-radio-button>
+                    <el-radio-button label="both">
+                        <i class="fas fa-square" />
+                    </el-radio-button>
+                    <el-radio-button label="html">
+                        <i class="fab fa-html5" />
+                    </el-radio-button>
+                </el-radio-group>
+                <el-radio-group v-model="dir" class="spaced" size="small">
+                    <el-radio-button label="row">
+                        <i class="fas fa-arrows-alt-h" />
+                    </el-radio-button>
+                    <el-radio-button label="column">
+                        <i class="fas fa-arrows-alt-v" />
+                    </el-radio-button>
+                </el-radio-group>
             </div>
-            <div class="input-markdown">
-                <div class="row-buttons" v-if="show_btns">
-                    <el-button-group>
-                        <el-button @click="handler('undo')" size="small" :disabled="position == 0">
-                            <i class="fas fa-undo" />
-                        </el-button>
-                        <el-button @click="handler('redo')" size="small" :disabled="position == hystory.length - 1">
-                            <i class="fas fa-redo" />
-                        </el-button>
-                    </el-button-group>
-                    <el-button-group class="spaced">
-                        <el-button @click="handler('bold')" size="small">
-                            <i class="fas fa-bold" />
-                        </el-button>
-                        <el-button @click="handler('italic')" size="small">
-                            <i class="fas fa-italic" />
-                        </el-button>
-                        <el-button @click="handler('striket')" size="small">
-                            <i class="fas fa-strikethrough" />
-                        </el-button>
-                        <el-button @click="handler('h')" size="small">
-                            <i class="fas fa-heading" />
-                        </el-button>
-                    </el-button-group>
-                    <el-button-group class="spaced">
-                        <el-button @click="handler('left')" size="small">
-                            <i class="fas fa-align-left" />
-                        </el-button>
-                        <el-button @click="handler('center')" size="small">
-                            <i class="fas fa-align-center" />
-                        </el-button>
-                        <el-button @click="handler('right')" size="small">
-                            <i class="fas fa-align-right" />
-                        </el-button>
-                    </el-button-group>
-                    <el-button-group class="spaced">
-                        <el-button @click="handler('table')" size="small">
-                            <i class="fas fa-table" />
-                        </el-button>
-                        <el-button @click="handler('image')" size="small">
-                            <i class="fas fa-images" />
-                        </el-button>
-                        <el-button @click="handler('link')" size="small">
-                            <i class="fas fa-link" />
-                        </el-button>
-                    </el-button-group>
-                    <el-button-group class="spaced">
-                        <el-button @click="handler('list')" size="small">
-                            <i class="fas fa-list" />
-                        </el-button>
-                        <el-button @click="handler('numberList')" size="small">
-                            <i class="fas fa-list-ol" />
-                        </el-button>
-                        <el-button @click="handler('code')" size="small">
-                            <i class="fas fa-code" />
-                        </el-button>
-                        <el-button @click="handler('quotes')" size="small">
-                            <i class="fas fa-quote-right" />
-                        </el-button>
-                    </el-button-group>
-                    <el-radio-group v-model="type" class="ml-auto spaced" size="small">
-                        <el-radio-button label="editor">
-                            <i class="fas fa-code" />
-                        </el-radio-button>
-                        <el-radio-button label="both">
-                            <i class="fas fa-square" />
-                        </el-radio-button>
-                        <el-radio-button label="html">
-                            <i class="fab fa-html5" />
-                        </el-radio-button>
-                    </el-radio-group>
-                    <el-radio-group v-model="dir" class="spaced" size="small">
-                        <el-radio-button label="row">
-                            <i class="fas fa-arrows-alt-h" />
-                        </el-radio-button>
-                        <el-radio-button label="column">
-                            <i class="fas fa-arrows-alt-v" />
-                        </el-radio-button>
-                    </el-radio-group>
-                </div>
-                <div :class="`row-editor direction-${dir}`" :style="{
-                    minHeight: height * (dir == 'row' ? 1 : 2)
-                }">
-                    <textarea class="editor" ref="editor" rows="10" v-model="markdown" :placeholder="placeholder"
-                        v-if="['editor', 'both'].includes(type)" />
-                    <div class="preview" v-html="compiled" v-if="['html', 'both'].includes(type)" />
-                </div>
+            <div :class="`row-editor direction-${dir}`" :style="{
+                minHeight: height * (dir == 'row' ? 1 : 2)
+            }">
+                <textarea class="editor" ref="editor" rows="10" v-model="markdown" :placeholder="placeholder"
+                    v-if="['editor', 'both'].includes(type)" />
+                <div class="preview" v-html="compiled" v-if="['html', 'both'].includes(type)" />
             </div>
-        </td>
-    </tr>
+        </div>
+        <slot name="append-slot" />
+    </CustomResourceComponent>
 </template>
 <script>
 export default {

@@ -38,7 +38,8 @@ class Upload extends Field
 
         $auto_set_name = @$this->options["auto_set_name"] !== null ? $this->options["auto_set_name"] : true;
         $auto_set_name = $auto_set_name ? 'true' : 'false';
-
+        $slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
+		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
         return $this->view = view("vStack::resources.field.upload", compact(
             "label",
@@ -52,7 +53,9 @@ class Upload extends Field
             "sizelimit",
             "eval",
             "is_image",
-            "auto_set_name"
+            "auto_set_name",
+            "slot_top",
+            "slot_bottom"
         ))->render();
     }
 }

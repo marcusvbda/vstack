@@ -11,4 +11,11 @@
 	maxlength="{{ $maxlength }}"   
     id="resource-input-textarea-{{ $field }}" 
     {!! $eval !!}              
-/>
+>
+<template #prepend-slot>
+    {!! $slot_top !!}
+</template>
+<template #append-slot>
+    {!! $slot_bottom !!}
+</template>
+</v-input-textarea>

@@ -1,9 +1,9 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
         <div class="d-flex flex-column">
-            <div class="col-sm-10" v-bind:class="{ 'col-sm-10': label, 'col-sm-12': !label }">
-                <codemirror v-model="text" :options="cmOptions" />
-            </div>
+            <slot name="prepend-slot" />
+            <codemirror v-model="text" :options="cmOptions" />
+            <slot name="append-slot" />
         </div>
     </CustomResourceComponent>
 </template>

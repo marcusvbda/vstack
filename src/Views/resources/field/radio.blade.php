@@ -7,4 +7,11 @@
     :errors='{{"errors.$field ? errors.$field : false"}}' 
     id="resource-radio-morphstomany-{{ $field }}" 
     {!! $eval !!}      
-/>
+>
+    <template #prepend-slot>
+        {!! $slot_top !!}
+    </template>
+    <template #append-slot>
+        {!! $slot_bottom !!}
+    </template>
+</v-radio>

@@ -1,10 +1,12 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
         <div class="d-flex flex-column">
+            <slot name="prepend-slot" />
             <div class="inline-editor" :style="`min-height : ${tiny_options.height}px;`">
                 <Editor :init="tiny_options" v-model="val" />
             </div>
             <small class="text-muted text-right" v-html="limitText" v-if="show_value_length" />
+            <slot name="append-slot" />
         </div>
     </CustomResourceComponent>
 </template>

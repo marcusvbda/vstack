@@ -27,14 +27,17 @@ class Tags extends Field
         $disabled       = @$this->options["disabled"] ? "true" : "false";
         $description    = $this->options["description"];
         $eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
-
+        $slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
+		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
         return $this->view = view("vStack::resources.field.tags", compact(
             "disabled",
             "label",
             "description",
             "field",
-            "eval"
+            "eval",
+            "slot_top",
+            "slot_bottom"
         ))->render();
     }
 }

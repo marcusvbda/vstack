@@ -9,4 +9,11 @@
     format='{{ $format }}' 
     id="resource-input-view-content-{{ $label }}" 
     {!! $eval !!}    
-/>
+>
+<template #prepend-slot>
+    {!! $slot_top !!}
+</template>
+<template #append-slot>
+    {!! $slot_bottom !!}
+</template>
+</v-input-view-content>

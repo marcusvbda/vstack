@@ -38,6 +38,8 @@ class Text extends Field
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
 		$show_value_length = (@$this->options["show_value_length"] !== null) ? $this->options["show_value_length"] : false;
 		$show_value_length = $show_value_length ? 'true' : 'false';
+		$slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
+		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
 		return $this->view = view("vStack::resources.field.text", compact(
 			"disabled",
@@ -55,7 +57,9 @@ class Text extends Field
 			"maxlength",
 			"min",
 			"eval",
-			"show_value_length"
+			"show_value_length",
+			"slot_top",
+			"slot_bottom"
 		))->render();
 	}
 }

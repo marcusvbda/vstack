@@ -1,6 +1,7 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
         <div class="d-flex flex-column">
+            <slot name="prepend-slot" />
             <div class="d-flex flex-row flex-wrap align-items-center">
                 <el-tag class="ml-0 mr-2 mb-2" :key="tag" v-for="tag in dynamicTags"
                     :closable="disabled != true ? true : false" :disable-transitions="false"
@@ -23,6 +24,7 @@
                     <li v-for="(e, i) in errors" :key="i" v-html="e" />
                 </ul>
             </div>
+            <slot name="append-slot" />
         </div>
     </CustomResourceComponent>
 </template>

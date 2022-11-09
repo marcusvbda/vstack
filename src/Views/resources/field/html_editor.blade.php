@@ -10,4 +10,11 @@
     :settings='@json($settings)'       
     :height='{{ $height }}'   
     id="resource-input-html-editor-{{ $field }}"     
-/>
+>
+<template #prepend-slot>
+    {!! $slot_top !!}
+</template>
+<template #append-slot>
+    {!! $slot_bottom !!}
+</template>
+</v-grapes>
