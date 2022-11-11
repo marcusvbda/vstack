@@ -418,8 +418,8 @@ class ResourceController extends Controller
 			$extra_data = @$extra_data["data"];
 		}
 
-		dispatch(function () use ($filepath, $resource, $fieldlist, $tenant_id, $user, $extra_data) {
-			$importer_data = compact('filepath', 'extra_data', 'user', 'resource', 'fieldlist', 'filepath', 'tenant_id');
+		dispatch(function () use ($config,$filepath, $resource, $fieldlist, $tenant_id, $user, $extra_data) {
+			$importer_data = compact('config','filepath', 'extra_data', 'user', 'resource', 'fieldlist', 'filepath', 'tenant_id');
 			$resource->importMethod($importer_data);
 		})->onQueue(Vstack::queue_resource_import());
 
@@ -565,7 +565,7 @@ class ResourceController extends Controller
 				if ($tenant_id) {
 					$new["tenant_id"] = $tenant_id;
 				}
-				$resource->importRowMethod($new, $extra_data);
+				$resource->importRowMethod($new, $extra_data,$config);
 				$qty++;
 			}
 			DB::commit();

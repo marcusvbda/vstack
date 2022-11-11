@@ -740,7 +740,7 @@ class Resource
 	public function importMethod($data)
 	{
 		extract($data);
-		$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
+		$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('config','extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
 		Excel::import($importer, $importer->getFile());
 		$result = $importer->getResult();
 		unlink($filepath);
@@ -761,7 +761,7 @@ class Resource
 		return ["success" => $success, "message" => $message];
 	}
 
-	public function importRowMethod($new, $extra_data)
+	public function importRowMethod($new, $extra_data,$config)
 	{
 		$fill_data = array_merge($new, $extra_data ? $extra_data : []);
 		$new_model = @$new["id"] ? $this->getModelInstance()->findOrFail($new["id"]) : $this->getModelInstance();

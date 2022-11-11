@@ -1,6 +1,6 @@
 <template>
-    <div class="card" v-loading="loading">
-        <div class="card-header bg-white py-4">
+    <div class="card" v-loading="loading" element-loading-text="Aguarde ...">
+        <div class=" card-header bg-white py-4">
             <div class="row">
                 <div class="col-12">
                     <h3 class="font-weight-light" v-if="data.resource.import_settings.page_title">{{

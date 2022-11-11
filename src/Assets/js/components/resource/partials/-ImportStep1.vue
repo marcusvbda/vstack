@@ -30,36 +30,36 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-0">
-                <div class="row">
-                    <div class="col-12">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th class="px-5">Nome da coluna</th>
-                                    <th class="px-5">Mapear para o campo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(column, i) in config.data.csv_header" :key="i">
-                                    <template>
-                                        <td class="px-5">{{ column }}</td>
-                                        <td class="px-5">
-                                            <el-select class="w-100" clearable v-model="config.fieldlist[column]"
-                                                filterable placeholder="Seleciona para onde este campo será importado">
-                                                <el-option label="Ignorar" value="_IGNORE_" />
-                                                <el-option v-for="(item, i) in headerOptions" :key="i" :label="item"
-                                                    :value="item" :disabled="columnHasSelected(item)" />
-                                            </el-select>
-                                        </td>
-                                    </template>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        </template>
+        <div class="card-body p-0">
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="px-5">Nome da coluna</th>
+                                <th class="px-5">Mapear para o campo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(column, i) in config.data.csv_header" :key="i">
+                                <template>
+                                    <td class="px-5">{{ column }}</td>
+                                    <td class="px-5">
+                                        <el-select class="w-100" clearable v-model="config.fieldlist[column]" filterable
+                                            placeholder="Seleciona para onde este campo será importado">
+                                            <el-option label="Ignorar" value="_IGNORE_" />
+                                            <el-option v-for="(item, i) in headerOptions" :key="i" :label="item"
+                                                :value="item" :disabled="columnHasSelected(item)" />
+                                        </el-select>
+                                    </td>
+                                </template>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </template>
+        </div>
         <div class="card-footer bg-white">
             <div class="row">
                 <div class="col-12 d-flex flex-row flex-wrap align-items-center justify-content-end">

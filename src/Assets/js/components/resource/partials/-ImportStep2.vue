@@ -13,7 +13,8 @@
         <div class="card-footer bg-white">
             <div class="row">
                 <div class="col-12 d-flex flex-row flex-wrap align-items-center justify-content-end">
-                    <a class="btn btn-primary" :href="data.resource.route">Ver {{ data.resource.label.toLowerCase() }}</a>
+                    <a class="btn btn-primary" :href="data.resource.route">Ver {{ data.resource.label.toLowerCase()
+                    }}</a>
                 </div>
             </div>
         </div>
