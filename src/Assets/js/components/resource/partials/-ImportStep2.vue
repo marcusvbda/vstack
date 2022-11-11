@@ -1,5 +1,5 @@
 <template>
-    <div class="card" v-loading="loading">
+    <div class="card" v-loading="loading" element-loading-text="Aguarde ...">
         <div class="card-body p-0">
             <div class="row">
                 <div class="col-12 d-flex flex-column justify-content-center align-items-center my-5">

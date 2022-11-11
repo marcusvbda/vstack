@@ -744,7 +744,6 @@ class Resource
 		Excel::import($importer, $importer->getFile());
 		$result = $importer->getResult();
 		unlink($filepath);
-
 		$success = $result["success"];
 		$message = "";
 		if (@$result["success"]) {
@@ -753,8 +752,8 @@ class Resource
 			$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
 		}
 
-		event(new WebSocketEvent("App.User." . $user->id,"user.notification",[
-			"type" => $success,
+		event(new WebSocketEvent("App.User." . $user->getIdAttribute(),"user.notification",[
+			"type" => $success ? "success" : "error",
 			"message" => $message
 		]));
 
