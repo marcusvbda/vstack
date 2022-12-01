@@ -74,7 +74,7 @@ export default {
     props: {
         aspect_ratio: {
             type: Number,
-            default: 1240 / 310
+            default: 1
         },
         crop_image: {
             type: Boolean,
