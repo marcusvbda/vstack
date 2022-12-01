@@ -74,7 +74,7 @@ export default {
     props: {
         aspect_ratio: {
             type: Number,
-            default: 1
+            default: 0
         },
         crop_image: {
             type: Boolean,
@@ -147,6 +147,31 @@ export default {
                 center: true,
                 cropBoxMovable: !has_ratio,
                 cropBoxResizable: !has_ratio,
+                // data:{
+                //     width: 240,
+                //     height:  90,
+                // },
+
+                crop: (event) => {                    
+                    // let min_crop_x = 1240;
+                    // let max_crop_x = 1240;
+                    // let min_crop_y = 310;
+                    // let max_crop_y = 310;
+                    // let width = event.detail.width;
+                    // let height = event.detail.height;
+
+                    // if ((width < min_crop_x) || (width > max_crop_x)) {
+                    //     this.cropper.setData({
+                    //         width: Math.max(min_crop_x, Math.min(max_crop_x, width)),
+                    //     });
+                    // }
+
+                    // if ((height < min_crop_y) || (width > max_crop_y)) {
+                    //     this.cropper.setData({
+                    //         height: Math.max(min_crop_y, Math.min(max_crop_y, height)),
+                    //     });
+                    // }
+                }
             }
 
             if (has_ratio) {
