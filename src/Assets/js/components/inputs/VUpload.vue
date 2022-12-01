@@ -57,7 +57,7 @@
         <el-dialog :visible.sync="cropDialog" :lock-scroll="true" :close-on-click-modal="false" :show-close="false"
             :destroy-on-close="true" :modal-append-to-body="true" :close-on-press-escape="false"
             custom-class="crop_dialog">
-            <div class="overflow-crop-loading" />
+            <div class="overflow-crop-loading" v-if="loading" />
             <img ref="croppel" :src="cropping_img" v-if="cropDialog" />
             <span slot="footer" class="dialog-footer mt-2">
                 <el-button @click="handleCancelCrop" v-if="!loading">Cancelar</el-button>
@@ -327,6 +327,7 @@ export default {
     .el-dialog__body {
         position: relative;
         padding: 0;
+
         .overflow-crop-loading {
             cursor: no-drop;
             background-color: #00000070;
