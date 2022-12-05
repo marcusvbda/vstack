@@ -411,6 +411,7 @@ ul.pagination {
 
 .el-upload-list--picture-card .el-upload-list__item {
     width: auto;
+    text-align: center;
 }
 
 
@@ -522,4 +523,16 @@ h4 {
             }
         }
     }
+}
+
+
+.el-upload-list--picture-card .el-upload-list__item-thumbnail {
+    width: unset!important;
+    height: unset!important;
+}
+
+
+.el-upload-list--picture-card .el-upload-list__item-thumbnail {
+    width: unset!important;
+    height: 100%!important;
 }
