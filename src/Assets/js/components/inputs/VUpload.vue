@@ -59,6 +59,11 @@
             custom-class="crop_dialog">
             <div class="overflow-crop-loading" v-if="loading" />
             <img ref="croppel" :src="cropping_img" v-if="cropDialog" />
+            <div class="row">
+                <div class="col-12 px-5">
+                    <slot name="append-crop-slot" />
+                </div>
+            </div>
             <span slot="footer" class="dialog-footer mt-2">
                 <el-button @click="handleCancelCrop" v-if="!loading">Cancelar</el-button>
                 <el-button type="primary" @click="handleCrop" :loading="loading">Confirmar</el-button>
@@ -147,31 +152,10 @@ export default {
                 center: true,
                 cropBoxMovable: !has_ratio,
                 cropBoxResizable: !has_ratio,
-                // data:{
-                //     width: 240,
-                //     height:  90,
-                // },
-
-                crop: (event) => {                    
-                    // let min_crop_x = 1240;
-                    // let max_crop_x = 1240;
-                    // let min_crop_y = 310;
-                    // let max_crop_y = 310;
-                    // let width = event.detail.width;
-                    // let height = event.detail.height;
-
-                    // if ((width < min_crop_x) || (width > max_crop_x)) {
-                    //     this.cropper.setData({
-                    //         width: Math.max(min_crop_x, Math.min(max_crop_x, width)),
-                    //     });
-                    // }
-
-                    // if ((height < min_crop_y) || (width > max_crop_y)) {
-                    //     this.cropper.setData({
-                    //         height: Math.max(min_crop_y, Math.min(max_crop_y, height)),
-                    //     });
-                    // }
-                }
+                data: {
+                    width: 1240,
+                    height: 310,
+                },
             }
 
             if (has_ratio) {
