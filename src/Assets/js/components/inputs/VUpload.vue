@@ -150,8 +150,6 @@ export default {
                 dragMode: 'move',
                 guides: true,
                 center: true,
-                cropBoxMovable: !has_ratio,
-                cropBoxResizable: !has_ratio,
                 data: {
                     width: 1240,
                     height: 310,
