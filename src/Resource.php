@@ -821,4 +821,9 @@ class Resource
 	{
 		return true;
 	}
+
+	public function resourceLoadingSaveMassage($type)
+	{
+		return $type == "action" ? "Executando ..." : "Salvando ...";
+	}
 }

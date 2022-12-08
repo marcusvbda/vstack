@@ -45,6 +45,7 @@
     :acl='@json(["can_update" => $resource->canUpdate()])'
     :crud_type='@json($resource->crudType())'
     :has_befores_store='@json($resource->beforeStore([]) !== false)'
+    loading_message="{{$resource->resourceLoadingSaveMassage($raw_type)}}"
     >
     @if (@!$data->id && !@$data['id'])
         @if (@$resource->afterCreateSlot())
