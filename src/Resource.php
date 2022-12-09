@@ -590,7 +590,7 @@ class Resource
 			}
 			return ["success" => true, "route" => $route, "model" => $target];
 		} else {
-			return ["success" => true];
+			return ["success" => true, 'model' => $target];
 		}
 	}
 

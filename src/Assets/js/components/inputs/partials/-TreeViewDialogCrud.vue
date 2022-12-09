@@ -41,17 +41,18 @@
                     </table>
                 </form>
             </div>
-            <div class="card-footer" v-if="!action_btn_loading">
+            <div class="card-footer">
                 <div class="d-flex flex-row justify-content-between">
-                    <button class="btn btn-danger btn-crud-item px-5" v-if="selected.id && acl.delete" @click="destroy">
+                    <el-button size="small" type="danger" :loading="action_btn_loading" class="px-5"
+                        v-if="selected.id && acl.delete" @click="destroy">
                         <i class="el-icon-delete mr-2" />
-                        Excluir
-                    </button>
-                    <button class="btn btn-secondary btn-crud-item px-5 ml-auto" @click="submit"
-                        v-if="(selected.id && acl.update) || (!selected.id && acl.create)">
+                        Excluir {{ label }}
+                    </el-button>
+                    <el-button :loading="action_btn_loading" size="small" type="info" class="ml-auto px-5"
+                        @click="submit" v-if="(selected.id && acl.update) || (!selected.id && acl.create)">
                         <i class="el-icon-check mr-2" />
-                        {{ selected.id ? "Salvar" : "Cadastrar" }}
-                    </button>
+                        {{ selected.id ? "Salvar" : "Cadastrar" }} {{ label }}
+                    </el-button>
                 </div>
             </div>
         </template>
@@ -59,7 +60,7 @@
 </template>
 <script>
 import VRuntimeTemplate from "v-runtime-template";
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
     props: ["resource", "selected", "label", "qtyfields", "fk_value", "fk_index", "acl"],
@@ -98,6 +99,7 @@ export default {
         },
     },
     methods: {
+        ...mapMutations("resource", ["setActionBtnLoading"]),
         close() {
             this.$emit("close");
         },
@@ -144,26 +146,32 @@ export default {
         submit() {
             this.loading_text = "Salvando ...";
             this.card_loading = true;
-            this.$http
-                .post(`/admin/${this.resource}/store`, {
-                    ...this.form,
-                    resource_id: this.resource,
-                    input_origin: "resource-tree",
-                })
-                .then(({ data }) => {
-                    if (data.success) {
-                        return this.$emit("saved", "Registro salvo com sucesso !!");
-                    } else {
-                        if (data.message) {
-                            this.$message({ showClose: true, message: data.message.text, type: data.message.type });
+            const form = Object.assign({}, this.form)
+            this.setActionBtnLoading(true)
+            this.$nextTick(() => {
+                this.$http
+                    .post(`/admin/${this.resource}/store`, {
+                        ...form,
+                        resource_id: this.resource,
+                        input_origin: "resource-tree",
+                    })
+                    .then(({ data }) => {
+                        if (data.success) {
+                            this.$emit("saved", "Registro salvo com sucesso !!");
+                            return this.setActionBtnLoading(false)
+                        } else {
+                            if (data.message) {
+                                this.$message({ showClose: true, message: data.message.text, type: data.message.type });
+                            }
+                            this.card_loading = false;
+                            return this.setActionBtnLoading(false)
                         }
+                    })
+                    .catch((er) => {
+                        this.makeFormValidationErrors(er);
                         this.card_loading = false;
-                    }
-                })
-                .catch((er) => {
-                    this.makeFormValidationErrors(er);
-                    this.card_loading = false;
-                });
+                    });
+            })
         },
         makeFormValidationErrors(er) {
             let errors = er.response.data.errors;
