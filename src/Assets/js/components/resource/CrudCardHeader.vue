@@ -11,7 +11,8 @@
                             </div>
                         </td>
                         <td>
-                            <slot />
+                            <VRuntimeTemplate v-if="append_content" :template="append_content" />
+                            <slot v-else />
                         </td>
                     </tr>
                 </tbody>
@@ -20,7 +21,13 @@
     </div>
 </template>
 <script>
+import VRuntimeTemplate from "v-runtime-template";
+
 export default {
-    props: ["label", "description"]
+    props: ["label", "description", "form", "append_content"],
+
+    components: {
+        VRuntimeTemplate
+    },
 }
 </script>
