@@ -168,6 +168,7 @@ export default {
                         }
                     })
                     .catch((er) => {
+                        this.setActionBtnLoading(false)
                         this.makeFormValidationErrors(er);
                         this.card_loading = false;
                     });
