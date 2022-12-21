@@ -50,10 +50,17 @@ export default {
                 return;
             }
             if (extra.action_type == "post") {
-                this.$loading({ text: "Aguarde ..." })
-                this.$http.post(extra.url ? extra.url : "#").then(() => {
-                    window.location.reload();
-                })
+                return this.$confirm(extra.confirm_message ? extra.confirm_message : "Confirmar ?", extra.confirm_title ? extra.confirm_title : "Confirmação", {
+                    confirmButtonText: "Sim",
+                    cancelButtonText: "Não",
+                    type: "warning",
+                }).then(() => {
+                    this.$loading({ text: "Aguarde ..." })
+                    this.$http.post(extra.url ? extra.url : "#").then(() => {
+                        window.location.reload();
+                    })
+                });
+
             }
         },
         goToEdit() {
