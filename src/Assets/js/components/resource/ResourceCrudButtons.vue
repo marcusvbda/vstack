@@ -2,13 +2,13 @@
     <div class="d-flex flex-row flex-wrap cursor-pointer align-items-center justify-content-center"
         style="min-height: 25px" :id="`resource-crud-btns-${data.id}`">
         <el-button-group>
-            <template v-for="(extra,i) in data.additional_extra_buttons">
+            <template v-for="(extra, i) in data.additional_extra_buttons">
                 <el-tooltip class="item" effect="dark" :content="extra.title ? extra.title : 'Extra Action'"
                     placement="top">
                     <el-button size="small" class="extra-action-btn" plain :style="{
-                        backgroundColor:extra.bg_color ? extra.bg_color : 'white',
-                        borderColor:extra.border_color ? extra.border_color: '#dedede',
-                        color:extra.color ? extra.color : '#606266'
+                        backgroundColor: extra.bg_color ? extra.bg_color : 'white',
+                        borderColor: extra.border_color ? extra.border_color : '#dedede',
+                        color: extra.color ? extra.color : '#606266'
                     }" :icon="extra.icon ? extra.icon : 'el-icon-more'" id="resource-btn-copy"
                         @click="clickedActionExtra(extra)" />
                 </el-tooltip>
@@ -48,6 +48,12 @@ export default {
             if (extra.action_type == "redirect") {
                 window.location.href = extra.url ? extra.url : "#";
                 return;
+            }
+            if (extra.action_type == "post") {
+                this.$loading({ text: "Aguarde ..." })
+                this.$http.post(extra.url ? extra.url : "#").then(() => {
+                    window.location.reload();
+                })
             }
         },
         goToEdit() {
