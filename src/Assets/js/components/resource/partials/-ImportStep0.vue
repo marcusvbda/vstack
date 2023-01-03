@@ -4,8 +4,8 @@
             <div class="row">
                 <div class="col-12">
                     <h3 class="font-weight-light" v-if="data.resource.import_settings.page_title">{{
-                            data.resource.import_settings.page_title
-                    }}</h3>
+        data.resource.import_settings.page_title
+}}</h3>
                     <div v-if="data.resource.import_settings.description"
                         v-html="data.resource.import_settings.description" />
                     <div v-if="data.resource.import_custom_crud_message"
@@ -37,7 +37,7 @@
         <div class="card-footer bg-white">
             <div class="row">
                 <div class="col-12 d-flex flex-row flex-wrap align-items-center justify-content-end">
-                    <button class="btn btn-primary" @click="next" :disabled="!frm.file">Continuar</button>
+                    <el-button type="primary" @click="next" :disabled="!frm.file">Continuar</el-button>
                 </div>
             </div>
         </div>

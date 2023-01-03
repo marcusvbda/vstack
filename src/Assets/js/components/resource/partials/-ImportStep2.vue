@@ -1,5 +1,5 @@
 <template>
-    <div class="card" v-loading="loading" element-loading-text="Aguarde ...">
+    <div class="card">
         <div class="card-body p-0">
             <div class="row">
                 <div class="col-12 d-flex flex-column justify-content-center align-items-center my-5">
@@ -13,8 +13,9 @@
         <div class="card-footer bg-white">
             <div class="row">
                 <div class="col-12 d-flex flex-row flex-wrap align-items-center justify-content-end">
-                    <a class="btn btn-primary" :href="data.resource.route">Ver {{ data.resource.label.toLowerCase()
-                        }}</a>
+                    <el-button type="primary" :loading="loading" class="btn btn-primary" @click="back">Ver {{
+        data.resource.label.toLowerCase()
+                        }}</el-button>
                 </div>
             </div>
         </div>
@@ -23,42 +24,10 @@
 <script>
 export default {
     props: ["data", "frm", "config"],
-    data() {
-        return {
-            loading: false,
-        };
-    },
-    async created() {
-        this.loading = true;
-        this.submit();
-    },
     methods: {
-        submit() {
-            this.loading = true;
-            let data = new FormData();
-
-            data.append("file", this.frm.file);
-            data.append("config", JSON.stringify(this.config));
-
-            Object.keys(this.frm).forEach((key) => {
-                if (!["file", "config"].includes(key)) {
-                    data.append(key, this.frm[key]);
-                }
-            });
-
-            this.$http
-                .post(this.data.resource.route + "/import/submit", data)
-                .then((res) => {
-                    res = res.data;
-                    this.loading = false;
-                    if (!res.success) return this.$message({ showClose: true, message: res.message, type: "error" });
-                })
-                .catch((er) => {
-                    console.log(er);
-                    this.loading = false;
-                    this.config.step = 1;
-                });
-        },
-    },
+        back() {
+            window.location.href = this.data.resource.route
+        }
+    }
 };
 </script>
