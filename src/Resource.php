@@ -304,6 +304,16 @@ class Resource
 		return $this->canDelete();
 	}
 
+	public function importerValidatorRulesMessages()
+	{
+		return [];
+	}
+
+	public function importerValidatorRules(Request $request)
+	{
+		return [];
+	}
+
 	public function beforeDelete()
 	{
 		return [];

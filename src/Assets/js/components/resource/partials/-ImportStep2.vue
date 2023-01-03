@@ -14,7 +14,7 @@
             <div class="row">
                 <div class="col-12 d-flex flex-row flex-wrap align-items-center justify-content-end">
                     <a class="btn btn-primary" :href="data.resource.route">Ver {{ data.resource.label.toLowerCase()
-                    }}</a>
+                        }}</a>
                 </div>
             </div>
         </div>
@@ -56,6 +56,7 @@ export default {
                 .catch((er) => {
                     console.log(er);
                     this.loading = false;
+                    this.config.step = 1;
                 });
         },
     },
