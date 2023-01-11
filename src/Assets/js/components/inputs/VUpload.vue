@@ -42,7 +42,7 @@
                         </template>
                     </el-upload>
                     <small class="mt-2 text-muted text-size-alert">
-                        {{ multiple ? "Os arquivos devem conter no máximo" : "O arquivo deve conter no máximo" }}
+                        {{ multiple? "Os arquivos devem conter no máximo": "O arquivo deve conter no máximo" }}
                         {{ $niceBytes(file_upload_limit_size) }}
                     </small>
                     <div class="invalid-feedback" v-show="errors">
@@ -69,6 +69,13 @@
                 <el-button type="primary" @click="handleCrop" :loading="loading">Confirmar</el-button>
             </span>
         </el-dialog>
+        <template v-if="show_url">
+            <p v-for="(link, i) in uploadedLinks" :key="i">
+                <small>
+                    <copy-text :value="link" />
+                </small>
+            </p>
+        </template>
     </CustomResourceComponent>
 </template>
 <script>
@@ -80,6 +87,10 @@ export default {
         aspect_ratio: {
             type: Number,
             default: 0
+        },
+        show_url: {
+            type: Boolean,
+            default: false
         },
         crop_image: {
             type: Boolean,
@@ -132,6 +143,9 @@ export default {
     computed: {
         cropDialog() {
             return this.crop_image && this.showing_crop
+        },
+        uploadedLinks() {
+            return (this.fileList ?? []).map(x => x.url).filter(x => x)
         }
     },
     methods: {

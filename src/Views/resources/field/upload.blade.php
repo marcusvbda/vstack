@@ -10,7 +10,8 @@
     accept='{{$accept}}'                        
     :sizelimit='{{ $sizelimit }}'      
     :aspect_ratio='{{$aspect_ratio}}'       
-    :crop_image='{{$crop_image}}'       
+    :crop_image='{{$crop_image}}'    
+    :show_url='{{$show_url}}'   
     :auto_set_name='{{ $auto_set_name }}'                 
     :errors='{{"errors.$field ? errors.$field : false"}}'    
     id="resource-input-upload-{{ $field }}" 

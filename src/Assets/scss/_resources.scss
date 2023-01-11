@@ -227,6 +227,10 @@ ul.pagination {
 }
 
 .table-crud {
+    table-layout: fixed;
+    td:not(.w-25) {
+        overflow: auto;
+    }
     .w-25 {
         background-color: #f9f9f9;
 
