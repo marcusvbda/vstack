@@ -14,6 +14,9 @@ require("./libs/pace");
 require("jquery-ui-dist/jquery-ui");
 require("bootstrap");
 import axios from "./libs/axios";
+import { Model } from 'vue-api-query'
+Vue.prototype.$http = axios;
+Model.$http = axios;
 require("./libs/element");
 require("./libs/loadash");
 require("./libs/pace");
@@ -27,9 +30,6 @@ Vue.prototype.$gsap = gsap;
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 Vue.prototype.$moment = moment;
-Vue.prototype.$http = axios;
-import { Model } from 'vue-api-query'
-Model.$http = axios;
 
 const debug = require("console-development");
 Vue.prototype.$debug = debug;
@@ -90,6 +90,10 @@ window.VueApp = {
     },
     initStore() {
         this.settings.store = new Vuex.Store(this.store_modules);
+    },
+    setAxios(axiosEngine) {
+        Vue.prototype.$http = axiosEngine;
+        Model.$http = axiosEngine;
     },
     start() {
         this.initStore();

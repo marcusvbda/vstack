@@ -398,7 +398,20 @@ class ResourceController extends Controller
 			return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
 		}
 
+		$validation_custom_message =  $resource->importerValidatorRulesMessages();
+
+		$_request = new Request();
+		$_request->setMethod('POST');
+		$_request->request->add((array)json_decode($data["config"],true));
+
+		$validator = Validator::make($_request->all(), $resource->importerValidatorRules($_request, @$validation_custom_message ?? []));
+
+		if ($validator->fails()) {
+			throw new HttpResponseException(response()->json(["errors" => $validator->errors()], 422));
+		}
+
 		$config = json_decode($data["config"]);
+
 		$fieldlist = $config->fieldlist;
 		$tenant_id = Auth::user()->tenant()->first()->id;
 		$filename = $tenant_id . "_" . uniqid() . ".xlsx";
@@ -1113,7 +1126,7 @@ class ResourceController extends Controller
 
 	public function editResource($resource_id, $code, Request $request)
 	{
-		$id = @$decoded[0] ?? $code;
+		$id = @$code[0] ?? $code;
 		$result = $this->apiStore($resource_id, $id, "edit", $request);
 		return response()->json(data_get($result, "model"));
 	}
@@ -1126,7 +1139,7 @@ class ResourceController extends Controller
 
 	public function destroyResource($resource_id, $code, Request $request)
 	{
-		$id = @$decoded[0] ?? $code;
+		$id = @$code[0] ?? $code;
 		$result = $this->destroy($resource_id, $id, $request);
 		return response()->json(data_get($result, "success"));
 	}

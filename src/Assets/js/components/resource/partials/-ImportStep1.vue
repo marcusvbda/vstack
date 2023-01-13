@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card" v-loading="loading" element-loading-text="Aguarde ...">
         <template v-if="data.resource.import_custom_map_step">
             <div class="card-header bg-white py-4" v-if="data.resource.import_custom_map_step.subtitle">
                 <div class="row">
@@ -63,7 +63,8 @@
         <div class="card-footer bg-white">
             <div class="row">
                 <div class="col-12 d-flex flex-row flex-wrap align-items-center justify-content-end">
-                    <button class="btn btn-primary" @click="next" :disabled="canExecute">Executar Importador</button>
+                    <el-button type="primary" :loading="loading" @click="submit" :disabled="canExecute">Executar
+                        Importador</el-button>
                 </div>
             </div>
         </div>
@@ -76,6 +77,7 @@ export default {
     props: ["data", "frm", "config"],
     data() {
         return {
+            loading: false,
             step_data: {
                 can_next: false,
             },
@@ -119,7 +121,50 @@ export default {
         },
         next() {
             this.loading = true;
-            this.config.step += 2;
+        },
+        makeFormValidationErrors(er) {
+            let errors = er.response.data.errors;
+            this.errors = errors;
+            try {
+                let message = Object.keys(errors)
+                    .map((key) => `<li>${errors[key][0]}</li>`)
+                    .join("");
+                this.$message({
+                    dangerouslyUseHTMLString: true,
+                    showClose: true,
+                    message: `<ul>${message}</ul>`,
+                    type: "error",
+                });
+            } catch {
+                return;
+            }
+        },
+        submit() {
+            this.loading = true;
+            let data = new FormData();
+
+            data.append("file", this.frm.file);
+            data.append("config", JSON.stringify(this.config));
+
+            Object.keys(this.frm).forEach((key) => {
+                if (!["file", "config"].includes(key)) {
+                    data.append(key, this.frm[key]);
+                }
+            });
+
+            this.$http
+                .post(this.data.resource.route + "/import/submit", data)
+                .then((res) => {
+                    res = res.data;
+                    this.loading = false;
+                    if (!res.success) return this.$message({ showClose: true, message: res.message, type: "error" });
+                    this.config.step += 2;
+                })
+                .catch((er) => {
+                    console.log(er);
+                    this.loading = false;
+                    this.makeFormValidationErrors(er);
+                });
         },
     },
 };
