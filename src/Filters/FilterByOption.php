@@ -13,8 +13,9 @@ class FilterByOption extends Filter
     public $placeholder = "";
     public $multiple = false;
     public $handle = null;
+    public $column = null;
 
-    public function __construct($options)
+    public function __construct($options = [])
     {
         foreach ($options as $key => $value) {
             $this->{$key} = $value;
