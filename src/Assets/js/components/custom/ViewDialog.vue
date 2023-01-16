@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a @click.prevent="visible = !visible" href="#">{{ text }}</a>
+        <a @click.prevent="visible = !visible" href="#">{{ decodedText }}</a>
         <el-dialog :title="title" :visible.sync="visible" :width="width">
             <div style="word-break: break-word;">
                 <slot />
@@ -27,6 +27,11 @@ export default {
     data() {
         return {
             visible: false
+        }
+    },
+    computed: {
+        decodedText() {
+            return decodeURIComponent(escape(this.text));
         }
     }
 }

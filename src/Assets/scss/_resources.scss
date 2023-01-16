@@ -228,8 +228,8 @@ ul.pagination {
 
 .table-crud {
     table-layout: fixed;
-    td:not(.w-25) {
-        overflow: auto;
+    td.auto-overflow-x {
+        overflow-x: auto;
     }
     .w-25 {
         background-color: #f9f9f9;

@@ -1,5 +1,5 @@
 <template>
-    <CustomResourceComponent :label="label" :description="description">
+    <CustomResourceComponent :label="label" :description="description" custom_class="auto-overflow-x">
         <div v-show="!(crop_image && showing_crop)">
             <el-progress v-if="loading" :text-inside="true" :stroke-width="18" class="mb-3" :percentage="progress" />
             <slot name="prepend-slot" />
