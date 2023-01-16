@@ -103,6 +103,13 @@ class VstackController extends Controller
 			$request = new Request(@$request->params ? $request->params : $request->json);
 		}
 
+		if(@$request->filter_class_name) {
+			$_class = app()->make($request->filter_class_name,['model' => @$request->model ?? null]);
+			if(method_exists($_class,'fetchOptionsHandler')) {
+			   return $_class->fetchOptionsHandler($request);
+			}
+		}
+
 		$model = @$request["model"];
 		if (!$model) {
 			abort(400);

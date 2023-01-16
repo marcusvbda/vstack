@@ -4,6 +4,7 @@ namespace marcusvbda\vstack;
 
 class Filter
 {
+	public $class_name;
 	public $view;
 	public $options = [];
 	public $model = null;
@@ -11,6 +12,7 @@ class Filter
 
 	public function __construct()
 	{
+		$this->class_name = get_class($this);
 		$this->makeView();
 	}
 

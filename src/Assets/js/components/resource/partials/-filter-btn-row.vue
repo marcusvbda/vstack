@@ -65,8 +65,10 @@ export default {
             if (results.length) {
                 return this.processOptionData(results);
             }
+
             this.$http
                 .post("/vstack/json-api", {
+                    filter_class_name: this.f.class_name,
                     model: this.f.model,
                 })
                 .then(({ data }) => {
