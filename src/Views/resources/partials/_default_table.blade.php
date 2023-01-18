@@ -51,6 +51,9 @@
 									$size = data_get($value,'size','auto');
 									$col_class = data_get($value,"col_class",'text-left');
 									$sortable_index = data_get($value,"sortable_index",$key);
+									if(!preg_match('/\d+(%|em|px|rem)/', $size)) {
+										$size .= 'px';
+									}
 								@endphp
 								<th width="{{$size}}" class="resource-table-col {{ $col_class }}" id="resource-list-head-{{ $sortable_index }}">					
 									@if(@data_get($value,"sortable") !== false)
