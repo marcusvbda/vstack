@@ -51,7 +51,7 @@
 									$size = data_get($value,'size','auto');
 									$col_class = data_get($value,"col_class",'text-left');
 									$sortable_index = data_get($value,"sortable_index",$key);
-									if(!preg_match('/\d+(%|em|px|rem)/', $size)) {
+									if(!preg_match('/\d+(%|em|px|rem)/', $size) && is_numeric($size)) {
 										$size .= 'px';
 									}
 								@endphp
