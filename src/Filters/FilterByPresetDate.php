@@ -11,7 +11,9 @@ class FilterByPresetDate extends Filter
     public $label       = "Data de Criação";
     public $index = "created_at";
     public $field = "created_at";
+    public $element = "";
     public $action = null;
+    public $column = null;
     public $joins = [];
 
     public $_options = [
@@ -25,12 +27,13 @@ class FilterByPresetDate extends Filter
         "esta semana" => ["Esta semana", "getThisWeek"],
         "este mes" =>  ["Este mês", "getThisMonth"],
         "este ano" =>  ["Este ano", "getThisYear"],
+        "todos" =>  ["Todos os Resultados", "getAll"],
     ];
 
     public function queryBetweenDates($column, $dates)
-	{
-		return "DATE($column) >= DATE('$dates[0]') and DATE($column) <= DATE('$dates[1]')";
-	}
+    {
+        return "DATE($column) >= DATE('$dates[0]') and DATE($column) <= DATE('$dates[1]')";
+    }
 
 
     public function __construct($options = [])
@@ -74,6 +77,11 @@ class FilterByPresetDate extends Filter
             return $this->{$action}();
         }
         return $values;
+    }
+
+    protected function getAll()
+    {
+        return [null, null];
     }
 
     protected function getLastThirthDays()
