@@ -20,8 +20,8 @@ class vStackServiceProvider extends ServiceProvider
 			clearResourceExport::class
 		]);
 		$this->publishes([
-			__DIR__ . '/config' => config_path(),
-			__DIR__ . '/migrations' => database_path("/migrations"),
+			__DIR__ . '/Config' => config_path(),
+			__DIR__ . '/Migrations' => database_path("/migrations"),
 		]);
 		$router->aliasMiddleware('hashids',  HashIds::class);
 	}
