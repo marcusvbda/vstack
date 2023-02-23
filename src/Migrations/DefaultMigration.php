@@ -50,7 +50,7 @@ class DefaultMigration extends Migration
     protected function createRelationship(Blueprint $table, String $columnName, String $tableName,$options = []):Blueprint
     {
         $table->unsignedBigInteger($columnName)->nullable(data_get($options,'nullable',false));
-        return $table->foreign($columnName)
+        $table->foreign($columnName)
             ->references(data_get($options,'references','id'))
             ->on($tableName)
             ->onDelete(data_get($options,'onDelete','cascade'));
