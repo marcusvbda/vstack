@@ -8,14 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class DefaultMigration extends Migration
 {
-    protected function initializeTable(Blueprint $table, Boolean $autoIncriment = true):Blueprint
+    protected function initializeTable(Blueprint $table):Blueprint
     {
         $table->charset = 'utf8mb4';
 		$table->collation = 'utf8mb4_unicode_ci';
 		$table->engine = 'InnoDB';
-        if($autoIncriment) {
-		    $table->bigIncrements('id');
-        }
+		$table->bigIncrements('id');
         return $table;
     }
 
