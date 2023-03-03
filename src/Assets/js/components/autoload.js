@@ -37,11 +37,11 @@ import io from "socket.io-client";
 Vue.prototype.$io = io;
 import PortalVue from "portal-vue";
 Vue.use(PortalVue);
-import AOS from "aos";
-import "aos/dist/aos.css";
+// import AOS from "aos";
+// import "aos/dist/aos.css";
 import getDefaultStore from "../../store";
 
-Vue.prototype.$aos = AOS;
+// Vue.prototype.$aos = AOS;
 const vue_settings = {
     store: null,
     data() {
@@ -58,11 +58,11 @@ const vue_settings = {
     },
     methods: {
         init() {
-            this.$aos.init({
-                once: true,
-                disable: !laravel.vstack.animation_enabled,
-                duration: 200,
-            });
+            // this.$aos.init({
+            //     once: true,
+            //     disable: !laravel.vstack.animation_enabled,
+            //     duration: 200,
+            // });
             let body = document.querySelector("body");
             body.style.display = "block";
         },
