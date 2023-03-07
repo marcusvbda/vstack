@@ -48,7 +48,7 @@ class ResourceController extends Controller
 		$data = $this->getData($resource, $request);
 		$per_page = $this->getPerPage($resource);
 
-		$data = $data->select("*")->paginate($per_page);
+		$data = $data->select("*")->cursorPaginate($per_page);
 		if ($report_mode) {
 			$data->setPath(route('resource.report', ["resource" => $resource->id]));
 		} else {
@@ -79,14 +79,14 @@ class ResourceController extends Controller
 			$topGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
 				$template = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
 				$template = ResourcesHelpers::minify($template);
-				$template = str_split($template, 500);
+				$template = str_split($template, 250);
 				return $template;
 			};
 
 			$tableGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
 				$template = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
 				$template = ResourcesHelpers::minify($template);
-				$template = str_split($template, 500);
+				$template = str_split($template, 250);
 				return $template;
 			};
 
