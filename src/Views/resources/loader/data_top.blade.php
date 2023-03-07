@@ -22,9 +22,9 @@
                 </div>
             @endif
             <div class="d-flex flex-row ml-auto align-items-center f-12 pagination-content">
-                @if ($data->count() > 0)
+                @if ($data->total() > 0)
                     <div class="d-flex flex-row align-items-center justify-content-center pagination-row">
-                        {!! $resource->resultsFoundLabel() !!} {{ $data->count() }}
+                        {!! $resource->resultsFoundLabel() !!} {{ $data->total() }}
                         <div class="nav-scroller py-1 mb-2"> 
                             <div class="ml-3" id="resource-pagination">
                                 {{ $data->appends($_data)->links() }}
