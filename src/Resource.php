@@ -750,7 +750,7 @@ class Resource
 	public function importMethod($data)
 	{
 		extract($data);
-		$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('config','extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
+		$importer = new GlobalImporter($filepath, ResourceController::class, 'sheetImportRow', compact('config', 'extra_data', 'resource', 'fieldlist', 'filepath', 'tenant_id'));
 		Excel::import($importer, $importer->getFile());
 		$result = $importer->getResult();
 		unlink($filepath);
@@ -762,7 +762,7 @@ class Resource
 			$message = "Erro na importação de planilha de " . $resource->label() . " ( " . $result["error"]['message'] . " )";
 		}
 
-		event(new WebSocketEvent("App.User." . $user->getIdAttribute(),"user.notification",[
+		event(new WebSocketEvent("App.User." . $user->getIdAttribute(), "user.notification", [
 			"type" => $success ? "success" : "error",
 			"message" => $message
 		]));
@@ -770,7 +770,7 @@ class Resource
 		return ["success" => $success, "message" => $message];
 	}
 
-	public function importRowMethod($new, $extra_data,$config)
+	public function importRowMethod($new, $extra_data)
 	{
 		$fill_data = array_merge($new, $extra_data ? $extra_data : []);
 		$new_model = @$new["id"] ? $this->getModelInstance()->findOrFail($new["id"]) : $this->getModelInstance();

@@ -1,15 +1,8 @@
 <tr {!! $eval !!} id="resource-input-check-{{ $field }}">
-<<<<<<< HEAD
     <td class="w-25 field-title">
         <div class="d-flex flex-column">
             @if(@$label)
             <b class="input-title">{!! $label !!}</b>
-=======
-    <td class="w-25">
-        <div class="d-flex flex-column">
-            @if(@$label)
-            <span class="input-title">{!! $label !!}</span>
->>>>>>> f3f4219b266368600aa696dfd36600cca789a0a0
             @endif
             @if(@$description)
             <small class="mt-1 text-muted">

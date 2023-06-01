@@ -418,11 +418,7 @@ class ResourceController extends Controller
 
 		$_request = new Request();
 		$_request->setMethod('POST');
-<<<<<<< HEAD
 		$_request->request->add((array)json_decode($data["config"], true));
-=======
-		$_request->request->add((array)json_decode($data["config"],true));
->>>>>>> f3f4219b266368600aa696dfd36600cca789a0a0
 
 		$validator = Validator::make($_request->all(), $resource->importerValidatorRules($_request, @$validation_custom_message ?? []));
 
@@ -451,13 +447,8 @@ class ResourceController extends Controller
 			$extra_data = @$extra_data["data"];
 		}
 
-<<<<<<< HEAD
 		dispatch(function () use ($config, $filepath, $resource, $fieldlist, $tenant_id, $user, $extra_data) {
 			$importer_data = compact('config', 'filepath', 'extra_data', 'user', 'resource', 'fieldlist', 'filepath', 'tenant_id');
-=======
-		dispatch(function () use ($config,$filepath, $resource, $fieldlist, $tenant_id, $user, $extra_data) {
-			$importer_data = compact('config','filepath', 'extra_data', 'user', 'resource', 'fieldlist', 'filepath', 'tenant_id');
->>>>>>> f3f4219b266368600aa696dfd36600cca789a0a0
 			$resource->importMethod($importer_data);
 		})->onQueue(Vstack::queue_resource_import());
 
@@ -599,11 +590,7 @@ class ResourceController extends Controller
 				if ($tenant_id) {
 					$new["tenant_id"] = $tenant_id;
 				}
-<<<<<<< HEAD
 				$resource->importRowMethod($new, $extra_data, $config);
-=======
-				$resource->importRowMethod($new, $extra_data,$config);
->>>>>>> f3f4219b266368600aa696dfd36600cca789a0a0
 				$qty++;
 			}
 			DB::commit();
