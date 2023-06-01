@@ -32,8 +32,12 @@ class FilterByPresetDate extends Filter
 
     public function queryBetweenDates($column, $dates)
     {
+<<<<<<< HEAD
         $end_of_filter = (new \Carbon\Carbon($dates[1]))->endOfDay();
         return "$column >= '$dates[0]' and $column <= '$end_of_filter'";
+=======
+        return "DATE($column) >= DATE('$dates[0]') and DATE($column) <= DATE('$dates[1]')";
+>>>>>>> f3f4219b266368600aa696dfd36600cca789a0a0
     }
 
 

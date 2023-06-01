@@ -100,6 +100,7 @@
 						resource_id="{{$resource->id}}"			
 						resource_route="{{$resource->route()}}"			
 					>
+					{{-- :table_after_row='@json($table_after_row)' --}}
 					</tbody>
 				</table>
 			</div>
