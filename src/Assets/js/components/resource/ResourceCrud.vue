@@ -113,7 +113,7 @@
                                             <div :class="[
                                                 'card-footer flex-wrap d-flex flex-row',
                                                 'justify-content-end p-2 align-items-center',
-                                            ]">                                                
+                                            ]">
                                                 <portal to="crud-btns-wizard" :disabled="show_crud_right_card"
                                                     class="ml-auto d-flex align-items-center">
                                                     <template v-if="wizard_step == data.fields.length - 1">
@@ -192,7 +192,8 @@ export default {
         "content",
         "ids",
         "has_befores_store",
-        "show_crud_right_card"
+        "show_crud_right_card",
+        "loading_message"
     ],
     data() {
         return {
@@ -521,7 +522,7 @@ export default {
             if (!checked && this.raw_type != "action") {
                 return this.checkStore(clicked_btn);
             }
-            const loading_text = this.raw_type == "action" ? "Executando ..." : "Salvando ...";
+            const loading_text = this.loading_message;
             const loading = this.$loading({ text: loading_text, background: "white" });
             const payload = { ...this.form, clicked_btn }
             if (this.raw_type == "action") {

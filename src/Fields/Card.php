@@ -10,6 +10,7 @@ class Card
 	public $description;
 	public $inputs;
 	public $icon;
+	public $options;
 	public $_uid;
 
 	public function __construct($label, $inputs, $options = false)
@@ -17,6 +18,7 @@ class Card
 		$this->label = is_array($label) ? $label[0] : $label;
 		$this->description = is_array($label) ? $label[1] : "";
 		$this->inputs = $inputs;
+		$this->options = $options;
 		if (is_array($options)) {
 			foreach ($options as $key => $value) {
 				$this->{$key} = $value;
@@ -50,14 +52,16 @@ class Card
 		$inputs = $this->mapInputs();
 		$advanced = $this->advanced;
 		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
-
+		$append_content = @$this->options["append_content"] ? $this->options["append_content"] : "";
+	
 		return $this->view = view("vStack::resources.field.card", compact(
 			"label",
 			"description",
 			"inputs",
 			"advanced",
 			"index",
-			"eval"
+			"eval",
+			"append_content"
 		))->render();
 	}
 }

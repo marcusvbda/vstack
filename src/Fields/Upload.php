@@ -41,7 +41,18 @@ class Upload extends Field
         $slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
 		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
+		$aspect_ratio = @$this->options["aspect_ratio"] ? $this->options["aspect_ratio"] : 0;
+		$crop_image = (@$this->options["crop_image"] && $is_image != "true") ? $this->options["crop_image"]: false;
+        $crop_image = $crop_image ? 'true' : 'false';
+
+
+        $show_url = @$this->options["show_url"] ? $this->options["show_url"]: false;
+        $show_url = $show_url ? 'true' : 'false';
+
         return $this->view = view("vStack::resources.field.upload", compact(
+            "aspect_ratio",
+            "crop_image",
+            "show_url",
             "label",
             "uploadroute",
             "field",

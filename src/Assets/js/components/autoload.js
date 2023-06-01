@@ -14,6 +14,9 @@ require("./libs/pace");
 require("jquery-ui-dist/jquery-ui");
 require("bootstrap");
 import axios from "./libs/axios";
+import { Model } from 'vue-api-query'
+Vue.prototype.$http = axios;
+Model.$http = axios;
 require("./libs/element");
 require("./libs/loadash");
 require("./libs/pace");
@@ -27,9 +30,6 @@ Vue.prototype.$gsap = gsap;
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 Vue.prototype.$moment = moment;
-Vue.prototype.$http = axios;
-import { Model } from 'vue-api-query'
-Model.$http = axios;
 
 const debug = require("console-development");
 Vue.prototype.$debug = debug;
@@ -37,11 +37,11 @@ import io from "socket.io-client";
 Vue.prototype.$io = io;
 import PortalVue from "portal-vue";
 Vue.use(PortalVue);
-import AOS from "aos";
-import "aos/dist/aos.css";
+// import AOS from "aos";
+// import "aos/dist/aos.css";
 import getDefaultStore from "../../store";
 
-Vue.prototype.$aos = AOS;
+// Vue.prototype.$aos = AOS;
 const vue_settings = {
     store: null,
     data() {
@@ -58,11 +58,11 @@ const vue_settings = {
     },
     methods: {
         init() {
-            this.$aos.init({
-                once: true,
-                disable: !laravel.vstack.animation_enabled,
-                duration: 200,
-            });
+            // this.$aos.init({
+            //     once: true,
+            //     disable: !laravel.vstack.animation_enabled,
+            //     duration: 200,
+            // });
             let body = document.querySelector("body");
             body.style.display = "block";
         },
@@ -90,6 +90,10 @@ window.VueApp = {
     },
     initStore() {
         this.settings.store = new Vuex.Store(this.store_modules);
+    },
+    setAxios(axiosEngine) {
+        Vue.prototype.$http = axiosEngine;
+        Model.$http = axiosEngine;
     },
     start() {
         this.initStore();

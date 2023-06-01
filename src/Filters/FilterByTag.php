@@ -15,7 +15,7 @@ class FilterByTag extends Filter
     public $index = "";
     public $multiple = true;
     public $table = "";
-    public $model = "";
+    public $tag_model = "";
     public $user = null;
     public $callback = null;
 
@@ -23,17 +23,20 @@ class FilterByTag extends Filter
     {
         $this->label = $label;
         $this->index = $index;
-        $this->model = $model;
+        $this->tag_model = $model;
         $this->callback = $callback;
-        $this->table = (new $this->model)->getTable();
+        $this->model_fields = ["value" => "id", "label" => "name"];
+        $this->table = (new $this->tag_model)->getTable();
         $this->user = Auth::user();
-        $this->options = TagRelation::where("resource_tags_relation.model", $this->model)
+
+        $this->options = TagRelation::where("resource_tags_relation.model", $this->tag_model)
             ->join("resource_tags", "resource_tags.id", "=", "resource_tags_relation.resource_tag_id")
             ->groupBy("resource_tags_relation.resource_tag_id")
             ->select("resource_tags.id as value", "resource_tags.name as label")
             ->where("resource_tags.tenant_id", $this->user->tenant_id)
-            ->where("resource_tags.model", $this->model)
+            ->where("resource_tags.model", $this->tag_model)
             ->get();
+
         parent::__construct();
     }
 

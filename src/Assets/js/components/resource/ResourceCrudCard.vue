@@ -1,7 +1,7 @@
 <template>
     <div :id="label" :index="index">
         <div class="card crud-card mb-4 p-0">
-            <CrudCardHeader :label="label" :description="description">
+            <CrudCardHeader :label="label" :description="description" :form="form" :append_content="append_content">
                 <div class="d-flex justify-content-end" v-if="advanced">
                     <el-checkbox v-model="showing" class="mb-1">Visualizar Informações</el-checkbox>
                 </div>
@@ -17,8 +17,9 @@
     </div>
 </template>
 <script>
+
 export default {
-    props: ["label", "description", "advanced", "inputs", "index"],
+    props: ["label", "description", "advanced", "inputs", "index", "append_content", "form"],
     data: () => ({
         showing: false
     }),

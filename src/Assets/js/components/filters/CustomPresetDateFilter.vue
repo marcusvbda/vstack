@@ -7,18 +7,9 @@
                 <el-option :label="options[key][0]" :value="key" :key="i" />
             </template>
         </el-select>
-        <el-date-picker
-            v-if="type === 'custom'"
-            class="mt-3 w-100"
-            v-model="custom_dates"
-            type="daterange"
-            align="right"
-            unlink-panels
-            format="dd/MM/yyyy"
-            value-format="yyyy-MM-dd"
-            end-placeholder="Data Fim"
-            start-placeholder="Data início"
-        />
+        <el-date-picker v-if="type === 'custom'" class="mt-3 w-100" v-model="custom_dates" type="daterange"
+            align="right" unlink-panels format="dd/MM/yyyy" value-format="yyyy-MM-dd" end-placeholder="Data Fim"
+            start-placeholder="Data início" />
     </div>
 </template>
 <script>
@@ -26,7 +17,7 @@ export default {
     props: ["filter", "index", "submit", "options"],
     data() {
         return {
-            type: this.getParams().type,
+            type: this.getParams()?.type ?? "todos",
             custom_dates: this.getParams().custom_dates,
         };
     },

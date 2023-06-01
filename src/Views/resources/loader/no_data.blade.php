@@ -1,13 +1,13 @@
 <div class="d-flex flex-column row align-items-center justify-items-center">
     <div class="col-md-6 col-sm-12 text-center">
-        <h4 class="text-center mt-5">
+        <h4 class="text-center my-4 d-flex flex-column">
             @if ($resource->icon())
-                <h1 style="opacity: .3;font-size: 250px;"><span class="{{ $resource->icon() }}"></span></h1>
+                <h1 style="opacity: .3;font-size: 200px;"><span class="{{ $resource->icon() }}"></span></h1>
             @endif
-            <div>{!! $resource->nothingStoredText() !!}</div>
+            {{ $resource->noResultsFoundText() }}
             @if (@!$report_mode)
                 @if ($resource->canCreate() || $resource->canImport())
-                    <div>{!! $resource->nothingStoredSubText() !!}</div>
+                    <small>{!! $resource->nothingStoredSubText() !!}</small>
                 @endif
             @endif
         </h4>

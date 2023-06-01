@@ -16,7 +16,6 @@
     <template slot="content">		
 		@if($list_type == "table")
 			@php
-				$table_after_row = @$resource->tableAfterRow(@$data[0]) !== false;
 				$has_actions = count($resource->actions()) > 0;
 				$show_right_actions_column = $resource->showRightActionsColumn();
 			@endphp
@@ -36,9 +35,7 @@
 				<table class="table table-striped hovered resource-table table-hover mb-0">
 					<thead id="resource-list-head">
 						<tr>
-							@if($table_after_row)
-								<th  width="1%;"></th>
-							@endif
+							<th  width="1%;"></th>
 							@if($has_actions)
 								<th  width="1%;" id="resource-list-head-action">
 									<div class="d-flex align-items-center justify-content-center">
@@ -51,6 +48,9 @@
 									$size = data_get($value,'size','auto');
 									$col_class = data_get($value,"col_class",'text-left');
 									$sortable_index = data_get($value,"sortable_index",$key);
+									if(!preg_match('/\d+(%|em|px|rem)/', $size) && is_numeric($size)) {
+										$size .= 'px';
+									}
 								@endphp
 								<th width="{{$size}}" class="resource-table-col {{ $col_class }}" id="resource-list-head-{{ $sortable_index }}">					
 									@if(@data_get($value,"sortable") !== false)
@@ -95,7 +95,6 @@
 					<tbody is="resource-tablelist-allinone" 
 						:rows='@json($rows_data)'
 						:table_keys='@json($table_keys)'
-						:table_after_row='@json($table_after_row)'
 						:has_actions='@json($has_actions)'
 						:show_right_actions_column='@json($show_right_actions_column)'	
 						resource_id="{{$resource->id}}"			

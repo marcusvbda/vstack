@@ -31,44 +31,59 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 		$report_mode = $type == "report";
+
 		if ($report_mode) {
 			request()->merge(["page_type" => "report"]);
 		} else {
 			request()->merge(["page_type" => "list"]);
 		}
-		if ($report_mode) {
-			if (!$resource->canViewReport()) {
-				abort(403);
-			}
-		} else {
-			if (!$resource->canViewList()) {
-				abort(403);
+
+		if ($type != "count") {
+			if ($report_mode) {
+				if (!$resource->canViewReport()) {
+					abort(403);
+				}
+			} else {
+				if (!$resource->canViewList()) {
+					abort(403);
+				}
 			}
 		}
-		$data = $this->getData($resource, $request);
-		$per_page = $this->getPerPage($resource);
 
-		$data = $data->select("*")->paginate($per_page);
+		$data = $this->getData($resource, $request);
+		$data->withoutAppends = true;
+
+		if ($type == "count") {
+			return json_encode(['count' => $data->select(0)->count()]);
+		}
+
+		$per_page = $this->getPerPage($resource);
+		$data = $data->select("*")->cursorPaginate($per_page);
+
 		if ($report_mode) {
 			$data->setPath(route('resource.report', ["resource" => $resource->id]));
 		} else {
 			$data->setPath(route('resource.index', ["resource" => $resource->id]));
 		}
+
 		if (@$request["list_type"]) {
 			$this->storeListType($resource, $request["list_type"]);
 		}
-		$user = Auth::user();
 
-		$model_count = $resource->model->count();
+		$user = Auth::user();
+		$model_count = 1;
+
 		if (!$model_count) {
 			$template = "<div>" . view("vStack::resources.loader.no_data", compact("resource", "model_count", "report_mode"))->render() . "</div>";
 			$minified_template = ResourcesHelpers::minify($template);
 			$template_chunked = str_split($minified_template, 100);
 			$response = ['template' => $template_chunked, "type" => "no_data"];
+
 			return json_encode($response, JSON_INVALID_UTF8_IGNORE);
 		} else {
 			$filters = $resource->filters();
 			$_data =  request()->all();
+
 			if (@$_data["page"]) {
 				unset($_data['page']);
 			}
@@ -79,19 +94,20 @@ class ResourceController extends Controller
 			$topGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
 				$template = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
 				$template = ResourcesHelpers::minify($template);
-				$template = str_split($template, 500);
+				$template = str_split($template, 250);
 				return $template;
 			};
 
 			$tableGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
 				$template = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
 				$template = ResourcesHelpers::minify($template);
-				$template = str_split($template, 500);
+				$template = str_split($template, 250);
 				return $template;
 			};
 
 			$top = $topGetter();
 			$table = $tableGetter();
+
 			return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
 		}
 	}
@@ -377,8 +393,8 @@ class ResourceController extends Controller
 		if (!count($header)) {
 			return ["success" => false, "message" => ["type" => "error", "text" => "Cabeçalho da planilha nao encontrado"]];
 		}
-		
-		return $resource->importHeader($header);		
+
+		return $resource->importHeader($header);
 	}
 
 	public function importSubmit($resource, Request $request)
@@ -398,7 +414,20 @@ class ResourceController extends Controller
 			return ["success" => false, "message" => ["type" => "error", "text" => "Arquivo maior do que o permitido..."]];
 		}
 
+		$validation_custom_message =  $resource->importerValidatorRulesMessages();
+
+		$_request = new Request();
+		$_request->setMethod('POST');
+		$_request->request->add((array)json_decode($data["config"], true));
+
+		$validator = Validator::make($_request->all(), $resource->importerValidatorRules($_request, @$validation_custom_message ?? []));
+
+		if ($validator->fails()) {
+			throw new HttpResponseException(response()->json(["errors" => $validator->errors()], 422));
+		}
+
 		$config = json_decode($data["config"]);
+
 		$fieldlist = $config->fieldlist;
 		$tenant_id = Auth::user()->tenant()->first()->id;
 		$filename = $tenant_id . "_" . uniqid() . ".xlsx";
@@ -418,8 +447,8 @@ class ResourceController extends Controller
 			$extra_data = @$extra_data["data"];
 		}
 
-		dispatch(function () use ($filepath, $resource, $fieldlist, $tenant_id, $user, $extra_data) {
-			$importer_data = compact('filepath', 'extra_data', 'user', 'resource', 'fieldlist', 'filepath', 'tenant_id');
+		dispatch(function () use ($config, $filepath, $resource, $fieldlist, $tenant_id, $user, $extra_data) {
+			$importer_data = compact('config', 'filepath', 'extra_data', 'user', 'resource', 'fieldlist', 'filepath', 'tenant_id');
 			$resource->importMethod($importer_data);
 		})->onQueue(Vstack::queue_resource_import());
 
@@ -512,33 +541,29 @@ class ResourceController extends Controller
 
 		$current_page = data_get($data, "exporting.current_page");
 		$per_page = data_get($data, "exporting.per_page");
-		$last_page = data_get($data, "exporting.last_page");
 
-		$results = $query->select("*")->paginate($per_page, ['*'], 'page', $current_page);
-
+		$results = $query->select("*")->cursorPaginate($per_page);
 		$processed_row = $this->processExportRow($resource, $results, $data);
 
-		$action = $current_page === $last_page ? "finish" : "next_page";
-		return response()->json(["action" => $action, "processed_row" => $processed_row]);
+		$action = !$results->hasMorePages() ? "finish" : "next_page";
+		return response()->json(["action" => $action, "processed_row" => $processed_row, "next_page" => $results->nextPageUrl()]);
 	}
 
 	protected function processExportRow($resource, $results, $data)
 	{
-		$vstack_controller = new VstackController;
-		$columns = data_get($data, 'columns');
+		$exportColumns = $resource->exportColumns();
+
+		$columns = collect($data['columns'])
+			->filter(fn ($x) => $x['enabled'])
+			->transform(fn ($x) => $x['handler'] = collect($exportColumns)->first(fn ($y) => $y['label'] == $x['label']))
+			->toArray();
+
 		$processed_rows = [];
+
 		foreach ($results as $row) {
-			$result = (array_map(function ($key)  use ($row, $columns, $vstack_controller, $resource) {
-				$enabled = data_get($columns, $key . ".enabled");
-				if ($enabled) {
-					return $vstack_controller->getColumnIndex($resource->exportColumns(), $row, $key);
-				}
-			}, array_keys($columns)));
-			$result = array_filter($result, function ($row) {
-				return @$row !== null;
-			});
-			$processed_rows[] = array_values($result);
+			$processed_rows[] = array_map(fn ($x) => $columns[$x]['handler']($row), array_keys($columns));
 		}
+
 		return $processed_rows;
 	}
 
@@ -565,7 +590,7 @@ class ResourceController extends Controller
 				if ($tenant_id) {
 					$new["tenant_id"] = $tenant_id;
 				}
-				$resource->importRowMethod($new, $extra_data);
+				$resource->importRowMethod($new, $extra_data, $config);
 				$qty++;
 			}
 			DB::commit();
@@ -1113,7 +1138,7 @@ class ResourceController extends Controller
 
 	public function editResource($resource_id, $code, Request $request)
 	{
-		$id = @$decoded[0] ?? $code;
+		$id = @$code[0] ?? $code;
 		$result = $this->apiStore($resource_id, $id, "edit", $request);
 		return response()->json(data_get($result, "model"));
 	}
@@ -1126,7 +1151,7 @@ class ResourceController extends Controller
 
 	public function destroyResource($resource_id, $code, Request $request)
 	{
-		$id = @$decoded[0] ?? $code;
+		$id = @$code[0] ?? $code;
 		$result = $this->destroy($resource_id, $id, $request);
 		return response()->json(data_get($result, "success"));
 	}

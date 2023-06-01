@@ -194,7 +194,7 @@ export default {
                     this.exporting.exported += data.processed_row.length;
                     this.updateEstimatedTime();
                     handleAppendRowToWorkSheet(data.processed_row);
-                    this.handleExport();
+                    this.handleExport(data.next_page ?? null);
                 },
                 finish: (data) => {
                     this.exporting.exported = this.exporting.total_results
@@ -283,9 +283,9 @@ export default {
                 }, this.humanize_timeout);
             });
         },
-        handleExport() {
+        handleExport(pNextPage) {
             this.$http
-                .post(`/admin/${this.id}/export`, this.exportingParameters)
+                .post(pNextPage ?? `/admin/${this.id}/export`, this.exportingParameters)
                 .then(({ data }) => {
                     const { action } = data;
                     return this.actions[action] && this.actions[action](data);

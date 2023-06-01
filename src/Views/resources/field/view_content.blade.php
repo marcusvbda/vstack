@@ -11,9 +11,9 @@
     {!! $eval !!}    
 >
 <template #prepend-slot>
-    {!! $slot_top !!}
+    {!! @$slot_top !!}
 </template>
 <template #append-slot>
-    {!! $slot_bottom !!}
+    {!! @$slot_bottom !!}
 </template>
 </v-input-view-content>

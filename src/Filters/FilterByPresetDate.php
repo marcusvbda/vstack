@@ -11,7 +11,9 @@ class FilterByPresetDate extends Filter
     public $label       = "Data de Criação";
     public $index = "created_at";
     public $field = "created_at";
+    public $element = "";
     public $action = null;
+    public $column = null;
     public $joins = [];
 
     public $_options = [
@@ -25,12 +27,14 @@ class FilterByPresetDate extends Filter
         "esta semana" => ["Esta semana", "getThisWeek"],
         "este mes" =>  ["Este mês", "getThisMonth"],
         "este ano" =>  ["Este ano", "getThisYear"],
+        "todos" =>  ["Todos os Resultados", "getAll"],
     ];
 
     public function queryBetweenDates($column, $dates)
-	{
-		return "DATE($column) >= DATE('$dates[0]') and DATE($column) <= DATE('$dates[1]')";
-	}
+    {
+        $end_of_filter = (new \Carbon\Carbon($dates[1]))->endOfDay();
+        return "$column >= '$dates[0]' and $column <= '$end_of_filter'";
+    }
 
 
     public function __construct($options = [])
@@ -76,75 +80,81 @@ class FilterByPresetDate extends Filter
         return $values;
     }
 
+    protected function getAll()
+    {
+        return [null, null];
+    }
+
     protected function getLastThirthDays()
     {
-        $starts = $this->format(Carbon::now()->subDays(30));
-        $ends = $this->format(Carbon::now());
+        $starts = Carbon::today()->subDays(30);
+        $ends = Carbon::today();
         return [$starts, $ends];
     }
 
     protected function getLastFourteenDays()
     {
-        $starts = $this->format(Carbon::now()->subDays(14));
-        $ends = $this->format(Carbon::now());
+        $starts = Carbon::today()->subDays(14);
+        $ends = Carbon::today();
         return [$starts, $ends];
     }
 
     protected function getLastFifteenDays()
     {
-        $starts = $this->format(Carbon::now()->subDays(15));
-        $ends = $this->format(Carbon::now());
+        $starts = Carbon::today()->subDays(15);
+        $ends = Carbon::today();
         return [$starts, $ends];
     }
 
     protected function getLastFiveDays()
     {
-        $starts = $this->format(Carbon::now()->subDays(5));
-        $ends = $this->format(Carbon::now());
+        $starts = Carbon::today()->subDays(5);
+        $ends = Carbon::today();
         return [$starts, $ends];
     }
 
     protected function getLastSevenDays()
     {
-        $starts = $this->format(Carbon::now()->subDays(7));
-        $ends = $this->format(Carbon::now());
+        $starts = Carbon::today()->subDays(7);
+        $ends = Carbon::today();
         return [$starts, $ends];
     }
 
     protected function getYesterday()
     {
-        $yesterday = $this->format(Carbon::now()->subDays(1));
+        $yesterday = Carbon::today()->subDays(1);
         return [$yesterday, $yesterday];
     }
 
     protected function getToday()
-    {
-        $today = $this->format(Carbon::now());
-        return [$today, $today];
+    {        
+        $today = Carbon::today();
+        $today_end = Carbon::today();
+        return [$today, $today_end];
     }
 
     protected function getThisWeek()
     {
         return [
-            $this->format(Carbon::now()->startOfWeek()->subDays(1)),
-            $this->format(Carbon::now()->endOfWeek()->subDays(1)),
+            Carbon::today()->startOfWeek()->subDays(1),
+            Carbon::today()->endOfWeek(),
         ];
     }
 
     protected function getThisYear()
     {
-        $year = Carbon::now()->format("Y");
+        $year = Carbon::today()->format("Y");
         return [
-            $this->format(Carbon::create("01-01-$year")),
-            $this->format(Carbon::create("31-12-$year"))
+            Carbon::create("01-01-$year"),
+            Carbon::create("31-12-$year")
         ];
     }
 
     protected function getThisMonth()
     {
         return [
-            $this->format(Carbon::now()->startOfMonth()),
-            $this->format(Carbon::now()->endOfMonth()),
+            Carbon::today()->startOfMonth(),
+            Carbon::today()->endOfMonth(),
         ];
     }
 

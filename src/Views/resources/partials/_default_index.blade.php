@@ -10,12 +10,10 @@
         <div class="d-flex flex-row  flex-wrap align-items-center sm-w-100 sm-mt-4">
             @if (!$report_mode)
             @if ($resource->canCreate())
-            @if ($resource->model->count() > 0)
             <resource-store-btn class="resource-btn" resource_id='{{ $resource->id }}'
                 :crud_type='@json($resource->crudType())' label="{{ $resource->storeButtonLabel() }}"
                 route="{{ route('resource.create', ['resource' => $resource->id]) }}">
             </resource-store-btn>
-            @endif
             @endif
             @if ($resource->canImport())
             <a class="ml-2 mr-4 f-12 link" id="resource-import-link"

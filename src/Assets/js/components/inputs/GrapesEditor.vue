@@ -131,12 +131,10 @@ export default {
             return content;
         },
         processModel() {
-            let content = this.iframeWindow.grapesEditor.getHtml();
-            let css = this.iframeWindow.grapesEditor.getCss();
-            if (content && css) {
-                content = `<style>${css}</style>${content}`;
+            const content = this.iframeWindow.grapesEditor.runCommand('gjs-get-inlined-html')
+            if (content) {
+                this.content = this.minify(content ?? '')
             }
-            this.content = this.minify(content);
         },
         setTheme() {
             let doc = this.$refs.iframe.contentDocument;
