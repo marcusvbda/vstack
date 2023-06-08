@@ -23,10 +23,6 @@ require("./libs/pace");
 require("./libs/helpers");
 require("./libs/marked");
 require("@fortawesome/fontawesome-free/js/all.js");
-import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
-Vue.prototype.$gsap = gsap;
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 Vue.prototype.$moment = moment;
@@ -37,11 +33,9 @@ import io from "socket.io-client";
 Vue.prototype.$io = io;
 import PortalVue from "portal-vue";
 Vue.use(PortalVue);
-// import AOS from "aos";
-// import "aos/dist/aos.css";
 import getDefaultStore from "../../store";
 
-// Vue.prototype.$aos = AOS;
+
 const vue_settings = {
     store: null,
     data() {
@@ -50,22 +44,10 @@ const vue_settings = {
         };
     },
     created() {
-        this.init();
         this.$pace.start();
     },
     mounted() {
         this.$pace.stop();
-    },
-    methods: {
-        init() {
-            // this.$aos.init({
-            //     once: true,
-            //     disable: !laravel.vstack.animation_enabled,
-            //     duration: 200,
-            // });
-            let body = document.querySelector("body");
-            body.style.display = "block";
-        },
     },
 };
 import Vuex from "vuex";

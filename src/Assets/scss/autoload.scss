@@ -1,8 +1,34 @@
-@import "resources";
+// @import "resources";
 @import "./libs/linkPreview";
 @import "./libs/pace";
 @import "./libs/shimmer";
 @import "./libs/vue_transitions";
 @import "~element-ui/lib/theme-chalk/index.css";
-@import "~bootstrap/scss/bootstrap";
+// @import "~bootstrap/scss/bootstrap";
 @import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.vstack-form {
+  .form-label {
+    @apply text-neutral-900 text-xs mb-2;
+  }
+
+  .form-input {
+    @apply text-neutral-800 border rounded-md p-2;
+  }
+}
+
+.vstack-btn {
+  @apply rounded-md py-2 text-sm font-semibold leading-5 text-white disabled:opacity-50 enabled:opacity-100 px-10;
+
+  &.primary {
+    @apply bg-blue-600  enabled:hover:bg-blue-500 disabled:cursor-not-allowed;
+  }
+}
+
+.el-loading-spinner {
+  @apply flex flex-col items-center justify-center;
+}
