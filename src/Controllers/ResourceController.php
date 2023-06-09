@@ -54,10 +54,12 @@ class ResourceController extends Controller
 		$data->withoutAppends = true;
 
 		if ($type == "count") {
-			return json_encode(['count' => $data->select(0)->count()]);
+			$result = $resource->resultsFoundLabel() . $data->select(0)->count();
+			return json_encode(['count' => $result]);
 		}
 
 		$per_page = $this->getPerPage($resource);
+
 		$data = $data->select("*")->cursorPaginate($per_page);
 
 		if ($report_mode) {
@@ -71,45 +73,24 @@ class ResourceController extends Controller
 		}
 
 		$user = Auth::user();
-		$model_count = 1;
 
-		if (!$model_count) {
-			$template = "<div>" . view("vStack::resources.loader.no_data", compact("resource", "model_count", "report_mode"))->render() . "</div>";
-			$minified_template = ResourcesHelpers::minify($template);
-			$template_chunked = str_split($minified_template, 100);
-			$response = ['template' => $template_chunked, "type" => "no_data"];
+		$filters = $resource->filters();
+		$_data =  request()->all();
 
-			return json_encode($response, JSON_INVALID_UTF8_IGNORE);
-		} else {
-			$filters = $resource->filters();
-			$_data =  request()->all();
-
-			if (@$_data["page"]) {
-				unset($_data['page']);
-			}
-			if (@$_data["page_type"]) {
-				unset($_data['page_type']);
-			}
-
-			$topGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
-				$template = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
-				$template = ResourcesHelpers::minify($template);
-				$template = str_split($template, 250);
-				return $template;
-			};
-
-			$tableGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
-				$template = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
-				$template = ResourcesHelpers::minify($template);
-				$template = str_split($template, 250);
-				return $template;
-			};
-
-			$top = $topGetter();
-			$table = $tableGetter();
-
-			return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
+		if (@$_data["page"]) {
+			unset($_data['page']);
 		}
+		if (@$_data["page_type"]) {
+			unset($_data['page_type']);
+		}
+
+		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
+		$top = str_split(ResourcesHelpers::minify($top), 250);
+
+		// 	$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
+		// 	$table = str_split(ResourcesHelpers::minify($template), 250);
+
+		return json_encode(['top' => $top, "table" => "<div></div>", "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
 	}
 
 	public function getListItem(Request $request)
@@ -124,14 +105,10 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 
-		if ($report_mode) {
-			if (!$resource->canViewReport()) {
-				abort(403);
-			}
-		} else {
-			if (!$resource->canViewList()) {
-				abort(403);
-			}
+		if ($report_mode && !$resource->canViewReport()) {
+			abort(403);
+		} else if (!$resource->canViewList()) {
+			abort(403);
 		}
 		if (request()->response_type == "json") {
 			$data = $this->getData($resource, $request);

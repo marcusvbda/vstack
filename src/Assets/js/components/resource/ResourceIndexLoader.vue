@@ -2,28 +2,31 @@
     <div>
         <VRuntimeTemplate v-if="template.top" :template="template.top" />
         <VRuntimeTemplate v-if="template.table" :template="template.table" />
-        <VRuntimeTemplate v-if="template.no_data" :template="template.no_data" />
+        <VRuntimeTemplate
+            v-if="template.no_data"
+            :template="template.no_data"
+        />
         <portal to="total-count">
             {{ total_count }}
         </portal>
     </div>
 </template>
 <script>
-import VRuntimeTemplate from "v-runtime-template";
+import VRuntimeTemplate from 'v-runtime-template';
 
 export default {
-    props: ["resource_id", "report_mode"],
+    props: ['resource_id', 'report_mode'],
     components: {
         VRuntimeTemplate,
     },
     data() {
         return {
             template: {
-                no_data: "",
-                top: "",
-                table: "",
+                no_data: '',
+                top: '',
+                table: '',
             },
-            total_count: '...',
+            total_count: '',
         };
     },
     computed: {
@@ -38,30 +41,26 @@ export default {
         removeLoadingEl(el) {
             this.$waitForEl(el).then(() => {
                 document.querySelector(el).remove();
-            })
+            });
         },
         init() {
             const payload = {
-                params: this.query_params
+                params: this.query_params,
             };
-            
-            const route = `/admin/${this.resource_id}/${this.report_mode ? "report" : "list"}/get-list-data`;
+
+            const route = `/admin/${this.resource_id}/${
+                this.report_mode ? 'report' : 'list'
+            }/get-list-data`;
             this.$http
                 .get(route, payload)
                 .then(({ data }) => {
-                    if (data.type == "no_data") {
-                        const no_data_template = data.template.join("");
-                        this.template.no_data = no_data_template;
-                        this.removeLoadingEl("#loading-section")
-                    } else {
-                        const top_template = data.top.join("");
-                        this.template.top = top_template;
-                        this.removeLoadingEl("#loading-section #top-loader")
+                    const top_template = data.top.join('');
+                    this.template.top = top_template;
+                    this.removeLoadingEl('#loading-section #top-loader');
 
-                        const table_template = data.table.join("");
-                        this.template.table = table_template;
-                        this.removeLoadingEl("#loading-section #table-loader")
-                    }
+                    const table_template = data.table.join('');
+                    this.template.table = table_template;
+                    this.removeLoadingEl('#loading-section #table-loader');
                 })
                 .catch((error) => {
                     console.log(error);
@@ -71,7 +70,7 @@ export default {
             this.$http
                 .get(count_route, payload)
                 .then(({ data }) => {
-                    this.total_count = data.count
+                    this.total_count = data.count;
                 })
                 .catch((error) => {
                     console.log(error);

@@ -4,5 +4,8 @@
 @include("vStack::resources.partials._breadcrumb")
 @endsection
 @section('content')
-@php $user = Auth::user(); @endphp
+<?php
+$user = Auth::user();
+?>
 @include($resource->indexBlade())
+@endsection

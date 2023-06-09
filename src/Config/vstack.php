@@ -8,7 +8,10 @@ return [
 	],
 	"upload_disk" => "local",
 	"prepend_breadcrumb" => [
-		"Dashboard" => "/admin",
+		[
+			"title" => "Dashboard",
+			"route" => "/admin"
+		]
 	],
 	"api" => [
 		"token_expiration" => "1 hour",

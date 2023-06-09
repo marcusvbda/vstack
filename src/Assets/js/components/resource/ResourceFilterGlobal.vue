@@ -1,5 +1,5 @@
 <template>
-    <form class="needs-validation mb-0" v-on:submit.prevent="submit">
+    <form v-on:submit.prevent="submit" class="m-0">
         <el-input
             size="medium"
             placeholder="Pesquisar ..."
@@ -18,7 +18,7 @@
 </template>
 <script>
 export default {
-    props: ["data"],
+    props: ['data'],
     data() {
         return {
             filter: this.data.value,
@@ -39,16 +39,16 @@ export default {
             this.makeNewRoute();
         },
         makeNewRoute() {
-            let str_query = "";
+            let str_query = '';
             for (let i in this.data.query) {
-                if (i != "page" && i != "_") {
-                    if (!["null", null].includes(this.data.query[i])) {
+                if (i != 'page' && i != '_') {
+                    if (!['null', null].includes(this.data.query[i])) {
                         str_query += `${i}=${this.data.query[i]}&`;
                     }
                 }
             }
             str_query = str_query.slice(0, -1);
-            str_query += `${str_query ? "&" : ""}_=${this.filter}`;
+            str_query += `${str_query ? '&' : ''}_=${this.filter}`;
             window.location.href = `${this.data.filter_route}?${str_query}`;
         },
     },

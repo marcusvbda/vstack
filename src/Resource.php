@@ -144,7 +144,7 @@ class Resource
 
 	public function resultsFoundLabel()
 	{
-		return "<span class='mr-1'>Resultados encontrados :</span>  ";
+		return "Resultados encontrados :  ";
 	}
 
 	public function nothingStoredText()
