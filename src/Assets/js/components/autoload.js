@@ -44,10 +44,17 @@ const vue_settings = {
         };
     },
     created() {
+        this.init();
         this.$pace.start();
     },
     mounted() {
         this.$pace.stop();
+    },
+    methods: {
+        init() {
+            let body = document.querySelector("body");
+            body.style.display = "block";
+        },
     },
 };
 import Vuex from "vuex";
