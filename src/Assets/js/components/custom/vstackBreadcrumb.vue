@@ -11,12 +11,12 @@
                     :key="index"
                     :href="item.url"
                     :class="[
-                        'inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600',
-                        index != items.length - 1 ? 'text-black' : '',
+                        'inline-flex items-center text-sm font-medium  hover:text-blue-600',
+                        index != items.length - 1 ? 'text-gray-700' : '',
                     ]"
                 >
                     <svg
-                        v-if="index != 0 && index != items.length - 1"
+                        v-if="index != 0"
                         aria-hidden="true"
                         class="w-6 h-6 text-gray-400"
                         fill="currentColor"
@@ -27,9 +27,9 @@
                             fill-rule="evenodd"
                             d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                             clip-rule="evenodd"
-                        ></path>
+                        />
                     </svg>
-                    Home
+                    {{ item.title }}
                 </a>
             </li>
         </ol>
