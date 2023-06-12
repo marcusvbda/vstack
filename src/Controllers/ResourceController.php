@@ -60,16 +60,12 @@ class ResourceController extends Controller
 
 		$per_page = $this->getPerPage($resource);
 
-		$data = $data->select("*")->cursorPaginate($per_page);
+		$data = $data->select("*")->paginate($per_page);
 
 		if ($report_mode) {
 			$data->setPath(route('resource.report', ["resource" => $resource->id]));
 		} else {
 			$data->setPath(route('resource.index', ["resource" => $resource->id]));
-		}
-
-		if (@$request["list_type"]) {
-			$this->storeListType($resource, $request["list_type"]);
 		}
 
 		$user = Auth::user();
@@ -87,10 +83,10 @@ class ResourceController extends Controller
 		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
 		$top = str_split(ResourcesHelpers::minify($top), 250);
 
-		// 	$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
-		// 	$table = str_split(ResourcesHelpers::minify($template), 250);
+		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
+		$table = str_split(ResourcesHelpers::minify($table), 250);
 
-		return json_encode(['top' => $top, "table" => "<div></div>", "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
+		return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
 	}
 
 	public function getListItem(Request $request)
@@ -117,22 +113,6 @@ class ResourceController extends Controller
 			return $data;
 		}
 		return view("vStack::resources.index", compact("resource", "report_mode"));
-	}
-
-	private function storeListType($resource, $type)
-	{
-		if (Auth::check()) {
-			$user = Auth::user();
-			$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", 'list_type')->first();
-			$config = @$config->id ? $config : new ResourceConfig;
-			$_data = @$config->data ?? (object)[];
-			$_data->type = $type;
-			$_data->user_id = $user->id;
-			$config->data = $_data;
-			$config->resource = $resource->id;
-			$config->config = 'list_type';
-			$config->save();
-		}
 	}
 
 	public function createReportTemplate($resource, Request $request)

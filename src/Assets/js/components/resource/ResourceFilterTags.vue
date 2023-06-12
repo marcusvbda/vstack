@@ -1,8 +1,16 @@
 <template>
-    <div class="d-flex align-items-center flex-row flex-wrap">
-        <ElTag class="filter-tag mb-2 ml-0 mr-2" size="mini" :closable="prevent_close == undefined"
-            v-for="(f, i) in selected_filters" :key="i" effect="dark" @close="handleClose(f.index)" style="height: auto"
-            :id="`resource-filter-tag-${f.index}`">
+    <div class="flex items-center flex-row flex-wrap" style="gap:5px'">
+        <ElTag
+            class="filter-tag mb-2"
+            size="mini"
+            :closable="prevent_close == undefined"
+            v-for="(f, i) in selected_filters"
+            :key="i"
+            effect="dark"
+            @close="handleClose(f.index)"
+            style="height: auto"
+            :id="`resource-filter-tag-${f.index}`"
+        >
             <b class="mr-2">{{ f.label }}</b> :
             <ResourceTagContent :filter="f" />
         </ElTag>
@@ -11,28 +19,46 @@
 <script>
 import ResourceTagContent from './partials/-resource-tag-content.vue';
 export default {
-    props: ["get_params", "resource_filters", "prevent_close"],
+    props: ['get_params', 'resource_filters', 'prevent_close'],
     components: {
-        ResourceTagContent
+        ResourceTagContent,
     },
     computed: {
         selected_filters() {
             const results = this.resource_filters
                 .map((rf) => {
                     if (this.hasContent(this.get_params, rf.index)) {
-                        let content = "";
-                        if (rf.component == "select-filter" && rf.options && rf.options.length) {
+                        let content = '';
+                        if (
+                            rf.component == 'select-filter' &&
+                            rf.options &&
+                            rf.options.length
+                        ) {
                             if (!rf?.multiple) {
-                                content = rf.options.find((x) => x.value == this.get_params[rf.index])?.label ?? "";
+                                content =
+                                    rf.options.find(
+                                        (x) =>
+                                            x.value == this.get_params[rf.index]
+                                    )?.label ?? '';
                             } else {
                                 let ids = this.get_params[rf.index]
-                                    .split(",")
-                                    .map((x) => (x ? (!isNaN(Number(x)) ? Number(x) : x) : ""));
+                                    .split(',')
+                                    .map((x) =>
+                                        x
+                                            ? !isNaN(Number(x))
+                                                ? Number(x)
+                                                : x
+                                            : ''
+                                    );
                                 content = rf.options
-                                    .filter((x) => ids.includes(x.value) || ids.includes(parseInt(x.value)))
+                                    .filter(
+                                        (x) =>
+                                            ids.includes(x.value) ||
+                                            ids.includes(parseInt(x.value))
+                                    )
                                     .map((x) => x.label)
                                     .filter((x) => x)
-                                    .join(", <br>");
+                                    .join(', <br>');
                             }
                         } else {
                             content = this.processWithOptions(rf);
@@ -41,8 +67,8 @@ export default {
                             label: rf.label,
                             index: rf.index,
                             content: content,
-                            get_value: this.get_params[rf.index] ?? "",
-                            original: rf
+                            get_value: this.get_params[rf.index] ?? '',
+                            original: rf,
                         };
                     }
                 })
@@ -62,7 +88,9 @@ export default {
             if (!filter) return false;
             if (filter[key]) {
                 if (Array.isArray(filter[key])) {
-                    return filter[key].filter((x) => x).length > 0 ? true : false;
+                    return filter[key].filter((x) => x).length > 0
+                        ? true
+                        : false;
                 }
                 return true;
             }
@@ -71,12 +99,19 @@ export default {
         handleClose(index) {
             let params = Object.assign({}, this.get_params);
             delete params[index];
-            if (params["page"]) delete params["page"];
+            if (params['page']) delete params['page'];
             let query = Object.keys(params)
-                .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
-                .join("&");
-            this.$loading({ text: "Atualizando Filtros..." });
-            return (window.location.href = `${window.location.href.split("?")[0]}?${query}`);
+                .map(
+                    (k) =>
+                        `${encodeURIComponent(k)}=${encodeURIComponent(
+                            params[k]
+                        )}`
+                )
+                .join('&');
+            this.$loading({ text: 'Atualizando Filtros...' });
+            return (window.location.href = `${
+                window.location.href.split('?')[0]
+            }?${query}`);
         },
     },
 };

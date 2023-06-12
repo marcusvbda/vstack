@@ -91,9 +91,14 @@ class Resource
 		return "<span class='" . $this->icon() . " mr-2'></span>" . " Relatório de " . $this->label();
 	}
 
+	public function storeBtnText()
+	{
+		return "Cadastrar";
+	}
+
 	public function storeButtonlabel()
 	{
-		return "<span class='el-icon-plus mr-2'></span>Cadastrar";
+		return "<span class='el-icon-plus mr-2'></span>" . $this->storeBtnText();
 	}
 
 	public function importButtonlabel()
@@ -183,7 +188,7 @@ class Resource
 
 	public function nothingStoredSubText()
 	{
-		return "<small>Clique no botão abaixo para adicionar um registro</small>";
+		return "<small>Clique em <b>'" . $this->storeBtnText() . "'</b> para adicionar um novo registro</small>";
 	}
 
 	public function fields()
@@ -366,11 +371,6 @@ class Resource
 	public function canExport()
 	{
 		return $this->canViewReport();
-	}
-
-	public function listType()
-	{
-		return ["table"];
 	}
 
 	public function canUpdate()
