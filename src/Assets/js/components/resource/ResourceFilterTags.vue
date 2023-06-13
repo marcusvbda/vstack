@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center flex-row flex-wrap" style="gap:5px'">
+    <div class="flex items-center flex-wrap" style="gap:5px'">
         <ElTag
             class="filter-tag mb-2"
             size="mini"

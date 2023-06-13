@@ -30,6 +30,7 @@ class Text extends Field
 		$mask           = json_encode($this->options["mask"]);
 		$placeholder    = $this->options["placeholder"];
 		$step           = @$this->options["step"] ?? 1;
+		$rows           = @$this->options["rows"] ?? 1;
 		$disabled       = @$this->options["disabled"] ? "true" : "false";
 		$description    = $this->options["description"];
 		$visible        = $this->options["visible"] ? 'true' : 'false';
@@ -59,7 +60,8 @@ class Text extends Field
 			"eval",
 			"show_value_length",
 			"slot_top",
-			"slot_bottom"
+			"slot_bottom",
+			"rows",
 		))->render();
 	}
 }

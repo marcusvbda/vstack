@@ -1,6 +1,6 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
-        <div class="d-flex flex-column">
+        <div class="flex flex-col">
             <slot name="prepend-slot" />
             <div v-html="processed_value" v-if="!loading" />
             <slot name="append-slot" />
@@ -9,7 +9,16 @@
 </template>
 <script>
 export default {
-    props: ["label", "description", "field", "value", "type", "options", "model", "format"],
+    props: [
+        'label',
+        'description',
+        'field',
+        'value',
+        'type',
+        'options',
+        'model',
+        'format',
+    ],
     data() {
         return {
             loading: true,
@@ -24,10 +33,14 @@ export default {
             const actions = {
                 belongsTo: () => {
                     if (this.option_list.length) {
-                        if (typeof this.option_list[1] == "object") {
-                            let found = this.option_list.find((option) => option.id.toString() == this.value.toString());
+                        if (typeof this.option_list[1] == 'object') {
+                            let found = this.option_list.find(
+                                (option) =>
+                                    option.id.toString() ==
+                                    this.value.toString()
+                            );
                             if (!found) {
-                                return "";
+                                return '';
                             }
                             if (found.name) {
                                 return found.name;
@@ -39,7 +52,7 @@ export default {
                         }
                         return this.value;
                     }
-                    return "";
+                    return '';
                 },
                 check: () => {
                     return this.$getEnabledIcons(this.value);
@@ -49,7 +62,7 @@ export default {
                         .map((date) => {
                             return this.formatDate(this.value);
                         })
-                        .join(" - ");
+                        .join(' - ');
                 },
                 date: () => {
                     return this.formatDate(this.value);
@@ -62,7 +75,7 @@ export default {
                         .map((image) => {
                             return `<img src='${image.url}' />'`;
                         })
-                        .join("");
+                        .join('');
                     return `<div class='upload-image-preview'>${images}</div>`;
                 },
             };
@@ -73,16 +86,16 @@ export default {
         formatDate(dt) {
             let date = this.$moment(dt);
             if (!date.isValid()) {
-                return "";
+                return '';
             }
             return date.format(this.format);
         },
         async init() {
-            if (this.type == "belongsTo") {
+            if (this.type == 'belongsTo') {
                 if (this.model) {
-                    let { data } = await this.$http.post("/vstack/json-api", {
+                    let { data } = await this.$http.post('/vstack/json-api', {
                         model: this.model,
-                        order_by: ["id", "desc"],
+                        order_by: ['id', 'desc'],
                     });
                     this.option_list = data;
                 } else {
@@ -106,7 +119,7 @@ export default {
         border-radius: 6px;
         border: 1px solid #c3c3c3;
 
-        +img {
+        + img {
             margin-left: 5px;
         }
     }

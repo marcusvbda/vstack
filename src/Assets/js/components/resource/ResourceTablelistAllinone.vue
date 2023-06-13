@@ -61,7 +61,7 @@
                 </td>
             </tr>
             <tr
-                class="table-row after"
+                class="table-row after bg-white"
                 :key="`table_after_row_${i}`"
                 :id="`resource-body-${row.content.id}-after-row`"
             >

@@ -1,14 +1,25 @@
 <template>
-    <el-select v-model="selected" multiple v-bind="$attrsAll" v-on="$listenserAll" @change="onChange">
-        <el-option v-for="item in mdoptionsList" :key="item.key" :label="item.label" :value="item.value">
-            <div class="w-100 d-flex" v-html="item.label" />
+    <el-select
+        v-model="selected"
+        multiple
+        v-bind="$attrsAll"
+        v-on="$listenserAll"
+        @change="onChange"
+    >
+        <el-option
+            v-for="item in mdoptionsList"
+            :key="item.key"
+            :label="item.label"
+            :value="item.value"
+        >
+            <div class="w-full flex" v-html="item.label" />
         </el-option>
     </el-select>
 </template>
 
 <script>
 export default {
-    name: "ElSelectAll",
+    name: 'ElSelectAll',
     props: {
         value: {
             type: Array,
@@ -24,7 +35,7 @@ export default {
         },
         label: {
             type: String,
-            default: "Todos(as)",
+            default: 'Todos(as)',
         },
     },
     data() {
@@ -48,17 +59,17 @@ export default {
             return Object.assign({}, this.$listeners, {
                 change: () => {
                     this.$emit(
-                        "change",
+                        'change',
                         (_this.selected || []).filter((v) => {
-                            return v !== "all";
+                            return v !== 'all';
                         })
                     );
                 },
                 input: () => {
                     this.$emit(
-                        "input",
+                        'input',
                         (_this.selected || []).filter((v) => {
-                            return v !== "all";
+                            return v !== 'all';
                         })
                     );
                 },
@@ -71,9 +82,9 @@ export default {
             deep: true,
             handler(val) {
                 this.$emit(
-                    "input",
+                    'input',
                     (val || []).filter((v) => {
-                        return v !== "all";
+                        return v !== 'all';
                     })
                 );
             },
@@ -87,8 +98,8 @@ export default {
                 } else {
                     this.mdoptionsList = [
                         {
-                            key: "all",
-                            value: "all",
+                            key: 'all',
+                            value: 'all',
                             label: this.label,
                         },
                         ...val,
@@ -103,16 +114,21 @@ export default {
     methods: {
         onChange(val) {
             const allValues = this.mdoptionsList.map((x) => x.value);
-            const oldVal = this.oldMdoptionsValue.length === 1 ? [] : this.oldMdoptionsValue[1] || [];
-            if (val.includes("all")) this.selected = allValues;
-            if (oldVal.includes("all") && !val.includes("all")) this.selected = [];
-            if (oldVal.includes("all") && val.includes("all")) {
-                const index = val.indexOf("all");
+            const oldVal =
+                this.oldMdoptionsValue.length === 1
+                    ? []
+                    : this.oldMdoptionsValue[1] || [];
+            if (val.includes('all')) this.selected = allValues;
+            if (oldVal.includes('all') && !val.includes('all'))
+                this.selected = [];
+            if (oldVal.includes('all') && val.includes('all')) {
+                const index = val.indexOf('all');
                 val.splice(index, 1);
                 this.selected = val;
             }
-            if (!oldVal.includes("all") && !val.includes("all")) {
-                if (val.length === allValues.length - 1) this.selected = ["all"].concat(val);
+            if (!oldVal.includes('all') && !val.includes('all')) {
+                if (val.length === allValues.length - 1)
+                    this.selected = ['all'].concat(val);
             }
             this.oldMdoptionsValue[1] = this.selected;
         },

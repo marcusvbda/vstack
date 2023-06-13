@@ -13,14 +13,22 @@
             :show-close="exporting.current_action == 'waiting'"
         >
             <template v-if="exporting.current_action == 'waiting'">
-                <div class="row d-flex justify-content-center">
-                    <div class="col-12 padding-dialog d-flex flex-row justify-content-between">
-                        <b>Selecione as colunas que deseja importar em sua planilha</b>
-                        <small class="ml-4 text-muted">Será respeitado o filtro da listagem</small>
+                <div class="row flex justify-center">
+                    <div class="col-12 padding-dialog flex justify-between">
+                        <b
+                            >Selecione as colunas que deseja importar em sua
+                            planilha</b
+                        >
+                        <small class="ml-4 text-neutral-400"
+                            >Será respeitado o filtro da listagem</small
+                        >
                     </div>
                 </div>
                 <div class="row mt-4">
-                    <div class="col-12 padding-dialog row-dialog-export" id="row-dialog-export-items">
+                    <div
+                        class="col-12 padding-dialog row-dialog-export"
+                        id="row-dialog-export-items"
+                    >
                         <ElCheckbox
                             class="no-check-mgt mx-1"
                             v-for="(f, i) in columns"
@@ -32,38 +40,70 @@
                         />
                     </div>
                 </div>
-                <span slot="footer" class="dialog-footer d-flex flex-row justify-content-end">
-                    <ElButton @click="visible = false" id="row-dialog-export-cancel">
+                <span slot="footer" class="dialog-footer flex justify-end">
+                    <ElButton
+                        @click="visible = false"
+                        id="row-dialog-export-cancel"
+                    >
                         Cancelar
                     </ElButton>
-                    <ElButton type="primary" @click="confirm" id="row-dialog-export-confirm">
+                    <ElButton
+                        type="primary"
+                        @click="confirm"
+                        id="row-dialog-export-confirm"
+                    >
                         Exportar Relatório
                     </ElButton>
                 </span>
             </template>
             <template v-else>
                 <template v-if="exporting.current_action == 'preparing'">
-                    <div class="loading-ballls d-flex flex-row align-items-center justify-content-center py-5">
-                        <div class="spinner-grow spinner-grow-xs text-muted mr-2" role="status">
+                    <div
+                        class="loading-ballls flex align-center justify-center py-5"
+                    >
+                        <div
+                            class="spinner-grow spinner-grow-xs text-neutral-400 mr-2"
+                            role="status"
+                        >
                             <span class="sr-only">Loading...</span>
                         </div>
-                        <div class="spinner-grow spinner-grow-xs text-muted mr-2" role="status">
+                        <div
+                            class="spinner-grow spinner-grow-xs text-neutral-400 mr-2"
+                            role="status"
+                        >
                             <span class="sr-only">Loading...</span>
                         </div>
-                        <div class="spinner-grow spinner-grow-xs text-muted mr-2" role="status">
+                        <div
+                            class="spinner-grow spinner-grow-xs text-neutral-400 mr-2"
+                            role="status"
+                        >
                             <span class="sr-only">Loading...</span>
                         </div>
                     </div>
                 </template>
                 <template v-if="exporting.current_action == 'processing'">
                     <div class="py-5">
-                        <div class="d-flex flex-row justify-content-between mb-2 w-100">
-                            <div class="text-muted">Exportando {{ exporting.exported }}/{{ exporting.total_results }}</div>
-                            <div class="text-muted">Tempo estimado : {{ formated_estimated_time }}</div>
+                        <div class="flex justify-between mb-2 w-full">
+                            <div class="text-neutral-400">
+                                Exportando {{ exporting.exported }}/{{
+                                    exporting.total_results
+                                }}
+                            </div>
+                            <div class="text-neutral-400">
+                                Tempo estimado : {{ formated_estimated_time }}
+                            </div>
                         </div>
-                        <ElProgress :text-inside="true" :stroke-width="24" :percentage="percentage" color="#5b5b5b" />
+                        <ElProgress
+                            :text-inside="true"
+                            :stroke-width="24"
+                            :percentage="percentage"
+                            color="#5b5b5b"
+                        />
                         <div class="text-center mt-4">
-                            <small class="text-muted word-break-all" v-html="message" />
+                            <small
+                                class="text-neutral-400 word-break-all"
+                                v-html="message"
+                            />
                         </div>
                     </div>
                 </template>
@@ -72,8 +112,8 @@
     </div>
 </template>
 <script>
-import Excel from "exceljs";
-import { saveAs } from "file-saver";
+import Excel from 'exceljs';
+import { saveAs } from 'file-saver';
 
 function getDefaultData(disabled_columns) {
     return {
@@ -89,7 +129,7 @@ function getDefaultData(disabled_columns) {
             started_time: null,
             estimated_time: 0,
             estimated_timeout: null,
-            current_action: "waiting",
+            current_action: 'waiting',
             sheet_created: false,
             new_disabled_columns: [],
             workbook: {},
@@ -113,30 +153,45 @@ const handleAppendRowToWorkSheet = (rows) => {
 
 const handleFinishWorkBook = async (fileName) => {
     const xls64 = await workbook.xlsx.writeBuffer({ base64: true });
-    const blob = new Blob([xls64], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const blob = new Blob([xls64], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
     await saveAs(blob, fileName);
 };
 
 export default {
-    props: ["id", "export_columns", "label", "get_params", "config_columns", "message"],
+    props: [
+        'id',
+        'export_columns',
+        'label',
+        'get_params',
+        'config_columns',
+        'message',
+    ],
     data() {
-        return getDefaultData(this.config_columns?.data?.disabled_columns ?? []);
+        return getDefaultData(
+            this.config_columns?.data?.disabled_columns ?? []
+        );
     },
     computed: {
         formated_estimated_time() {
-             if(!this.exporting.estimated_time && this.percentage != 100) {
-                return "Calculando ...";
+            if (!this.exporting.estimated_time && this.percentage != 100) {
+                return 'Calculando ...';
             }
             if (this.exporting.estimated_time !== null) {
-                return this.$moment.utc(this.exporting.estimated_time).format("HH:mm:ss");
+                return this.$moment
+                    .utc(this.exporting.estimated_time)
+                    .format('HH:mm:ss');
             }
-            if(this.exporting.estimated_time < 0 || this.percentage === 100) {
-                return this.$moment.utc(0).format("HH:mm:ss");
-            }           
-            return "Calculando ...";
+            if (this.exporting.estimated_time < 0 || this.percentage === 100) {
+                return this.$moment.utc(0).format('HH:mm:ss');
+            }
+            return 'Calculando ...';
         },
         percentage() {
-            const value = Math.round((this.exporting.exported / this.exporting.total_results) * 100);
+            const value = Math.round(
+                (this.exporting.exported / this.exporting.total_results) * 100
+            );
             if (value < 0) {
                 return 0;
             }
@@ -161,7 +216,9 @@ export default {
             };
         },
         enabledColumns() {
-            return Object.keys(this.columns).filter((key) => this.columns[key].enabled);
+            return Object.keys(this.columns).filter(
+                (key) => this.columns[key].enabled
+            );
         },
         sheetColumns() {
             const columns = this.enabledColumns.map((col) => ({
@@ -176,7 +233,7 @@ export default {
         actions() {
             const actions = {
                 set_totals: (data) => {
-                    this.exporting.current_action = "processing";
+                    this.exporting.current_action = 'processing';
                     this.exporting.total_results = data.total;
                     this.exporting.current_page = data.current_page;
                     this.exporting.last_page = data.last_page;
@@ -185,11 +242,11 @@ export default {
                     this.exporting.new_disabled_columns = data.disabled_columns;
                     this.updateEstimatedTime();
                     handleCreateWorkSheet(this.label, this.sheetColumns);
-                    this.initPreventClose()
+                    this.initPreventClose();
                     this.handleExport();
                 },
                 next_page: (data) => {
-                    this.exporting.current_action = "processing";
+                    this.exporting.current_action = 'processing';
                     this.exporting.current_page++;
                     this.exporting.exported += data.processed_row.length;
                     this.updateEstimatedTime();
@@ -197,7 +254,7 @@ export default {
                     this.handleExport(data.next_page ?? null);
                 },
                 finish: (data) => {
-                    this.exporting.exported = this.exporting.total_results
+                    this.exporting.exported = this.exporting.total_results;
                     handleAppendRowToWorkSheet(data.processed_row);
                     this.updateEstimatedTime();
                     clearInterval(this.exporting.estimated_timeout);
@@ -207,7 +264,7 @@ export default {
                             this.$message({
                                 showClose: true,
                                 message: `Exportação do relatório de ${this.label} concluída !`,
-                                type: "success",
+                                type: 'success',
                             });
                             this.resetData();
                         });
@@ -223,8 +280,8 @@ export default {
     methods: {
         initPreventClose() {
             window.onbeforeunload = () => {
-                return "Exportação em andamento, se sair agora, a exportação será cancelada e o progresso será perdido.";
-            }
+                return 'Exportação em andamento, se sair agora, a exportação será cancelada e o progresso será perdido.';
+            };
         },
         updateEstimatedTime() {
             if (!this.exporting.exported) {
@@ -233,13 +290,16 @@ export default {
             }
             const now = new Date().getTime();
             const total_time = now - this.exporting.started_time;
-            const rest_to_import = this.exporting.total_results - this.exporting.exported;
-            let estimated_ms = Math.round((rest_to_import * total_time) / this.exporting.exported);
+            const rest_to_import =
+                this.exporting.total_results - this.exporting.exported;
+            let estimated_ms = Math.round(
+                (rest_to_import * total_time) / this.exporting.exported
+            );
             this.exporting.estimated_time = estimated_ms < 0 ? 0 : estimated_ms;
 
             clearInterval(this.exporting.estimated_timeout);
             this.exporting.estimated_timeout = setInterval(() => {
-                if( this.exporting.estimated_time > 1000) {
+                if (this.exporting.estimated_time > 1000) {
                     this.exporting.estimated_time -= 1000;
                 } else {
                     this.exporting.estimated_time = 0;
@@ -247,8 +307,12 @@ export default {
             }, 1000);
         },
         async finishExporting() {
-            const xls64 = await this.exporting.workbook.xlsx.writeBuffer({ base64: true });
-            const blob = new Blob([xls64], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            const xls64 = await this.exporting.workbook.xlsx.writeBuffer({
+                base64: true,
+            });
+            const blob = new Blob([xls64], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
             await saveAs(blob, this.fileName);
         },
         resetData() {
@@ -266,7 +330,9 @@ export default {
                 let storage_value = !(disabled_columns ?? []).includes(key);
                 this.$set(this.columns, key, {
                     enabled: storage_value,
-                    label: this.export_columns[key].label ? this.export_columns[key].label : this.export_columns[key],
+                    label: this.export_columns[key].label
+                        ? this.export_columns[key].label
+                        : this.export_columns[key],
                 });
             });
             workbook = new Excel.Workbook();
@@ -276,8 +342,11 @@ export default {
             this.visible = true;
         },
         confirm() {
-            this.$confirm("Exportar relatório para planilha ? ", "Confirmação").then(() => {
-                this.exporting.current_action = "preparing";
+            this.$confirm(
+                'Exportar relatório para planilha ? ',
+                'Confirmação'
+            ).then(() => {
+                this.exporting.current_action = 'preparing';
                 setTimeout(() => {
                     this.handleExport();
                 }, this.humanize_timeout);
@@ -285,7 +354,10 @@ export default {
         },
         handleExport(pNextPage) {
             this.$http
-                .post(pNextPage ?? `/admin/${this.id}/export`, this.exportingParameters)
+                .post(
+                    pNextPage ?? `/admin/${this.id}/export`,
+                    this.exportingParameters
+                )
                 .then(({ data }) => {
                     const { action } = data;
                     return this.actions[action] && this.actions[action](data);

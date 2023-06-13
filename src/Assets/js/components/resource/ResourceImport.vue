@@ -1,5 +1,5 @@
 <template>
-    <div class="row d-flex justify-content-center mt-4">
+    <div class="row flex justify-center mt-4">
         <div class="col-12">
             <el-steps
                 :active="config.step"

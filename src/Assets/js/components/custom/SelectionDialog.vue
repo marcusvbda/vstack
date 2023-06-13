@@ -32,10 +32,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <span
-                slot="footer"
-                class="el-dialog__footer d-flex justify-content-end p-1"
-            >
+            <span slot="footer" class="el-dialog__footer flex justify-end p-1">
                 <button
                     class="vstack-btn primary"
                     :disabled="multiple ? !value.length : !value"

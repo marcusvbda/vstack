@@ -1,252 +1,89 @@
 <template>
-    <div :class="`row crud-type-${crud_type ? crud_type.template : 'page'}`" id="crud-view">
-        <div class="col-12">
-            <form class="needs-validation m-0" novalidate v-on:submit.prevent>
-                <template v-if="dialog">
-                    <div class="row">
-                        <div class="col-12">
-                            <template v-for="(card, i) in data.fields">
-                                <v-runtime-template :key="i" :template="card.view"
-                                    :id="`resource-crud-card-${card.label}`" />
-                            </template>
-                        </div>
-                    </div>
+    <div class="flex flex-col">
+        <div class="w-full">
+            <form
+                class="needs-validation m-0"
+                novalidate
+                v-on:submit.prevent
+                id="resource-crud-page"
+                v-if="initialized"
+            >
+                <template v-for="(card, i) in data.fields">
+                    <v-runtime-template
+                        :key="i"
+                        :template="card.view"
+                        :id="`resource-crud-card-${card.label}`"
+                    />
                 </template>
-                <template v-else>
-                    <template v-if="crud_type.template == 'page'">
-                        <div class="row" id="resource-crud-page">
-                            <div :class="`col-12 ${show_crud_right_card ? 'col-lg-9' : ''}`">
-                                <template v-for="(card, i) in data.fields">
-                                    <v-runtime-template :key="i" :template="card.view"
-                                        :id="`resource-crud-card-${card.label}`" />
-                                </template>
-                            </div>
-                            <div :class="`col-12 col-lg-3 fields-tab ${!show_crud_right_card ? 'd-none' : ''}`"
-                                id="resource-card-section-list">
-                                <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
-                                    <div class="col-12">
-                                        <div class="card">
-                                            <div class="card-body d-none d-md-block d-lg-block" v-if="showPills">
-                                                <div class="row" v-if="!right_card_content">
-                                                    <div class="col-12">
-                                                        <ul class="d-flex flex-column mb-0 pl-3">
-                                                            <li v-for="(card, i) in namedCards" :key="i"
-                                                                :id="`resource-card-section-list-link-${card.label}`">
-                                                                <a class="f-12 link"
-                                                                    :href="`#resource-crud-card-${card.label}`"
-                                                                    v-html="card.label" />
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <v-runtime-template v-else :template="right_card_content" />
-                                            </div>
-                                            <div :class="[
-                                                'card-footer flex-wrap d-flex',
-                                                'flex-row justify-content-end p-2 align-items-center',
-                                            ]">
-                                                <portal to="crud-btns" :disabled="show_crud_right_card"
-                                                    class="ml-auto d-flex align-items-center">
-                                                    <el-button v-if="first_btn" :size="first_btn.size"
-                                                        :type="first_btn.type" @click="submit(first_btn.field)"
-                                                        :loading="action_btn_loading" :disabled="action_btn_loading"
-                                                        id="resource-crud-btn-first">
-                                                        <span v-html="first_btn.content" />
-                                                    </el-button>
-                                                    <el-button v-if="second_btn" :size="second_btn.size"
-                                                        :type="second_btn.type" @click="submit(second_btn.field)"
-                                                        :loading="action_btn_loading" :disabled="action_btn_loading"
-                                                        id="resource-crud-btn-second">
-                                                        <span v-html="second_btn.content" />
-                                                    </el-button>
-                                                </portal>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                    <template v-if="crud_type.template == 'wizard'">
-                        <div class="row" id="resource-crud-page">
-                            <div :class="`col-12 ${show_crud_right_card ? 'col-lg-9' : 'col-12'} d-flex flex-column`">
-                                <div :class="`d-flex ${wizardContentClass}`">
-                                    <el-steps :active="wizard_step" finish-status="success" :direction="wizardDirection"
-                                        class="step-resource-crud py-0" :simple="isSimple" id="resource-wizard-steps">
-                                        <template v-for="(step, i) in data.fields">
-                                            <el-step :key="`step_wizard_${i}`"
-                                                :class="`resource-step ${getResourceStepStatus(i)}`"
-                                                :id="`resource-wizard-steps-${step.label}`">
-                                                <div slot="icon" v-html="step.icon ? step.icon : i + 1" />
-                                                <div slot="title" v-if="step.label" v-html="step.label" />
-                                                <div v-if="step.description" slot="description"
-                                                    v-html="step.description" />
-                                            </el-step>
-                                        </template>
-                                    </el-steps>
-                                    <div :class="`flex-grow-1 ${wizardCrudClass}`">
-                                        <transition :name="wizardTransitionName">
-                                            <v-runtime-template :template="data.fields[wizard_step].view"
-                                                :id="`resource-crud-card-${data.fields[wizard_step].label}`" />
-                                        </transition>
-                                    </div>
-                                </div>
-                            </div>
-                            <div :class="`col-12 col-lg-3 fields-tab ${!show_crud_right_card ? 'd-none' : ''} `">
-                                <div class="row flex-column" :style="{ top: 10, position: 'sticky' }">
-                                    <div class="col-12">
-                                        <div class="card">
-                                            <div class="card-body d-none d-md-block d-lg-block pb-0" v-if="showPills">
-                                                <div class="row" v-if="!right_card_content">
-                                                    <div class="col-12">
-                                                        <el-timeline class="pl-0">
-                                                            <el-timeline-item v-for="(step, i) in namedCards" :key="i"
-                                                                :type="getTimelineItemColor(i)"
-                                                                :timestamp="step.description">
-                                                                {{ step.label }}
-                                                            </el-timeline-item>
-                                                        </el-timeline>
-                                                    </div>
-                                                </div>
-                                                <v-runtime-template v-else :template="right_card_content" />
-                                            </div>
-                                            <div :class="[
-                                                'card-footer flex-wrap d-flex flex-row',
-                                                'justify-content-end p-2 align-items-center',
-                                            ]">
-                                                <portal to="crud-btns-wizard" :disabled="show_crud_right_card"
-                                                    class="ml-auto d-flex align-items-center">
-                                                    <template v-if="wizard_step == data.fields.length - 1">
-                                                        <el-button v-if="first_btn" :size="first_btn.size"
-                                                            :type="first_btn.type" @click="submit(first_btn.field)"
-                                                            :loading="action_btn_loading"
-                                                            :disabled="action_btn_loading">
-                                                            <span v-html="first_btn.content" />
-                                                        </el-button>
-                                                        <el-button v-if="second_btn" :size="second_btn.size"
-                                                            :type="second_btn.type" @click="submit(second_btn.field)"
-                                                            :loading="action_btn_loading"
-                                                            :disabled="action_btn_loading">
-                                                            <span v-html="second_btn.content" />
-                                                        </el-button>
-                                                    </template>
-                                                    <template v-else>
-                                                        <el-button v-if="wizard_step != 0" :size="first_btn.size"
-                                                            type="warning" @click="previousStep"
-                                                            :disabled="action_btn_loading"
-                                                            :loading="loading_wizard_previous || action_btn_loading">
-                                                            <span>
-                                                                <div class="d-flex flex-row">
-                                                                    <i class="el-icon-back mr-2"></i>
-                                                                    Voltar
-                                                                </div>
-                                                            </span>
-                                                        </el-button>
-                                                        <el-button :size="second_btn.size" type="primary"
-                                                            @click="nextStep" :disabled="action_btn_loading"
-                                                            :loading="loading_wizard_next || action_btn_loading"
-                                                            id="resource-btn-next-step">
-                                                            <span>
-                                                                <div class="d-flex flex-row">
-                                                                    <i class="el-icon-right mr-2"></i>
-                                                                    Prosseguir
-                                                                </div>
-                                                            </span>
-                                                        </el-button>
-                                                    </template>
-                                                </portal>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 d-flex justify-content-end">
-                                <portal-target name="crud-btns-wizard" class="d-flex" />
-                            </div>
-                        </div>
-                    </template>
-                </template>
-                <slot name="aftercreate" v-if="['CREATE', 'CLONE'].includes(pageType)"></slot>
-                <slot name="afteredit" v-if="['EDIT'].includes(pageType)"></slot>
+                <slot
+                    name="aftercreate"
+                    v-if="['CREATE', 'CLONE'].includes(pageType)"
+                />
+                <slot name="afteredit" v-if="['EDIT'].includes(pageType)" />
             </form>
+        </div>
+
+        <div class="w-full" v-if="first_btn || second_btn">
+            <div class="pt-3 flex justify-end gap-5 flex-wrap">
+                <button
+                    v-if="first_btn"
+                    :size="first_btn.size"
+                    :class="`vstack-btn ${first_btn.class}`"
+                    @click="submit(first_btn.field)"
+                    :loading="action_btn_loading"
+                    :disabled="action_btn_loading"
+                >
+                    <span v-html="first_btn.content" />
+                </button>
+                <button
+                    v-if="second_btn"
+                    :size="second_btn.size"
+                    :class="`vstack-btn ${second_btn.class}`"
+                    @click="submit(second_btn.field)"
+                    :loading="action_btn_loading"
+                    :disabled="action_btn_loading"
+                >
+                    <span v-html="second_btn.content" />
+                </button>
+            </div>
         </div>
     </div>
 </template>
 <script>
-import VRuntimeTemplate from "v-runtime-template";
-import { mapGetters, mapMutations } from "vuex";
+import VRuntimeTemplate from 'v-runtime-template';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
     props: [
-        "crud_type",
-        "data",
-        "redirect",
-        "params",
-        "raw_type",
-        "acl",
-        "first_btn",
-        "second_btn",
-        "dialog",
-        "right_card_content",
-        "content_id",
-        "content",
-        "ids",
-        "has_befores_store",
-        "show_crud_right_card",
-        "loading_message"
+        'crud_type',
+        'data',
+        'redirect',
+        'params',
+        'raw_type',
+        'acl',
+        'first_btn',
+        'second_btn',
+        'content_id',
+        'content',
+        'ids',
+        'has_befores_store',
+        'loading_message',
     ],
     data() {
         return {
             window_width: null,
-            resourceData: {},
             form: {},
             errors: {},
-            wizard_step: 0,
-            wizardTransitionName: "",
-            loading_wizard_next: false,
-            loading_wizard_previous: false,
             loading: false,
             submitting: false,
+            initialized: false,
         };
     },
     components: {
-        "v-runtime-template": VRuntimeTemplate,
+        'v-runtime-template': VRuntimeTemplate,
     },
     computed: {
-        ...mapGetters("resource", ["action_btn_loading"]),
-        crud_template() {
-            return this.crud_type?.template ?? 'page'
-        },
-        isSimple() {
-            if (this.crud_template != "wizard") {
-                return false;
-            }
-            if (this.crud_type.style == "row") {
-                return true;
-            }
-            if (this.crud_type.style == "timeline") {
-                return false;
-            }
-            return false;
-        },
-        wizardStepSide() {
-            if (this.crud_template != "wizard") {
-                return "";
-            }
-            if (this.crud_type.position == "top") {
-                return "center";
-            }
-            return this.crud_type.position;
-        },
-        wizardDirection() {
-            if (this.crud_template != "wizard") {
-                return "";
-            }
-            if (this.window_width <= 991) {
-                return "horizontal";
-            }
-            return ["left", "right"].includes(this.crud_type.position) && !this.isSimple ? "vertical" : "horizontal";
-        },
+        ...mapGetters('resource', ['action_btn_loading']),
         showPills() {
             return this.namedCards.length > 1 || this.right_card_content;
         },
@@ -256,29 +93,6 @@ export default {
         namedCards() {
             return this.data.fields.filter((x) => x.label);
         },
-        wizardContentClass() {
-            let justifyClasses = {
-                left: "justify-content-start",
-                right: "flex-row-reverse",
-            };
-            if (this.wizardDirection == "vertical") {
-                return `flex-column flex-lg-row ${justifyClasses[this.wizardStepSide]}`;
-            }
-            if (this.wizardDirection === "horizontal") {
-                return "flex-column";
-            }
-            return "";
-        },
-        wizardCrudClass() {
-            let classes = {
-                left: "ml-4",
-                right: "mr-4",
-            };
-            if (this.wizardDirection === "horizontal") {
-                return "mt-2";
-            }
-            return classes[this.crud_type.position] ?? "";
-        },
     },
     created() {
         this.removeLoadingEl();
@@ -286,12 +100,12 @@ export default {
         this.initForm();
     },
     methods: {
-        ...mapMutations("resource", ["setActionBtnLoading"]),
+        ...mapMutations('resource', ['setActionBtnLoading']),
         removeLoadingEl() {
-            const el_name = "#loading-section #cud-loader";
+            const el_name = '#loading-section #cud-loader';
             this.$waitForEl(el_name).then(() => {
                 document.querySelector(el_name).remove();
-            })
+            });
         },
         getScreenSize() {
             this.window_width = window.innerWidth;
@@ -301,61 +115,15 @@ export default {
                 this.getScreenSize();
             };
         },
-        getTimelineItemColor(index) {
-            if (this.wizard_step == index) {
-                return "secondary";
-            }
-            if (this.wizard_step < index) {
-                return "";
-            }
-            if (this.wizard_step > index) {
-                return "success";
-            }
-            return "";
-        },
         handleActionBtnLoading(val) {
             this.action_btn_loading = val;
-        },
-        clikedStepWizard(index) {
-            let stepStatus = this.getResourceStepStatus(index);
-            if (stepStatus == "done") {
-                this.wizard_step = index;
-            }
-        },
-        getResourceStepStatus(index) {
-            if (index < this.wizard_step) {
-                return "done";
-            }
-            if (index == this.wizard_step) {
-                return "current";
-            }
-            if (index > this.wizard_step) {
-                return "blocked";
-            }
-            return "";
         },
         initForm() {
             this.initFields();
             this.loadParams();
-            this.initWizardEvents();
-            this.$set(this.form, "resource_id", this.data.resource_id);
-            if (this.data.id && this.pageType == "EDIT") {
-                this.$set(this.form, "id", this.data.id);
-            }
-        },
-        initWizardEvents() {
-            if (this.crud_template == "wizard") {
-                this.$waitForEls(".resource-step").then((elements) => {
-                    elements.forEach((item, index) => {
-                        [".el-step__head", ".el-step__main"].forEach((child) => {
-                            item.querySelectorAll(child).forEach((attr) => {
-                                attr.addEventListener("click", () => {
-                                    this.clikedStepWizard(index);
-                                });
-                            });
-                        });
-                    });
-                });
+            this.$set(this.form, 'resource_id', this.data.resource_id);
+            if (this.data.id && this.pageType == 'EDIT') {
+                this.$set(this.form, 'id', this.data.id);
             }
         },
         initFields() {
@@ -372,25 +140,27 @@ export default {
                     let field_name = field.options.field;
                     let field_type = field.options.type;
 
-                    let field_value = this.processFieldValue(field_name, field.options);
-                    if (field_type === "slider") {
+                    let field_value = this.processFieldValue(
+                        field_name,
+                        field.options
+                    );
+                    if (field_type === 'slider') {
                         field_value = parseInt(field_value);
                     }
                     if (field_name) {
-                        this.$set(
-                            field.options.type == "resource-field" ? this.resourceData : this.form,
-                            field_name,
-                            field_value
-                        );
+                        console.log(field_name, field_value);
+                        this.$set(this.form, field_name, field_value);
                     }
                 }
             }
+
+            this.initialized = true;
         },
         processFieldValue(name, options) {
             let value = options.value;
-            if (!["null", "", "undefined"].includes(String(options.value))) {
+            if (!['null', '', 'undefined'].includes(String(options.value))) {
                 let option_value = this.content?.id ? value : options.default;
-                if (!["object", "array"].includes(typeof option_value)) {
+                if (!['object', 'array'].includes(typeof option_value)) {
                     option_value = String(option_value);
                 }
                 value = this.processFieldPerType(options.type, option_value);
@@ -401,10 +171,20 @@ export default {
                 if (Array.isArray(option_value)) {
                     option_value = option_value.filter((x) => x);
                 }
-                if (!["object", "array", "undefined"].includes(typeof option_value) && ![null, false].includes) {
+                if (
+                    !['object', 'array', 'undefined'].includes(
+                        typeof option_value
+                    ) &&
+                    ![null, false].includes
+                ) {
                     option_value = String(option_value);
                 }
-                value = this.processFieldPerType(options.type, [null, undefined].includes(option_value) ? null : option_value);
+                value = this.processFieldPerType(
+                    options.type,
+                    [null, undefined].includes(option_value)
+                        ? null
+                        : option_value
+                );
             }
             return value;
         },
@@ -414,15 +194,22 @@ export default {
                     if (Array.isArray(value)) {
                         return value.map((x) => String(x));
                     }
-                    return value ? value.split(",") : [];
+                    return value ? value.split(',') : [];
                 },
-                check: () => String(value) == "true",
-                upload: () => (value ? (Array.isArray(value) ? value.map((x) => String(x)) : value.split(",")) : []),
+                check: () => String(value) == 'true',
+                upload: () =>
+                    value
+                        ? Array.isArray(value)
+                            ? value.map((x) => String(x))
+                            : value.split(',')
+                        : [],
                 daterange: () => {
                     if (Array.isArray(value)) {
                         return value.map((x) => new Date(String(x)));
                     }
-                    return value ? value.split(",").map((x) => new Date(String(x))) : [];
+                    return value
+                        ? value.split(',').map((x) => new Date(String(x)))
+                        : [];
                 },
             };
             if (actions[type]) {
@@ -433,60 +220,44 @@ export default {
         loadParams() {
             let paramKeys = Object.keys(this.params);
             for (let i in paramKeys) {
-                if (paramKeys[i] != "redirect_back") {
-                    this.$set(this.form, paramKeys[i], this.params[paramKeys[i]]);
+                if (paramKeys[i] != 'redirect_back') {
+                    this.$set(
+                        this.form,
+                        paramKeys[i],
+                        this.params[paramKeys[i]]
+                    );
                 }
             }
         },
-        previousStep() {
-            this.loading_wizard_previous = true;
-            this.wizardTransitionName = "fade";
-            this.wizard_step--;
-            this.loading_wizard_previous = false;
-            setTimeout(() => {
-                this.wizardTransitionName = "";
-            }, 500);
-        },
-        nextStep() {
-            this.loading_wizard_next = true;
-            if (this.wizard_step == this.data.fields.length - 1) {
-                return this.submit();
-            }
-            let page_type = this.form.id ? "edit" : "create";
-            this.$http
-                .post(`${this.data.store_route}-wizard-step-validation`, {
-                    ...this.form,
-                    wizard_step: this.wizard_step,
-                    page_type,
-                })
-                .then(() => {
-                    this.wizardTransitionName = "fade";
-                    this.wizard_step++;
-                    this.loading_wizard_next = false;
-                    setTimeout(() => {
-                        this.wizardTransitionName = "";
-                    }, 500);
-                })
-                .catch((er) => {
-                    this.makeFormValidationErrors(er);
-                    this.loading_wizard_next = false;
-                });
-        },
         makeFormValidationErrors(er) {
-            let errors = er.response.data.errors;
+            let errors = er?.response?.data?.errors || null;
+            if (!errors) {
+                this.$message({
+                    dangerouslyUseHTMLString: true,
+                    showClose: true,
+                    message: er?.response?.data?.message || er.message,
+                    type: 'error',
+                });
+                return;
+            }
             this.errors = errors;
             try {
                 let message = Object.keys(errors)
                     .map((key) => `<li>${errors[key][0]}</li>`)
-                    .join("");
+                    .join('');
                 this.$message({
                     dangerouslyUseHTMLString: true,
                     showClose: true,
                     message: `<ul>${message}</ul>`,
-                    type: "error",
+                    type: 'error',
                 });
             } catch {
-                return;
+                this.$message({
+                    dangerouslyUseHTMLString: true,
+                    showClose: true,
+                    message: 'Ocorreu um erro ao salvar os dados',
+                    type: 'error',
+                });
             }
         },
         checkStore(clicked_btn) {
@@ -495,43 +266,54 @@ export default {
             }
 
             this.setActionBtnLoading(true);
-            this.$http.post(this.data.checkout_route, { ...this.form, clicked_btn }).then(({ data }) => {
-                if (data?.success === false) {
-                    this.setActionBtnLoading(false);
-                    return this.$message.error(data.message);
-                }
-
-                if (data?.success === true) {
-                    return this.submit(clicked_btn, true);
-                }
-
-                if (data?.confirm) {
-                    this.loading_confirm = false;
-                    return this.$confirm(data.confirm?.message || "Confirmar ?", data.confirm?.title || "Confirmação", {
-                        confirmButtonText: data.confirm?.buttons?.yes || "Sim",
-                        cancelButtonText: data.confirm?.buttons?.no || "Não",
-                        type: data.confirm?.type || "warning",
-                    }).then(() => {
+            this.$http
+                .post(this.data.checkout_route, { ...this.form, clicked_btn })
+                .then(({ data }) => {
+                    if (data?.success === false) {
                         this.setActionBtnLoading(false);
-                        this.submit(clicked_btn, true);
-                    });
-                }
-            });
+                        return this.$message.error(data.message);
+                    }
+
+                    if (data?.success === true) {
+                        return this.submit(clicked_btn, true);
+                    }
+
+                    if (data?.confirm) {
+                        this.loading_confirm = false;
+                        return this.$confirm(
+                            data.confirm?.message || 'Confirmar ?',
+                            data.confirm?.title || 'Confirmação',
+                            {
+                                confirmButtonText:
+                                    data.confirm?.buttons?.yes || 'Sim',
+                                cancelButtonText:
+                                    data.confirm?.buttons?.no || 'Não',
+                                type: data.confirm?.type || 'warning',
+                            }
+                        ).then(() => {
+                            this.setActionBtnLoading(false);
+                            this.submit(clicked_btn, true);
+                        });
+                    }
+                });
         },
-        submit(clicked_btn = "save_and_back", checked = false) {
-            if (!checked && this.raw_type != "action") {
+        submit(clicked_btn = 'save_and_back', checked = false) {
+            if (!checked && this.raw_type != 'action') {
                 return this.checkStore(clicked_btn);
             }
             const loading_text = this.loading_message;
-            const loading = this.$loading({ text: loading_text, background: "white" });
-            const payload = { ...this.form, clicked_btn }
-            if (this.raw_type == "action") {
+            const loading = this.$loading({
+                text: loading_text,
+                background: 'white',
+            });
+            const payload = { ...this.form, clicked_btn };
+            if (this.raw_type == 'action') {
                 payload.ids = this.ids;
             }
             this.$http
                 .post(this.data.store_route, payload)
                 .then(({ data }) => {
-                    if (this.raw_type == "action") {
+                    if (this.raw_type == 'action') {
                         if (data.success) return window.location.reload();
                         else {
                             loading.close();
@@ -544,7 +326,12 @@ export default {
                             return (window.location.href = data.route);
                         } else {
                             if (data.message) {
-                                this.$message({ showClose: true, message: data.message.text, type: data.message.type, dangerouslyUseHTMLString: true });
+                                this.$message({
+                                    showClose: true,
+                                    message: data.message.text,
+                                    type: data.message.type,
+                                    dangerouslyUseHTMLString: true,
+                                });
                             }
                             loading.close();
                         }
@@ -559,45 +346,3 @@ export default {
     },
 };
 </script>
-<style lang="scss" scoped>
-#crud-view {
-    .fields-tab {
-        .nav-link {
-            font-size: 12px;
-        }
-    }
-
-    .f-12 {
-        font-size: 12px;
-    }
-
-    .el-button {
-        flex-direction: row;
-        display: flex;
-    }
-
-    .step-resource-crud {
-        .resource-step {
-            opacity: 0.8;
-
-            &.current {
-                cursor: default;
-                opacity: 1;
-            }
-
-            &.blocked {
-                cursor: no-drop;
-            }
-
-            &.done {
-                cursor: pointer;
-
-                &:hover {
-                    transition: 0.4s;
-                    opacity: 1;
-                }
-            }
-        }
-    }
-}
-</style>

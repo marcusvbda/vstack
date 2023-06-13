@@ -1,4 +1,4 @@
-<div class="flex flex-row p-2 gap-4 items-center justify-center" id="resource-lenses">
+<div class="flex  p-2 gap-4 items-center justify-center flex-wrap" id="resource-lenses">
     <?php
     $current_len = @$_data["current_len"] ? @$_data["current_len"] : "all";
     $lenses = $resource->lenses();

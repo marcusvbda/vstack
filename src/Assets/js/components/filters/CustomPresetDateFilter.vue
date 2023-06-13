@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex flex-column">
+    <div class="flex flex-col">
         <el-select v-model="type" filterable class="w-full" clearable>
             <el-option label="Customizado" value="custom" />
             <el-option
@@ -11,7 +11,7 @@
         </el-select>
         <el-date-picker
             v-if="type === 'custom'"
-            class="mt-3 w-100"
+            class="mt-3 w-full"
             v-model="custom_dates"
             type="daterange"
             align="right"

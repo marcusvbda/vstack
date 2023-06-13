@@ -1,8 +1,8 @@
 <template>
-    <tbody>
+    <tbody class="border">
         <tr v-if="f.label">
             <td
-                class="p-2"
+                class="p-2 cursor-pointer"
                 style="position: relative"
                 @click="visible = !visible"
                 :id="`resource-filter-item-${index}`"
@@ -10,7 +10,7 @@
                 <span class="badge-number" v-if="hasBadge" v-html="'!'" />
                 <div class="w-full">
                     <div
-                        :class="`flex flex-row justify-between text-bold w-full ${
+                        :class="`flex  justify-between text-bold w-full ${
                             hasBadge ? 'pl-3' : ''
                         }`"
                     >

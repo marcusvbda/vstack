@@ -1,48 +1,97 @@
 <template>
-    <CustomResourceComponent :label="label" :description="description" custom_class="auto-overflow-x">
+    <CustomResourceComponent
+        :label="label"
+        :description="description"
+        custom_class="auto-overflow-x"
+    >
         <div v-show="!(crop_image && showing_crop)">
-            <el-progress v-if="loading" :text-inside="true" :stroke-width="18" class="mb-3" :percentage="progress" />
+            <el-progress
+                v-if="loading"
+                :text-inside="true"
+                :stroke-width="18"
+                class="mb-3"
+                :percentage="progress"
+            />
             <slot name="prepend-slot" />
-            <div v-show="loading" class="shimmer resource-tree-item" :style="{ width: '100%', height: 130 }" />
+            <div
+                v-show="loading"
+                class="shimmer resource-tree-item"
+                :style="{ width: '100%', height: 130 }"
+            />
             <div v-show="!loading" class="my-4">
-                <div class="d-flex flex-column upload-resource-field input-group">
-                    <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :on-preview="handlePreview"
-                        :onProgress="onProgress" :disabled="disabled" v-bind:class="{
+                <div class="flex flex-col upload-resource-field input-group">
+                    <el-upload
+                        multiple
+                        :limit="!multiple ? 1 : limit"
+                        ref="uploader"
+                        :on-preview="handlePreview"
+                        :onProgress="onProgress"
+                        :disabled="disabled"
+                        v-bind:class="{
                             disabled: fileList.length >= limit_value,
-                            'hide-input': loading || fileList.length >= limit_value,
+                            'hide-input':
+                                loading || fileList.length >= limit_value,
                             'is-invalid': errors,
-                        }" :action="uploadroute" :list-type="`${is_image ? 'picture-card' : 'text'}`"
-                        :file-list="fileList" :on-success="handleAvatarSuccess" :before-upload="handleBeforeUpload"
-                        :on-remove="handleRemove" :before-remove="beforeRemove" :on-change="handleChange"
-                        :http-request="uploadMethod" :auto-upload="false" :headers="header" v-if="renderComponent"
-                        @input.native="handleInput">
+                        }"
+                        :action="uploadroute"
+                        :list-type="`${is_image ? 'picture-card' : 'text'}`"
+                        :file-list="fileList"
+                        :on-success="handleAvatarSuccess"
+                        :before-upload="handleBeforeUpload"
+                        :on-remove="handleRemove"
+                        :before-remove="beforeRemove"
+                        :on-change="handleChange"
+                        :http-request="uploadMethod"
+                        :auto-upload="false"
+                        :headers="header"
+                        v-if="renderComponent"
+                        @input.native="handleInput"
+                    >
                         <template v-if="!is_image">
-                            <el-button icon="el-icon-upload" type="primary" v-if="(fileList.length < limit_value)">
+                            <el-button
+                                icon="el-icon-upload"
+                                type="primary"
+                                v-if="fileList.length < limit_value"
+                            >
                                 Fazer Upload
                             </el-button>
                         </template>
                         <template v-else>
                             <div slot="file" slot-scope="{ file }">
                                 <div>
-                                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                                    <img
+                                        class="el-upload-list__item-thumbnail"
+                                        :src="file.url"
+                                        alt=""
+                                    />
                                     <div class="el-upload-list__item-actions">
-                                        <span class="el-upload-list__item-preview" v-if="preview != undefined"
-                                            @click="handlePreview(file)">
+                                        <span
+                                            class="el-upload-list__item-preview"
+                                            v-if="preview != undefined"
+                                            @click="handlePreview(file)"
+                                        >
                                             <i class="el-icon-zoom-in"></i>
                                         </span>
-                                        <span class="el-upload-list__item-delete" @click="handleRemove(file)">
+                                        <span
+                                            class="el-upload-list__item-delete"
+                                            @click="handleRemove(file)"
+                                        >
                                             <i class="el-icon-delete"></i>
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center justify-content-center h-100">
+                            <div class="flex align-center justify-center h-100">
                                 <i class="el-icon-plus"></i>
                             </div>
                         </template>
                     </el-upload>
-                    <small class="mt-2 text-muted text-size-alert">
-                        {{ multiple? "Os arquivos devem conter no máximo": "O arquivo deve conter no máximo" }}
+                    <small class="mt-2 text-neutral-400 text-size-alert">
+                        {{
+                            multiple
+                                ? 'Os arquivos devem conter no máximo'
+                                : 'O arquivo deve conter no máximo'
+                        }}
                         {{ $niceBytes(file_upload_limit_size) }}
                     </small>
                     <div class="invalid-feedback" v-show="errors">
@@ -54,9 +103,16 @@
             </div>
             <slot name="append-slot" />
         </div>
-        <el-dialog :visible.sync="cropDialog" :lock-scroll="true" :close-on-click-modal="false" :show-close="false"
-            :destroy-on-close="true" :modal-append-to-body="true" :close-on-press-escape="false"
-            custom-class="crop_dialog">
+        <el-dialog
+            :visible.sync="cropDialog"
+            :lock-scroll="true"
+            :close-on-click-modal="false"
+            :show-close="false"
+            :destroy-on-close="true"
+            :modal-append-to-body="true"
+            :close-on-press-escape="false"
+            custom-class="crop_dialog"
+        >
             <div class="overflow-crop-loading" v-if="loading" />
             <img ref="croppel" :src="cropping_img" v-if="cropDialog" />
             <div class="row">
@@ -65,8 +121,12 @@
                 </div>
             </div>
             <span slot="footer" class="dialog-footer mt-2">
-                <el-button @click="handleCancelCrop" v-if="!loading">Cancelar</el-button>
-                <el-button type="primary" @click="handleCrop" :loading="loading">Confirmar</el-button>
+                <el-button @click="handleCancelCrop" v-if="!loading"
+                    >Cancelar</el-button
+                >
+                <el-button type="primary" @click="handleCrop" :loading="loading"
+                    >Confirmar</el-button
+                >
             </span>
         </el-dialog>
         <template v-if="show_url">
@@ -79,18 +139,18 @@
     </CustomResourceComponent>
 </template>
 <script>
-import { mapMutations } from "vuex";
-import 'cropperjs/dist/cropper.css'
+import { mapMutations } from 'vuex';
+import 'cropperjs/dist/cropper.css';
 import Cropper from 'cropperjs';
 export default {
     props: {
         aspect_ratio: {
             type: Number,
-            default: 0
+            default: 0,
         },
         show_url: {
             type: Boolean,
-            default: false
+            default: false,
         },
         crop_image: {
             type: Boolean,
@@ -124,11 +184,17 @@ export default {
             initialized: false,
             new_filename: null,
             fileList: [],
-            header: { "X-CSRF-TOKEN": laravel.general.csrf_token ? laravel.general.csrf_token : "" },
+            header: {
+                'X-CSRF-TOKEN': laravel.general.csrf_token
+                    ? laravel.general.csrf_token
+                    : '',
+            },
             loading: false,
             limit_value: this.multiple ? this.limit : 1,
             renderComponent: true,
-            file_upload_limit_size: this.sizelimit ? this.sizelimit : laravel.vstack.file_upload_limit_size ?? 0
+            file_upload_limit_size: this.sizelimit
+                ? this.sizelimit
+                : laravel.vstack.file_upload_limit_size ?? 0,
         };
     },
     mounted() {
@@ -142,24 +208,24 @@ export default {
     },
     computed: {
         cropDialog() {
-            return this.crop_image && this.showing_crop
+            return this.crop_image && this.showing_crop;
         },
         uploadedLinks() {
-            return (this.fileList ?? []).map(x => x.url).filter(x => x)
-        }
+            return (this.fileList ?? []).map((x) => x.url).filter((x) => x);
+        },
     },
     methods: {
-        ...mapMutations("resource", ["setActionBtnLoading"]),
+        ...mapMutations('resource', ['setActionBtnLoading']),
         handleCancelCrop() {
             this.loading = false;
-            this.progress = 0
-            this.showing_crop = false
-            this.cropping_img = null
-            this.cropper = null
+            this.progress = 0;
+            this.showing_crop = false;
+            this.cropping_img = null;
+            this.cropper = null;
         },
         initCropper() {
-            this.loading = false
-            const has_ratio = this.aspect_ratio ? true : false
+            this.loading = false;
+            const has_ratio = this.aspect_ratio ? true : false;
             let config = {
                 dragMode: 'move',
                 guides: true,
@@ -168,22 +234,22 @@ export default {
                     width: 1240,
                     height: 310,
                 },
-            }
+            };
 
             if (has_ratio) {
-                config.aspectRatio = this.aspect_ratio
+                config.aspectRatio = this.aspect_ratio;
             }
             this.cropper = new Cropper(this.$refs.croppel, config);
         },
         onProgress(event) {
             if (event.lengthComputable) {
                 var percentComplete = event.loaded / event.total;
-                this.progress = parseInt(Math.round(percentComplete * 100))
+                this.progress = parseInt(Math.round(percentComplete * 100));
             }
         },
         handlePreview(file) {
             if (this.preview) {
-                window.open(file.response.path, "_blank");
+                window.open(file.response.path, '_blank');
             }
         },
         beforeRemove() {
@@ -197,7 +263,7 @@ export default {
             value
                 .filter((x) => x)
                 .forEach((item) => {
-                    if (typeof item == "string") {
+                    if (typeof item == 'string') {
                         items.push({
                             name: item,
                             uid: new Date().getTime(),
@@ -228,32 +294,40 @@ export default {
         handleInput(event) {
             if (!this.auto_set_name && this.initialized) {
                 this.loading = true;
-                this.$prompt("Como deseja nomear este arquivo ?", "Nome", {
-                    confirmButtonText: "Continuar",
-                    cancelButtonText: "Cancelar",
+                this.$prompt('Como deseja nomear este arquivo ?', 'Nome', {
+                    confirmButtonText: 'Continuar',
+                    cancelButtonText: 'Cancelar',
                     inputPattern: /^.{1,}$/,
-                    inputErrorMessage: "Digite um nome válido",
+                    inputErrorMessage: 'Digite um nome válido',
                 })
                     .then(({ value }) => {
-                        this.renameFile(value, () => this.$refs.uploader.submit());
+                        this.renameFile(value, () =>
+                            this.$refs.uploader.submit()
+                        );
                     })
                     .catch(() => {
-                        const filename = event.target.value.split("\\").reverse()[0];
+                        const filename = event.target.value
+                            .split('\\')
+                            .reverse()[0];
                         this.handleRemove(filename);
                         this.loading = false;
                     });
             } else {
                 this.loading = true;
-                this.renameFile("--RENAME-FILE--", () => this.$refs.uploader.submit());
+                this.renameFile('--RENAME-FILE--', () =>
+                    this.$refs.uploader.submit()
+                );
             }
         },
         renameFile(name, callback) {
             setTimeout(() => {
                 const index = this.$refs.uploader.uploadFiles.length - 1;
-                const original_name = this.$refs.uploader.uploadFiles[index].raw.name;
+                const original_name =
+                    this.$refs.uploader.uploadFiles[index].raw.name;
                 const ext = original_name.split('.').pop();
                 const new_name = `${name}.${ext}`;
-                const original_file = this.$refs.uploader.uploadFiles[index].raw;
+                const original_file =
+                    this.$refs.uploader.uploadFiles[index].raw;
                 const new_file = new File([original_file], new_name);
                 new_file.uid = original_file.uid;
                 this.new_filename = new_name;
@@ -267,20 +341,24 @@ export default {
         },
         emitChanges() {
             let files = this.$refs.uploader.uploadFiles;
-            return this.$emit("input", files);
+            return this.$emit('input', files);
         },
         handleBeforeUpload(file) {
             if (file.size > this.file_upload_limit_size) {
-                this.$message.error(`O arquivo deve conter no máximo ${this.$niceBytes(this.file_upload_limit_size)}`);
+                this.$message.error(
+                    `O arquivo deve conter no máximo ${this.$niceBytes(
+                        this.file_upload_limit_size
+                    )}`
+                );
                 this.loading = false;
                 return false;
             }
             if (this.crop_image) {
-                this.showing_crop = true
-                this.cropping_img = URL.createObjectURL(file)
+                this.showing_crop = true;
+                this.cropping_img = URL.createObjectURL(file);
                 this.$nextTick(() => {
-                    this.initCropper()
-                })
+                    this.initCropper();
+                });
                 return false;
             }
             this.loading = true;
@@ -291,22 +369,27 @@ export default {
             const canvas = this.cropper.getCroppedCanvas();
             canvas.toBlob((blob) => {
                 this.uploadMethod({
-                    file: this.blobToFile(blob, "--RENAME-FILE--.png")
-                })
-            })
+                    file: this.blobToFile(blob, '--RENAME-FILE--.png'),
+                });
+            });
         },
         uploadMethod(info) {
             let formData = new FormData();
             formData.append('file', info.file);
-            this.$http.post(this.uploadroute, formData, {
-                headers: this.header,
-                onUploadProgress: this.onProgress
-            }).then(({ data }) => {
-                this.handleAvatarSuccess(data, Object.assign({}, info.file))
-            })
+            this.$http
+                .post(this.uploadroute, formData, {
+                    headers: this.header,
+                    onUploadProgress: this.onProgress,
+                })
+                .then(({ data }) => {
+                    this.handleAvatarSuccess(
+                        data,
+                        Object.assign({}, info.file)
+                    );
+                });
         },
         blobToFile(blob, fileName) {
-            return new File([blob], fileName, { lastModified: new Date() })
+            return new File([blob], fileName, { lastModified: new Date() });
         },
         handleAvatarSuccess(response, file) {
             file.url = response.path;
@@ -314,19 +397,19 @@ export default {
             file.name = this.new_filename;
             files.push(file);
             this.setInputFiles(files);
-            this.handleCancelCrop()
+            this.handleCancelCrop();
         },
         handleRemove(file) {
             let files = this.$refs.uploader.uploadFiles;
             files = files.filter((f) => {
-                if (typeof file == "string") {
+                if (typeof file == 'string') {
                     return f.name != file;
                 } else {
                     return f.uid != file.uid;
                 }
             });
             this.setInputFiles(files);
-        }
+        },
     },
 };
 </script>

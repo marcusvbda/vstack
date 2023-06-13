@@ -42,12 +42,12 @@ class Field
 				} else {
 					$this->options["required"] = true;
 				}
-				$this->options["label"] = $this->options["label"] . ' <small class="text-danger" style="position: relative;top: -2px;">*</small>';
+				$this->options["label"] = $this->options["label"] . ' <small style="position: relative;top: -2px;">*</small>';
 			} else {
 				if ($this->hasRequiredIfRule($rules)) {
-					$this->options["label"] = $this->options["label"] . ' <small class="text-success" style="position: relative;top: -2px;">*</small>';
+					$this->options["label"] = $this->options["label"] . ' <small style="position: relative;top: -2px;">*</small>';
 				} else {
-					$this->options["label"] = $this->options["label"] . ' <small class="text-muted" style="position: relative;top: -2px;">(opcional)</small>';
+					$this->options["label"] = $this->options["label"];
 				}
 			}
 		}

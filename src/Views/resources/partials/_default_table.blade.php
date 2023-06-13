@@ -5,8 +5,8 @@ $current_order_type = Arr::get($_data, 'order_type', "desc");
 $order_type = $current_order_type == "desc" ? "asc" : "desc";
 ?>
 <div ref="container" class="card text-gray-700 border border-gray-200 rounded-lg bg-gray-50">
-	<div class="p-1">
-		<div class="flex align-items-center flex-wrap">
+	<div class="p-1" style="min-height: 40px;">
+		<div class="flex align-center flex-wrap">
 			@if($resource->lenses())
 			@include("vStack::resources.partials._lenses")
 			@endif
@@ -52,7 +52,7 @@ $order_type = $current_order_type == "desc" ? "asc" : "desc";
 							@if(@data_get($value,"sortable") !== false)
 							<a href="{{ResourcesHelpers::sortLink($resource->route(),request()->all(), $sortable_index,$order_type)}}" class="flex gap-4">
 								<div class="link">{{data_get($value,"label",$value)}}</div>
-								<div class="ml-auto flex flex-row mr-4">
+								<div class="ml-auto flex  mr-4">
 									<span class="sort-icon el-icon-arrow-down
 													@if($order_type=='asc' && $order_by==$sortable_index ) block @else hidden @endif">
 									</span>

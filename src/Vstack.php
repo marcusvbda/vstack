@@ -61,12 +61,12 @@ class Vstack
 
 	public static function makeLinesHtmlAppend(...$args)
 	{
-		$html = "<div class='d-flex flex-column'>";
+		$html = "<div class='flex flex-col'>";
 		foreach ($args as $key => $value) {
 			if ($key == 0) {
 				$html .= "<span><b>{$value}</b></span>";
 			} else {
-				$html .= "<small class='text-muted'>{$value}</small>";
+				$html .= "<small class='text-neutral-400'>{$value}</small>";
 			}
 		}
 		return $html . "</div>";

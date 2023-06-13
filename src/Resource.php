@@ -159,14 +159,10 @@ class Resource
 
 	public function secondCrudBtn()
 	{
-		if ($this->crudType()["template"] == "dialog") {
-			return false;
-		}
 		return [
-			"size" => "small",
 			"field" => "save",
-			"type" => "success",
-			"content" => "<div class='d-flex flex-row'>
+			"class" => "secondary",
+			"content" => "<div class='flex items-center'>
 							<i class='el-icon-success mr-2'></i>
 							Salvar
 						</div>"
@@ -178,8 +174,8 @@ class Resource
 		return [
 			"size" => "small",
 			"field" => "save_and_back",
-			"type" => "info",
-			"content" => "<div class='d-flex flex-row'>
+			"class" => "primary",
+			"content" => "<div class='flex items-center'>
 							<i class='el-icon-arrow-left mr-2'></i>
 							Salvar e Voltar
 						</div>"
@@ -674,55 +670,33 @@ class Resource
 		];
 	}
 
-	public function crudType()
-	{
-		return [
-			"template" => "page"
-		];
-	}
-
-	public function crudRightCardBody()
-	{
-		return null;
-	}
-
 	public function createMethod($params, $data)
 	{
-		if ($this->crudType()["template"] == "dialog") {
-			return abort(404);
-		}
 		$resource = $this;
 		return view("vStack::resources.crud", compact("resource", "data", "params"));
 	}
 
 	public function editMethod($params, $data, $content)
 	{
-		if ($this->crudType()["template"] == "dialog") {
-			return  abort(404);
-		}
 		$resource = $this;
 		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
 	}
 
 	public function viewMethod($params, $data, $content)
 	{
-		if ($this->crudType()["template"] == "dialog") {
-			return  abort(404);
-		}
 		$resource = $this;
 		return view("vStack::resources.view", compact("resource", "data", "params", "content"));
 	}
 
 	public function secondViewBtn()
 	{
-		if ($this->crudType()["template"] == "dialog") {
+		if ($this->canUpdate()) {
 			return false;
 		}
 		return [
-			"size" => "small",
 			"field" => "edit",
-			"type" => "primary",
-			"content" => "<div class='d-flex flex-row'>
+			"class" => "secondary",
+			"content" => "<div class='flex '>
 							<i class='el-icon-edit mr-2'></i>
 							Editar
 						</div>"
@@ -732,10 +706,9 @@ class Resource
 	public function firstViewBtn()
 	{
 		return [
-			"size" => "small",
 			"field" => "back",
-			"type" => "info",
-			"content" => "<div class='d-flex flex-row'>
+			"class" => "primary",
+			"content" => "<div class='flex '>
 							<i class='el-icon-arrow-left mr-2'></i>
 							 Voltar
 						</div>"
@@ -825,11 +798,6 @@ class Resource
 		$enabled = array_filter([$this->canView(), $this->canUpdate(), $this->canDelete(), $this->canClone()]);
 		$extras = $this->extraActionButtons(null);
 		return count($enabled) + count($extras);
-	}
-
-	public function showCrudRightCard()
-	{
-		return true;
 	}
 
 	public function resourceLoadingSaveMassage($type)

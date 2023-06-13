@@ -1,25 +1,48 @@
 <template>
     <CustomResourceComponent :label="label" :description="description">
-        <div class="d-flex flex-column">
+        <div class="flex flex-col">
             <slot name="prepend-slot" />
-            <div class="d-flex flex-row flex-wrap align-items-center">
-                <el-tag class="ml-0 mr-2 mb-2" :key="tag" v-for="tag in dynamicTags"
-                    :closable="disabled != true ? true : false" :disable-transitions="false"
-                    @keydown="$event.keyCode === 13 ? $event.preventDefault() : false" @close="handleClose(tag)">
+            <div class="flex flex-wrap align-center">
+                <el-tag
+                    class="ml-0 mr-2 mb-2"
+                    :key="tag"
+                    v-for="tag in dynamicTags"
+                    :closable="disabled != true ? true : false"
+                    :disable-transitions="false"
+                    @keydown="
+                        $event.keyCode === 13 ? $event.preventDefault() : false
+                    "
+                    @close="handleClose(tag)"
+                >
                     {{ tag }}
                 </el-tag>
                 <template v-if="disabled != true">
-                    <el-input class="input-new-tag ml-0 mr-2 mb-2" v-if="inputVisible" v-model="inputValue"
-                        ref="saveTagInput" size="medium" @keyup.enter.native="handleInputConfirm"
-                        @blur="handleInputConfirm">
+                    <el-input
+                        class="input-new-tag ml-0 mr-2 mb-2"
+                        v-if="inputVisible"
+                        v-model="inputValue"
+                        ref="saveTagInput"
+                        size="medium"
+                        @keyup.enter.native="handleInputConfirm"
+                        @blur="handleInputConfirm"
+                    >
                     </el-input>
-                    <button type="button" v-else class="ml-0 btn btn-primary btn-sm button-new-tag" size="small"
-                        @click="showInput">
+                    <button
+                        type="button"
+                        v-else
+                        class="ml-0 btn btn-primary btn-sm button-new-tag"
+                        size="small"
+                        @click="showInput"
+                    >
                         + Adicionar
                     </button>
                 </template>
             </div>
-            <div class="invalid-feedback" v-if="errors" :style="{ display: `${errors ? 'block' : 'none'}` }">
+            <div
+                class="invalid-feedback"
+                v-if="errors"
+                :style="{ display: `${errors ? 'block' : 'none'}` }"
+            >
                 <ul class="pl-3 mb-0">
                     <li v-for="(e, i) in errors" :key="i" v-html="e" />
                 </ul>
@@ -31,34 +54,34 @@
 <script>
 export default {
     props: [
-        "placeholder",
-        "label",
-        "route_list",
-        "list_model",
-        "disabled",
-        "errors",
-        "optionlist",
-        "required",
-        "size",
-        "multiple",
-        "relation",
-        "allowcreate",
-        "unique",
-        "description",
-        "extraValidator",
+        'placeholder',
+        'label',
+        'route_list',
+        'list_model',
+        'disabled',
+        'errors',
+        'optionlist',
+        'required',
+        'size',
+        'multiple',
+        'relation',
+        'allowcreate',
+        'unique',
+        'description',
+        'extraValidator',
     ],
     data() {
         return {
             dynamicTags: [],
             inputVisible: false,
             started: false,
-            inputValue: "",
+            inputValue: '',
         };
     },
     watch: {
         dynamicTags() {
             if (this.started) {
-                return this.$emit("input", val);
+                return this.$emit('input', val);
             }
         },
     },
@@ -79,24 +102,33 @@ export default {
             if (!this.inputVisible) return;
             if (this.unique) {
                 if (this.dynamicTags.find((x) => x == this.inputValue))
-                    return this.$message({ showClose: true, message: `${this.inputValue} já existe`, type: "error" });
+                    return this.$message({
+                        showClose: true,
+                        message: `${this.inputValue} já existe`,
+                        type: 'error',
+                    });
             }
             let inputValue = this.inputValue;
             if (inputValue) {
                 if (this.extraValidator) {
                     let valid = this.extraValidator.handle(inputValue);
-                    if (!valid) return this.$message({ showClose: true, message: this.extraValidator.message, type: "error" });
+                    if (!valid)
+                        return this.$message({
+                            showClose: true,
+                            message: this.extraValidator.message,
+                            type: 'error',
+                        });
                 }
                 this.dynamicTags.push(inputValue);
             }
             this.inputVisible = false;
-            this.inputValue = "";
+            this.inputValue = '';
         },
     },
 };
 </script>
 <style>
-.el-tag+.el-tag {
+.el-tag + .el-tag {
     margin-left: 10px;
 }
 

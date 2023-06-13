@@ -1,15 +1,17 @@
-// @import "resources";
 @import "./libs/linkPreview";
 @import "./libs/pace";
 @import "./libs/shimmer";
 @import "./libs/vue_transitions";
 @import "~element-ui/lib/theme-chalk/index.css";
-// @import "~bootstrap/scss/bootstrap";
 @import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  zoom: .9;
+}
 
 .vstack-form {
   .form-label {
@@ -26,6 +28,10 @@
 
   &.primary {
     @apply bg-blue-600  enabled:hover:bg-blue-500 disabled:cursor-not-allowed;
+  }
+
+  &.danger {
+    @apply bg-red-600  enabled:hover:bg-red-500 disabled:cursor-not-allowed;
   }
 
   &.secondary {
@@ -50,7 +56,7 @@
 
   nav {
     ul {
-      @apply flex items-center justify-center;
+      @apply flex items-center justify-center flex-wrap;
   
       li {
         @apply bg-gray-600 text-white text-sm flex items-center justify-center;
@@ -77,6 +83,38 @@
 @media screen and (max-width: 767px) {
   .table-responsive-sm {
       overflow-x: auto;
-      max-width: 100%;
+      max-width: 100%; 
   }
+}
+
+.vstack-crud-card {
+  @apply shadow-lg rounded-lg border mb-4 bg-white;
+
+  .crud-card-header {
+    @apply p-4 bg-gray-50 text-neutral-800;
+
+    .header-title {
+      @apply text-lg text-neutral-700 font-normal;
+    }
+  }
+
+  .crud-card-body {
+    .table-crud {
+        .field-title{
+          @apply border-b bg-gray-50 p-4 w-3/12;
+        }
+
+        .field-slot {
+          @apply p-4 border-b;
+        }
+    }
+  }
+}
+
+.break-words {
+  word-break: break-word;
+}
+
+.w-full {
+  width: 100%!important;
 }

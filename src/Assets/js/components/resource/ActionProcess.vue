@@ -19,7 +19,7 @@
         <el-dialog
             :title="running_action.title"
             :visible.sync="running_action.visible"
-            width="85%"
+            width="70%"
         >
             <template v-if="loading">
                 <div class="flex">
@@ -64,7 +64,7 @@
                     ref="crud"
                 />
 
-                <div class="w-100 d-flex justify-content-end">
+                <div class="w-full flex justify-end mt-3">
                     <button
                         v-if="running_action.submit_button"
                         :size="running_action.submit_button.size"

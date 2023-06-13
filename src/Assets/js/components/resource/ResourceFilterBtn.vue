@@ -1,6 +1,6 @@
 <template>
     <div
-        class="dropdown ml-2 mb-2"
+        class="dropdown"
         style="position: relative"
         v-if="data.filters.length > 0 || show_page_list"
     >
@@ -11,7 +11,6 @@
         />
         <button
             class="vstack-btn secondary"
-            style="height: 33px"
             type="button"
             @click.prevent="toggleFilters"
             v-html="`Filtrar ${label}`"
@@ -25,7 +24,7 @@
             :append-to-body="true"
         >
             <template slot="title">
-                <div class="flex-row w-1/2">
+                <div class="w-1/2">
                     <button
                         class="vstack-btn primary"
                         id="resource-btn-confirm"

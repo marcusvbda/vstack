@@ -9,7 +9,7 @@
                 />
             </div>
             <template v-if="col == virtual_indexes.action_col">
-                <div class="d-flex align-items-center justify-content-center">
+                <div class="flex align-center justify-center">
                     <input
                         class="select-action-resource select_action_box"
                         type="checkbox"

@@ -8,7 +8,7 @@ use marcusvbda\vstack\Models\ResourceConfig;
             {!! @$report_mode ? @$resource->reportLabel() : @$resource->indexLabel() !!}
         </h4>
         @if (!@$report_mode && $resource->canCreate())
-        <resource-store-btn resource_id='{{ $resource->id }}' :crud_type='@json($resource->crudType())' label="{{ $resource->storeButtonLabel() }}" route="{{ route('resource.create', ['resource' => $resource->id]) }}">
+        <resource-store-btn resource_id='{{ $resource->id }}' label="{{ $resource->storeButtonLabel() }}" route="{{ route('resource.create', ['resource' => $resource->id]) }}">
         </resource-store-btn>
         @endif
         @if ($resource->canImport() && !@$report_mode && $resource->canCreate())
