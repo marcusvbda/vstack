@@ -1,12 +1,10 @@
 <template>
-    <div>
-        <button
-            id="resource-btn-store"
-            class="vstack-btn primary"
-            @click.prevent="click"
-            v-html="label"
-        />
-    </div>
+    <button
+        id="resource-btn-store"
+        class="vstack-btn primary block"
+        @click.prevent="click"
+        v-html="label"
+    />
 </template>
 <script>
 export default {

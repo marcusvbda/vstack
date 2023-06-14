@@ -14,10 +14,6 @@ class Text extends Field
 
 	public function getView($type = "input")
 	{
-		if ($type == "view") {
-			return $this->getViewOnlyValue();
-		}
-
 		if (@$this->options["hide"]) {
 			return $this->view = "";
 		}

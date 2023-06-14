@@ -81,7 +81,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex align-center justify-center h-100">
+                            <div
+                                class="flex items-center justify-center h-full"
+                            >
                                 <i class="el-icon-plus"></i>
                             </div>
                         </template>
@@ -115,19 +117,31 @@
         >
             <div class="overflow-crop-loading" v-if="loading" />
             <img ref="croppel" :src="cropping_img" v-if="cropDialog" />
-            <div class="row">
-                <div class="col-12 px-5">
+            <div class="flex flex-col">
+                <div class="w-full px-5">
                     <slot name="append-crop-slot" />
                 </div>
             </div>
-            <span slot="footer" class="dialog-footer mt-2">
-                <el-button @click="handleCancelCrop" v-if="!loading"
-                    >Cancelar</el-button
+            <div
+                slot="footer"
+                class="dialog-footer mt-2 flex w-full justify-end items-center"
+            >
+                <button
+                    class="vstack-btn secondary"
+                    @click="handleCancelCrop"
+                    v-if="!loading"
                 >
-                <el-button type="primary" @click="handleCrop" :loading="loading"
-                    >Confirmar</el-button
+                    Cancelar
+                </button>
+                <button
+                    class="vstack-btn primary"
+                    type="primary"
+                    @click="handleCrop"
+                    :loading="loading"
                 >
-            </span>
+                    Confirmar
+                </button>
+            </div>
         </el-dialog>
         <template v-if="show_url">
             <p v-for="(link, i) in uploadedLinks" :key="i">

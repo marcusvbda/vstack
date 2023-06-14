@@ -14,10 +14,6 @@ class ResourceTree extends Field
 
     public function getView($type = "input")
     {
-        if ($type == "view") {
-            return $this->getViewOnlyValue();
-        }
-
         if (@$this->options["hide"]) {
             return $this->view = "";
         }
@@ -28,7 +24,7 @@ class ResourceTree extends Field
         $parent_resource = @$this->options['parent_resource'];
         $eval = @$this->options["eval"]  ? $this->options["eval"] : '';
         $slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
-		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
+        $slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
         return $this->view = view("vStack::resources.field.resource_tree", compact(
             "resource",

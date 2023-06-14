@@ -18,10 +18,6 @@ class DateTime extends Field
 			return $this->view = "";
 		}
 
-		if ($type == "view") {
-			return $this->getViewOnlyValue();
-		}
-
 		$label          = $this->options["label"];
 		$append         = @$this->options["append"];
 		$prepend        = @$this->options["prepend"];

@@ -500,19 +500,6 @@ class Resource
 		return 5;
 	}
 
-	public function tagColors()
-	{
-		return [
-			"#e56868",
-			"#7d7ded",
-			"#87bf87",
-			"#903d90",
-			"#9c0c91",
-			"#9c76c5",
-			"#5ab2b6"
-		];
-	}
-
 	public function actions()
 	{
 		return [];
@@ -628,7 +615,8 @@ class Resource
 			"create" => "Cadastro de {$this->singularLabel()}",
 			"view" => "Visualização de {$this->singularLabel()}",
 			"report" => "Relatório de {$this->singularLabel()}",
-			"edit" => "Edição de {$this->singularLabel()}"
+			"edit" => "Edição de {$this->singularLabel()}",
+			"import" => "Importação de {$this->singularLabel()}"
 		];
 	}
 
@@ -685,7 +673,7 @@ class Resource
 	public function viewMethod($params, $data, $content)
 	{
 		$resource = $this;
-		return view("vStack::resources.view", compact("resource", "data", "params", "content"));
+		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
 	}
 
 	public function secondViewBtn()

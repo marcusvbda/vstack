@@ -13,48 +13,48 @@
             :show-close="exporting.current_action == 'waiting'"
         >
             <template v-if="exporting.current_action == 'waiting'">
-                <div class="row flex justify-center">
-                    <div class="col-12 padding-dialog flex justify-between">
-                        <b
-                            >Selecione as colunas que deseja importar em sua
-                            planilha</b
-                        >
-                        <small class="ml-4 text-neutral-400"
-                            >Será respeitado o filtro da listagem</small
-                        >
-                    </div>
+                <div class="flex padding-dialog flex-col gap-3">
+                    <b>
+                        Selecione as colunas que deseja importar em sua planilha
+                    </b>
+                    <small class="text-neutral-400">
+                        Será respeitado o filtro da listagem
+                    </small>
                 </div>
-                <div class="row mt-4">
-                    <div
-                        class="col-12 padding-dialog row-dialog-export"
-                        id="row-dialog-export-items"
-                    >
-                        <ElCheckbox
-                            class="no-check-mgt mx-1"
-                            v-for="(f, i) in columns"
-                            :key="i"
-                            v-model="columns[i].enabled"
-                            :label="columns[i].label"
-                            border
-                            :id="`row-dialog-export-items-${columns[i].label}`"
-                        />
-                    </div>
+                <div
+                    class="flex padding-dialog row-dialog-export gap-2"
+                    id="row-dialog-export-items"
+                >
+                    <ElCheckbox
+                        v-for="(f, i) in columns"
+                        :key="i"
+                        v-model="columns[i].enabled"
+                        class="mx-0"
+                        :label="columns[i].label"
+                        border
+                        :id="`row-dialog-export-items-${columns[i].label}`"
+                    />
                 </div>
-                <span slot="footer" class="dialog-footer flex justify-end">
-                    <ElButton
+                <div
+                    slot="footer"
+                    class="dialog-footer flex flex-col md:flex-row justify-end gap-2"
+                >
+                    <button
                         @click="visible = false"
                         id="row-dialog-export-cancel"
+                        class="vstack-btn secondary"
                     >
                         Cancelar
-                    </ElButton>
-                    <ElButton
+                    </button>
+                    <button
                         type="primary"
                         @click="confirm"
                         id="row-dialog-export-confirm"
+                        class="vstack-btn primary"
                     >
                         Exportar Relatório
-                    </ElButton>
-                </span>
+                    </button>
+                </div>
             </template>
             <template v-else>
                 <template v-if="exporting.current_action == 'preparing'">

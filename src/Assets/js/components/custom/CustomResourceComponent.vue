@@ -1,5 +1,5 @@
 <template>
-    <tr>
+    <tr class="flex flex-col md:table-row">
         <td class="field-title" v-if="show_label">
             <div class="flex flex-col">
                 <b

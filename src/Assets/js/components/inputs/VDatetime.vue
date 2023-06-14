@@ -5,7 +5,6 @@
             <el-date-picker
                 v-model="val"
                 :type="type"
-                class="w-full"
                 range-separator=" - "
                 :disabled="disabled"
                 :start-placeholder="start_placeholder"

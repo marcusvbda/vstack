@@ -18,9 +18,6 @@ class Check extends Field
             return $this->view = "";
         }
 
-        if ($type == "view") {
-            return $this->getViewOnlyValue();
-        }
         $label          = $this->options["label"];
         $field          = $this->options["field"];
         $active_color   = @$this->options["active_color"] ? $this->options["active_color"] : "green";
@@ -31,7 +28,7 @@ class Check extends Field
         $description    = @$this->options["description"];
         $eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
         $slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
-		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
+        $slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 
         return $this->view = view("vStack::resources.field.check", compact(
             "label",

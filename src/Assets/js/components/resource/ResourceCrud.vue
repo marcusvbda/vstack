@@ -1,30 +1,16 @@
 <template>
-    <div class="flex flex-col">
-        <div class="w-full">
-            <form
-                class="needs-validation m-0"
-                novalidate
-                v-on:submit.prevent
-                id="resource-crud-page"
-                v-if="initialized"
-            >
-                <template v-for="(card, i) in data.fields">
-                    <v-runtime-template
-                        :key="i"
-                        :template="card.view"
-                        :id="`resource-crud-card-${card.label}`"
-                    />
-                </template>
-                <slot
-                    name="aftercreate"
-                    v-if="['CREATE', 'CLONE'].includes(pageType)"
-                />
-                <slot name="afteredit" v-if="['EDIT'].includes(pageType)" />
-            </form>
-        </div>
-
-        <div class="w-full" v-if="first_btn || second_btn">
-            <div class="pt-3 flex justify-end gap-5 flex-wrap">
+    <div class="flex flex-col relative" ref="bar" style="padding-bottom: 100px">
+        <div
+            class="view-overflow absolute z-999 w-full h-full"
+            v-if="pageType === 'VIEW'"
+        />
+        <div
+            class="vstack-crud-card mb-3 p-3"
+            ref="topbar"
+            id="save-topbar"
+            v-if="(first_btn || second_btn) && pageType !== 'VIEW'"
+        >
+            <div class="flex justify-end items-center gap-5 flex-wrap">
                 <button
                     v-if="first_btn"
                     :size="first_btn.size"
@@ -46,6 +32,28 @@
                     <span v-html="second_btn.content" />
                 </button>
             </div>
+        </div>
+        <div class="w-full">
+            <form
+                class="needs-validation m-0"
+                novalidate
+                v-on:submit.prevent
+                id="resource-crud-page"
+                v-if="initialized"
+            >
+                <template v-for="(card, i) in data.fields">
+                    <v-runtime-template
+                        :key="i"
+                        :template="card.view"
+                        :id="`resource-crud-card-${card.label}`"
+                    />
+                </template>
+                <slot
+                    name="aftercreate"
+                    v-if="['CREATE', 'CLONE'].includes(pageType)"
+                />
+                <slot name="afteredit" v-if="['EDIT'].includes(pageType)" />
+            </form>
         </div>
     </div>
 </template>
@@ -98,9 +106,33 @@ export default {
         this.removeLoadingEl();
         this.getScreenSize();
         this.initForm();
+        this.initCrudSectioEvent();
     },
     methods: {
         ...mapMutations('resource', ['setActionBtnLoading']),
+        initCrudSectioEvent() {
+            this.$nextTick(() => {
+                const element = this.$refs.topbar;
+                if (!element) return;
+                let breakpoint = element.getBoundingClientRect().top;
+                window.addEventListener('scroll', () => {
+                    if (element) {
+                        const mustFix =
+                            breakpoint > 0 &&
+                            document.body.scrollTop >= breakpoint;
+                        if (mustFix) {
+                            if (!element.classList.contains('fixed-top')) {
+                                element.classList.add('fixed-top');
+                            }
+                        } else {
+                            if (element.classList.contains('fixed-top')) {
+                                element.classList.remove('fixed-top');
+                            }
+                        }
+                    }
+                });
+            });
+        },
         removeLoadingEl() {
             const el_name = '#loading-section #cud-loader';
             this.$waitForEl(el_name).then(() => {
@@ -148,7 +180,6 @@ export default {
                         field_value = parseInt(field_value);
                     }
                     if (field_name) {
-                        console.log(field_name, field_value);
                         this.$set(this.form, field_name, field_value);
                     }
                 }
@@ -298,6 +329,8 @@ export default {
                 });
         },
         submit(clicked_btn = 'save_and_back', checked = false) {
+            if (this.pageType === 'VIEW') return;
+
             if (!checked && this.raw_type != 'action') {
                 return this.checkStore(clicked_btn);
             }
@@ -346,3 +379,12 @@ export default {
     },
 };
 </script>
+<style lang="scss">
+#save-topbar.fixed-top {
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    left: 0;
+    right: 0;
+}
+</style>

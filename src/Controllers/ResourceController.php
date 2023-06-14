@@ -1016,7 +1016,6 @@ class ResourceController extends Controller
 
 	protected function getTag($model_class, $name, $resource)
 	{
-		$colors = $resource->tagColors();
 		$old_tag = Tag::where("model", $model_class)->where("name", $name)->first();
 		if ($old_tag) {
 			return $old_tag;
@@ -1024,7 +1023,7 @@ class ResourceController extends Controller
 		return Tag::create([
 			"model" => $model_class,
 			"name" => $name,
-			"color" => $colors[rand(0, count($colors) - 1)]
+			"color" => "#ecf5ff"
 		]);
 	}
 

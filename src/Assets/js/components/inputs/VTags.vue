@@ -2,13 +2,13 @@
     <CustomResourceComponent :label="label" :description="description">
         <div class="flex flex-col">
             <slot name="prepend-slot" />
-            <div class="flex flex-wrap align-center">
+            <div class="flex flex-wrap items-center gap-2">
                 <el-tag
-                    class="ml-0 mr-2 mb-2"
                     :key="tag"
                     v-for="tag in dynamicTags"
                     :closable="disabled != true ? true : false"
                     :disable-transitions="false"
+                    class="mx-0"
                     @keydown="
                         $event.keyCode === 13 ? $event.preventDefault() : false
                     "
@@ -30,7 +30,7 @@
                     <button
                         type="button"
                         v-else
-                        class="ml-0 btn btn-primary btn-sm button-new-tag"
+                        class="ml-0 btn vstack-btn primary"
                         size="small"
                         @click="showInput"
                     >

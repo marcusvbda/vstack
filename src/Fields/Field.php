@@ -34,6 +34,7 @@ class Field
 
 	private function checkRequired()
 	{
+		$requiredTag = ' <small style="position: relative;top: -2px;color:#961313;font-weight: bold;">*</small>';
 		if (@$this->options['type'] != "check") {
 			$rules = !is_array($this->options['rules']) ? explode("|", $this->options['rules']) : $this->options['rules'];
 			if ($this->options["required"] || $this->hasRequiredRule($rules)) {
@@ -42,10 +43,10 @@ class Field
 				} else {
 					$this->options["required"] = true;
 				}
-				$this->options["label"] = $this->options["label"] . ' <small style="position: relative;top: -2px;">*</small>';
+				$this->options["label"] = $this->options["label"] . $requiredTag;
 			} else {
 				if ($this->hasRequiredIfRule($rules)) {
-					$this->options["label"] = $this->options["label"] . ' <small style="position: relative;top: -2px;">*</small>';
+					$this->options["label"] = $this->options["label"] . $requiredTag;
 				} else {
 					$this->options["label"] = $this->options["label"];
 				}
@@ -75,41 +76,6 @@ class Field
 	private function hasRequiredRule($rules)
 	{
 		return array_search("required", $rules) !== false;
-	}
-
-	protected function getViewOnlyValue()
-	{
-		$content = request()->get("content");
-		$label  = @$this->options["label"];
-		$description    = @$this->options["description"];
-		$type    = @$this->options["type"];
-		$model    = @$this->options["model"];
-		$value = @$this->options["default"];
-		$options = @$this->options["options"] ?? [];
-		if ($content && @$this->options["field"]) {
-			$value = @$content->{$this->options["field"]};
-		}
-		if (!$value) {
-			$value = @$this->options["default"];
-		}
-
-		if ($type == "date" || $type == "daterange") {
-			$format         = @$this->options["format"] ? $this->options["format"] : 'DD/MM/YYYY';
-		} else {
-			$format         = @$this->options["format"] ? $this->options["format"] : 'DD/MM/YYYY HH:mm:ss';
-		}
-		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
-
-		return $this->view = view("vStack::resources.field.view_content", compact(
-			"label",
-			"description",
-			"value",
-			"type",
-			"options",
-			"model",
-			"format",
-			"eval"
-		))->render();
 	}
 
 	public function getDefaultMaxlength($default)

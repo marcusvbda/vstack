@@ -19,9 +19,6 @@ class BelongsTo extends Field
 			return $this->view = "";
 		}
 
-		if ($type == "view") {
-			return $this->getViewOnlyValue();
-		}
 		$allow_create = @$this->options["allow_create"] ? 'true' : 'false';
 		$model       = @$this->options["model"] ? $this->options["model"] : null;
 		$field       = @$this->options["field"];

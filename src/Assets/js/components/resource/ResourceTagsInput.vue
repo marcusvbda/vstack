@@ -4,7 +4,6 @@
             <div class="w-full flex flex-wrap items-center" v-if="!loading">
                 <template v-if="only_view == undefined">
                     <ElTag
-                        :style="{ '--color': t.color }"
                         class="resource-tag"
                         size="mini"
                         :closable="only_view == undefined"
@@ -237,26 +236,5 @@ export default {
     &:focus {
         outline: unset;
     }
-}
-.resource-tag {
-    border-color: var(--color);
-    background-color: var(--color);
-    color: white;
-    font-weight: 700;
-}
-.el-tag.el-tag__close {
-    color: white !important;
-    &:before {
-        color: white !important;
-    }
-}
-
-.resource-badge {
-    border-color: var(--color);
-    background-color: var(--color);
-    color: white;
-}
-.resource-badge + .resource-badge {
-    margin-left: 5px;
 }
 </style>

@@ -11,6 +11,7 @@
                     effect="dark"
                     :content="extra.title ? extra.title : 'Extra Action'"
                     placement="top"
+                    :key="i"
                 >
                     <el-button
                         size="small"
