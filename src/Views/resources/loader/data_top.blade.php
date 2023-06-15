@@ -3,8 +3,9 @@
         :get_params='@json($_data)'>
     </resource-filter-tags>
     @php
+        $routeParam = ['resource' => $resource->id];
         $globalFilterData = [
-            'filter_route' => route('resource.index', ['resource' => $resource->id]),
+            'filter_route' => @$report_mode ? route('resource.report', $routeParam) : route('resource.index', $routeParam),
             'query' => $_data,
             'value' => @$_data['_'] ? $_data['_'] : '',
         ];
@@ -15,7 +16,7 @@
             </portal-target>
         </small>
         @if ($resource->search())
-            <resource-filter-global :data="{{ json_encode($globalFilterData) }}">
+            <resource-filter-global :data='@json($globalFilterData)''>
             </resource-filter-global>
         @endif
         @include('vStack::resources.partials._filter_btn')

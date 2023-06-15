@@ -1,5 +1,5 @@
 <div class="overflow-x-auto bg-white">
-    <table class="table table-sm table-hover mb-0 vstack-resource-list" id="resource-table">
+    <table class="mb-0 vstack-resource-list w-full" id="resource-table">
         <thead class="thead-dark">
             <tr id="resource-report-head">
                 @foreach ($table as $key => $value)

@@ -60,7 +60,7 @@ class ResourceController extends Controller
 
 		$per_page = $this->getPerPage($resource);
 
-		$data = $data->select("*")->paginate($per_page);
+		$data = $data->select("*")->cursorPaginate($per_page);
 
 		if ($report_mode) {
 			$data->setPath(route('resource.report', ["resource" => $resource->id]));
@@ -520,21 +520,19 @@ class ResourceController extends Controller
 		return response()->json(["action" => $action, "processed_row" => $processed_row, "next_page" => $results->nextPageUrl()]);
 	}
 
-	protected function processExportRow($resource, $results, $data)
+	public static function processExportRow($resource, $results, $data)
 	{
-		$exportColumns = $resource->exportColumns();
-
-		$columns = collect($data['columns'])
-			->filter(fn ($x) => $x['enabled'])
-			->transform(fn ($x) => $x['handler'] = collect($exportColumns)->first(fn ($y) => $y['label'] == $x['label']))
-			->toArray();
-
+		$vstack_controller = new VstackController;
+		$columns = data_get($data, 'columns');
 		$processed_rows = [];
-
+	
 		foreach ($results as $row) {
-			$processed_rows[] = array_map(fn ($x) => $columns[$x]['handler']($row), array_keys($columns));
+			$result = array_map(fn($key) => $vstack_controller->getColumnIndex($resource->exportColumns(), $row, $key), array_keys($columns));
+	
+			$result = array_filter($result, fn($row) => $row !== null);
+			$processed_rows[] = array_values($result);
 		}
-
+	
 		return $processed_rows;
 	}
 

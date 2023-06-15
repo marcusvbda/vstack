@@ -58,27 +58,10 @@
             </template>
             <template v-else>
                 <template v-if="exporting.current_action == 'preparing'">
-                    <div
-                        class="loading-ballls flex align-center justify-center py-5"
-                    >
-                        <div
-                            class="spinner-grow spinner-grow-xs text-neutral-400 mr-2"
-                            role="status"
-                        >
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                        <div
-                            class="spinner-grow spinner-grow-xs text-neutral-400 mr-2"
-                            role="status"
-                        >
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                        <div
-                            class="spinner-grow spinner-grow-xs text-neutral-400 mr-2"
-                            role="status"
-                        >
-                            <span class="sr-only">Loading...</span>
-                        </div>
+                    <div style="height: 300px;" class="flex items-center justify-center">
+                        <span class="text-4xl text-neutral-400">
+                            <i class="fas fa-spinner fa-spin" />
+                        </span>
                     </div>
                 </template>
                 <template v-if="exporting.current_action == 'processing'">
