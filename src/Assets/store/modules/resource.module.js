@@ -3,6 +3,7 @@ const state = {
     inputs_initialized: [],
     filter_options: {},
     field_options: {},
+    resource_list_total : 0
 };
 
 const getters = {
@@ -10,6 +11,7 @@ const getters = {
     inputs_initialized: (state) => state.inputs_initialized,
     filter_options: (state) => state.filter_options,
     field_options: (state) => state.field_options,
+    resource_list_total: (state) => state.resource_list_total,
 };
 
 const mutations = {
@@ -25,6 +27,9 @@ const mutations = {
     addFieldOptions: (state, payload) => {
         state.field_options = { ...state.field_options, ...payload };
     },
+    setResourceListTotal: (state, payload) => {
+        state.resource_list_total = payload;
+    }
 };
 
 export default {

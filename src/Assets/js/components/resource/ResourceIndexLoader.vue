@@ -6,13 +6,11 @@
             v-if="template.no_data"
             :template="template.no_data"
         />
-        <portal to="total-count">
-            {{ total_count }}
-        </portal>
     </div>
 </template>
 <script>
 import VRuntimeTemplate from 'v-runtime-template';
+import { mapMutations } from 'vuex';
 
 export default {
     props: ['resource_id', 'report_mode'],
@@ -38,6 +36,7 @@ export default {
         this.init();
     },
     methods: {
+        ...mapMutations('resource', ['setResourceListTotal']),
         removeLoadingEl(el) {
             this.$waitForEl(el).then(() => {
                 document.querySelector(el).remove();
@@ -70,7 +69,7 @@ export default {
             this.$http
                 .get(count_route, payload)
                 .then(({ data }) => {
-                    this.total_count = data.count;
+                    this.setResourceListTotal(data.count);
                 })
                 .catch((error) => {
                     console.log(error);

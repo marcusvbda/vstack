@@ -11,17 +11,14 @@
         ];
     @endphp
     <div class="flex flex-col md:flex-row justify-end items-center gap-5 mt-5">
-        <small class="text-sm text-neutral-500">
-            <portal-target name="total-count" />
-            </portal-target>
-        </small>
         @if ($resource->search())
-            <resource-filter-global :data='@json($globalFilterData)''>
+            <resource-filter-global :data='@json($globalFilterData)'>
             </resource-filter-global>
         @endif
         @include('vStack::resources.partials._filter_btn')
     </div>
-    <div class="vstack-pagination">
-        {{ $data->appends($_data)->links() }}
-    </div>
+    {{-- {{ $data->appends($_data)->links() }} --}}
+    <vstack-resource-pagination class="flex justify-end my-4 flex-wrap" :per_page="{{ $per_page }}"
+        :current_page="3">
+    </vstack-resource-pagination>
 </div>

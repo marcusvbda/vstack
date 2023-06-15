@@ -69,6 +69,17 @@ class VstackController extends Controller
 		return ["content" => $content, "acl" => $acl, "additional_extra_buttons" => $resource->extraActionButtons($row)];
 	}
 
+	public static function makePagination($query, $perPage, $currentPage)
+	{
+		$currentPage = 3;
+		$perPage = 10;
+		$skip = ($currentPage - 1) * $perPage;
+		return $query
+			->skip($skip)
+			->limit($perPage)
+			->get();
+	}
+
 	public function getColumnIndex($columns, $row, $key, $placeholder = "          -          ")
 	{
 		$removeEmoji = function ($text) {

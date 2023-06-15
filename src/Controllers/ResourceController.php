@@ -54,21 +54,12 @@ class ResourceController extends Controller
 		$data->withoutAppends = true;
 
 		if ($type == "count") {
-			$result = $resource->resultsFoundLabel() . $data->select(0)->count();
-			return json_encode(['count' => $result]);
+			return json_encode(['count' =>  $data->select(0)->count()]);
 		}
 
 		$per_page = $this->getPerPage($resource);
-
-		$data = $data->select("*")->cursorPaginate($per_page);
-
-		if ($report_mode) {
-			$data->setPath(route('resource.report', ["resource" => $resource->id]));
-		} else {
-			$data->setPath(route('resource.index', ["resource" => $resource->id]));
-		}
-
-		$user = Auth::user();
+		$current_page = 1;
+		$data = VstackController::makePagination($data->select("*"), $per_page, $current_page);
 
 		$filters = $resource->filters();
 		$_data =  request()->all();
@@ -80,10 +71,10 @@ class ResourceController extends Controller
 			unset($_data['page_type']);
 		}
 
-		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
+		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "per_page"))->render() . "</div>";
 		$top = str_split(ResourcesHelpers::minify($top), 250);
 
-		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
+		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode"))->render() . "</div>";
 		$table = str_split(ResourcesHelpers::minify($table), 250);
 
 		return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
@@ -525,14 +516,14 @@ class ResourceController extends Controller
 		$vstack_controller = new VstackController;
 		$columns = data_get($data, 'columns');
 		$processed_rows = [];
-	
+
 		foreach ($results as $row) {
-			$result = array_map(fn($key) => $vstack_controller->getColumnIndex($resource->exportColumns(), $row, $key), array_keys($columns));
-	
-			$result = array_filter($result, fn($row) => $row !== null);
+			$result = array_map(fn ($key) => $vstack_controller->getColumnIndex($resource->exportColumns(), $row, $key), array_keys($columns));
+
+			$result = array_filter($result, fn ($row) => $row !== null);
 			$processed_rows[] = array_values($result);
 		}
-	
+
 		return $processed_rows;
 	}
 

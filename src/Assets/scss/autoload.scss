@@ -51,34 +51,6 @@
   font-size: 8rem;
 }
 
-.vstack-pagination {
-  @apply flex justify-end mb-2 mt-2;
-
-  nav {
-    ul {
-      @apply flex items-center justify-center flex-wrap;
-  
-      li {
-        @apply bg-gray-600 text-white text-sm flex items-center justify-center;
-        height: 30px;
-
-        &.disabled {
-          display: none;
-        }
-
-        &.active {
-          @apply bg-gray-500;
-        }
-
-        a,.page-link {
-          @apply text-white px-3 py-1;
-        }
-      }
-    }
-  }
-  
-}
-
 
 @media screen and (max-width: 767px) {
   .table-responsive-sm {

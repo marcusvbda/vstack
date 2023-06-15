@@ -147,11 +147,6 @@ class Resource
 		return "Nenhum resultado encontrado";
 	}
 
-	public function resultsFoundLabel()
-	{
-		return "Resultados encontrados :  ";
-	}
-
 	public function nothingStoredText()
 	{
 		return "<h4>Nada cadastrado ainda...</h4>";
