@@ -16,10 +16,10 @@
                 v-html="data.resource.import_settings.description"
                 class="text-neutral-500 mt-3 w-full"
             />
-            <div
+            <small
                 v-if="data.resource.import_custom_crud_message"
                 v-html="data.resource.import_custom_crud_message"
-                class="text-netral-700 mt-3 w-full"
+                class="text-neutral-500 mt-3 w-full"
             />
         </div>
         <div class="w-full flex items-center mt-4 gap-4">

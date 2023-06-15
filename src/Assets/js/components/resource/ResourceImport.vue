@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col justify-center mt-4" style="margin-bottom: 150px">
+    <div class="flex flex-col justify-center my-4" style="margin-bottom: 150px">
         <el-steps :active="config.step" finish-status="success" align-center>
             <el-step title="Upload de arquivo" />
             <el-step

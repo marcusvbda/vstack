@@ -125,6 +125,7 @@ export default {
         relateColumns() {
             let columns = this.headerOptions;
             let headers = this.config.data.csv_header;
+            console.log(columns, headers)
             for (let i in headers) {
                 let index = columns.indexOf(headers[i]);
                 if (index > -1) {

@@ -9,10 +9,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  zoom: .9;
-}
-
 .vstack-form {
   .form-label {
     @apply text-neutral-900 text-xs mb-2;
@@ -141,4 +137,15 @@ html {
 .mx-0 {
   margin-left: 0!important;
   margin-right: 0!important;
+}
+
+
+.vstack-resource-list {
+  tr * {
+    @apply text-sm;
+  }
+}
+
+#resource-import-link,#resource-report-btn,#resource-report-btn {
+  @apply text-sm;
 }

@@ -31,7 +31,7 @@
                 :actions='@json($actions)'></action-process>
         @endif
         <div class="table-responsive-sm bg-white">
-            <table class="w-full">
+            <table class="w-full vstack-resource-list">
                 <thead id="resource-list-head">
                     <tr class="border">
                         <th width="1%;"></th>
