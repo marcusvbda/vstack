@@ -284,11 +284,25 @@ class ResourceController extends Controller
 		if (!$resource->canImport()) {
 			abort(403);
 		}
-		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant()->first()->name . ".xlsx";
+		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . uniqid() . ".xlsx";
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
-		Excel::store($exporter, $filename, "temp_report");
-		$full_path = storage_path("app/temp_report/$filename");
+
+		$storeTempPath = $this->getStoragePath("public");
+
+		Excel::store($exporter, "public/$filename");
+		$full_path = $storeTempPath . "/" . $filename;
+
 		return response()->download($full_path)->deleteFileAfterSend(true);
+	}
+
+	private function getStoragePath($disk = "public")
+	{
+		$disks = config("filesystems.disks");
+		$storeTempPath =  data_get($disks, "$disk.root");
+		if (!file_exists($storeTempPath)) {
+			mkdir($storeTempPath, 0777, true);
+		}
+		return $storeTempPath;
 	}
 
 	protected function getImporterCollumns($resource)

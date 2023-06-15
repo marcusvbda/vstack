@@ -9,5 +9,5 @@
     @include('vStack::resources.partials._breadcrumb')
 @endsection
 @section('content')
-    <resource-import :data="{{ json_encode($data) }}"></resource-import>
+    <resource-import :data='@json($data)'></resource-import>
 @endsection

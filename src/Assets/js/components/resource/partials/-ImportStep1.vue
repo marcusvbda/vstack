@@ -1,115 +1,82 @@
 <template>
-    <div class="card" v-loading="loading" element-loading-text="Aguarde ...">
+    <div
+        class="vstack-crud-card p-5"
+        v-loading="loading"
+        element-loading-text="Aguarde ..."
+    >
         <template v-if="data.resource.import_custom_map_step">
-            <div
-                class="card-header bg-white py-4"
-                v-if="data.resource.import_custom_map_step.subtitle"
+            <h3
+                class="font-light text-3xl"
+                v-if="data.resource.import_custom_map_step.title"
             >
-                <div class="row">
-                    <div class="col-12">
-                        <h3
-                            v-html="data.resource.import_custom_map_step.title"
-                        />
-                        <div
-                            class="mt-3"
-                            v-html="
-                                data.resource.import_custom_map_step.subtitle
-                            "
-                        />
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12">
-                        <v-runtime-template
-                            :template="
-                                data.resource.import_custom_map_step.template
-                            "
-                        />
-                    </div>
-                </div>
+                {{ data.resource.import_custom_map_step.title }}
+            </h3>
+            <small
+                v-if="data.resource.import_custom_map_step.subtitle"
+                v-html="data.resource.import_custom_map_step.subtitle"
+                class="text-neutral-500 mt-3 w-full"
+            />
+            <div class="w-full mt-4 flex flex-col">
+                <v-runtime-template
+                    :template="data.resource.import_custom_map_step.template"
+                />
             </div>
         </template>
         <template v-else>
-            <div class="card-header bg-white py-4">
-                <div class="row">
-                    <div class="col-12">
-                        <h3>
-                            Mapear campos da planilha para
-                            {{ data.resource.label.toLowerCase() }}
-                        </h3>
-                        <div class="mt-3">
-                            Selecione os campos da sua planilha (a esquerda) e
-                            relacione-os com os campos que deverão ser
-                            importados em
-                            {{ data.resource.label.toLowerCase() }} (a direita)
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <h3 class="font-light text-3xl">
+                Mapear campos da planilha para
+                {{ data.resource.label.toLowerCase() }}
+            </h3>
+            <small class="text-neutral-500 mt-3 w-full">
+                Selecione os campos da sua planilha (a esquerda) e relacione-os
+                com os campos que deverão ser importados em
+                {{ data.resource.label.toLowerCase() }} (a direita)
+            </small>
         </template>
-        <div class="card-body p-0">
-            <div class="row">
-                <div class="col-12">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th class="px-5">Nome da coluna</th>
-                                <th class="px-5">Mapear para o campo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(column, i) in config.data.csv_header"
-                                :key="i"
+        <table class="mt-5 w-full">
+            <thead>
+                <tr>
+                    <th class="p-4 border text-neutral-700">Nome da coluna</th>
+                    <th class="p-4 border">Mapear para o campo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(column, i) in config.data.csv_header" :key="i">
+                    <template>
+                        <td class="p-4 font-bold border">
+                            {{ column }}
+                        </td>
+                        <td class="p-4 border">
+                            <el-select
+                                class="w-full"
+                                clearable
+                                v-model="config.fieldlist[column]"
+                                filterable
+                                placeholder="Seleciona para onde este campo será importado"
                             >
-                                <template>
-                                    <td class="px-5">{{ column }}</td>
-                                    <td class="px-5">
-                                        <el-select
-                                            class="w-full"
-                                            clearable
-                                            v-model="config.fieldlist[column]"
-                                            filterable
-                                            placeholder="Seleciona para onde este campo será importado"
-                                        >
-                                            <el-option
-                                                label="Ignorar"
-                                                value="_IGNORE_"
-                                            />
-                                            <el-option
-                                                v-for="(
-                                                    item, i
-                                                ) in headerOptions"
-                                                :key="i"
-                                                :label="item"
-                                                :value="item"
-                                                :disabled="
-                                                    columnHasSelected(item)
-                                                "
-                                            />
-                                        </el-select>
-                                    </td>
-                                </template>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="card-footer bg-white">
-            <div class="row">
-                <div class="col-12 flex flex-wrap align-center justify-end">
-                    <el-button
-                        type="primary"
-                        :loading="loading"
-                        @click="submit"
-                        :disabled="canExecute"
-                        >Executar Importador</el-button
-                    >
-                </div>
-            </div>
+                                <el-option label="Ignorar" value="_IGNORE_" />
+                                <el-option
+                                    v-for="(item, i) in headerOptions"
+                                    :key="i"
+                                    :label="item"
+                                    :value="item"
+                                    :disabled="columnHasSelected(item)"
+                                />
+                            </el-select>
+                        </td>
+                    </template>
+                </tr>
+            </tbody>
+        </table>
+        <div class="w-full flex flex-col md:flex-row justify-end mt-5 pt-4">
+            <button
+                class="vstack-btn primary"
+                :loading="loading"
+                @click="submit"
+                :disabled="canExecute"
+            >
+                Executar Importador
+            </button>
         </div>
     </div>
 </template>

@@ -36,10 +36,15 @@
                             {{ item.title }}
                         </a>
                         <span
-                            class="inline-flex items-center text-sm font-medium text-blue-700"
+                            :class="[
+                                'inline-flex items-center text-sm',
+                                'font-medium text-blue-700',
+                            ]"
+                            :key="`${index}-last`"
                             v-else
                         >
                             <svg
+                                v-if="index != 0"
                                 aria-hidden="true"
                                 class="w-6 h-6 text-gray-400"
                                 fill="currentColor"

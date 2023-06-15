@@ -1,68 +1,70 @@
 <template>
-    <div class="card" v-loading="loading" element-loading-text="Aguarde ...">
-        <div class="card-header bg-white py-4">
-            <div class="row">
-                <div class="col-12">
-                    <h3
-                        class="font-weight-light"
-                        v-if="data.resource.import_settings.page_title"
-                    >
-                        {{ data.resource.import_settings.page_title }}
-                    </h3>
-                    <div
-                        v-if="data.resource.import_settings.description"
-                        v-html="data.resource.import_settings.description"
+    <div
+        class="vstack-crud-card p-5"
+        v-loading="loading"
+        element-loading-text="Aguarde ..."
+    >
+        <div class="flex flex-col w-full">
+            <h3
+                class="font-light text-3xl"
+                v-if="data.resource.import_settings.page_title"
+            >
+                {{ data.resource.import_settings.page_title }}
+            </h3>
+            <small
+                v-if="data.resource.import_settings.description"
+                v-html="data.resource.import_settings.description"
+                class="text-neutral-500 mt-3 w-full"
+            />
+            <div
+                v-if="data.resource.import_custom_crud_message"
+                v-html="data.resource.import_custom_crud_message"
+                class="text-netral-700 mt-3 w-full"
+            />
+        </div>
+        <div class="w-full flex items-center mt-4 gap-4">
+            <small
+                class="w-full md:w-6/12 text-netral-700"
+                v-if="data.resource.import_settings.input_text"
+                v-html="data.resource.import_settings.input_text"
+            />
+            <div
+                class="w-full mt-4 md:w-6/12 flex-col md:flex-row text-netral-700 gap-4"
+            >
+                <template v-if="!frm.file">
+                    <input
+                        accept=".xls, .xlsx"
+                        type="file"
+                        @change="fileChange"
                     />
-                    <div
-                        v-if="data.resource.import_custom_crud_message"
-                        v-html="data.resource.import_custom_crud_message"
-                    />
-                </div>
+                    <div>
+                        <small class="mt-2">Tamanho máximo: 128 MB</small>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="flex items-center gap-4 flex-col md:flex-row">
+                        <small class="text-neutral-500">
+                            {{ frm.file.name }}
+                        </small>
+                        <a
+                            href="#"
+                            class="ml-2 link text-danger"
+                            @click.prevent="frm.file = null"
+                        >
+                            Trocar de Arquivo
+                        </a>
+                    </div>
+                </template>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div
-                    class="col-md-5 col-sm-12"
-                    v-if="data.resource.import_settings.input_text"
-                    v-html="data.resource.import_settings.input_text"
-                />
-                <div class="col-md-6 col-sm-12">
-                    <template v-if="!frm.file">
-                        <input
-                            accept=".xls, .xlsx"
-                            type="file"
-                            @change="fileChange"
-                        />
-                        <div>
-                            <small class="mt-2">Tamanho máximo: 128 MB</small>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div class="flex">
-                            <div>{{ frm.file.name }}</div>
-                            <a
-                                href="#"
-                                class="ml-2 link text-danger"
-                                @click.prevent="frm.file = null"
-                                >Trocar de Arquivo</a
-                            >
-                        </div>
-                    </template>
-                </div>
-            </div>
-        </div>
-        <div class="card-footer bg-white">
-            <div class="row">
-                <div class="col-12 flex flex-wrap align-center justify-end">
-                    <el-button
-                        type="primary"
-                        @click="next"
-                        :disabled="!frm.file"
-                        >Continuar</el-button
-                    >
-                </div>
-            </div>
+        <div class="flex mt-3 justify-end">
+            <button
+                class="vstack-btn primary"
+                @click="next"
+                :disabled="!frm.file"
+            >
+                Continuar
+            </button>
         </div>
     </div>
 </template>
@@ -92,13 +94,7 @@ export default {
                 .then((res) => {
                     res = res.data;
                     this.loading = false;
-                    if (!res.success)
-                        return this.$message({
-                            showClose: true,
-                            message: res.message,
-                            type: 'error',
-                        });
-                    this.config.data.csv_header = res.data;
+                    this.config.data.csv_header = res;
                     this.config.step++;
                 })
                 .catch((er) => {
