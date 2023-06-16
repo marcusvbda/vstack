@@ -12,7 +12,7 @@
             <div class="shimmer" style="height: 33px; width: 230px;"></div>
         </div>
     </div>
-    <div id="table-loader" class="mt-3">
+    <div id="table-loader" class="mt-5">
         <div class="shimmer" style="height: 450px;width: 100%;"></div>
     </div>
 </div>

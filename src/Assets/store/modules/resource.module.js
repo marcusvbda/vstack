@@ -8,8 +8,11 @@ const state = {
     resource_list_total : 0,
     resource_list_current_page : 1,
     resource_list_per_page : 10,
+    resource_list_is_loading : true,
     resource_list_next_cursor : null,
     resource_list_previous_cursor : null,
+    previous_loading:false,
+    next_loading:false,
     resource_id : null,
     resource_total_text : 'Resultados encontrados : ',
     report_mode : false,
@@ -35,7 +38,10 @@ const getters = {
     resource_list_payload: (state) => state.resource_list_payload,
     resource_id: (state) => state.resource_id,
     report_mode: (state) => state.report_mode,
+    resource_list_is_loading: (state) => state.resource_list_is_loading,
     resource_total_text: (state) => state.resource_total_text,
+    previous_loading: (state) => state.previous_loading,
+    next_loading: (state) => state.next_loading,
 };
 
 const mutations = {
@@ -80,32 +86,44 @@ const mutations = {
     },
     setResourceTotalText: (state, payload) => {
         state.resource_total_text = payload;
+    },
+    setResourceListIsLoading: (state, payload) => {
+        state.resource_list_is_loading = payload;
+    },
+    setPreviousLoading: (state, payload) => {
+        state.previous_loading = payload;
+    },
+    setNextLoading: (state, payload) => {
+        state.next_loading = payload;
     }
-
 };
 
 const actions = {
     loadResourceData: async ({ commit,state },cursor = null) => {
-        const setVisibleLoadingEl = (el,value) => {
-            waitForEl(el).then(() => document.querySelector(el).style.display = value);
+        const removeLoadingEl = (el) => {
+            waitForEl(el).then(() => document.querySelector(el).remove());
         };
-        
-        commit("setResourceListTemplate",({ table: "" }));
-        setVisibleLoadingEl('#loading-section #table-loader','block');
+
+        if(cursor) commit("setResourceListIsLoading",true);
 
         const axios = VueApp.getAxiosClient();
+
         const route = `/admin/${state.resource_id}/${
             state.report_mode ? 'report' : 'list'
         }/get-list-data`;
-        if(cursor) state.resource_list_payload.params.cursor = cursor
+
+        if(cursor) state.resource_list_payload.params.cursor = cursor.value
+
         axios.get(route, state.resource_list_payload)
             .then(({ data }) => {
                 const top_template = data.top.join('');
                 commit("setResourceListTemplate",({ top: top_template }));
-                setVisibleLoadingEl('#loading-section #top-loader','none');
+                if(!cursor) removeLoadingEl('#loading-section #top-loader');
                 const table_template = data.table.join('');
                 commit("setResourceListTemplate",{ table: table_template });
-                setVisibleLoadingEl('#loading-section #table-loader','none');
+                if(!cursor) removeLoadingEl('#loading-section #table-loader');
+                commit("setResourceListIsLoading",false);
+                if(cursor) cursor.callback()
             })
             .catch((error) => {
                 console.log(error);

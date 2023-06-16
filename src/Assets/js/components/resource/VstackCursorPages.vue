@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center gap-3 py-3">
+    <div class="flex items-center gap-3 pb-3">
         <div class="flex items-center w-full justify-center md:justify-end">
             <div class="flex flex-col items-end gap-2">
                 <div class="flex flex-col md:flex-row items-center gap-3">
@@ -17,6 +17,7 @@
                             :disabled="!resource_list_previous_cursor"
                             v-if="showContent"
                             @click="goToPrevPage()"
+                            :loading="previous_loading"
                         >
                             Anterior
                         </el-button>
@@ -27,6 +28,7 @@
                             :disabled="!resource_list_next_cursor"
                             @click="goToNextPage()"
                             v-if="showContent"
+                            :loading="next_loading"
                         >
                             Próxima
                             <i class="el-icon-arrow-right el-icon-right"> </i>
@@ -54,6 +56,8 @@ export default {
             'resource_list_next_cursor',
             'resource_list_previous_cursor',
             'resource_total_text',
+            'previous_loading',
+            'next_loading',
         ]),
         showContent() {
             return (
@@ -85,20 +89,32 @@ export default {
             'setResourceListPreviousCursor',
             'setResourceListNextCursor',
             'setResourceListCurrentPage',
+            'setNextLoading',
+            'setPreviousLoading',
         ]),
         goToNextPage() {
-            this.loadResourceData(this.resource_list_next_cursor).then(() =>
-                this.setResourceListCurrentPage(
-                    this.resource_list_current_page + 1
-                )
-            );
+            this.setNextLoading(true);
+            this.loadResourceData({
+                value: this.resource_list_next_cursor,
+                callback: () => {
+                    this.setResourceListCurrentPage(
+                        this.resource_list_current_page + 1
+                    );
+                    this.setNextLoading(false);
+                },
+            });
         },
         goToPrevPage() {
-            this.loadResourceData(this.resource_list_previous_cursor).then(() =>
-                this.setResourceListCurrentPage(
-                    this.resource_list_current_page - 1
-                )
-            );
+            this.setPreviousLoading(true);
+            this.loadResourceData({
+                value: this.resource_list_previous_cursor,
+                callback: () => {
+                    this.setResourceListCurrentPage(
+                        this.resource_list_current_page - 1
+                    );
+                    this.setPreviousLoading(false);
+                },
+            });
         },
     },
 };
