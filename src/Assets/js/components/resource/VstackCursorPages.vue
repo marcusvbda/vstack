@@ -87,22 +87,17 @@ export default {
             'setResourceListCurrentPage',
         ]),
         goToNextPage() {
-            this.loadResourceData(this.resource_list_next_cursor).then(() => {
-                console.log('next');
+            this.loadResourceData(this.resource_list_next_cursor).then(() =>
                 this.setResourceListCurrentPage(
                     this.resource_list_current_page + 1
-                );
-            });
+                )
+            );
         },
         goToPrevPage() {
-            this.loadResourceData(this.resource_list_previous_cursor).then(
-                () => {
-                    console.log('prev');
-
-                    this.setResourceListCurrentPage(
-                        this.resource_list_current_page - 1
-                    );
-                }
+            this.loadResourceData(this.resource_list_previous_cursor).then(() =>
+                this.setResourceListCurrentPage(
+                    this.resource_list_current_page - 1
+                )
             );
         },
     },
