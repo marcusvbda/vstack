@@ -532,7 +532,6 @@ class ResourceController extends Controller
 
 		foreach ($results as $row) {
 			$result = array_map(fn ($key) => $vstack_controller->getColumnIndex($resource->exportColumns(), $row, $key), array_keys($columns));
-
 			$result = array_filter($result, fn ($row) => $row !== null);
 			$processed_rows[] = array_values($result);
 		}
