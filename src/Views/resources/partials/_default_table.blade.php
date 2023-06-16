@@ -7,7 +7,7 @@
 <vstack-cursor-pages class="flex justify-end my-4 flex-wrap" :appends='@json($_data)'
     previous_cursor="{{ $previous_cursor }}" next_cursor="{{ $next_cursor }}">
 </vstack-cursor-pages>
-<div ref="container" class="text-gray-700 border border-gray-200 rounded-lg bg-gray-50">
+<div ref="container" class="text-gray-700 border border-gray-200 rounded-lg bg-gray-50" style="margin-bottom: 200px">
     <div class="p-1" style="min-height: 40px;">
         <div class="flex align-center flex-wrap">
             @if ($resource->lenses())

@@ -17,9 +17,6 @@ Route::group(['prefix' => "vstack"], function () {
 
 Route::group(['prefix' => "admin"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
-		Route::get('inputs/resource-tree', [ResourceController::class, 'resource_tree'])->name("resource.inputs.resource_tree");
-		Route::get('inputs/resource-tree/load-items', [ResourceController::class, 'resource_tree_items'])->name("resource.inputs.resource_tree_items");
-		Route::get('inputs/resource-tree/load-crud', [ResourceController::class, 'resource_tree_items_crud'])->name("resource.inputs.resource_tree_crud");
 		Route::match(['get', 'post'], 'inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
 
 		Route::post('get-list-cards', [ResourceController::class, 'getListItem'])->name("resource.get_list_item");
@@ -49,7 +46,7 @@ Route::group(['prefix' => "admin"], function () {
 		Route::delete('{resource}/{code}/tags/destroy/{id}', [ResourceController::class, 'destroyTag'])->middleware(['hashids:code'])->name("resource.deleteTag");
 		Route::post('{resource}/{code}/tags/add', [ResourceController::class, 'addTag'])->middleware(['hashids:code'])->name("resource.addTag");
 		Route::get('{resource}/{code}/edit', [ResourceController::class, 'edit'])->middleware(['hashids:code'])->name("resource.edit");
-		Route::match(['delete', 'post'],'{resource}/{code}/destroy', [ResourceController::class, 'destroy'])->middleware(['hashids:code'])->name("resource.destroy");
+		Route::match(['delete', 'post'], '{resource}/{code}/destroy', [ResourceController::class, 'destroy'])->middleware(['hashids:code'])->name("resource.destroy");
 		Route::post('{resource}/{code}/before-destroy', [ResourceController::class, 'beforeDestroy'])->middleware(['hashids:code'])->name("resource.before_destroy");
 		Route::delete('{resource}/{id}/field/destroy', [ResourceController::class, 'destroyField'])->name("resource.field.destroy");
 		Route::post('globalsearch', [ResourceController::class, 'globalSearch'])->name("resource.globalsearch");

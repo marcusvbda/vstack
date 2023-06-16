@@ -1,4 +1,8 @@
-<div class="overflow-x-auto bg-white">
+<vstack-cursor-pages class="flex justify-end my-4 flex-wrap" :appends='@json($_data)'
+    previous_cursor="{{ $previous_cursor }}" next_cursor="{{ $next_cursor }}">
+</vstack-cursor-pages>
+
+<div class="overflow-x-auto bg-white" style="margin-bottom: 200px">
     <table class="mb-0 vstack-resource-list w-full" id="resource-table">
         <thead class="thead-dark">
             <tr id="resource-report-head">
