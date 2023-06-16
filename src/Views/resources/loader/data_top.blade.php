@@ -17,8 +17,4 @@
         @endif
         @include('vStack::resources.partials._filter_btn')
     </div>
-    {{-- {{ $data->appends($_data)->links() }} --}}
-    <vstack-resource-pagination class="flex justify-end my-4 flex-wrap" :per_page="{{ $per_page }}"
-        :current_page="3">
-    </vstack-resource-pagination>
 </div>

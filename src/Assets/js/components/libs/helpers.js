@@ -208,7 +208,7 @@ Vue.prototype.$waitForEls = (selector) => {
     });
 };
 
-Vue.prototype.$waitForEl = (selector) => {
+export const waitForEl = (selector) => {
     return new Promise((resolve) => {
         let el = document.querySelector(selector);
         if (el) {
@@ -230,6 +230,8 @@ Vue.prototype.$waitForEl = (selector) => {
         });
     });
 };
+
+Vue.prototype.$waitForEl = waitForEl;
 
 Vue.prototype.$getUrlParams = () => {
     return Object.fromEntries(new URLSearchParams(location.search));

@@ -53,13 +53,23 @@ class ResourceController extends Controller
 		$data = $this->getData($resource, $request);
 		$data->withoutAppends = true;
 
+		$per_page = $this->getPerPage($resource);
+
 		if ($type == "count") {
-			return json_encode(['count' =>  $data->select(0)->count()]);
+			return response()->json([
+				'resource_total_text' => $resource->resultsFoundLabel(),
+				'count' =>  $data->select(0)->count(),
+				'per_page' => $per_page,
+			]);
 		}
 
-		$per_page = $this->getPerPage($resource);
-		$current_page = 1;
-		$data = VstackController::makePagination($data->select("*"), $per_page, $current_page);
+		$data = $data->select("*")->cursorPaginate($per_page);
+
+		if ($report_mode) {
+			$data->setPath(route('resource.report', ["resource" => $resource->id]));
+		} else {
+			$data->setPath(route('resource.index', ["resource" => $resource->id]));
+		}
 
 		$filters = $resource->filters();
 		$_data =  request()->all();
@@ -71,10 +81,13 @@ class ResourceController extends Controller
 			unset($_data['page_type']);
 		}
 
-		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "per_page"))->render() . "</div>";
+		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode"))->render() . "</div>";
 		$top = str_split(ResourcesHelpers::minify($top), 250);
 
-		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode"))->render() . "</div>";
+		$next_cursor = $data->hasMorePages() ? $data->nextCursor()->encode() : null;
+		$previous_cursor = $data->previousCursor() ? $data->previousCursor()->encode() : null;
+
+		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "next_cursor", "previous_cursor", "resource", "data", "report_mode"))->render() . "</div>";
 		$table = str_split(ResourcesHelpers::minify($table), 250);
 
 		return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
@@ -100,7 +113,7 @@ class ResourceController extends Controller
 		if (request()->response_type == "json") {
 			$data = $this->getData($resource, $request);
 			$per_page = $this->getPerPage($resource);
-			$data = $data->select("*")->paginate($per_page);
+			$data = $data->select("*")->cursorPaginate($per_page);
 			return $data;
 		}
 		return view("vStack::resources.index", compact("resource", "report_mode"));

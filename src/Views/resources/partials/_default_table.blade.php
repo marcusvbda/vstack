@@ -4,7 +4,10 @@
     $current_order_type = Arr::get($_data, 'order_type', 'desc');
     $order_type = $current_order_type == 'desc' ? 'asc' : 'desc';
 @endphp
-<div ref="container" class="card text-gray-700 border border-gray-200 rounded-lg bg-gray-50">
+<vstack-cursor-pages class="flex justify-end my-4 flex-wrap" :appends='@json($_data)'
+    previous_cursor="{{ $previous_cursor }}" next_cursor="{{ $next_cursor }}">
+</vstack-cursor-pages>
+<div ref="container" class="text-gray-700 border border-gray-200 rounded-lg bg-gray-50">
     <div class="p-1" style="min-height: 40px;">
         <div class="flex align-center flex-wrap">
             @if ($resource->lenses())

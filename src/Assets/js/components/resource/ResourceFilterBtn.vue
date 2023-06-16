@@ -22,6 +22,7 @@
             direction="rtl"
             :before-close="confirmClose"
             :append-to-body="true"
+            class="sm:w-full"
         >
             <template slot="title">
                 <div class="w-1/2">

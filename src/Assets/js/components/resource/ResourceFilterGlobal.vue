@@ -41,7 +41,7 @@ export default {
         makeNewRoute() {
             let str_query = '';
             for (let i in this.data.query) {
-                if (i != 'page' && i != '_') {
+                if (i != '_' && i != 'cursor') {
                     if (!['null', null].includes(this.data.query[i])) {
                         str_query += `${i}=${this.data.query[i]}&`;
                     }

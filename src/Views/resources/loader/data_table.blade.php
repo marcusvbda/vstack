@@ -1,6 +1,3 @@
-<resource-list-items resource_id="{{ $resource->id }}" :request_data='@json(request()->all())'>
-</resource-list-items>
-
 @if ($data->count() <= 0)
     @include('vStack::resources.partials._no_data')
 @else

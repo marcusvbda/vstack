@@ -374,6 +374,11 @@ class Resource
 		return true;
 	}
 
+	public function resultsFoundLabel()
+	{
+		return "Resultados encontrados : ";
+	}
+
 	public function canViewReport()
 	{
 		return false;
