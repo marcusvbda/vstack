@@ -1,24 +1,15 @@
 <template>
-    <div class="row list-items" id="resource-list-items">
-        <template v-if="loading">
-            <div
-                class="col-md-2 col-sm-12"
-                :style="{ marginTop: 26, marginBottom: 18 }"
-            >
-                <div class="shimmer" :style="{ height: 75, width: '100%' }" />
-            </div>
-            <div
-                class="col-md-3 col-sm-12"
-                :style="{ marginTop: 26, marginBottom: 18 }"
-            >
-                <div class="shimmer" :style="{ height: 75, width: '100%' }" />
-            </div>
-        </template>
+    <div
+        class="flex flex-wrap gap-3 mt-5"
+        id="resource-list-items"
+        v-if="!loading"
+    >
         <div
-            v-else
             v-for="(list_item, i) in list_items"
             :key="i"
-            :class="`col list-item ${list_item.class ? list_item.class : ''}`"
+            :class="`${
+                list_item.class ? list_item.class : 'w-full md:w-2/12'
+            } bg-white rounded p-3 border`"
             :id="`resource-list-item-${list_item.label}`"
         >
             <v-runtime-template
@@ -27,9 +18,12 @@
                 :template="list_item.template"
             />
             <div class="list-item--content" v-else>
-                <b class="list-item--title" v-html="list_item.label" />
+                <b
+                    class="list-item--title text-neutral-700 text-sm"
+                    v-html="list_item.label"
+                />
                 <div
-                    class="list-item--value text-neutral-400"
+                    class="list-item--value text-neutral-400 text-xs"
                     v-html="list_item.value"
                 />
             </div>

@@ -98,10 +98,6 @@
   word-break: break-word;
 }
 
-.w-full {
-  width: 100%!important;
-}
-
 .z-999 {
   z-index: 999!important;
 }
@@ -126,4 +122,10 @@
 
 .el-drawer {
   @apply w-full md:w-3/12 #{!important};
+}
+
+.el-message-box {
+  .el-button.el-button--default.el-button--small.el-button--primary {
+    background-color: #409EFF;
+  }
 }

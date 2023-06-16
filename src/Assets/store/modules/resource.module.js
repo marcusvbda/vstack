@@ -89,11 +89,8 @@ const actions = {
         const setVisibleLoadingEl = (el,value) => {
             waitForEl(el).then(() => document.querySelector(el).style.display = value);
         };
-
-        commit("setResourceListTemplate",({ top: "" }));
+        
         commit("setResourceListTemplate",({ table: "" }));
-
-        setVisibleLoadingEl('#loading-section #top-loader','block');
         setVisibleLoadingEl('#loading-section #table-loader','block');
 
         const axios = VueApp.getAxiosClient();

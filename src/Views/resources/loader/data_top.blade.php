@@ -10,6 +10,11 @@
             'value' => @$_data['_'] ? $_data['_'] : '',
         ];
     @endphp
+    @if ($report_mode && $resource->canCreateReportTemplates())
+        <div class="d-flex flex-column w-100">
+            @include('vStack::resources.partials._save_filter_btn')
+        </div>
+    @endif
     <div class="flex flex-col md:flex-row justify-end items-center gap-5 mt-5">
         @if ($resource->search())
             <resource-filter-global :data='@json($globalFilterData)'>
