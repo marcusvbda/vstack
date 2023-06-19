@@ -8,31 +8,27 @@
                         v-if="resource_list_total"
                         class="text-neutral-400 text-xs"
                     />
-                    <div class="flex gap-1">
-                        <el-button
-                            type="primary"
-                            icon="el-icon-arrow-left"
-                            plain
-                            size="small"
+                    <div class="flex pagination-btn-row">
+                        <button
+                            class="vstack-btn default small"
                             :disabled="!resource_list_previous_cursor"
-                            v-if="showContent"
+                            v-if="showBtnPages"
                             @click="goToPrevPage()"
                             :loading="previous_loading"
                         >
+                            <i class="el-icon-arrow-left" />
                             Anterior
-                        </el-button>
-                        <el-button
-                            plain
-                            type="primary"
-                            size="small"
+                        </button>
+                        <button
+                            class="vstack-btn primary small"
                             :disabled="!resource_list_next_cursor"
                             @click="goToNextPage()"
-                            v-if="showContent"
+                            v-if="showBtnPages"
                             :loading="next_loading"
                         >
                             Próxima
-                            <i class="el-icon-arrow-right el-icon-right"> </i>
-                        </el-button>
+                            <i class="el-icon-arrow-right" />
+                        </button>
                     </div>
                 </div>
                 <span v-if="showContent" class="text-neutral-400 text-xs">
@@ -58,13 +54,21 @@ export default {
             'resource_total_text',
             'previous_loading',
             'next_loading',
+            'cursor',
         ]),
+        showBtnPages() {
+            return (
+                this.resource_list_previous_cursor ||
+                this.resource_list_next_cursor
+            );
+        },
         showContent() {
             return (
-                this.resource_list_total &&
-                this.resource_list_current_page &&
-                this.resource_list_per_page &&
-                this.pagesText != 'Página 1 de 1'
+                (this.resource_list_total &&
+                    this.resource_list_current_page &&
+                    this.resource_list_per_page &&
+                    this.pagesText != 'Página 1 de 1') ||
+                this.cursor
             );
         },
         totalPages() {
@@ -73,10 +77,21 @@ export default {
             );
         },
         pagesText() {
+            if (this.cursor && this.resource_list_previous_cursor) {
+                return `Paginação via URL`;
+            }
+            this.setCursor(null);
             return `Página ${this.resource_list_current_page} de ${this.totalPages}`;
         },
         totalText() {
             return `${this.resource_total_text} ${this.resource_list_total}`;
+        },
+    },
+    watch: {
+        resource_list_previous_cursor() {
+            if (!this.resource_list_previous_cursor) {
+                this.setResourceListCurrentPage(1);
+            }
         },
     },
     created() {
@@ -91,6 +106,7 @@ export default {
             'setResourceListCurrentPage',
             'setNextLoading',
             'setPreviousLoading',
+            'setCursor',
         ]),
         goToNextPage() {
             this.setNextLoading(true);
@@ -100,6 +116,7 @@ export default {
                     this.setResourceListCurrentPage(
                         this.resource_list_current_page + 1
                     );
+                    this.$setUrlParam('cursor', this.resource_list_next_cursor);
                     this.setNextLoading(false);
                 },
             });
@@ -111,6 +128,10 @@ export default {
                 callback: () => {
                     this.setResourceListCurrentPage(
                         this.resource_list_current_page - 1
+                    );
+                    this.$setUrlParam(
+                        'cursor',
+                        this.resource_list_previous_cursor
                     );
                     this.setPreviousLoading(false);
                 },

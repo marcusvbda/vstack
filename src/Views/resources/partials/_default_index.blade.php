@@ -48,7 +48,12 @@
         {!! @$resource->beforeListSlot() !!}
     @endif
 
-    <resource-index-loader :report_mode='@json($report_mode)' resource_id='{{ $resource->id }}'>
+    @php
+        $cursor = @request()?->cursor ? request()->cursor : '';
+    @endphp
+
+    <resource-index-loader :report_mode='@json($report_mode)' resource_id='{{ $resource->id }}'
+        cursor="{{ $cursor }}">
         <resource-list-items resource_id="{{ $resource->id }}" :request_data='@json(request()->all())'>
         </resource-list-items>
     </resource-index-loader>

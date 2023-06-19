@@ -20,22 +20,41 @@
 }
 
 .vstack-btn {
-  @apply rounded-md py-2 text-sm font-semibold leading-5 text-white disabled:opacity-50 enabled:opacity-100 px-10 flex items-center justify-center;
+  @apply gap-3 rounded-md py-2 text-sm font-semibold leading-5 disabled:opacity-50 enabled:opacity-100 px-10 flex 
+  items-center justify-center bg-gray-200 border text-gray-800 enabled:hover:bg-gray-300;
+
+  &.small {
+    @apply px-4 text-xs;
+  }
 
   &.primary {
-    @apply bg-blue-600  enabled:hover:bg-blue-500 disabled:cursor-not-allowed;
+    @apply bg-blue-600  enabled:hover:bg-blue-500 disabled:cursor-not-allowed text-white;
   }
 
   &.danger {
-    @apply bg-red-600  enabled:hover:bg-red-500 disabled:cursor-not-allowed;
+    @apply bg-red-600  enabled:hover:bg-red-500 disabled:cursor-not-allowed text-white;
   }
 
   &.secondary {
-    @apply bg-gray-600  enabled:hover:bg-gray-500 disabled:cursor-not-allowed;
+    @apply bg-gray-600  enabled:hover:bg-gray-500 disabled:cursor-not-allowed text-white;
   }
 
   &.block {
     @apply w-full md:w-auto;
+  }
+}
+
+.pagination-btn-row {
+  .vstack-btn {
+    @apply rounded-none;
+  }
+
+  .vstack-btn:first-child {
+    @apply rounded-l-md;
+  }
+
+  .vstack-btn:last-child {
+    @apply rounded-r-md;
   }
 }
 

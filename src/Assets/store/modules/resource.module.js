@@ -15,6 +15,7 @@ const state = {
     next_loading:false,
     resource_id : null,
     resource_total_text : 'Resultados encontrados : ',
+    cursor : '',
     report_mode : false,
     resource_list_template: {
         no_data: '',
@@ -42,6 +43,7 @@ const getters = {
     resource_total_text: (state) => state.resource_total_text,
     previous_loading: (state) => state.previous_loading,
     next_loading: (state) => state.next_loading,
+    cursor: (state) => state.cursor,
 };
 
 const mutations = {
@@ -95,6 +97,9 @@ const mutations = {
     },
     setNextLoading: (state, payload) => {
         state.next_loading = payload;
+    },
+    setCursor : (state, payload) => {
+        state.cursor = payload;
     }
 };
 
@@ -113,6 +118,9 @@ const actions = {
         }/get-list-data`;
 
         if(cursor) state.resource_list_payload.params.cursor = cursor.value
+        else {
+            if(state.cursor) state.resource_list_payload.params.cursor = state.cursor
+        }
 
         axios.get(route, state.resource_list_payload)
             .then(({ data }) => {

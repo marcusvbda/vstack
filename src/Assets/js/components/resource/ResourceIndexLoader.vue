@@ -20,7 +20,7 @@ import VRuntimeTemplate from 'v-runtime-template';
 import { mapMutations, mapActions, mapGetters } from 'vuex';
 
 export default {
-    props: ['resource_id', 'report_mode'],
+    props: ['resource_id', 'report_mode', 'cursor'],
     components: {
         VRuntimeTemplate,
     },
@@ -37,6 +37,7 @@ export default {
         const payload = {
             params: this.query_params,
         };
+        this.setCursor(this.cursor);
         this.setReportMode(this.report_mode);
         this.setResourceId(this.resource_id);
         this.setResourceListPayload(payload);
@@ -47,6 +48,7 @@ export default {
             'setResourceListPayload',
             'setResourceId',
             'setReportMode',
+            'setCursor',
         ]),
         ...mapActions('resource', ['loadResourceData']),
         removeLoadingEl(el) {
