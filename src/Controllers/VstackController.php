@@ -61,7 +61,6 @@ class VstackController extends Controller
 			"resource_singular_label" => $resource->singularLabel(),
 			"resource_label" => $resource->label(),
 			"resource_icon" => $resource->icon(),
-			"crud_type" => $resource->crudType(),
 			"before_delete" => array_map(function ($row) {
 				unset($row["handler"]);
 				return $row;
@@ -103,10 +102,10 @@ class VstackController extends Controller
 			$request = new Request(@$request->params ? $request->params : $request->json);
 		}
 
-		if(@$request->filter_class_name) {
-			$_class = app()->make($request->filter_class_name,['model' => @$request->model ?? null]);
-			if(method_exists($_class,'fetchOptionsHandler')) {
-			   return $_class->fetchOptionsHandler($request);
+		if (@$request->filter_class_name) {
+			$_class = app()->make($request->filter_class_name, ['model' => @$request->model ?? null]);
+			if (method_exists($_class, 'fetchOptionsHandler')) {
+				return $_class->fetchOptionsHandler($request);
 			}
 		}
 

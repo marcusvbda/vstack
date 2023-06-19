@@ -19,10 +19,6 @@ class Radio extends Field
 			return $this->view = "";
 		}
 
-		if ($type == "view") {
-			return $this->getViewOnlyValue();
-		}
-
 		$model       = @$this->options["model"] ? $this->options["model"] : null;
 		$field       = @$this->options["field"];
 		$label       = $this->options["label"];

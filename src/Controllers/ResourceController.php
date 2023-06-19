@@ -53,11 +53,16 @@ class ResourceController extends Controller
 		$data = $this->getData($resource, $request);
 		$data->withoutAppends = true;
 
+		$per_page = $this->getPerPage($resource);
+
 		if ($type == "count") {
-			return json_encode(['count' => $data->select(0)->count()]);
+			return response()->json([
+				'resource_total_text' => $resource->resultsFoundLabel(),
+				'count' =>  $data->select(0)->count(),
+				'per_page' => $per_page,
+			]);
 		}
 
-		$per_page = $this->getPerPage($resource);
 		$data = $data->select("*")->cursorPaginate($per_page);
 
 		if ($report_mode) {
@@ -66,50 +71,26 @@ class ResourceController extends Controller
 			$data->setPath(route('resource.index', ["resource" => $resource->id]));
 		}
 
-		if (@$request["list_type"]) {
-			$this->storeListType($resource, $request["list_type"]);
+		$filters = $resource->filters();
+		$_data =  request()->all();
+
+		if (@$_data["page"]) {
+			unset($_data['page']);
+		}
+		if (@$_data["page_type"]) {
+			unset($_data['page_type']);
 		}
 
-		$user = Auth::user();
-		$model_count = 1;
+		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode"))->render() . "</div>";
+		$top = str_split(ResourcesHelpers::minify($top), 250);
 
-		if (!$model_count) {
-			$template = "<div>" . view("vStack::resources.loader.no_data", compact("resource", "model_count", "report_mode"))->render() . "</div>";
-			$minified_template = ResourcesHelpers::minify($template);
-			$template_chunked = str_split($minified_template, 100);
-			$response = ['template' => $template_chunked, "type" => "no_data"];
+		$next_cursor = $data->hasMorePages() ? $data->nextCursor()->encode() : null;
+		$previous_cursor = $data->previousCursor() ? $data->previousCursor()->encode() : null;
 
-			return json_encode($response, JSON_INVALID_UTF8_IGNORE);
-		} else {
-			$filters = $resource->filters();
-			$_data =  request()->all();
+		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "next_cursor", "previous_cursor", "resource", "data", "report_mode"))->render() . "</div>";
+		$table = str_split(ResourcesHelpers::minify($table), 250);
 
-			if (@$_data["page"]) {
-				unset($_data['page']);
-			}
-			if (@$_data["page_type"]) {
-				unset($_data['page_type']);
-			}
-
-			$topGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
-				$template = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
-				$template = ResourcesHelpers::minify($template);
-				$template = str_split($template, 250);
-				return $template;
-			};
-
-			$tableGetter = function () use ($filters, $_data, $resource, $data, $report_mode, $user) {
-				$template = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "resource", "data", "report_mode", "user"))->render() . "</div>";
-				$template = ResourcesHelpers::minify($template);
-				$template = str_split($template, 250);
-				return $template;
-			};
-
-			$top = $topGetter();
-			$table = $tableGetter();
-
-			return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
-		}
+		return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
 	}
 
 	public function getListItem(Request $request)
@@ -124,38 +105,18 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 
-		if ($report_mode) {
-			if (!$resource->canViewReport()) {
-				abort(403);
-			}
-		} else {
-			if (!$resource->canViewList()) {
-				abort(403);
-			}
+		if ($report_mode && !$resource->canViewReport()) {
+			abort(403);
+		} else if (!$resource->canViewList()) {
+			abort(403);
 		}
 		if (request()->response_type == "json") {
 			$data = $this->getData($resource, $request);
 			$per_page = $this->getPerPage($resource);
-			$data = $data->select("*")->paginate($per_page);
+			$data = $data->select("*")->cursorPaginate($per_page);
 			return $data;
 		}
 		return view("vStack::resources.index", compact("resource", "report_mode"));
-	}
-
-	private function storeListType($resource, $type)
-	{
-		if (Auth::check()) {
-			$user = Auth::user();
-			$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", 'list_type')->first();
-			$config = @$config->id ? $config : new ResourceConfig;
-			$_data = @$config->data ?? (object)[];
-			$_data->type = $type;
-			$_data->user_id = $user->id;
-			$config->data = $_data;
-			$config->resource = $resource->id;
-			$config->config = 'list_type';
-			$config->save();
-		}
 	}
 
 	public function createReportTemplate($resource, Request $request)
@@ -327,11 +288,25 @@ class ResourceController extends Controller
 		if (!$resource->canImport()) {
 			abort(403);
 		}
-		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant()->first()->name . ".xlsx";
+		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . uniqid() . ".xlsx";
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
-		Excel::store($exporter, $filename, "temp_report");
-		$full_path = storage_path("app/temp_report/$filename");
+
+		$storeTempPath = $this->getStoragePath("public");
+
+		Excel::store($exporter, "public/$filename");
+		$full_path = $storeTempPath . "/" . $filename;
+
 		return response()->download($full_path)->deleteFileAfterSend(true);
+	}
+
+	private function getStoragePath($disk = "public")
+	{
+		$disks = config("filesystems.disks");
+		$storeTempPath =  data_get($disks, "$disk.root");
+		if (!file_exists($storeTempPath)) {
+			mkdir($storeTempPath, 0777, true);
+		}
+		return $storeTempPath;
 	}
 
 	protected function getImporterCollumns($resource)
@@ -549,19 +524,16 @@ class ResourceController extends Controller
 		return response()->json(["action" => $action, "processed_row" => $processed_row, "next_page" => $results->nextPageUrl()]);
 	}
 
-	protected function processExportRow($resource, $results, $data)
+	public static function processExportRow($resource, $results, $data)
 	{
-		$exportColumns = $resource->exportColumns();
-
-		$columns = collect($data['columns'])
-			->filter(fn ($x) => $x['enabled'])
-			->transform(fn ($x) => $x['handler'] = collect($exportColumns)->first(fn ($y) => $y['label'] == $x['label']))
-			->toArray();
-
+		$vstack_controller = new VstackController;
+		$columns = data_get($data, 'columns');
 		$processed_rows = [];
 
 		foreach ($results as $row) {
-			$processed_rows[] = array_map(fn ($x) => $columns[$x]['handler']($row), array_keys($columns));
+			$result = array_map(fn ($key) => $vstack_controller->getColumnIndex($resource->exportColumns(), $row, $key), array_keys($columns));
+			$result = array_filter($result, fn ($row) => $row !== null);
+			$processed_rows[] = array_values($result);
 		}
 
 		return $processed_rows;
@@ -1059,7 +1031,6 @@ class ResourceController extends Controller
 
 	protected function getTag($model_class, $name, $resource)
 	{
-		$colors = $resource->tagColors();
 		$old_tag = Tag::where("model", $model_class)->where("name", $name)->first();
 		if ($old_tag) {
 			return $old_tag;
@@ -1067,7 +1038,7 @@ class ResourceController extends Controller
 		return Tag::create([
 			"model" => $model_class,
 			"name" => $name,
-			"color" => $colors[rand(0, count($colors) - 1)]
+			"color" => "#ecf5ff"
 		]);
 	}
 
@@ -1165,98 +1136,5 @@ class ResourceController extends Controller
 			return response()->json(["token" => $jwt]);
 		}
 		return response()->json("Invalid credentials", 401);
-	}
-
-	public function resource_tree(Request $request)
-	{
-		if ($request->isMethod('post') && ($request->params || $request->json)) {
-			$request = new Request(@$request->params ? $request->params : $request->json);
-		}
-
-		request()->merge(["input_origin" => "resource-tree"]);
-
-		$resource = ResourcesHelpers::find($request->parent_resource);
-		$field = null;
-		$cards = $resource->fields();
-		foreach ($cards as $card) {
-			foreach ($card->inputs as $input) {
-				if (data_get($input, 'options.type') == "resource-tree" && data_get($input, 'options.resource') == $request->resource) {
-					$field = $input;
-					break;
-				}
-			}
-		}
-
-		$resource_field = ResourcesHelpers::find(data_get($field, "options.resource"));
-		$inputOptions = data_get($field, "options");
-		$inputDisabled = data_get($inputOptions, "disabled", false);
-		$inputFieldsQtyFields = rand(3, 7);
-		$tree = $this->makeRecursiveTree($resource_field, data_get($field, "options"), $resource->id, $inputFieldsQtyFields, $inputDisabled);
-		return $tree;
-	}
-
-	private function makeRecursiveTree($resource, $options, $parent_resource, $qty_fields, $disabled)
-	{
-		request()->merge(["input_origin" => "resource-tree"]);
-		$children = [];
-		$cards = $resource->fields();
-		$children = [];
-		foreach ($cards as $card) {
-			foreach ($card->inputs as $input) {
-				if (data_get($input, 'options.type') == "resource-tree") {
-					$resource_id = data_get($input, "options.resource");
-					$resource_input = ResourcesHelpers::find($resource_id);
-					$inputOptions = data_get($input, "options");
-					$inputParentResource = data_get($input, "options.parent_resource");
-					$inputDisabled = data_get($inputOptions, "disabled", false);
-					$inputFieldsQtyFields =  rand(3, 7);
-					$children = $this->makeRecursiveTree($resource_input, $inputOptions, $inputParentResource, $inputFieldsQtyFields, $inputDisabled);
-				}
-			}
-		}
-		$fields[] = [
-			"acl" => [
-				"delete" => $resource->canDelete(),
-				"create" => $resource->canCreate(),
-				"update" => $resource->canUpdate(),
-			],
-			"disabled" => $disabled,
-			"parent_resource" => $parent_resource,
-			"relation" => data_get($options, "relation"),
-			"foreign_key" => data_get($options, "foreign_key", $parent_resource . "_id"),
-			"resource" => data_get($options, "resource"),
-			"template_code" => data_get($options, "template_code"),
-			"label_index" => data_get($options, "label_index", "name"),
-			"template" => data_get($options, "template"),
-			"qty_fields" => $qty_fields,
-			"label" => $resource->label(),
-			"singular_label" => $resource->singularLabel(),
-			"children" => $children
-		];
-
-		return $fields;
-	}
-
-	public function resource_tree_items(Request $request)
-	{
-		request()->merge(["input_origin" => "resource-tree"]);
-		$resource = ResourcesHelpers::find($request->resource);
-		if (!$resource->canViewList()) {
-			abort(404);
-		}
-		$parent_resource = ResourcesHelpers::find($request->parent_resource);
-		$parent_model = $parent_resource->getModelInstance();
-		$parent = $parent_model->find($request->parent_id);
-		$query = $parent->{$request->relation}();
-		$query = $resource->resourceTreeLoadItemsFilter($request, $query);
-		$items = $query->get();
-		return  $items;
-	}
-
-	public function resource_tree_items_crud(Request $request)
-	{
-		$resource = ResourcesHelpers::find($request->resource);
-		$cards = $resource->tree_fields();
-		return  $cards;
 	}
 }

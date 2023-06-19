@@ -1,22 +1,29 @@
 <template>
     <div class="grapes-preview-window" v-bind:class="{ 'is-invalid': errors }">
-        <iframe v-show="started" @load="onLoadIframe" ref="iframe" src="/vstack/grapes-editor" width="100%"
-            frameborder="0" :style="{ height: `${height}px!important` }" />
+        <iframe
+            v-show="started"
+            @load="onLoadIframe"
+            ref="iframe"
+            src="/vstack/grapes-editor"
+            width="100%"
+            frameborder="0"
+            :style="{ height: `${height}px!important` }"
+        />
         <div class="invalid-feedback" v-if="errors">
             <ul class="pl-3 mb-0">
                 <li v-for="(e, i) in errors" :key="i" v-html="e" />
             </ul>
         </div>
-        <div class="shimmer w-100" :style="{ height }" v-if="!started" />
+        <div class="shimmer w-full" :style="{ height }" v-if="!started" />
     </div>
 </template>
 
 <script>
-import presetWebPage from "grapesjs-preset-webpage";
-import presetNewsletter from "grapesjs-preset-newsletter";
-import gpsCustomCode from "grapesjs-custom-code";
-import variables from "../../../../../../../../resources/sass/_variables.scss";
-import BR from "../libs/grapes_translate";
+import presetWebPage from 'grapesjs-preset-webpage';
+import presetNewsletter from 'grapesjs-preset-newsletter';
+import gpsCustomCode from 'grapesjs-custom-code';
+import variables from '../../../../../../../../resources/sass/_variables.scss';
+import BR from '../libs/grapes_translate';
 
 export default {
     props: {
@@ -34,7 +41,7 @@ export default {
         },
         blocks: {
             type: Object,
-            default: () => { },
+            default: () => {},
         },
         errors: {
             type: Array,
@@ -42,7 +49,7 @@ export default {
         },
         mode: {
             type: String,
-            default: "webpage",
+            default: 'webpage',
         },
     },
     data() {
@@ -65,7 +72,7 @@ export default {
     },
     watch: {
         content(val) {
-            this.$emit("input", val);
+            this.$emit('input', val);
         },
     },
     methods: {
@@ -91,12 +98,16 @@ export default {
                 plugins: this.plugins,
                 allowScripts: 1,
                 assetManager: {
-                    headers: { "X-CSRF-TOKEN": laravel.general.csrf_token ? laravel.general.csrf_token : "" },
-                    upload: laravel.vstack.default_upload_route + "?grapes=1",
+                    headers: {
+                        'X-CSRF-TOKEN': laravel.general.csrf_token
+                            ? laravel.general.csrf_token
+                            : '',
+                    },
+                    upload: laravel.vstack.default_upload_route + '?grapes=1',
                 },
                 ...this.settings,
                 i18n: {
-                    locale: "BR",
+                    locale: 'BR',
                     detectLocale: false,
                     messages: { BR },
                 },
@@ -110,14 +121,17 @@ export default {
         },
         createExtraBlocks() {
             Object.keys(this.blocks).forEach((key) => {
-                this.iframeWindow.grapesEditor.BlockManager.add(key, this.blocks[key]);
+                this.iframeWindow.grapesEditor.BlockManager.add(
+                    key,
+                    this.blocks[key]
+                );
             });
         },
         setInitialValues() {
             this.iframeWindow.grapesEditor.setComponents(this.content);
         },
         createModel() {
-            this.iframeWindow.grapesEditor.on("change", () => {
+            this.iframeWindow.grapesEditor.on('change', () => {
                 if (this.started) {
                     this.processModel();
                 }
@@ -125,15 +139,17 @@ export default {
         },
         minify(content) {
             content = content
-                .replace(/\\>[\r\n ]+\\</g, "><")
-                .replace(/(<.*?>)|\s+/g, (m, $1) => ($1 ? $1 : " "))
+                .replace(/\\>[\r\n ]+\\</g, '><')
+                .replace(/(<.*?>)|\s+/g, (m, $1) => ($1 ? $1 : ' '))
                 .trim();
             return content;
         },
         processModel() {
-            const content = this.iframeWindow.grapesEditor.runCommand('gjs-get-inlined-html')
+            const content = this.iframeWindow.grapesEditor.runCommand(
+                'gjs-get-inlined-html'
+            );
             if (content) {
-                this.content = this.minify(content ?? '')
+                this.content = this.minify(content ?? '');
             }
         },
         setTheme() {

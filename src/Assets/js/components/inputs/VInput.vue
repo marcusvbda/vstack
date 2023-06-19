@@ -1,90 +1,87 @@
+<!-- eslint-disable vue/no-parsing-error -->
 <template>
     <CustomResourceComponent :label="label" :description="description">
-        <div class="d-flex flex-column">
+        <div class="flex flex-col">
             <slot name="prepend-slot" />
-            <div class="input-group">
-                <div class="input-group-prepend" v-if="prepend">
-                    <span class="input-group-text">
-                        <span v-html="prepend ? prepend : ''"></span>
-                    </span>
+            <template v-if="type == 'percentage'">
+                <div class="progress-section">
+                    <ElProgress
+                        type="dashboard"
+                        :percentage="parseInt(!val ? '0' : val)"
+                    />
+                    <input
+                        :disabled="disabled"
+                        class="form-control"
+                        v-model="val"
+                        v-bind:class="{ 'is-invalid': errors }"
+                        :placeholder="placeholder ? placeholder : ''"
+                        :min="min"
+                        @change="validMinMax"
+                        :max="max"
+                        type="number"
+                        :step="step"
+                        @blur="$emit('blur', val)"
+                    />
                 </div>
-                <template v-if="type == 'password'">
-                    <input :disabled="disabled" class="form-control" v-model="val"
-                        v-bind:class="{ 'is-invalid': errors }" :placeholder="placeholder ? placeholder : ''"
-                        :maxlength="maxlength" :type="protected ? 'password' : 'text'" @blur="$emit('blur', val)" />
-                    <el-button size="small" @click.prevent="protected = !protected">
-                        <i class="el-icon-lock" v-if="protected" />
-                        <i class="el-icon-unlock" v-else />
-                    </el-button>
-                </template>
-                <template v-else-if="type == 'percentage'">
-                    <div class="progress-section">
-                        <ElProgress type="dashboard" :percentage="parseInt(!val ? '0' : val)" />
-                        <input :disabled="disabled" class="form-control" v-model="val"
-                            v-bind:class="{ 'is-invalid': errors }" :placeholder="placeholder ? placeholder : ''"
-                            :min="min" @change="validMinMax" :max="max" type="number" :step="step"
-                            @blur="$emit('blur', val)" />
-                    </div>
-                </template>
-                <template v-else>
-                    <currency-input v-if="type == 'currency'" class="form-control"
-                        v-bind:class="{ 'is-invalid': errors }" currency="BRL"
-                        :placeholder="placeholder ? placeholder : ''" :auto-decimal-mode="true" v-model="val"
-                        :maxlength="maxlength" @blur="$emit('blur', val)" />
-                    <template v-else>
-                        <the-mask :disabled="disabled" class="form-control" v-if="mask" :mask="mask" :masked="true"
-                            v-model="val" v-bind:class="{ 'is-invalid': errors }"
-                            :placeholder="placeholder ? placeholder : ''" :maxlength="maxlength"
-                            @blur="$emit('blur', val)" :type="type ? type : 'text'" />
-                        <input :disabled="disabled" class="form-control" v-else v-model="val"
-                            v-bind:class="{ 'is-invalid': errors }" :placeholder="placeholder ? placeholder : ''"
-                            :maxlength="maxlength" @change="validMinMax" :min="min" :max="max"
-                            :type="type ? type : 'text'" :step="step" @blur="$emit('blur', val)" />
+            </template>
+            <template v-else>
+                <el-input
+                    :placeholder="placeholder ? placeholder : ''"
+                    :disabled="disabled"
+                    @blur="$emit('blur', val)"
+                    v-model="val"
+                    :maxlength="maxlength"
+                    :rows="rows"
+                    class="w-full"
+                    :type="type"
+                >
+                    <template slot="prepend" v-if="prepend">
+                        <span v-html="prepend ? prepend : ''" />
                     </template>
-                </template>
-                <div class="input-group-append" v-if="append">
-                    <span class="input-group-text">
-                        <span v-html="append ? append : ''"></span>
-                    </span>
-                </div>
-                <div class="invalid-feedback" v-if="errors">
-                    <ul class="pl-3 mb-0">
-                        <li v-for="(e, i) in errors" :key="i" v-html="e" />
-                    </ul>
-                </div>
+                    <template slot="append" v-if="append">
+                        <span v-html="append ? append : ''" />
+                    </template>
+                </el-input>
+            </template>
+            <div class="mt-2 ml-2" v-if="errors">
+                <ul class="text-sm text-red-700">
+                    <li v-for="(e, i) in errors" :key="i" v-html="e" />
+                </ul>
             </div>
-            <small class="text-muted text-right" v-html="limitText" v-if="show_value_length" />
-            <slot name="append-slot" />
         </div>
+        <div class="w-full mt-2 flex justify-end" v-if="show_value_length">
+            <small class="text-neutral-400" v-html="limitText" />
+        </div>
+        <slot name="append-slot" />
     </CustomResourceComponent>
 </template>
 <script>
 export default {
     props: [
-        "label",
-        "type",
-        "placeholder",
-        "errors",
-        "prepend",
-        "append",
-        "disabled",
-        "mask",
-        "description",
-        "maxlength",
-        "min",
-        "value",
-        "step",
-        "show_value_length",
+        'rows',
+        'label',
+        'type',
+        'placeholder',
+        'errors',
+        'prepend',
+        'append',
+        'disabled',
+        'mask',
+        'description',
+        'maxlength',
+        'min',
+        'value',
+        'step',
+        'show_value_length',
     ],
     data() {
         return {
             val: null,
-            protected: true,
         };
     },
     watch: {
         val(val) {
-            return this.$emit("input", val);
+            return this.$emit('input', val);
         },
         value(val) {
             this.val = val;
@@ -92,7 +89,7 @@ export default {
     },
     computed: {
         rest() {
-            return this.max - (this.val || "").length;
+            return this.max - (this.val || '').length;
         },
         limitText() {
             return `${this.rest}/${this.max}`;
@@ -102,7 +99,7 @@ export default {
         },
     },
     created() {
-        if (this.type === "slider") {
+        if (this.type === 'slider') {
             this.val = parseInt(this.value ?? 0);
         } else {
             this.val = this.value;
@@ -110,7 +107,7 @@ export default {
     },
     methods: {
         validMinMax() {
-            if (["number", "slider"].includes(this.type)) {
+            if (['number', 'slider'].includes(this.type)) {
                 if (this.min !== undefined) {
                     if (this.val < this.min) {
                         this.val = this.min;
@@ -124,28 +121,3 @@ export default {
     },
 };
 </script>
-<style lang="scss">
-.el-slider.el-slider--with-input {
-    width: 100%;
-}
-
-.el-input-number__decrease,
-.el-input-number__increase {
-    height: 93%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.progress-section {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    input {
-        position: absolute;
-        width: 80%;
-    }
-}
-</style>

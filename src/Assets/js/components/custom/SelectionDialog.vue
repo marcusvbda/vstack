@@ -1,5 +1,5 @@
 <template>
-    <div data-aos="fade-down" v-if="options.length">
+    <div v-if="options.length">
         <slot />
         <el-dialog
             :title="title"
@@ -11,7 +11,7 @@
             :append-to-body="true"
             :automatic-dropdown="true"
         >
-            <div class="d-flex flex-column">
+            <div class="flex flex-col">
                 <el-select
                     :append-to-body="true"
                     v-model="value"
@@ -20,6 +20,7 @@
                     placeholder="Selecione ..."
                     :multiple="multiple ? multiple : false"
                     :clearable="true"
+                    class="w-full"
                 >
                     <el-option
                         v-for="item in options"
@@ -31,39 +32,44 @@
                     </el-option>
                 </el-select>
             </div>
-            <span slot="footer" class="el-dialog__footer d-flex justify-content-end p-1">
-                <button class="btn btn-primary" :disabled="multiple ? !value.length : !value" @click="confirm">{{ btn_text ? btn_text : 'Confirmar' }}</button>
+            <span slot="footer" class="el-dialog__footer flex justify-end p-1">
+                <button
+                    class="vstack-btn primary"
+                    :disabled="multiple ? !value.length : !value"
+                    @click="confirm"
+                >
+                    {{ btn_text ? btn_text : 'Confirmar' }}
+                </button>
             </span>
         </el-dialog>
     </div>
 </template>
 <script>
 export default {
-    props: ['title', 'default', 'btn_text', 'multiple', 'options', 'value_index', 'label_index'],
+    props: [
+        'title',
+        'default',
+        'btn_text',
+        'multiple',
+        'options',
+        'value_index',
+        'label_index',
+    ],
     data() {
         return {
             showing: false,
             value: this.multiple ? [] : null,
-        }
+        };
     },
     methods: {
         open() {
-            this.value = this.default ? this.default : null
-            this.showing = true
+            this.value = this.default ? this.default : null;
+            this.showing = true;
         },
         confirm() {
-            this.showing = false
-            return this.$emit('selected', this.value)
+            this.showing = false;
+            return this.$emit('selected', this.value);
         },
     },
-}
+};
 </script>
-<style lang="scss">
-.selection {
-    .el-select-dropdown__item {
-        height: auto !important;
-        min-height: 34px !important;
-        border-bottom: 1px solid #e9e9e9;
-    }
-}
-</style>

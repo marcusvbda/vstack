@@ -1,46 +1,47 @@
-<div class="d-flex flex-row my-1" style="font-size:14px;" id="resource-lenses">
+<div class="flex  p-2 gap-4 items-center justify-center flex-wrap" id="resource-lenses">
     @php
-        $current_len = @$_data["current_len"] ? @$_data["current_len"] : "all";
-        $lenses = $resource->lenses(); 
+        $current_len = @$_data['current_len'] ? @$_data['current_len'] : 'all';
+        $lenses = $resource->lenses();
     @endphp
-    @if($current_len=="all")   
-        <b>Todos</b>
-    @else 
+    @if ($current_len == 'all')
+        <b class="text-neutral-700 text-sm">Todos</b>
+    @else
         @php
             $query = request()->all();
-            foreach($lenses as $len_key=>$len_value) {
-                if(isset($query[$len_value["field"]])) {
-                    unset($query[$len_value["field"]]);
+            foreach ($lenses as $len_key => $len_value) {
+                if (isset($query[$len_value['field']])) {
+                    unset($query[$len_value['field']]);
                 }
             }
-            if(isset($query["current_len"])) {
-                unset($query["current_len"]);
+            
+            if (isset($query['current_len'])) {
+                unset($query['current_len']);
             }
-            $route = route("resource.index",array_merge(["resource"=>$resource->id],$query));
+            $route = route('resource.index', array_merge(['resource' => $resource->id], $query));
         @endphp
-        <a href="{{$route}}">Todos</a>
+        <a href="{{ $route }}">Todos</a>
     @endif
-    @foreach($lenses as $len_key=>$len_value)
+    @foreach ($lenses as $len_key => $len_value)
         @php
             $query = request()->query();
-			$field = $len_value["field"];
-			$other_fields = array_filter($lenses,function($row) use ($field){
-				return $row["field"] != $field;
-			});
-            $query[$len_value["field"]] = $len_value["value"];
-			$query["current_len"] = $len_key;
-			foreach($other_fields as $other) {
-				if(@$query[$other["field"]]) {
-                    unset($query[$other["field"]]);
+            $field = $len_value['field'];
+            $other_fields = array_filter($lenses, function ($row) use ($field) {
+                return $row['field'] != $field;
+            });
+            $query[$len_value['field']] = $len_value['value'];
+            $query['current_len'] = $len_key;
+            foreach ($other_fields as $other) {
+                if (@$query[$other['field']]) {
+                    unset($query[$other['field']]);
                 }
-			}
-            $route = route("resource.index",array_merge(["resource"=>$resource->id],$query));
+            }
+            $route = route('resource.index', array_merge(['resource' => $resource->id], $query));
         @endphp
-        <div class="mx-2" style="opacity:.5;">|</div>
-        @if($current_len==$len_key)  
-            <b id="resource-lenses-{{ $len_key }}">{!! $len_key !!}</b>
+        <div class="px-2">|</div>
+        @if ($current_len == $len_key)
+            <b id="resource-lenses-{{ $len_key }}" class="text-neutral-700 text-sm">{!! $len_key !!}</b>
         @else
-            <a id="resource-lenses-{{ $len_key }}" href="{{$route}}">
+            <a id="resource-lenses-{{ $len_key }}" href="{{ $route }}" class="text-neutral-600 text-sm">
                 {!! $len_key !!}
             </a>
         @endif

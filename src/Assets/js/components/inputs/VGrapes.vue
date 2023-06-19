@@ -1,16 +1,26 @@
 <template>
     <tr>
         <td colspan="2" :style="{ height: h }" class="field-title">
-            <div class="d-flex flex-column mb-3">
-                <span class="input-title" v-if="label" v-html="label ? label : ''" />
-                <small v-if="description" class="mt-1 text-muted">
+            <div class="flex flex-col mb-3">
+                <span
+                    class="input-title"
+                    v-if="label"
+                    v-html="label ? label : ''"
+                />
+                <small v-if="description" class="mt-1 text-neutral-400">
                     <span v-html="description"></span>
                 </small>
             </div>
-            <div class="d-flex flex-column">
+            <div class="flex flex-col">
                 <slot name="prepend-slot" />
-                <GrapesEditor :errors="errors" :mode="mode" :blocks="blocks" :settings="settings" v-model="content"
-                    :height="h" />
+                <GrapesEditor
+                    :errors="errors"
+                    :mode="mode"
+                    :blocks="blocks"
+                    :settings="settings"
+                    v-model="content"
+                    :height="h"
+                />
                 <slot name="append-slot" />
             </div>
         </td>
@@ -18,7 +28,16 @@
 </template>
 <script>
 export default {
-    props: ["description", "label", "errors", "mode", "blocks", "settings", "value", "height"],
+    props: [
+        'description',
+        'label',
+        'errors',
+        'mode',
+        'blocks',
+        'settings',
+        'value',
+        'height',
+    ],
     data() {
         return {
             content: this.value,
@@ -31,7 +50,7 @@ export default {
     },
     watch: {
         content(val) {
-            this.$emit("input", val);
+            this.$emit('input', val);
         },
     },
 };

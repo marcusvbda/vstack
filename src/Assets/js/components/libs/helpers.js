@@ -159,16 +159,6 @@ window.sleep = (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-Vue.prototype.$insertParam = (key, value) => {
-    if (history.pushState) {
-        let searchParams = new URLSearchParams(window.location.search);
-        searchParams.set(key, value);
-        let newurl =
-            window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + searchParams.toString();
-        window.history.pushState({ path: newurl }, "", newurl);
-    }
-};
-
 Vue.prototype.$percentage = (partialValue, totalValue, string = true) => {
     const value = `${+parseFloat((100 * Number(partialValue)) / Number(totalValue)).toFixed(2)}`;
     return string ? `${value}%` : Number(value);
@@ -208,7 +198,7 @@ Vue.prototype.$waitForEls = (selector) => {
     });
 };
 
-Vue.prototype.$waitForEl = (selector) => {
+export const waitForEl = (selector) => {
     return new Promise((resolve) => {
         let el = document.querySelector(selector);
         if (el) {
@@ -230,6 +220,8 @@ Vue.prototype.$waitForEl = (selector) => {
         });
     });
 };
+
+Vue.prototype.$waitForEl = waitForEl;
 
 Vue.prototype.$getUrlParams = () => {
     return Object.fromEntries(new URLSearchParams(location.search));
@@ -256,6 +248,26 @@ Vue.prototype.$paramsToObject = () => {
 Vue.prototype.$randomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
+export const setUrlParam = (key, value) => {
+    const url = new URL(window.location.href);
+    if (!value) {
+        url.searchParams.delete(key);
+    } else {
+        url.searchParams.set(key, String(value || ''));
+    }
+    window.history.pushState({ path: url.href }, '', url.href);
+};
+  
+export const getUrlParam = (key, fallback = null) => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const value = urlParams.get(key);
+    return value ? value : fallback;
+};
+  
+Vue.prototype.$setUrlParam = setUrlParam;
+Vue.prototype.$getUrlParam = getUrlParam;
 
 String.prototype.unescape = function () {
     return this.replace(/&amp;/g, '&')

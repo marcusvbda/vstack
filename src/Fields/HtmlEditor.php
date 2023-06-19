@@ -19,10 +19,6 @@ class HtmlEditor extends Field
 			return $this->view = "";
 		}
 
-		if ($type == "view") {
-			return $this->getViewOnlyValue();
-		}
-
 		$field     = $this->options["field"];
 		$label = $this->options["label"];
 		$description = $this->options["description"];

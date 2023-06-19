@@ -1,23 +1,11 @@
-@php
-    $right_card_content = $resource->crudRightCardBody() ;
-@endphp
-<div class="row mt-2" data-aos="fade-left">
-    <div class="col-12">
-        <div class="d-flex flex-row justify-content-between align-items-center mb-3">
-            <h4>
-                @if (@$resource->icon())
-                    <span class="{{ $resource->icon() }} mr-2"></span>
-                @endif
-                {{ $resource->breadcrumbLabels()[$raw_type] }}
-            </h4>
-            @if(!$right_card_content)
-                <div class="top-save">
-                    <portal-target  name="crud-btns">
-                        {{--  --}}
-                    </portal-target>
-                </div>
+<div class="flex flex-col mt-2">
+    <div class="flex justify-between items-center mb-3">
+        <h4 class="text-3xl mt-4 flex items-center gap-5">
+            @if (@$resource->icon())
+                <span class="{{ $resource->icon() }}"></span>
             @endif
-        </div>
+            {{ $resource->breadcrumbLabels()[$raw_type] }}
+        </h4>
     </div>
 </div>
 @if ($data['page_type'] == 'Edição' && $resource->useTags())
@@ -33,20 +21,12 @@
     @endif
 @endif
 
-<resource-crud :data="{{ json_encode($data) }}" :params="{{ json_encode($params) }}" redirect="{{ $current_route }}" data-aos="fade-right"
-    :breadcrumb="{{ json_encode($routes) }}" @if (@$content)
-    :content="{{ json_encode($content) }}"
-    @endif
-    :show_crud_right_card='@json($resource->showCrudRightCard())'
-    right_card_content="{{ $right_card_content }}"
-    raw_type='{{ $raw_type }}'
-    :first_btn='@json($resource->firstCrudBtn())'
-    :second_btn='@json($resource->secondCrudBtn())'
-    :acl='@json(["can_update" => $resource->canUpdate()])'
-    :crud_type='@json($resource->crudType())'
-    :has_befores_store='@json($resource->beforeStore([]) !== false)'
-    loading_message="{{$resource->resourceLoadingSaveMassage($raw_type)}}"
-    >
+<resource-crud class="mt-2" :data="{{ json_encode($data) }}" :params="{{ json_encode($params) }}"
+    redirect="{{ $current_route }}" :breadcrumb="{{ json_encode($routes) }}"
+    @if (@$content) :content="{{ json_encode($content) }}" @endif raw_type='{{ $raw_type }}'
+    :first_btn='@json($resource->firstCrudBtn())' :second_btn='@json($resource->secondCrudBtn())'
+    :acl='@json(['can_update' => $resource->canUpdate()])' :has_befores_store='@json($resource->beforeStore([]) !== false)'
+    loading_message="{{ $resource->resourceLoadingSaveMassage($raw_type) }}">
     @if (@!$data->id && !@$data['id'])
         @if (@$resource->afterCreateSlot())
             <template slot="aftercreate">
@@ -63,5 +43,5 @@
 </resource-crud>
 
 <div id="loading-section">
-    @include("vStack::resources.loader.crud_shimmer")    
+    @include('vStack::resources.loader.crud_shimmer')
 </div>

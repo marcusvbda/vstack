@@ -1,81 +1,60 @@
 <template>
     <div>
-        <VRuntimeTemplate v-if="template.top" :template="template.top" />
-        <VRuntimeTemplate v-if="template.table" :template="template.table" />
-        <VRuntimeTemplate v-if="template.no_data" :template="template.no_data" />
-        <portal to="total-count">
-            {{ total_count }}
-        </portal>
+        <VRuntimeTemplate
+            v-if="resource_list_template.top"
+            :template="resource_list_template.top"
+        />
+        <slot />
+        <VRuntimeTemplate
+            v-if="resource_list_template.table"
+            :template="resource_list_template.table"
+        />
+        <VRuntimeTemplate
+            v-if="resource_list_template.no_data"
+            :template="resource_list_template.no_data"
+        />
     </div>
 </template>
 <script>
-import VRuntimeTemplate from "v-runtime-template";
+import VRuntimeTemplate from 'v-runtime-template';
+import { mapMutations, mapActions, mapGetters } from 'vuex';
 
 export default {
-    props: ["resource_id", "report_mode"],
+    props: ['resource_id', 'report_mode', 'cursor'],
     components: {
         VRuntimeTemplate,
     },
-    data() {
-        return {
-            template: {
-                no_data: "",
-                top: "",
-                table: "",
-            },
-            total_count: '...',
-        };
-    },
     computed: {
+        ...mapGetters('resource', [
+            'resource_list_template',
+            'resource_list_payload',
+        ]),
         query_params() {
             return this.$getUrlParams();
         },
     },
     created() {
-        this.init();
+        const payload = {
+            params: this.query_params,
+        };
+        this.setCursor(this.cursor);
+        this.setReportMode(this.report_mode);
+        this.setResourceId(this.resource_id);
+        this.setResourceListPayload(payload);
+        this.loadResourceData();
     },
     methods: {
+        ...mapMutations('resource', [
+            'setResourceListPayload',
+            'setResourceId',
+            'setReportMode',
+            'setCursor',
+        ]),
+        ...mapActions('resource', ['loadResourceData']),
         removeLoadingEl(el) {
             this.$waitForEl(el).then(() => {
                 document.querySelector(el).remove();
-            })
-        },
-        init() {
-            const payload = {
-                params: this.query_params
-            };
-            
-            const route = `/admin/${this.resource_id}/${this.report_mode ? "report" : "list"}/get-list-data`;
-            this.$http
-                .get(route, payload)
-                .then(({ data }) => {
-                    if (data.type == "no_data") {
-                        const no_data_template = data.template.join("");
-                        this.template.no_data = no_data_template;
-                        this.removeLoadingEl("#loading-section")
-                    } else {
-                        const top_template = data.top.join("");
-                        this.template.top = top_template;
-                        this.removeLoadingEl("#loading-section #top-loader")
-
-                        const table_template = data.table.join("");
-                        this.template.table = table_template;
-                        this.removeLoadingEl("#loading-section #table-loader")
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-
-            const count_route = `/admin/${this.resource_id}/count/get-list-data`;
-            this.$http
-                .get(count_route, payload)
-                .then(({ data }) => {
-                    this.total_count = data.count
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            });
         },
     },
 };

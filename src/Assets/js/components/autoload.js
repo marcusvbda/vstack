@@ -9,7 +9,6 @@ require("./libs/cookies");
 require("./libs/vmask");
 require("./libs/hash");
 require("./libs/linkPreview");
-// require("summernote");
 require("./libs/pace");
 require("jquery-ui-dist/jquery-ui");
 require("bootstrap");
@@ -35,7 +34,6 @@ import PortalVue from "portal-vue";
 Vue.use(PortalVue);
 import getDefaultStore from "../../store";
 
-// Vue.prototype.$aos = AOS;
 const vue_settings = {
     store: null,
     data() {
@@ -89,4 +87,7 @@ window.VueApp = {
         this.app = new Vue(this.settings);
         this.app.$mount(this.div);
     },
+    getAxiosClient() {
+        return this.app.$http;
+    }
 };

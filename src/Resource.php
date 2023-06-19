@@ -91,9 +91,14 @@ class Resource
 		return "<span class='" . $this->icon() . " mr-2'></span>" . " Relatório de " . $this->label();
 	}
 
+	public function storeBtnText()
+	{
+		return "Cadastrar";
+	}
+
 	public function storeButtonlabel()
 	{
-		return "<span class='el-icon-plus mr-2'></span>Cadastrar";
+		return "<span class='el-icon-plus mr-2'></span>" . $this->storeBtnText();
 	}
 
 	public function importButtonlabel()
@@ -142,11 +147,6 @@ class Resource
 		return "Nenhum resultado encontrado";
 	}
 
-	public function resultsFoundLabel()
-	{
-		return "<span class='mr-1'>Resultados encontrados :</span>  ";
-	}
-
 	public function nothingStoredText()
 	{
 		return "<h4>Nada cadastrado ainda...</h4>";
@@ -154,14 +154,10 @@ class Resource
 
 	public function secondCrudBtn()
 	{
-		if ($this->crudType()["template"] == "dialog") {
-			return false;
-		}
 		return [
-			"size" => "small",
 			"field" => "save",
-			"type" => "success",
-			"content" => "<div class='d-flex flex-row'>
+			"class" => "secondary",
+			"content" => "<div class='flex items-center'>
 							<i class='el-icon-success mr-2'></i>
 							Salvar
 						</div>"
@@ -173,8 +169,8 @@ class Resource
 		return [
 			"size" => "small",
 			"field" => "save_and_back",
-			"type" => "info",
-			"content" => "<div class='d-flex flex-row'>
+			"class" => "primary",
+			"content" => "<div class='flex items-center'>
 							<i class='el-icon-arrow-left mr-2'></i>
 							Salvar e Voltar
 						</div>"
@@ -183,7 +179,7 @@ class Resource
 
 	public function nothingStoredSubText()
 	{
-		return "<small>Clique no botão abaixo para adicionar um registro</small>";
+		return "<small>Clique em <b>'" . $this->storeBtnText() . "'</b> para adicionar um novo registro</small>";
 	}
 
 	public function fields()
@@ -368,11 +364,6 @@ class Resource
 		return $this->canViewReport();
 	}
 
-	public function listType()
-	{
-		return ["table"];
-	}
-
 	public function canUpdate()
 	{
 		return true;
@@ -381,6 +372,11 @@ class Resource
 	public function canDelete()
 	{
 		return true;
+	}
+
+	public function resultsFoundLabel()
+	{
+		return "Resultados encontrados : ";
 	}
 
 	public function canViewReport()
@@ -504,19 +500,6 @@ class Resource
 		return 5;
 	}
 
-	public function tagColors()
-	{
-		return [
-			"#e56868",
-			"#7d7ded",
-			"#87bf87",
-			"#903d90",
-			"#9c0c91",
-			"#9c76c5",
-			"#5ab2b6"
-		];
-	}
-
 	public function actions()
 	{
 		return [];
@@ -632,7 +615,8 @@ class Resource
 			"create" => "Cadastro de {$this->singularLabel()}",
 			"view" => "Visualização de {$this->singularLabel()}",
 			"report" => "Relatório de {$this->singularLabel()}",
-			"edit" => "Edição de {$this->singularLabel()}"
+			"edit" => "Edição de {$this->singularLabel()}",
+			"import" => "Importação de {$this->singularLabel()}"
 		];
 	}
 
@@ -674,55 +658,33 @@ class Resource
 		];
 	}
 
-	public function crudType()
-	{
-		return [
-			"template" => "page"
-		];
-	}
-
-	public function crudRightCardBody()
-	{
-		return null;
-	}
-
 	public function createMethod($params, $data)
 	{
-		if ($this->crudType()["template"] == "dialog") {
-			return abort(404);
-		}
 		$resource = $this;
 		return view("vStack::resources.crud", compact("resource", "data", "params"));
 	}
 
 	public function editMethod($params, $data, $content)
 	{
-		if ($this->crudType()["template"] == "dialog") {
-			return  abort(404);
-		}
 		$resource = $this;
 		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
 	}
 
 	public function viewMethod($params, $data, $content)
 	{
-		if ($this->crudType()["template"] == "dialog") {
-			return  abort(404);
-		}
 		$resource = $this;
-		return view("vStack::resources.view", compact("resource", "data", "params", "content"));
+		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
 	}
 
 	public function secondViewBtn()
 	{
-		if ($this->crudType()["template"] == "dialog") {
+		if ($this->canUpdate()) {
 			return false;
 		}
 		return [
-			"size" => "small",
 			"field" => "edit",
-			"type" => "primary",
-			"content" => "<div class='d-flex flex-row'>
+			"class" => "secondary",
+			"content" => "<div class='flex '>
 							<i class='el-icon-edit mr-2'></i>
 							Editar
 						</div>"
@@ -732,10 +694,9 @@ class Resource
 	public function firstViewBtn()
 	{
 		return [
-			"size" => "small",
 			"field" => "back",
-			"type" => "info",
-			"content" => "<div class='d-flex flex-row'>
+			"class" => "primary",
+			"content" => "<div class='flex '>
 							<i class='el-icon-arrow-left mr-2'></i>
 							 Voltar
 						</div>"
@@ -825,11 +786,6 @@ class Resource
 		$enabled = array_filter([$this->canView(), $this->canUpdate(), $this->canDelete(), $this->canClone()]);
 		$extras = $this->extraActionButtons(null);
 		return count($enabled) + count($extras);
-	}
-
-	public function showCrudRightCard()
-	{
-		return true;
 	}
 
 	public function resourceLoadingSaveMassage($type)

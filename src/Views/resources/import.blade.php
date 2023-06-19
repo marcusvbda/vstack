@@ -1,25 +1,13 @@
-@extends("templates.admin")
+@extends('templates.admin')
 @php
-    $page_title = $data["resource"]["import_settings"]["page_title"];
-    $label = $data["resource"]["label"];
-    $resource_route = $data["resource"]["route"];
+    $page_title = $data['resource']['import_settings']['page_title'];
+    $resource = ResourcesHelpers::find($data['resource']['resource_id']);
+    $raw_type = 'import';
 @endphp
-@section('title',$page_title)
+@section('title', $page_title)
 @section('breadcrumb')
-<div class="row">
-    <div class="col-12">
-        <nav aria-label="breadcrumb">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{asset('admin')}}" class="link">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{$resource_route}}" class="link">{{$label}}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{$page_title}}</li>
-                </ol>
-            </nav>
-        </nav>
-    </div>
-</div>
+    @include('vStack::resources.partials._breadcrumb')
 @endsection
 @section('content')
-<resource-import :data="{{json_encode($data)}}"></resource-import>
+    <resource-import :data='@json($data)'></resource-import>
 @endsection
