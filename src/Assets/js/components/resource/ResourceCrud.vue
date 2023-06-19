@@ -179,7 +179,15 @@ export default {
                     if (field_type === 'slider') {
                         field_value = parseInt(field_value);
                     }
+
                     if (field_name) {
+                        if (
+                            field_type === 'belongsTo' &&
+                            Array.isArray(field_value)
+                        ) {
+                            field_value = field_value.map((x) => String(x));
+                        }
+
                         this.$set(this.form, field_name, field_value);
                     }
                 }
