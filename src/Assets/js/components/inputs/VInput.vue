@@ -26,6 +26,7 @@
             </template>
             <template v-else>
                 <el-input
+                    v-if="!mask"
                     :placeholder="placeholder ? placeholder : ''"
                     :disabled="disabled"
                     @blur="$emit('blur', val)"
@@ -34,6 +35,24 @@
                     :rows="rows"
                     class="w-full"
                     :type="type"
+                >
+                    <template slot="prepend" v-if="prepend">
+                        <span v-html="prepend ? prepend : ''" />
+                    </template>
+                    <template slot="append" v-if="append">
+                        <span v-html="append ? append : ''" />
+                    </template>
+                </el-input>
+                <el-input
+                    v-else
+                    :placeholder="placeholder ? placeholder : ''"
+                    :disabled="disabled"
+                    @blur="$emit('blur', val)"
+                    v-model="val"
+                    :maxlength="maxlength"
+                    :rows="rows"
+                    class="w-full"
+                    v-mask="mask"
                 >
                     <template slot="prepend" v-if="prepend">
                         <span v-html="prepend ? prepend : ''" />
@@ -56,6 +75,7 @@
     </CustomResourceComponent>
 </template>
 <script>
+import { mask } from 'vue-the-mask';
 export default {
     props: [
         'rows',
@@ -74,6 +94,7 @@ export default {
         'step',
         'show_value_length',
     ],
+    directives: { mask },
     data() {
         return {
             val: null,
