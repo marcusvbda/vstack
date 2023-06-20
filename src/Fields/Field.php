@@ -10,6 +10,7 @@ class Field
 	public function processFieldOptions()
 	{
 		@$this->options["type"]                 = @$this->options["type"] ?? "text";
+		@$this->options["raw_label"]            = @$this->options["label"] ?? "";
 		@$this->options["label"]                = @$this->options["label"] ?? "";
 		@$this->options["field"]                = @$this->options["field"] ?? "";
 		@$this->options["required"]             = @$this->options["required"] ?? false;

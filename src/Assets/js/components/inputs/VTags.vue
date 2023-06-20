@@ -3,22 +3,28 @@
         <div class="flex flex-col">
             <slot name="prepend-slot" />
             <div class="flex flex-wrap items-center gap-2">
-                <el-tag
-                    :key="tag"
-                    v-for="tag in dynamicTags"
-                    :closable="disabled != true ? true : false"
-                    :disable-transitions="false"
-                    class="mx-0"
-                    @keydown="
-                        $event.keyCode === 13 ? $event.preventDefault() : false
-                    "
-                    @close="handleClose(tag)"
-                >
-                    {{ tag }}
-                </el-tag>
+                <draggable v-model="dynamicTags" class="input-tag-row">
+                    <transition-group>
+                        <el-tag
+                            :key="tag"
+                            v-for="tag in dynamicTags"
+                            :closable="disabled != true ? true : false"
+                            :disable-transitions="false"
+                            class="cursor-pointer input-tag"
+                            @keydown="
+                                $event.keyCode === 13
+                                    ? $event.preventDefault()
+                                    : false
+                            "
+                            @close="handleClose(tag)"
+                        >
+                            {{ tag }}
+                        </el-tag>
+                    </transition-group>
+                </draggable>
                 <template v-if="disabled != true">
                     <el-input
-                        class="input-new-tag ml-0 mr-2 mb-2"
+                        style="width: 160px"
                         v-if="inputVisible"
                         v-model="inputValue"
                         ref="saveTagInput"
@@ -52,6 +58,7 @@
     </CustomResourceComponent>
 </template>
 <script>
+import draggable from 'vuedraggable';
 export default {
     props: [
         'placeholder',
@@ -70,19 +77,19 @@ export default {
         'description',
         'extraValidator',
     ],
+    components: {
+        draggable,
+    },
     data() {
         return {
             dynamicTags: [],
             inputVisible: false,
-            started: false,
             inputValue: '',
         };
     },
     watch: {
-        dynamicTags() {
-            if (this.started) {
-                return this.$emit('input', val);
-            }
+        dynamicTags(val) {
+            return this.$emit('input', val);
         },
     },
     created() {
@@ -127,22 +134,11 @@ export default {
     },
 };
 </script>
-<style>
-.el-tag + .el-tag {
-    margin-left: 10px;
-}
-
-.button-new-tag {
-    margin-left: 10px;
-    height: 32px;
-    line-height: 30px;
-    padding: 0 40px;
-    margin-bottom: 7px;
-}
-
-.input-new-tag {
-    width: 160px;
-    margin-left: 10px;
-    vertical-align: bottom;
+<style lang="scss">
+.input-tag-row span {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 </style>
