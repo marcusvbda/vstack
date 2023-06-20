@@ -66,7 +66,7 @@ class Vstack
 			if ($key == 0) {
 				$html .= "<span><b>{$value}</b></span>";
 			} else {
-				$html .= "<small class='text-neutral-400'>{$value}</small>";
+				$html .= "<small class='text-neutral-400 text-xs'>{$value}</small>";
 			}
 		}
 		return $html . "</div>";
