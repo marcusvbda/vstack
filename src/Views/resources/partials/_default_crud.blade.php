@@ -21,9 +21,9 @@
     @endif
 @endif
 
-<resource-crud class="mt-2" :data="{{ json_encode($data) }}" :params="{{ json_encode($params) }}"
-    redirect="{{ $current_route }}" :breadcrumb="{{ json_encode($routes) }}"
-    @if (@$content) :content="{{ json_encode($content) }}" @endif raw_type='{{ $raw_type }}'
+<resource-crud class="mt-2" :data='@json($data)' :params='@json($params)'
+    style="padding-bottom: 100px" redirect="{{ $current_route }}" :breadcrumb='@json($routes)'
+    @if (@$content) :content='@json($content)' @endif raw_type='{{ $raw_type }}'
     :first_btn='@json($resource->firstCrudBtn())' :second_btn='@json($resource->secondCrudBtn())'
     :acl='@json(['can_update' => $resource->canUpdate()])' :has_befores_store='@json($resource->beforeStore([]) !== false)'
     loading_message="{{ $resource->resourceLoadingSaveMassage($raw_type) }}">

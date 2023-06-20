@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col relative" ref="bar" style="padding-bottom: 100px">
+    <div class="flex flex-col relative" ref="bar">
         <div
             class="view-overflow absolute z-999 w-full h-full"
             v-if="pageType === 'VIEW'"
