@@ -114,6 +114,9 @@ export default {
                 window.location.href = extra.url ? extra.url : '#';
                 return;
             }
+            if (extra.action_type == 'script') {
+                return eval(extra.script);
+            }
             if (extra.action_type == 'post') {
                 return this.$confirm(
                     extra.confirm_message
