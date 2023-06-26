@@ -62,7 +62,17 @@
                             :label="item.name"
                             :value="String(item.id)"
                         >
-                            <div class="w-full flex" v-html="item.name"></div>
+                             <VRuntimeTemplate
+                                v-if="option_template"
+                                :template-props="{
+                                    index: i,
+                                    item,
+                                    value: value,
+                                    options: options,
+                                }"
+                                :template="option_template"
+                            />
+                            <div v-else class="w-full flex" v-html="item.name"></div>
                         </el-option>
                     </el-select>
                 </template>
@@ -78,7 +88,7 @@
 </template>
 <script>
 import { mapGetters, mapMutations } from 'vuex';
-
+import VRuntimeTemplate from 'v-runtime-template';
 export default {
     props: [
         'placeholder',
@@ -101,7 +111,11 @@ export default {
         'allow_create',
         'model_filter',
         'type',
+        'option_template',
     ],
+    components: {
+        VRuntimeTemplate,
+    },
     data() {
         return {
             loading: true,
