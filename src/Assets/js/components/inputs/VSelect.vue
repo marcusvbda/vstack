@@ -61,6 +61,7 @@
                             :key="i"
                             :label="item.name"
                             :value="String(item.id)"
+                            style="height: unset !important"
                         >
                              <VRuntimeTemplate
                                 v-if="option_template"
