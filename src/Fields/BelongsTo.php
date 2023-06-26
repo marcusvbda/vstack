@@ -19,6 +19,9 @@ class BelongsTo extends Field
 			return $this->view = "";
 		}
 
+		if ($type == "view") {
+			return $this->getViewOnlyValue();
+		}
 		$allow_create = @$this->options["allow_create"] ? 'true' : 'false';
 		$model       = @$this->options["model"] ? $this->options["model"] : null;
 		$field       = @$this->options["field"];
@@ -37,9 +40,11 @@ class BelongsTo extends Field
 		$model_filter = @$this->options["model_filter"] ? json_encode($this->options["model_filter"]) : "[]";
 		$slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
 		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
+		$option_template = @$this->options["option_template"] ? $this->options["option_template"] : "";
 
 		return $this->view = view("vStack::resources.field.belongsto", compact(
 			"field",
+			"option_template",
 			"model",
 			"label",
 			"disabled",
