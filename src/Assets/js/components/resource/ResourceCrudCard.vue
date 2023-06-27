@@ -6,7 +6,9 @@
                 :description="description"
                 :form="form"
                 :append_content="append_content"
-            />
+            >
+                 <portal-target :name="`portal-card-header-${label}`" />
+            </CrudCardHeader>
             <div class="crud-card-body">
                 <div class="row">
                     <div class="col-12">
