@@ -10,7 +10,7 @@
             :style="{ height: `${height}px!important` }"
         />
         <div class="invalid-feedback" v-if="errors">
-            <ul class="pl-3 mb-0">
+            <ul class="text-sm pl-3 text-red-700">
                 <li v-for="(e, i) in errors" :key="i" v-html="e" />
             </ul>
         </div>

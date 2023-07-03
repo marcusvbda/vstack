@@ -49,7 +49,7 @@
                 v-if="errors"
                 :style="{ display: `${errors ? 'block' : 'none'}` }"
             >
-                <ul class="pl-3 mb-0">
+                <ul class="text-sm pl-3 text-red-700">
                     <li v-for="(e, i) in errors" :key="i" v-html="e" />
                 </ul>
             </div>

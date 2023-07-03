@@ -63,7 +63,7 @@
                             :value="String(item.id)"
                             style="height: unset !important"
                         >
-                             <VRuntimeTemplate
+                            <VRuntimeTemplate
                                 v-if="option_template"
                                 :template-props="{
                                     index: i,
@@ -73,12 +73,16 @@
                                 }"
                                 :template="option_template"
                             />
-                            <div v-else class="w-full flex" v-html="item.name"></div>
+                            <div
+                                v-else
+                                class="w-full flex"
+                                v-html="item.name"
+                            ></div>
                         </el-option>
                     </el-select>
                 </template>
                 <div class="invalid-feedback" v-if="errors">
-                    <ul class="pl-3 mb-0">
+                    <ul class="text-sm pl-3 text-red-700">
                         <li v-for="(e, i) in errors" :key="i" v-html="e" />
                     </ul>
                 </div>
