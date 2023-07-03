@@ -62,11 +62,9 @@
                     </template>
                 </el-input>
             </template>
-            <div class="mt-2 ml-2" v-if="errors">
-                <ul class="text-sm text-red-700">
-                    <li v-for="(e, i) in errors" :key="i" v-html="e" />
-                </ul>
-            </div>
+            <ul class="text-sm text-red-700" v-if="errors">
+                <li v-for="(e, i) in errors" :key="i" v-html="e" />
+            </ul>
         </div>
         <div class="w-full mt-2 flex justify-end" v-if="show_value_length">
             <small class="text-neutral-400" v-html="limitText" />

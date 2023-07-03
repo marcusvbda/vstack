@@ -22,11 +22,9 @@
                     <span v-html="append ? append : ''" />
                 </template>
             </el-date-picker>
-            <div class="mt-2 ml-2" v-if="errors">
-                <ul class="text-sm text-red-700">
-                    <li v-for="(e, i) in errors" :key="i" v-html="e" />
-                </ul>
-            </div>
+            <ul class="text-sm text-red-700" v-if="errors">
+                <li v-for="(e, i) in errors" :key="i" v-html="e" />
+            </ul>
         </div>
     </CustomResourceComponent>
 </template>
