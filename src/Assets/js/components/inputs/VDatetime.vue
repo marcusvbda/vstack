@@ -12,7 +12,9 @@
                 :placeholder="placeholder"
                 :format="format"
                 :value-format="value_format"
-            >
+                ><ul class="text-sm pl-3 text-red-700">
+                    <li v-for="(e, i) in errors" :key="i" v-html="e" />
+                </ul>
                 <template slot="prepend" v-if="prepend">
                     <span v-html="prepend ? prepend : ''" />
                 </template>
