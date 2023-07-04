@@ -528,7 +528,7 @@ class ResourceController extends Controller
 	public static function processExportRow($resource, $results, $data)
 	{
 		$vstack_controller = new VstackController;
-		$columns = data_get($data, 'columns');
+		$columns = collect(data_get($data, 'columns'))->filter(fn ($row) => $row['enabled'])->toArray();
 		$processed_rows = [];
 
 		foreach ($results as $row) {
