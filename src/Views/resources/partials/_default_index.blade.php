@@ -16,7 +16,7 @@
                 {!! $resource->importButtonlabel() !!}
             </a>
         @endif
-        @if (@$report_mode && $resource->canExport() && $resource->model->count() > 0)
+        @if (@$report_mode && $resource->canExport() &&  $resource->model->toBase()->first('id'))
             @php
                 $resource_config_query = ResourceConfig::where('data->user_id', $user->id)->where('resource', $resource->id);
                 $config_columns = (clone $resource_config_query)->where('config', 'resource_export_disabled_columns')->first();
