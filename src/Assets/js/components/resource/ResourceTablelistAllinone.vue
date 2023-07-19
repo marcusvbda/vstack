@@ -1,12 +1,16 @@
 <template>
     <tbody class="bg-gray-50">
         <template v-for="(row, i) in rows">
-            <tr :key="i" :id="`resource-body-${row.content.id}`" class="border">
+            <tr
+                :key="i"
+                :id="`resource-body-${row.content.id}`"
+                class="border dark:border-none"
+            >
                 <td
                     v-for="(col, y) in columns"
                     :key="`${i}_${y}`"
                     :id="`resource-body-${col}`"
-                    class="p-2"
+                    class="p-2 dark:bg-gray-700 dark:text-neutral-100 dark:border-none"
                 >
                     <resource-tablelist-allinone-item
                         :virtual_indexes="virtual_indexes"
@@ -31,12 +35,12 @@
                                     placement="top"
                                 >
                                     <span
-                                        class="el-icon-arrow-down arrow-after-icon"
+                                        class="el-icon-arrow-down arrow-after-icon dark:text-neutral-100"
                                         v-if="!after_row.visible"
                                         @click="after_row.visible = true"
                                     />
                                     <span
-                                        class="el-icon-arrow-up arrow-after-icon"
+                                        class="el-icon-arrow-up arrow-after-icon dark:text-neutral-100"
                                         v-else
                                         @click="after_row.visible = false"
                                     />
@@ -61,7 +65,7 @@
                 </td>
             </tr>
             <tr
-                class="table-row after bg-white"
+                class="table-row after bg-white dark:bg-gray-800"
                 :key="`table_after_row_${i}`"
                 :id="`resource-body-${row.content.id}-after-row`"
             >

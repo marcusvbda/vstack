@@ -1,5 +1,7 @@
 <template>
-    <tbody class="border">
+    <tbody
+        class="border dark:border-t-0 dark:border-l-0 dark:border-r-0 dark:border-b-gray-950"
+    >
         <tr v-if="f.label">
             <td
                 class="p-2 cursor-pointer"
@@ -15,12 +17,17 @@
                         }`"
                     >
                         <label
-                            class="mb-0 text-neutral-600"
+                            :class="[
+                                'mb-0 text-neutral-600 dark:text-neutral-200',
+                                'cursor-pointer',
+                            ]"
                             style="font-size: 13px; font-weight: bold"
                             v-html="f.label ? f.label : k"
                         />
                         <span
-                            :class="`el-icon-arrow-${!visible ? 'down' : 'up'}`"
+                            :class="`el-icon-arrow-${
+                                !visible ? 'down' : 'up'
+                            } dark:text-neutral-200`"
                         />
                     </div>
                 </div>

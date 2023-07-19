@@ -1,12 +1,12 @@
 <template>
     <div
-        class="vstack-crud-card p-5"
+        class="vstack-crud-card p-5 dark:bg-gray-800"
         v-loading="loading"
         element-loading-text="Aguarde ..."
     >
         <div class="flex flex-col w-full">
             <h3
-                class="font-light text-3xl"
+                class="font-light text-3xl dark:text-neutral-200"
                 v-if="data.resource.import_settings.page_title"
             >
                 {{ data.resource.import_settings.page_title }}
@@ -14,17 +14,17 @@
             <small
                 v-if="data.resource.import_settings.description"
                 v-html="data.resource.import_settings.description"
-                class="text-neutral-500 mt-3 w-full"
+                class="text-neutral-500 mt-3 w-full dark:text-neutral-300"
             />
             <small
                 v-if="data.resource.import_custom_crud_message"
                 v-html="data.resource.import_custom_crud_message"
-                class="text-neutral-500 mt-3 w-full"
+                class="text-neutral-500 mt-3 w-full dark:text-neutral-400"
             />
         </div>
         <div class="w-full flex items-center mt-4 gap-4">
             <small
-                class="w-full md:w-6/12 text-netral-700"
+                class="w-full md:w-6/12 text-netral-700 dark:text-neutral-400"
                 v-if="data.resource.import_settings.input_text"
                 v-html="data.resource.import_settings.input_text"
             />
@@ -34,11 +34,14 @@
                 <template v-if="!frm.file">
                     <input
                         accept=".xls, .xlsx"
+                        class="dark:text-neutral-400"
                         type="file"
                         @change="fileChange"
                     />
                     <div>
-                        <small class="mt-2">Tamanho máximo: 128 MB</small>
+                        <small class="mt-2 dark:text-neutral-400">
+                            Tamanho máximo: 128 MB
+                        </small>
                     </div>
                 </template>
                 <template v-else>
@@ -48,7 +51,7 @@
                         </small>
                         <a
                             href="#"
-                            class="ml-2 link text-danger"
+                            class="ml-2 link vstack-link"
                             @click.prevent="frm.file = null"
                         >
                             Trocar de Arquivo

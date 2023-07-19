@@ -8,7 +8,9 @@
     previous_cursor="{{ $previous_cursor }}" next_cursor="{{ $next_cursor }}">
 </vstack-cursor-pages>
 <vstack-resource-loading>
-    <div ref="container" class="text-gray-700 border border-gray-200 rounded-lg bg-gray-50" style="margin-bottom: 200px">
+    <div ref="container"
+        class="text-gray-700 border dark:border-none border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700"
+        style="margin-bottom: 200px">
         <div class="p-1" style="min-height: 40px;">
             <div class="flex align-center flex-wrap">
                 @if ($resource->lenses())
@@ -37,10 +39,10 @@
             <div class="table-responsive-sm bg-white">
                 <table class="w-full vstack-resource-list">
                     <thead id="resource-list-head">
-                        <tr class="border">
-                            <th width="1%;"></th>
+                        <tr class="border dark:border-none">
+                            <th width="1%;" class="dark:bg-gray-800"></th>
                             @if ($has_actions)
-                                <th width="1%;" id="resource-list-head-action" class="p-2">
+                                <th width="1%;" id="resource-list-head-action" class="p-2 dark:bg-gray-800">
                                     <input type="checkbox" id="{{ $resource->id . '_action_select_all' }}" />
                                 </th>
                             @endif
@@ -53,11 +55,11 @@
                                         $size .= 'px';
                                     }
                                 @endphp
-                                <th width="{{ $size }}" class="{{ $col_class }} p-2"
+                                <th width="{{ $size }}" class="{{ $col_class }} p-2 dark:bg-gray-800"
                                     id="resource-list-head-{{ $sortable_index }}">
                                     @if (@data_get($value, 'sortable') !== false)
                                         <a href="{{ ResourcesHelpers::sortLink($resource->route(), request()->all(), $sortable_index, $order_type) }}"
-                                            class="flex gap-4">
+                                            class="flex gap-4 vstack-link">
                                             <div class="link">{{ data_get($value, 'label', $value) }}</div>
                                             <div class="ml-auto flex  mr-4">
                                                 <span
@@ -71,7 +73,7 @@
                                             </div>
                                         </a>
                                     @else
-                                        <div class="link-sortable">
+                                        <div class="link-sortable dark:text-neutral-200">
                                             {{ isset($value['label']) ? @$value['label'] : $value }}
                                         </div>
                                     @endif
@@ -83,7 +85,7 @@
                                     $action_size = 210 + $qty_extra_btns * 30;
                                 @endphp
                                 <th style="max-width: {{ $action_size }}px;width: {{ $action_size }}px"
-                                    id="resource-list-head-actions">
+                                    class="dark:bg-gray-800" id="resource-list-head-actions">
                                 </th>
                             @endif
                         </tr>

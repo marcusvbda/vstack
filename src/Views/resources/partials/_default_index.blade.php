@@ -3,7 +3,7 @@
 @endphp
 <div class="flex flex-col">
     <div class="flex flex-col md:flex-row items-center gap-5">
-        <h4 class="text-3xl md:text-2xl font-bold text-neutral-800" id="resource-label">
+        <h4 class="text-3xl md:text-2xl font-bold text-neutral-800 dark:text-neutral-200" id="resource-label">
             {!! @$report_mode ? @$resource->reportLabel() : @$resource->indexLabel() !!}
         </h4>
         @if (!@$report_mode && $resource->canCreate())
@@ -12,7 +12,8 @@
             </resource-store-btn>
         @endif
         @if ($resource->canImport() && !@$report_mode && $resource->canCreate())
-            <a id="resource-import-link" href="{{ route('resource.import', ['resource' => $resource->id]) }}">
+            <a id="resource-import-link" class="vstack-link"
+                href="{{ route('resource.import', ['resource' => $resource->id]) }}">
                 {!! $resource->importButtonlabel() !!}
             </a>
         @endif
@@ -32,7 +33,7 @@
             </resource-export-btn>
         @endif
         @if (!@$report_mode && $resource->canViewReport())
-            <a class="ml-2 f-12" href="/admin/relatorios/{{ $resource->id }}" id="resource-report-btn">
+            <a class="ml-2 f-12 vstack-link" href="/admin/relatorios/{{ $resource->id }}" id="resource-report-btn">
                 <span class="el-icon-tickets mr-1"></span>
                 Relatório de {{ $resource->label() }}
             </a>

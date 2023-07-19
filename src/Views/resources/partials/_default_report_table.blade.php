@@ -7,7 +7,8 @@
             <thead class="thead-dark">
                 <tr id="resource-report-head">
                     @foreach ($table as $key => $value)
-                        <th style="min-width: 200px;text-align:left;" class="bg-gray-600 text-white text-sm p-1 border"
+                        <th style="min-width: 200px;text-align:left;"
+                            class="bg-gray-600 text-white text-sm p-1 border dark:border-none dark:bg-gray-800 dark:text-neutral-200"
                             id="resource-report-head-{{ data_get($table[$key], 'label', $key) }}">
                             @if (@$value['label'])
                                 {{ @$value['label'] }}
@@ -23,7 +24,7 @@
                     <tr id="resource-body-{{ $row->id }}">
                         @foreach ($table_keys as $key)
                             <td id="resource-report-body-{{ $row->id }}-{{ data_get($table[$key], 'label', $key) }}"
-                                class="font-sm text-neutral-700 border p-1">
+                                class="text-xs text-neutral-700 border p-1 dark:border-none dark:bg-gray-700 dark:text-neutral-300">
                                 {{ $controller->getColumnIndex($table, $row, $key) }}
                             </td>
                         @endforeach

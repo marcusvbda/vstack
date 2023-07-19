@@ -1,6 +1,6 @@
 <div class="flex flex-col mt-2">
     <div class="flex justify-between items-center mb-3">
-        <h4 class="text-3xl mt-4 flex items-center gap-5">
+        <h4 class="text-3xl mt-4 flex items-center gap-5 dark:text-neutral-200">
             @if (@$resource->icon())
                 <span class="{{ $resource->icon() }}"></span>
             @endif

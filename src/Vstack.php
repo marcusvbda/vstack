@@ -64,9 +64,9 @@ class Vstack
 		$html = "<div class='flex flex-col'>";
 		foreach ($args as $key => $value) {
 			if ($key == 0) {
-				$html .= "<span><b>{$value}</b></span>";
+				$html .= "<span><b class='dark:text-neutral-100'>{$value}</b></span>";
 			} else {
-				$html .= "<small class='text-neutral-400 text-xs'>{$value}</small>";
+				$html .= "<small class='text-neutral-400 dark:text-neutral-400 text-xs'>{$value}</small>";
 			}
 		}
 		return $html . "</div>";

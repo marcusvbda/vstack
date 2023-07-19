@@ -8,6 +8,7 @@
             width="100%"
             frameborder="0"
             :style="{ height: `${height}px!important` }"
+            class="dark:border-none"
         />
         <div class="invalid-feedback" v-if="errors">
             <ul class="text-sm text-red-700">

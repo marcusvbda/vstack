@@ -1,4 +1,4 @@
-<tr {!! $eval !!} id="resource-input-check-{{ $field }}">
+<tr {!! $eval !!} id="resource-input-check-{{ $field }}" class="flex flex-col md:table-row">
     <td class="field-title">
         <div class="flex flex-col">
             @if (@$label)
@@ -11,7 +11,7 @@
             @endif
         </div>
     </td>
-    <td>
+    <td class="field-slot">
         <div class='field-slot'>
             {!! @$slot_top !!}
             <el-switch :disabled='{{ $disabled }}' class='ml-3' v-model='{{ "form.$field" }}'

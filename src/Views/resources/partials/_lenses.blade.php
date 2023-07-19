@@ -5,7 +5,7 @@
         $query = request()->except(['cursor']);
     @endphp
     @if ($current_len == 'all')
-        <b class="text-neutral-700 text-sm">Todos</b>
+        <b class="text-neutral-700 text-sm dark:text-neutral-300">Todos</b>
     @else
         @php
             foreach ($lenses as $len_key => $len_value) {
@@ -19,7 +19,7 @@
             }
             $route = route('resource.index', array_merge(['resource' => $resource->id], $query));
         @endphp
-        <a href="{{ $route }}">Todos</a>
+        <a href="{{ $route }}" class="dark:text-neutral-300 dark:hover:text-neutral-100 ">Todos</a>
     @endif
     @foreach ($lenses as $len_key => $len_value)
         @php
@@ -36,11 +36,14 @@
             }
             $route = route('resource.index', array_merge(['resource' => $resource->id], $query));
         @endphp
-        <div class="px-2">|</div>
+        <div class="px-2 dark:text-neutral-500">|</div>
         @if ($current_len == $len_key)
-            <b id="resource-lenses-{{ $len_key }}" class="text-neutral-700 text-sm">{!! $len_key !!}</b>
+            <b id="resource-lenses-{{ $len_key }}"
+                class="text-neutral-700 dark:text-neutral-300 text-sm">{!! $len_key !!}
+            </b>
         @else
-            <a id="resource-lenses-{{ $len_key }}" href="{{ $route }}" class="text-neutral-600 text-sm">
+            <a id="resource-lenses-{{ $len_key }}" href="{{ $route }}"
+                class="text-neutral-600 dark:text-neutral-300 dark:hover:text-neutral-100 text-sm">
                 {!! $len_key !!}
             </a>
         @endif

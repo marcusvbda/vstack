@@ -1,9 +1,11 @@
 <template>
-    <div class="vstack-crud-card p-5 flex flex-col items-center justify-center">
+    <div
+        class="vstack-crud-card p-5 flex flex-col items-center justify-center dark:bg-gray-800 p-5"
+    >
         <h1 style="font-size: 150px" class="mt-4 text-green-600">
             <span class="el-icon-info" />
         </h1>
-        <h4 class="text-center text-3xl text-neutral-700">
+        <h4 class="text-center text-3xl text-neutral-700 dark:text-white">
             Importação de Planilha em execução, em breve será finalizado !
         </h4>
         <div class="flex items-center gap-4 flex-col md:flex-row mt-5">

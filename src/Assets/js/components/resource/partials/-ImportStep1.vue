@@ -1,12 +1,12 @@
 <template>
     <div
-        class="vstack-crud-card p-5"
+        class="vstack-crud-card dark:bg-gray-800 p-5"
         v-loading="loading"
         element-loading-text="Aguarde ..."
     >
         <template v-if="data.resource.import_custom_map_step">
             <h3
-                class="font-light text-3xl"
+                class="font-light text-3xl dark:text-neutral-200"
                 v-if="data.resource.import_custom_map_step.title"
             >
                 {{ data.resource.import_custom_map_step.title }}
@@ -23,7 +23,7 @@
             </div>
         </template>
         <template v-else>
-            <h3 class="font-light text-3xl">
+            <h3 class="font-light text-3xl dark:text-neutral-200">
                 Mapear campos da planilha para
                 {{ data.resource.label.toLowerCase() }}
             </h3>
@@ -36,14 +36,20 @@
         <table class="mt-5 w-full">
             <thead>
                 <tr>
-                    <th class="p-4 border text-neutral-700">Nome da coluna</th>
-                    <th class="p-4 border">Mapear para o campo</th>
+                    <th
+                        class="p-4 border text-neutral-700 dark:text-neutral-200"
+                    >
+                        Nome da coluna
+                    </th>
+                    <th class="p-4 border dark:text-neutral-200">
+                        Mapear para o campo
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(column, i) in config.data.csv_header" :key="i">
                     <template>
-                        <td class="p-4 font-bold border">
+                        <td class="p-4 font-bold border dark:text-neutral-200">
                             {{ column }}
                         </td>
                         <td class="p-4 border">

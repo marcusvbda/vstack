@@ -14,7 +14,7 @@
         >
             <template v-if="exporting.current_action == 'waiting'">
                 <div class="flex padding-dialog flex-col gap-3">
-                    <b>
+                    <b class="dark:text-neutral-200">
                         Selecione as colunas que deseja importar em sua planilha
                     </b>
                     <small class="text-neutral-400">
@@ -58,7 +58,10 @@
             </template>
             <template v-else>
                 <template v-if="exporting.current_action == 'preparing'">
-                    <div style="height: 300px;" class="flex items-center justify-center">
+                    <div
+                        style="height: 300px"
+                        class="flex items-center justify-center"
+                    >
                         <span class="text-4xl text-neutral-400">
                             <i class="fas fa-spinner fa-spin" />
                         </span>

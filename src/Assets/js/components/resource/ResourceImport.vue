@@ -19,7 +19,7 @@
         </el-steps>
         <div class="mt-3">
             <a
-                class="link"
+                class="link vstack-link"
                 href="#"
                 v-if="config.step > 0"
                 @click.prevent="reload"

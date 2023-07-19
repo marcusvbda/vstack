@@ -1,5 +1,9 @@
 <template>
-    <CustomResourceComponent :label="label" :description="description">
+    <CustomResourceComponent
+        custom_class="display-revert"
+        :label="label"
+        :description="description"
+    >
         <div class="flex flex-col">
             <slot name="prepend-slot" />
             <div class="flex flex-wrap items-center gap-2">

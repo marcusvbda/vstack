@@ -310,8 +310,8 @@ class ResourceController extends Controller
 		}
 		$filename = $resource->id . "_" . Carbon::now()->format('Y_m_d_H_i_s') . '_' . Auth::user()->tenant()->first()->name . ".xlsx";
 		$exporter = new DefaultGlobalExporter($this->getImporterCollumns($resource));
-		Excel::store($exporter, $filename, "temp_report");
-		$full_path = storage_path("app/temp_report/$filename");
+		Excel::store($exporter, $filename, "public");
+		$full_path = storage_path("app/public/$filename");
 		return response()->download($full_path)->deleteFileAfterSend(true);
 	}
 

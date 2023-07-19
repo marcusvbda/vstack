@@ -44,15 +44,19 @@
                 <b>
                     <template v-if="row.acl.can_view || row.acl.can_update">
                         <template v-if="row.acl.can_view">
-                            <a :href="`${resource_route}/${row.content.code}`">
+                            <a
+                                :href="`${resource_route}/${row.content.code}`"
+                                class="vstack-link"
+                            >
                                 <v-runtime-template
-                                    :template="`<div class='text-sm'>${row.content[col]}</div>`"
+                                    :template="`<div class='text-sm '>${row.content[col]}</div>`"
                                 />
                             </a>
                         </template>
                         <template v-else>
                             <a
                                 :href="`${resource_route}/${row.content.code}/edit`"
+                                class="vstack-link"
                             >
                                 <v-runtime-template
                                     :template="`<div class='text-sm'>${row.content[col]}</div>`"
@@ -62,14 +66,14 @@
                     </template>
                     <template v-else>
                         <v-runtime-template
-                            :template="`<div class='text-neutral-600 text-sm'>${row.content[col]}</div>`"
+                            :template="`<div class='text-neutral-600 dark:text-neutral-200 text-sm'>${row.content[col]}</div>`"
                         />
                     </template>
                 </b>
             </template>
             <template v-else>
                 <v-runtime-template
-                    :template="`<div class='text-neutral-600 text-sm'>${row.content[col]}</div>`"
+                    :template="`<div class='text-neutral-600 dark:text-neutral-200 text-sm'>${row.content[col]}</div>`"
                 />
             </template>
         </template>

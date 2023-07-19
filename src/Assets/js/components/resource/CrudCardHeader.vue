@@ -9,7 +9,7 @@
                                 <b
                                     v-if="label"
                                     v-html="label"
-                                    class="text-neutral-700"
+                                    class="text-neutral-700 dark:text-neutral-300"
                                 />
                                 <small
                                     v-if="description"

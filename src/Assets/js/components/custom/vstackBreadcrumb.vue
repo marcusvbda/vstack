@@ -2,7 +2,7 @@
 <template>
     <div class="hidden md:block">
         <nav
-            class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50"
+            class="flex px-5 py-3 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-none"
             aria-label="Breadcrumb"
         >
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -15,7 +15,7 @@
                             :class="[
                                 'inline-flex items-center text-sm font-medium  hover:text-blue-600',
                                 index != items.length - 1
-                                    ? 'text-gray-700'
+                                    ? 'text-gray-700 dark:text-gray-50'
                                     : '',
                             ]"
                         >

@@ -5,7 +5,7 @@
             v-if="pageType === 'VIEW'"
         />
         <div
-            class="vstack-crud-card mb-3 p-3"
+            class="vstack-crud-card mb-3 p-3 dark:bg-gray-800 dark:border-none"
             ref="topbar"
             id="save-topbar"
             v-if="(first_btn || second_btn) && pageType !== 'VIEW'"
