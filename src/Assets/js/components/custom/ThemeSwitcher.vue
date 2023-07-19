@@ -1,7 +1,7 @@
 <template>
     <el-button
         :icon="icon"
-        class="border-none bg-gray-50 dark:bg-gray-900"
+        class="border dark:border-none bg-gray-50 dark:bg-gray-900"
         @click="toggle"
     />
 </template>
