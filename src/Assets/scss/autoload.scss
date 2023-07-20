@@ -210,10 +210,22 @@
 
 .dark {
     .el-button {
-        filter: brightness(0.7);
+        filter: brightness(0.8);
 
         &:hover {
-            filter: brightness(0.8);
+            filter: brightness(0.9);
         }
+    }
+}
+
+.el-message-box {
+    @apply dark:bg-gray-800 dark:border-none;
+
+    .el-message-box__title span {
+        @apply dark:text-neutral-100;
+    }
+
+    .el-message-box__message p {
+        @apply dark:text-neutral-200;
     }
 }
