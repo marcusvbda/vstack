@@ -24,7 +24,7 @@ export default {
         toggle() {
             this.theme = this.theme == 'dark' ? 'light' : 'dark';
             localStorage.setItem('theme', this.theme);
-            if (this.theme != 'dark') {
+            if (this.theme === 'dark') {
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');

@@ -10,6 +10,7 @@ class SetVstackMutator extends BaseMutator
 	public function process($content)
 	{
 		$content["vstack"] = [
+			"theme" => Vstack::theme(),
 			"version" => [
 				"current" => Vstack::current_version(),
 				"last" => Vstack::last_version(),

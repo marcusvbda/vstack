@@ -3,7 +3,6 @@
 namespace marcusvbda\vstack;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
 
 class Vstack
 {
@@ -12,6 +11,11 @@ class Vstack
 		$content = file_get_contents(__DIR__ . "/../composer.json");
 		$content = json_decode($content, true);
 		return @$content["version"];
+	}
+
+	public static function theme()
+	{
+		return config("vstack.default_theme", "dark");
 	}
 
 	public static function last_version()

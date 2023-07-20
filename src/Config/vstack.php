@@ -1,6 +1,7 @@
 <?php
 
 return [
+	"default_theme" => "dark",
 	"default_upload_route" => "/admin/upload_file",
 	"extra_javascript_global_variables" => [],
 	"animation" => [
