@@ -240,21 +240,21 @@ export default {
                     this.handleExport(data.next_page ?? null);
                 },
                 finish: (data) => {
-                    // this.exporting.exported = this.exporting.total_results;
-                    // handleAppendRowToWorkSheet(data.processed_row);
-                    // this.updateEstimatedTime();
-                    // clearInterval(this.exporting.estimated_timeout);
-                    // window.onbeforeunload = null;
-                    // setTimeout(() => {
-                    //     handleFinishWorkBook(this.fileName).then(() => {
-                    //         this.$message({
-                    //             showClose: true,
-                    //             message: `Exportação do relatório de ${this.label} concluída !`,
-                    //             type: 'success',
-                    //         });
-                    //         this.resetData();
-                    //     });
-                    // }, this.humanize_timeout);
+                    this.exporting.exported = this.exporting.total_results;
+                    handleAppendRowToWorkSheet(data.processed_row);
+                    this.updateEstimatedTime();
+                    clearInterval(this.exporting.estimated_timeout);
+                    window.onbeforeunload = null;
+                    setTimeout(() => {
+                        handleFinishWorkBook(this.fileName).then(() => {
+                            this.$message({
+                                showClose: true,
+                                message: `Exportação do relatório de ${this.label} concluída !`,
+                                type: 'success',
+                            });
+                            this.resetData();
+                        });
+                    }, this.humanize_timeout);
                 },
             };
             return actions;
