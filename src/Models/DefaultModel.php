@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use marcusvbda\vstack\Models\Traits\CascadeOrRestrictSoftdeletes;
 use marcusvbda\vstack\Models\Scopes\TenantScope;
 use marcusvbda\vstack\Models\Observers\TenantObserver;
+use marcusvbda\vstack\Models\Scopes\OrderByScope;
 use marcusvbda\vstack\Models\Traits\HasSlug;
 use marcusvbda\vstack\Models\Traits\useTenantTz;
 use marcusvbda\vstack\Vstack;
@@ -27,9 +28,9 @@ class DefaultModel extends Model
 		if (static::hasTenant()) {
 			static::observe(new TenantObserver());
 			static::addGlobalScope(new TenantScope());
+			static::addGlobalScope(new OrderByScope(with(new static)->getTable()));
 		}
 	}
-
 	public function scopeWithoutAppends($query)
 	{
 		self::$withoutAppends = true;
