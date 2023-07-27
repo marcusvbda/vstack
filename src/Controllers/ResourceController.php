@@ -209,10 +209,10 @@ class ResourceController extends Controller
 		if (isset($data["_"])) {
 			$query = $query->where(function ($q) use ($search, $data, $table) {
 				foreach ($search as $s) {
-					if (is_callable($s)) {
+					if (!is_string($s)) {
 						$q = $s($q, $data["_"]);
 					} else {
-						$q = $q->orWhere($table . $s, "like", "%" . ($data["_"] ?? "") . "%");
+						$q = $q->orWhere($table . "." . $s, "like", "%" . ($data["_"] ?? "") . "%");
 					}
 				}
 				return $q;
