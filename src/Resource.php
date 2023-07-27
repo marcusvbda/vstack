@@ -154,6 +154,7 @@ class Resource
 
 	public function secondCrudBtn()
 	{
+		if (!$this->canUpdate()) return null;
 		return [
 			"field" => "save",
 			"class" => "secondary",
