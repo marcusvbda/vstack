@@ -4,6 +4,7 @@ namespace marcusvbda\vstack;
 
 use App;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use marcusvbda\vstack\Controllers\ResourceController;
 use marcusvbda\vstack\Events\WebSocketEvent;
@@ -568,23 +569,31 @@ class Resource
 
 	public function storeMethod($id, $data)
 	{
-		$target = @$id ? $this->getModelInstance()->findOrFail($id) : $this->getModelInstance();
-		foreach (array_keys($data["data"]) as $key) {
-			$target->{$key} = $data["data"][$key];
-		}
-		$target->save();
-		$controller = new ResourceController;
-		$controller->storeUploads($target, $data["upload"]);
-		if (!request("input_origin")) {
-			Messages::send("success", "Registro salvo com sucesso !!");
-			if (request("clicked_btn") == "save") {
-				$route = route('resource.edit', ["resource" => $this->id, "code" => $target->code]);
-			} else {
-				$route = route('resource.index', ["resource" => $this->id]);
+		try {
+			DB::beginTransaction();
+			$target = @$id ? $this->getModelInstance()->findOrFail($id) : $this->getModelInstance();
+			foreach (array_keys($data["data"]) as $key) {
+				$target->{$key} = $data["data"][$key];
 			}
-			return ["success" => true, "route" => $route, "model" => $target];
-		} else {
-			return ["success" => true, 'model' => $target];
+			$target->save();
+			$controller = new ResourceController;
+			$controller->storeUploads($target, $data["upload"]);
+			DB::commit();
+			if (!request("input_origin")) {
+				Messages::send("success", "Registro salvo com sucesso !!");
+				if (request("clicked_btn") == "save") {
+					$route = route('resource.edit', ["resource" => $this->id, "code" => $target->code]);
+				} else {
+					$route = route('resource.index', ["resource" => $this->id]);
+				}
+				return ["success" => true, "route" => $route, "model" => $target];
+			} else {
+				return ["success" => true, 'model' => $target];
+			}
+		} catch (\Exception $e) {
+			DB::rollBack();
+			Messages::send("error", "Erro ao salvar registro !!");
+			return ["success" => false, "error" => $e->getMessage()];
 		}
 	}
 
