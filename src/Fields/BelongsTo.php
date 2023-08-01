@@ -41,7 +41,8 @@ class BelongsTo extends Field
 		$slot_top = @$this->options["slot_top"] ? $this->options["slot_top"] : "";
 		$slot_bottom = @$this->options["slot_bottom"] ? $this->options["slot_bottom"] : "";
 		$option_template = @$this->options["option_template"] ? $this->options["option_template"] : "";
-
+		$entity_parent = @$this->options["entity_parent"] ? $this->options["entity_parent"] : "";
+		$entity_parent_message = @$this->options["entity_parent_message"] ? $this->options["entity_parent_message"] : "";
 		return $this->view = view("vStack::resources.field.belongsto", compact(
 			"field",
 			"option_template",
@@ -61,7 +62,9 @@ class BelongsTo extends Field
 			"model_filter",
 			"type",
 			"slot_top",
-			"slot_bottom"
+			"slot_bottom",
+			"entity_parent",
+			"entity_parent_message"
 		))->render();
 	}
 }

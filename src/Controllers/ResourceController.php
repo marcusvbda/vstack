@@ -851,7 +851,9 @@ class ResourceController extends Controller
 			$filters = @$request->model_filter ?? [];
 			foreach ($filters as $key => $value) {
 				foreach ($value as $item) {
-					$model = $model->{$key}($item[0], @$item[1], @$item[2] ? $item[2] : null);
+					if (!empty($item)) {
+						$model = $model->{$key}($item[0], @$item[1], @$item[2] ? $item[2] : null);
+					}
 				}
 			}
 			$model = $model->orderBy(data_get($model_fields, "name", ""), "asc");

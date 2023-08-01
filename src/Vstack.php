@@ -159,4 +159,11 @@ class Vstack
 		$test = data_get(static::encodeJWT($result, $expiration_str), 'token');
 		return $test === $token ? $result : false;
 	}
+
+	public static function enumToOptions($cases)
+	{
+		return collect($cases)->map(function ($x) {
+			return ["id" => $x->name, "value" => $x->value];
+		})->toArray();
+	}
 }

@@ -4,7 +4,7 @@
         :description="description"
         custom_class="display-revert"
     >
-        <div class="flex flex-col">
+        <div class="flex flex-col" v-if="canShowEntity">
             <slot name="prepend-slot" />
             <div
                 class="input-group v-select"
@@ -93,6 +93,9 @@
             </div>
             <slot name="append-slot" />
         </div>
+        <span v-else class="text-sm text-gray-500">
+            {{ entity_parent_message }}
+        </span>
     </CustomResourceComponent>
 </template>
 <script>
@@ -121,6 +124,8 @@ export default {
         'model_filter',
         'type',
         'option_template',
+        'entity_parent',
+        'entity_parent_message',
     ],
     components: {
         VRuntimeTemplate,
@@ -136,6 +141,13 @@ export default {
     },
     created() {
         this.initialize();
+        if (this.entity_parent) {
+            this.$watch(`$parent.form.${this.entity_parent}`, () => {
+                this.loading = true;
+                this.value = this.multiple ? [] : null;
+                this.initialize();
+            });
+        }
     },
     watch: {
         '$attrs.value'(val) {
@@ -156,6 +168,12 @@ export default {
             return (this.list_model ? this.list_model : '')
                 .replaceAll('\\', '_')
                 .toLowerCase();
+        },
+        canShowEntity() {
+            if (this.entity_parent && !this.$parent.form[this.entity_parent]) {
+                return false;
+            }
+            return true;
         },
     },
     methods: {
@@ -232,7 +250,8 @@ export default {
 
             if (
                 this.field_options[this.option_model_index] == 'loading' ||
-                !this.field_options[this.option_model_index]
+                !this.field_options[this.option_model_index] ||
+                this.entity_parent
             ) {
                 this.$watch(
                     `field_options.${this.option_model_index}`,
@@ -246,21 +265,54 @@ export default {
                     }
                 );
 
-                if (!this.field_options[this.option_model_index]) {
+                if (
+                    !this.field_options[this.option_model_index] ||
+                    this.entity_parent
+                ) {
                     let field_op = {};
                     field_op[this.option_model_index] = 'loading';
+
+                    if (
+                        this.entity_parent &&
+                        !this.$parent.form[this.entity_parent]
+                    ) {
+                        return;
+                    }
+
                     this.addFieldOptions(field_op);
+
+                    let parentCondition = [];
+                    if (this.entity_parent) {
+                        parentCondition = [
+                            this.entity_parent,
+                            '=',
+                            this.$parent.form[this.entity_parent],
+                        ];
+                    }
+
+                    console.log(parentCondition);
 
                     const payload = {
                         params: {
                             model: this.list_model,
                             model_fields: this.model_fields,
-                            model_filter: this.model_filter,
+                            model_filter: {
+                                ...this.model_filter,
+                                ...{
+                                    where: [
+                                        (this.model_filter?.where || []).concat(
+                                            parentCondition
+                                        ),
+                                    ],
+                                },
+                            },
                         },
                     };
+
                     return this.$http
                         .post(this.route_list, payload)
                         .then((res) => {
+                            console.log(payload);
                             res = res.data;
                             let field_op = {};
                             field_op[this.option_model_index] = res.data.map(
