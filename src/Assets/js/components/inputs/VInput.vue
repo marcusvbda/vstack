@@ -3,7 +3,20 @@
     <CustomResourceComponent :label="label" :description="description">
         <div class="flex flex-col">
             <slot name="prepend-slot" />
-            <template v-if="type == 'percentage'">
+            <template v-if="type == 'currency'">
+                <currency-input
+                    v-if="type == 'currency'"
+                    class="el-input__inner"
+                    v-bind:class="{ 'is-invalid': errors }"
+                    currency="BRL"
+                    :placeholder="placeholder ? placeholder : ''"
+                    :auto-decimal-mode="true"
+                    v-model="val"
+                    :maxlength="maxlength"
+                    @blur="$emit('blur', val)"
+                />
+            </template>
+            <template v-else-if="type == 'percentage'">
                 <div class="progress-section">
                     <ElProgress
                         type="dashboard"
@@ -11,7 +24,7 @@
                     />
                     <input
                         :disabled="disabled"
-                        class="form-control"
+                        class="el-input__inner"
                         v-model="val"
                         v-bind:class="{ 'is-invalid': errors }"
                         :placeholder="placeholder ? placeholder : ''"
