@@ -33,6 +33,42 @@ class Field
 		$this->checkRequired();
 	}
 
+	protected function getViewOnlyValue()
+	{
+		$content = request()->get("content");
+		$label  = @$this->options["label"];
+		$description    = @$this->options["description"];
+		$type    = @$this->options["type"];
+		$model    = @$this->options["model"];
+		$value = @$this->options["default"];
+		$options = @$this->options["options"] ?? [];
+		if ($content && @$this->options["field"]) {
+			$value = @$content->{$this->options["field"]};
+		}
+		if (!$value) {
+			$value = @$this->options["default"];
+		}
+
+		if ($type == "date" || $type == "daterange") {
+			$format = @$this->options["format"] ? $this->options["format"] : 'DD/MM/YYYY';
+		} else {
+			$format = @$this->options["format"] ? $this->options["format"] : 'DD/MM/YYYY HH:mm:ss';
+		}
+		$eval = " " . (@$this->options["eval"] ? trim($this->options["eval"]) : "") . " ";
+
+		return $this->view = view("vStack::resources.field.view_content", compact(
+			"label",
+			"description",
+			"value",
+			"type",
+			"options",
+			"model",
+			"format",
+			"eval"
+		))->render();
+	}
+
+
 	private function checkRequired()
 	{
 		$requiredTag = ' <small style="position: relative;top: -2px;color:#961313;font-weight: bold;">*</small>';

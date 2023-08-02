@@ -7,5 +7,5 @@
     @php
         $user = Auth::user();
     @endphp
-    @include($resource->indexBlade())
+    {!! $resource->makeIndexContent(compact('resource', 'report_mode')) !!}
 @endsection

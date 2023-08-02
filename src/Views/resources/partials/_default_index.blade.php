@@ -1,5 +1,6 @@
 @php
     use marcusvbda\vstack\Models\ResourceConfig;
+    $user = Auth::user();
 @endphp
 <div class="flex flex-col">
     <div class="flex flex-col md:flex-row items-center gap-5">
@@ -17,7 +18,7 @@
                 {!! $resource->importButtonlabel() !!}
             </a>
         @endif
-        @if (@$report_mode && $resource->canExport() &&  $resource->model->toBase()->first('id'))
+        @if (@$report_mode && $resource->canExport() && $resource->model->toBase()->first('id'))
             @php
                 $resource_config_query = ResourceConfig::where('data->user_id', $user->id)->where('resource', $resource->id);
                 $config_columns = (clone $resource_config_query)->where('config', 'resource_export_disabled_columns')->first();

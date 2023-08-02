@@ -512,14 +512,14 @@ class Resource
 		return "vStack::resources.partials._default_table";
 	}
 
-	public function vieReportBlade()
+	public function viewReportBlade()
 	{
 		return "vStack::resources.partials._default_report_table";
 	}
 
-	public function indexBlade()
+	public function makeIndexContent($data)
 	{
-		return "vStack::resources.partials._default_index";
+		return view("vStack::resources.partials._default_index", $data);
 	}
 
 	public function viewBlade()
@@ -684,6 +684,21 @@ class Resource
 	{
 		$resource = $this;
 		return view("vStack::resources.crud", compact("resource", "data", "params", "content"));
+	}
+
+	public function makeViewContent($data)
+	{
+		return view('vStack::resources.partials._crud_content', $data);
+	}
+
+	public function makeCreateContent($data)
+	{
+		return view('vStack::resources.partials._crud_content', $data);
+	}
+
+	public function makeEditContent($data)
+	{
+		return view('vStack::resources.partials._crud_content', $data);
 	}
 
 	public function secondViewBtn()

@@ -11,4 +11,4 @@
     $table_keys = array_keys($table);
     $controller = new \marcusvbda\vstack\Controllers\VstackController();
 @endphp
-@include($resource->vieReportBlade())
+@include($resource->viewReportBlade())

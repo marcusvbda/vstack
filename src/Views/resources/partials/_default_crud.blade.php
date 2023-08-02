@@ -11,7 +11,7 @@
 @if ($data['page_type'] == 'Edição' && $resource->useTags())
     <resource-tags-input resource='{{ $resource->id }}' resource_code='{{ @$content->code }}'></resource-tags-input>
 @endif
-@if (@!$data->id)
+@if (@$raw_type == 'create')
     @if (@$resource->beforeCreateSlot())
         {!! @$resource->beforeCreateSlot() !!}
     @endif
@@ -21,27 +21,16 @@
     @endif
 @endif
 
-<resource-crud class="mt-2" :data='@json($data)' :params='@json($params)'
-    style="padding-bottom: 100px" redirect="{{ $current_route }}" :breadcrumb='@json($routes)'
-    @if (@$content) :content='@json($content)' @endif raw_type='{{ $raw_type }}'
-    :first_btn='@json($resource->firstCrudBtn())' :second_btn='@json($resource->secondCrudBtn())'
-    :acl='@json(['can_update' => $resource->canUpdate()])' :has_befores_store='@json($resource->beforeStore([]) !== false)'
-    loading_message="{{ $resource->resourceLoadingSaveMassage($raw_type) }}">
-    @if (@!$data->id && !@$data['id'])
-        @if (@$resource->afterCreateSlot())
-            <template slot="aftercreate">
-                {!! @$resource->afterCreateSlot() !!}
-            </template>
-        @endif
-    @else
-        @if (@$resource->afterEditSlot())
-            <template slot="afteredit">
-                {!! @$resource->afterEditSlot() !!}
-            </template>
-        @endif
-    @endif
-</resource-crud>
+@if ($raw_type == 'view')
+    {!! $resource->makeViewContent(
+        compact('data', 'params', 'content', 'raw_type', 'resource', 'current_route', 'routes'),
+    ) !!}
+@endif
 
-<div id="loading-section">
-    @include('vStack::resources.loader.crud_shimmer')
-</div>
+@if ($raw_type == 'create')
+    {!! $resource->makeCreateContent(compact('data', 'params', 'raw_type', 'resource', 'current_route', 'routes')) !!}
+@endif
+
+@if ($raw_type == 'edit')
+    {!! $resource->makeEditContent(compact('data', 'params', 'raw_type', 'resource', 'current_route', 'routes')) !!}
+@endif
