@@ -3,7 +3,7 @@
     @if (@$content) :content='@json($content)' @endif raw_type='{{ $raw_type }}'
     :first_btn='@json($resource->firstCrudBtn())' :second_btn='@json($resource->secondCrudBtn())'
     :acl='@json(['can_update' => $resource->canUpdate()])' :has_befores_store='@json($resource->beforeStore([]) !== false)'
-    loading_message="{{ $resource->resourceLoadingSaveMassage($raw_type) }}">
+    resource_id="{{ $resource->id }}" loading_message="{{ $resource->resourceLoadingSaveMassage($raw_type) }}">
     @if (@$raw_type == 'create')
         @if (@$resource->afterCreateSlot())
             <template slot="aftercreate">
@@ -23,4 +23,3 @@
 <div id="loading-section">
     @include('vStack::resources.loader.crud_shimmer')
 </div>
-

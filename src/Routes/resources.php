@@ -17,7 +17,7 @@ Route::group(['prefix' => "vstack"], function () {
 
 Route::group(['prefix' => "admin"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
-		Route::match(['get', 'post'], 'inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
+		Route::post('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
 
 		Route::post('get-list-cards', [ResourceController::class, 'getListItem'])->name("resource.get_list_item");
 		Route::post('upload', [ResourceController::class, 'upload'])->name("resource.upload");

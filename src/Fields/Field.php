@@ -6,6 +6,7 @@ class Field
 {
 	public $options = [];
 	public $view    = "";
+	public $fetch_options_calllback = null;
 
 	public function processFieldOptions()
 	{
@@ -30,6 +31,7 @@ class Field
 		@$this->options["multiple"]             = @$this->options["multiple"] ?? false;
 		@$this->options["_uid"]             	= @$this->options["_uid"] ? $this->options["_uid"] : uniqid();
 		@$this->options["resource"]             = @$this->options["resource"] ? $this->options["resource"] : null;
+		@$this->fetch_options_calllback            = @$this->options["fetch_options_calllback"] ? $this->options["fetch_options_calllback"] : fn ($form, $query) => $query;
 		$this->checkRequired();
 	}
 

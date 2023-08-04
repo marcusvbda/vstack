@@ -76,6 +76,7 @@ export default {
         'ids',
         'has_befores_store',
         'loading_message',
+        'resource_id',
     ],
     data() {
         return {
@@ -103,13 +104,14 @@ export default {
         },
     },
     created() {
+        this.setResourceId(this.resource_id);
         this.removeLoadingEl();
         this.getScreenSize();
         this.initForm();
         this.initCrudSectioEvent();
     },
     methods: {
-        ...mapMutations('resource', ['setActionBtnLoading']),
+        ...mapMutations('resource', ['setActionBtnLoading', 'setResourceId']),
         initCrudSectioEvent() {
             this.$nextTick(() => {
                 const element = this.$refs.topbar;

@@ -140,13 +140,26 @@ export default {
         };
     },
     created() {
-        this.initialize();
+        let val = this.$attrs.value
+            ? this.$attrs.value
+            : this.multiple
+            ? []
+            : null;
+        if (!Array.isArray(val)) {
+            val = val ? String(val) : null;
+        } else {
+            val = val.map((x) => String(x));
+        }
+        this.value = val;
+
         if (this.entity_parent) {
             this.$watch(`$parent.form.${this.entity_parent}`, () => {
                 this.loading = true;
                 this.value = this.multiple ? [] : null;
-                this.initialize();
+                this.initialize(false);
             });
+        } else {
+            this.initialize();
         }
     },
     watch: {
@@ -163,14 +176,18 @@ export default {
         },
     },
     computed: {
-        ...mapGetters('resource', ['field_options']),
+        ...mapGetters('resource', ['field_options', 'resource_id']),
         option_model_index() {
             return (this.list_model ? this.list_model : '')
                 .replaceAll('\\', '_')
                 .toLowerCase();
         },
         canShowEntity() {
-            if (this.entity_parent && !this.$parent.form[this.entity_parent]) {
+            if (
+                this.entity_parent &&
+                (!this.$parent.form[this.entity_parent] ||
+                    !this.$parent.form[this.entity_parent]?.length)
+            ) {
                 return false;
             }
             return true;
@@ -197,19 +214,9 @@ export default {
             }
             this.marked = !this.marked;
         },
-        initialize() {
+        initialize(changeVal = true) {
             if (this.list_model) {
                 this.initOptions(() => {
-                    this.value = this.$attrs.value
-                        ? this.$attrs.value
-                        : this.multiple
-                        ? []
-                        : null;
-                    if (!Array.isArray(this.value)) {
-                        this.value = this.value ? String(this.value) : null;
-                    } else {
-                        this.value = this.value.map((x) => String(x));
-                    }
                     this.finishInit();
                 });
             } else {
@@ -274,7 +281,7 @@ export default {
 
                     if (
                         this.entity_parent &&
-                        !this.$parent.form[this.entity_parent]
+                        !this.$parent?.form?.[this.entity_parent]
                     ) {
                         return;
                     }
@@ -286,24 +293,26 @@ export default {
                         parentCondition = [
                             this.entity_parent,
                             '=',
-                            this.$parent.form[this.entity_parent],
+                            this.$parent?.form?.[this.entity_parent],
                         ];
                     }
-
-                    console.log(parentCondition);
-
                     const payload = {
                         params: {
-                            model: this.list_model,
-                            model_fields: this.model_fields,
-                            model_filter: {
-                                ...this.model_filter,
-                                ...{
-                                    where: [
-                                        (this.model_filter?.where || []).concat(
-                                            parentCondition
-                                        ),
-                                    ],
+                            field_index: this.field_index,
+                            resource_id: this.resource_id,
+                            form: this.$parent?.form,
+                            query: {
+                                model: this.list_model,
+                                model_fields: this.model_fields,
+                                model_filter: {
+                                    ...this.model_filter,
+                                    ...{
+                                        where: [
+                                            (
+                                                this.model_filter?.where || []
+                                            ).concat(parentCondition),
+                                        ],
+                                    },
                                 },
                             },
                         },
@@ -312,7 +321,6 @@ export default {
                     return this.$http
                         .post(this.route_list, payload)
                         .then((res) => {
-                            console.log(payload);
                             res = res.data;
                             let field_op = {};
                             field_op[this.option_model_index] = res.data.map(

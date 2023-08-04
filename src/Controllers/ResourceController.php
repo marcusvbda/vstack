@@ -830,11 +830,14 @@ class ResourceController extends Controller
 
 	public function option_list(Request $request)
 	{
-		if ($request->isMethod('post') && ($request->params || $request->json)) {
-			$request = new Request(@$request->params ? $request->params : $request->json);
-		}
+		$form = data_get($request, "params.form");
+		$filters = data_get($request, "params.model_filter", []);
+		$query = data_get($request, "params.query");
+		$field_index = data_get($request, "params.field_index");
+		$resource_id = data_get($request, "params.resource_id");
 
-		$model_fields = @$request->model_fields ?? [];
+		$model_fields = data_get($query, "model_fields", []);
+
 		if (is_string($model_fields)) {
 			$model_fields = json_decode($model_fields, true);
 		}
@@ -845,10 +848,9 @@ class ResourceController extends Controller
 		}, array_keys($model_fields));
 
 		try {
-			$model = app()->make($request["model"]);
+			$model = app()->make(data_get($query, "model"));
 			$select_raw = implode(", ", $formated_model_fields);
 			$model = $model->selectRaw($select_raw);
-			$filters = @$request->model_filter ?? [];
 			foreach ($filters as $key => $value) {
 				foreach ($value as $item) {
 					if (!empty($item)) {
@@ -857,9 +859,24 @@ class ResourceController extends Controller
 				}
 			}
 			$model = $model->orderBy(data_get($model_fields, "name", ""), "asc");
-			return ["success" => true, "data" => $model->get()];
+			$field = $this->getFieldIndex($resource_id, $field_index);
+			$callback = $field->fetch_options_calllback;
+			return ["success" => true, "data" => $callback(new Request($form), $model)->get()];
 		} catch (\Exception $e) {
 			return ["success" => false, "data" => [], "error" => $e->getMessage()];
+		}
+	}
+
+	private function getFieldIndex($resource_id, $index)
+	{
+		$resource = ResourcesHelpers::find($resource_id);
+		$cards = $resource->fields();
+		foreach ($cards as $card) {
+			foreach ($card->inputs as $field) {
+				if ($field->options["field"] == $index) {
+					return $field;
+				}
+			}
 		}
 	}
 
