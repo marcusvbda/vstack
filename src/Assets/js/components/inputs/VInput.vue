@@ -134,7 +134,11 @@ export default {
         if (this.type === 'slider') {
             this.val = parseInt(this.value ?? 0);
         } else {
-            this.val = this.value;
+            if (this.type === 'currency') {
+                this.val = parseFloat(this.value ?? 0);
+            } else {
+                this.val = this.value;
+            }
         }
     },
     methods: {

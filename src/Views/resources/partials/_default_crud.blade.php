@@ -32,5 +32,7 @@
 @endif
 
 @if ($raw_type == 'edit')
-    {!! $resource->makeEditContent(compact('data', 'params', 'raw_type', 'resource', 'current_route', 'routes')) !!}
+    {!! $resource->makeEditContent(
+        compact('content', 'data', 'params', 'raw_type', 'resource', 'current_route', 'routes'),
+    ) !!}
 @endif

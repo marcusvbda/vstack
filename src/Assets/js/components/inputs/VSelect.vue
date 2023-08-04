@@ -4,87 +4,94 @@
         :description="description"
         custom_class="display-revert"
     >
-        <div class="flex flex-col" v-if="canShowEntity">
+        <div class="flex flex-col">
             <slot name="prepend-slot" />
             <div
                 class="input-group v-select"
                 v-bind:class="{ 'is-invalid': errors }"
             >
-                <template v-if="multiple && !allow_create && type == 'radio'">
-                    <template v-if="loading">
-                        <div class="shimmer select mb-3" />
-                        <div class="shimmer select mb-3" />
-                        <div class="shimmer select mb-3" />
-                    </template>
-                    <div class="flex" v-else>
-                        <el-checkbox-group
-                            class="vstack-hasmany"
-                            v-model="value"
-                        >
-                            <el-checkbox-button
-                                v-for="(op, i) in options"
-                                :label="op.id"
-                                :key="i"
-                            >
-                                {{ op.name }}
-                            </el-checkbox-button>
-                        </el-checkbox-group>
-                        <a
-                            class="px-3 text-center f-12"
-                            @click.prevent="toggleMarked"
-                            href="#"
-                        >
-                            {{ !marked ? 'Marcar' : 'Desmarcar' }} todas as
-                            opções
-                        </a>
-                    </div>
-                </template>
-                <template v-else>
-                    <div class="shimmer select" v-if="loading" />
-                    <el-select
-                        :allow-create="allow_create"
-                        :disabled="disabled"
-                        v-else
-                        :size="size ? size : 'large'"
-                        :allow_create="allow_create"
-                        class="w-full"
-                        clearable
-                        v-model="value"
-                        filterable
-                        ref="select"
-                        :placeholder="placeholder"
-                        v-loading="loading"
-                        :loading="loading"
-                        @keyup.enter.native="selectCreate"
-                        loading-text="Carregando..."
-                        :multiple="multiple"
-                        :popper-append-to-body="false"
+                <template v-if="canShowEntity">
+                    <template
+                        v-if="multiple && !allow_create && type == 'radio'"
                     >
-                        <el-option
-                            v-for="(item, i) in options"
-                            :key="i"
-                            :label="item.name"
-                            :value="String(item.id)"
-                            style="height: unset !important"
+                        <template v-if="loading">
+                            <div class="shimmer select mb-3" />
+                            <div class="shimmer select mb-3" />
+                            <div class="shimmer select mb-3" />
+                        </template>
+                        <div class="flex" v-else>
+                            <el-checkbox-group
+                                class="vstack-hasmany"
+                                v-model="value"
+                            >
+                                <el-checkbox-button
+                                    v-for="(op, i) in options"
+                                    :label="op.id"
+                                    :key="i"
+                                >
+                                    {{ op.name }}
+                                </el-checkbox-button>
+                            </el-checkbox-group>
+                            <a
+                                class="px-3 text-center f-12"
+                                @click.prevent="toggleMarked"
+                                href="#"
+                            >
+                                {{ !marked ? 'Marcar' : 'Desmarcar' }} todas as
+                                opções
+                            </a>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="shimmer select" v-if="loading" />
+                        <el-select
+                            :allow-create="allow_create"
+                            :disabled="disabled"
+                            v-else
+                            :size="size ? size : 'large'"
+                            :allow_create="allow_create"
+                            class="w-full"
+                            clearable
+                            v-model="value"
+                            filterable
+                            ref="select"
+                            :placeholder="placeholder"
+                            v-loading="loading"
+                            :loading="loading"
+                            @keyup.enter.native="selectCreate"
+                            loading-text="Carregando..."
+                            :multiple="multiple"
+                            :popper-append-to-body="false"
                         >
-                            <VRuntimeTemplate
-                                v-if="option_template"
-                                :template-props="{
-                                    index: i,
-                                    item,
-                                    value: value,
-                                    options: options,
-                                }"
-                                :template="option_template"
-                            />
-                            <div
-                                v-else
-                                class="w-full flex"
-                                v-html="item.name"
-                            ></div>
-                        </el-option>
-                    </el-select>
+                            <el-option
+                                v-for="(item, i) in options"
+                                :key="i"
+                                :label="item.name"
+                                :value="String(item.id)"
+                                style="height: unset !important"
+                            >
+                                <VRuntimeTemplate
+                                    v-if="option_template"
+                                    :template-props="{
+                                        index: i,
+                                        item,
+                                        value: value,
+                                        options: options,
+                                    }"
+                                    :template="option_template"
+                                />
+                                <div
+                                    v-else
+                                    class="w-full flex"
+                                    v-html="item.name"
+                                ></div>
+                            </el-option>
+                        </el-select>
+                    </template>
                 </template>
+                <span v-else class="text-sm text-gray-500">
+                    {{ entity_parent_message }}
+                </span>
                 <div class="invalid-feedback" v-if="errors">
                     <ul class="text-sm text-red-700">
                         <li v-for="(e, i) in errors" :key="i" v-html="e" />
@@ -93,9 +100,6 @@
             </div>
             <slot name="append-slot" />
         </div>
-        <span v-else class="text-sm text-gray-500">
-            {{ entity_parent_message }}
-        </span>
     </CustomResourceComponent>
 </template>
 <script>
@@ -126,6 +130,7 @@ export default {
         'option_template',
         'entity_parent',
         'entity_parent_message',
+        'page_type',
     ],
     components: {
         VRuntimeTemplate,
@@ -151,13 +156,15 @@ export default {
             val = val.map((x) => String(x));
         }
         this.value = val;
-
-        if (this.entity_parent) {
+        if (this.entity_parent && this.page_type === 'create') {
             this.$watch(`$parent.form.${this.entity_parent}`, () => {
                 this.loading = true;
                 this.value = this.multiple ? [] : null;
-                this.initialize(false);
+                this.initialize();
             });
+            if (this?.$parent?.form?.[this.entity_parent]) {
+                this.initialize();
+            }
         } else {
             this.initialize();
         }
@@ -214,7 +221,7 @@ export default {
             }
             this.marked = !this.marked;
         },
-        initialize(changeVal = true) {
+        initialize() {
             if (this.list_model) {
                 this.initOptions(() => {
                     this.finishInit();

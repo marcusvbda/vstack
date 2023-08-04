@@ -6,7 +6,7 @@
     entity_parent_message='{{ $entity_parent_message }}' :model_fields='@json($model_fields)'
     type={{ $type }} all_options_label="{{ $all_options_label }}" list_model='{{ $model }}'
     :errors='{{ "errors.$field ? errors.$field : false" }}' id="resource-input-belongsto-{{ $field }}"
-    {!! $eval !!}>
+    page_type="{{ request()?->page_type }}" {!! $eval !!}>
     <template #prepend-slot>
         {!! @$slot_top !!}
     </template>

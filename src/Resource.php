@@ -630,6 +630,16 @@ class Resource
 		];
 	}
 
+	public function isCreating()
+	{
+		return request()->page_type === "create";
+	}
+
+	public function isEditing()
+	{
+		return request()->page_type === "edit";
+	}
+
 	public function makeAclResource()
 	{
 		return [
