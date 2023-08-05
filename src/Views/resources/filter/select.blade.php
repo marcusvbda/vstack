@@ -2,7 +2,11 @@
     placeholder='{{ $placeholder }}' :multiple='@json($multiple)'
     v-bind:class='{"withFilter" : {{ "filter.$index" }} }'>
     @foreach ($options as $option)
-        <el-option :value='{{ strval(data_get($option, 'value')) }}' label='{{ data_get($option, 'label') }}'>
+        @php
+            $val = data_get($option, 'value');
+            $valueIndex = is_numeric($val) ? ':value' : 'value';
+        @endphp
+        <el-option {{ $valueIndex }}='{{ strval($val) }}' label='{{ data_get($option, 'label') }}'>
             {!! @$option->html !!}
         </el-option>
     @endforeach

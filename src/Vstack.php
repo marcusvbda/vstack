@@ -160,8 +160,13 @@ class Vstack
 		return $test === $token ? $result : false;
 	}
 
-	public static function enumToOptions($cases)
+	public static function enumToOptions($cases, $filter = false)
 	{
+		if ($filter) {
+			return collect($cases)->map(function ($x) {
+				return ["value" => $x->name, "label" => $x->value];
+			})->toArray();
+		}
 		return collect($cases)->map(function ($x) {
 			return ["id" => $x->name, "value" => $x->value];
 		})->toArray();
