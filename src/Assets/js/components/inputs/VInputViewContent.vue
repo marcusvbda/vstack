@@ -5,7 +5,7 @@
             <input
                 v-if="!loading"
                 class="el-input__inner"
-                :value="processed_value"
+                :value="processed_defaultValue"
             />
             <slot name="append-slot" />
         </div>
@@ -17,7 +17,7 @@ export default {
         'label',
         'description',
         'field',
-        'value',
+        'defaultValue',
         'type',
         'options',
         'model',
@@ -33,49 +33,58 @@ export default {
         this.init();
     },
     computed: {
-        processed_value() {
+        processed_defaultValue() {
             const actions = {
                 belongsTo: () => {
                     if (this.option_list.length) {
-                        if (typeof this.option_list[1] == 'object') {
-                            let found = this.option_list.find(
-                                (option) =>
-                                    option.id.toString() ==
-                                    this.value.toString()
-                            );
-                            if (!found) {
-                                return '';
-                            }
-                            if (found.name) {
-                                return found.name;
-                            }
-                            if (found.value) {
-                                return found.value;
-                            }
-                            return this.value;
-                        }
-                        return this.value;
+                        const indexes = Array.isArray(this.defaultValue)
+                            ? this.defaultValue.map((x) => String(x))
+                            : [String(this.defaultValue)];
+
+                        let found = this.option_list.filter((option) =>
+                            indexes.includes(option.id.toString())
+                        );
+
+                        if (!found.length) return '';
+
+                        const foundValue = found
+                            .map((x) => x?.value)
+                            .filter((x) => x)
+                            .join(', ');
+                        const foundName = found
+                            .map((x) => x?.name)
+                            .filter((x) => x)
+                            .join(', ');
+                        return foundName || foundValue;
                     }
                     return '';
                 },
                 check: () => {
-                    return this.$getEnabledIcons(this.value);
+                    return this.$getEnabledIcons(this.defaultValue);
                 },
                 datetimerange: () => {
-                    return (Array.isArray(this.value) ? this.value : [])
+                    return (
+                        Array.isArray(this.defaultValue)
+                            ? this.defaultValue
+                            : []
+                    )
                         .map((date) => {
-                            return this.formatDate(this.value);
+                            return this.formatDate(this.defaultValue);
                         })
                         .join(' - ');
                 },
                 date: () => {
-                    return this.formatDate(this.value);
+                    return this.formatDate(this.defaultValue);
                 },
                 datetime: () => {
-                    return this.formatDate(this.value);
+                    return this.formatDate(this.defaultValue);
                 },
                 upload: () => {
-                    let images = (Array.isArray(this.value) ? this.value : [])
+                    let images = (
+                        Array.isArray(this.defaultValue)
+                            ? this.defaultValue
+                            : []
+                    )
                         .map((image) => {
                             return `<img src='${image.url}' />'`;
                         })
@@ -83,7 +92,9 @@ export default {
                     return `<div class='upload-image-preview'>${images}</div>`;
                 },
             };
-            return actions[this.type] ? actions[this.type]() : this.value;
+            return actions[this.type]
+                ? actions[this.type]()
+                : this.defaultValue;
         },
     },
     methods: {
@@ -100,6 +111,7 @@ export default {
                     let { data } = await this.$http.post('/vstack/json-api', {
                         model: this.model,
                         order_by: ['id', 'desc'],
+                        where: [['id', '=', this.defaultValue]],
                     });
                     this.option_list = data;
                 } else {

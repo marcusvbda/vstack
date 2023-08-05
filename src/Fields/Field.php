@@ -50,7 +50,6 @@ class Field
 		if (!$value) {
 			$value = @$this->options["default"];
 		}
-
 		if ($type == "date" || $type == "daterange") {
 			$format = @$this->options["format"] ? $this->options["format"] : 'DD/MM/YYYY';
 		} else {
