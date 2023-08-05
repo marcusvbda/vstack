@@ -233,3 +233,14 @@
 .el-input-group__prepend {
     @apply dark:bg-gray-800 dark:text-neutral-100 dark:border-none;
 }
+
+.el-tabs {
+    .el-tabs__item:not(.is-active) {
+        @apply dark:text-neutral-400;
+    }
+    .el-tabs__nav-wrap {
+        &::after {
+            @apply dark:bg-gray-800 #{!important};
+        }
+    }
+}
