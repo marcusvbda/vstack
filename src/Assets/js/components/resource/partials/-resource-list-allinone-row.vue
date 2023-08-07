@@ -28,6 +28,7 @@
                         can_update: row.acl.can_update,
                         can_delete: row.acl.can_delete,
                         can_clone: row.acl.can_clone,
+                        can_view_audits: row.acl.can_view_audits,
                         before_delete: row.acl.before_delete,
                         crud_type: row.acl.crud_type,
                         resource_label: row.acl.resource_label,

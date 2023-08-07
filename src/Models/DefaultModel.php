@@ -13,10 +13,13 @@ use marcusvbda\vstack\Models\Scopes\OrderByScope;
 use marcusvbda\vstack\Models\Traits\HasSlug;
 use marcusvbda\vstack\Models\Traits\useTenantTz;
 use marcusvbda\vstack\Vstack;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class DefaultModel extends Model
+class DefaultModel extends Model implements AuditableContract
 {
-	use hasCode, SoftDeletes, CascadeOrRestrictSoftdeletes, useTenantTz, hasTags, HasSlug;
+
+	use hasCode, SoftDeletes, CascadeOrRestrictSoftdeletes, useTenantTz, hasTags, HasSlug, Auditable;
 	public $guarded = ["created_at"];
 	public $cascadeDeletes = [];
 	public $restrictDeletes = [];
@@ -29,6 +32,12 @@ class DefaultModel extends Model
 			static::observe(new TenantObserver());
 			static::addGlobalScope(new TenantScope());
 			static::addGlobalScope(new OrderByScope(with(new static)->getTable()));
+		}
+
+		if (static::isAuditable()) {
+			parent::enableAuditing();
+		} else {
+			parent::disableAuditing();
 		}
 	}
 	public function scopeWithoutAppends($query)
@@ -55,6 +64,11 @@ class DefaultModel extends Model
 	public static function hasTenant()
 	{
 		return true;
+	}
+
+	public static function isAuditable()
+	{
+		return false;
 	}
 
 	public function getFCreatedAtBadgeAttribute()

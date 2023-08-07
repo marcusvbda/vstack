@@ -108,6 +108,19 @@ class ResourceController extends Controller
 	{
 		$resource = ResourcesHelpers::find($resource);
 
+		if ($resource->id === 'audits') {
+			if (request()->has('resource_id') && request()->has('code')) {
+				$parentResource = ResourcesHelpers::find(request()->resource_id);
+				$parentRow = $parentResource->getModelInstance()->findByCode(request()->code);
+				if (!$parentRow) abort(404);
+				if (!$parentResource->canViewAudits() || !$parentResource->canViewAuditsRow($parentRow)) {
+					abort(403);
+				}
+			} else {
+				abort(404);
+			}
+		}
+
 		if ($report_mode) {
 			if (!$resource->canViewReport()) {
 				abort(403);
@@ -232,7 +245,7 @@ class ResourceController extends Controller
 			}
 		}
 
-		return $this->makeSorterHandler($resource, $query, $orderBy, $orderType);
+		return $this->makeSorterHandler($resource, $resource->prepareQueryToList($query), $orderBy, $orderType);
 	}
 
 	public function clone($resource, $code)

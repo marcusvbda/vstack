@@ -18,7 +18,6 @@ Route::group(['prefix' => "vstack"], function () {
 Route::group(['prefix' => "admin"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
 		Route::post('inputs/option_list', [ResourceController::class, 'option_list'])->name("resource.inputs.option_list");
-
 		Route::post('get-list-cards', [ResourceController::class, 'getListItem'])->name("resource.get_list_item");
 		Route::post('upload', [ResourceController::class, 'upload'])->name("resource.upload");
 		Route::get('relatorios/{resource}', [ResourceController::class, 'report'])->name("resource.report");
@@ -51,5 +50,6 @@ Route::group(['prefix' => "admin"], function () {
 		Route::delete('{resource}/{id}/field/destroy', [ResourceController::class, 'destroyField'])->name("resource.field.destroy");
 		Route::post('globalsearch', [ResourceController::class, 'globalSearch'])->name("resource.globalsearch");
 		Route::get('{resource}', [ResourceController::class, 'index'])->name("resource.index");
+		Route::get('audits/{resource}/{code}', [ResourceController::class, 'indexAudits'])->name("resource.audits");
 	});
 });

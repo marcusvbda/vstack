@@ -210,14 +210,14 @@ export default {
                     value = value
                         .split(',')
                         .map((x) =>
-                            x ? (!isNaN(Number(x)) ? Number(x) : '') : ''
+                            x ? (!isNaN(Number(x)) ? Number(x) : '') : x
                         )
                         .filter((x) => x);
                 } else
                     value = value
                         ? !isNaN(Number(value))
                             ? Number(value)
-                            : ''
+                            : value
                         : '';
             }
             if (filter.component == 'rangedate-filter')

@@ -19,9 +19,13 @@ class Resource
 	public $model_string  = null;
 	public $debug = false;
 	public $id    = [];
+	public $parentResource    = [];
+	public $row    = [];
 
-	public function __construct()
+	public function __construct($parentResource = null, $row = null)
 	{
+		$this->parentResource = $parentResource;
+		$this->row = $row;
 		$this->model_string = $this->model ? (is_object($this->model) ? $this->model->getMorphClass() : $this->model) : Migration::class;
 		$this->model = App::make($this->model_string);
 		$this->makeId();
@@ -554,7 +558,7 @@ class Resource
 
 	public function showRightActionsColumn()
 	{
-		return $this->canView() || $this->canUpdate() || $this->canDelete() || $this->canClone();
+		return $this->canView() || $this->canUpdate() || $this->canDelete() || $this->canClone() || $this->canViewAudits();
 	}
 
 	public function extraActionButtons($row)
@@ -648,6 +652,7 @@ class Resource
 			"can_update" => $this->canUpdate(),
 			"can_destroy" => $this->canDelete(),
 			"can_create" => $this->canCreate(),
+			"can_view_audits" => $this->canViewAudits(),
 		];
 	}
 
@@ -789,6 +794,11 @@ class Resource
 		está aba</b>, caso contrário o processo será perdido.";
 	}
 
+	public function prepareQueryToList($query)
+	{
+		return $query;
+	}
+
 	public function prepareQueryToExport($query)
 	{
 		return $query;
@@ -826,5 +836,15 @@ class Resource
 	public function resourceLoadingSaveMassage($type)
 	{
 		return $type == "action" ? "Executando ..." : "Salvando ...";
+	}
+
+	public function canViewAudits()
+	{
+		return is_callable($this?->model?->isAuditable) ?  $this->model->isAuditable() : false;
+	}
+
+	public function canViewAuditsRow($row)
+	{
+		return $this->canViewAudits();
 	}
 }

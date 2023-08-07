@@ -53,6 +53,7 @@ class VstackController extends Controller
 			}
 		}
 		$acl = [
+			"can_view_audits" => $resource->checkAclResource($row, "viewAudits"),
 			"can_update" => $resource->checkAclResource($row, "update"),
 			"can_clone" => $resource->checkAclResource($row, "clone"),
 			"can_delete" => $resource->checkAclResource($row, "delete"),

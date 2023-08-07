@@ -1,6 +1,20 @@
 @php
     $breadcrumbs = $resource->breadcrumbLabels();
+    
     $prepend = config('vstack.prepend_breadcrumb', ['Dashboard' => '/admin']);
+    
+    if ($resource->id === 'audits') {
+        if (request()->has('resource_id') && request()->has('code')) {
+            $parentResource = ResourcesHelpers::find(request()->resource_id);
+            $prepend = array_merge($prepend, [
+                [
+                    'title' => $parentResource->label(),
+                    'route' => $parentResource->route(),
+                ],
+            ]);
+        }
+    }
+    
     $bc[] = [
         'title' => $breadcrumbs['list'],
         'route' => @$resource->route(),

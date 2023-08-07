@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use marcusvbda\vstack\Commands\{createResource, createFilter, createAction, clearResourceExport};
 use marcusvbda\vstack\Middleware\HashIds;
 use Illuminate\Routing\Router;
+use OwenIt\Auditing\AuditingServiceProvider;
 
 class vStackServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,10 @@ class vStackServiceProvider extends ServiceProvider
 			__DIR__ . '/Migrations' => database_path("/migrations"),
 		]);
 		$router->aliasMiddleware('hashids',  HashIds::class);
+	}
+
+	public function register()
+	{
+		$this->app->register(AuditingServiceProvider::class);
 	}
 }

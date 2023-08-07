@@ -1,4 +1,7 @@
 <?php
+
+use marcusvbda\vstack\Audits;
+
 class ResourcesHelpers
 {
     static function minify($htmlString)
@@ -51,6 +54,10 @@ class ResourcesHelpers
     }
     static function find($name)
     {
+        if ($name === "audits") {
+            return  App::make(Audits::class);
+        }
+
         $groups = self::_all();
         $_resource = null;
         foreach ($groups as $resources) {

@@ -34,6 +34,7 @@ import PortalVue from "portal-vue";
 Vue.use(PortalVue);
 import getDefaultStore from "../../store";
 
+
 const vue_settings = {
     store: null,
     data() {

@@ -32,7 +32,22 @@
                     />
                 </el-tooltip>
             </template>
-
+            <el-tooltip
+                class="item"
+                effect="dark"
+                content="Ver audits"
+                placement="top"
+                v-if="data.can_view_audits"
+            >
+                <el-button
+                    size="small"
+                    plain
+                    type="info"
+                    icon="el-icon-tickets"
+                    @click="goToAudits()"
+                    id="resource-btn-view-audits"
+                />
+            </el-tooltip>
             <el-tooltip
                 class="item"
                 effect="dark"
@@ -43,7 +58,7 @@
                 <el-button
                     size="small"
                     plain
-                    type="secondary"
+                    type="success"
                     icon="el-icon-document-copy"
                     @click="clickedClone"
                     id="resource-btn-copy"
@@ -138,6 +153,9 @@ export default {
         },
         goToEdit() {
             return (window.location.href = `${this.data.route}/edit`);
+        },
+        goToAudits() {
+            return (window.location.href = `/admin/audits?resource_id=${this.resource_id}&code=${this.data.code}`);
         },
         goTo(route) {
             window.location.href = route;
