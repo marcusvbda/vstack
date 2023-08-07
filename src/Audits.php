@@ -77,27 +77,8 @@ class Audits extends Resource
 
     public function table()
     {
-        return [
-            "event" => ["label" => "Evento", "handler" => function ($row) {
-                return AuditsEventsEnum::badge($row->event);
-            }],
-            "user->name" => ["label" => "Usuário", "sortable_index" => "user_id"],
-            "values" => ["label" => "Valores", "sortable" => false, "handler" => function ($row) {
-                $values =  "<small class='text-neutral-400 dark:text-neutral-400 text-xs'>
-                                <b>Antes :</b>
-                                <code>" . nl2br(json_encode($row->old_values, JSON_PRETTY_PRINT)) . "</code><br><br>
-                                <b class='mt-3'>Depois :</b>
-                                <code>" . nl2br(json_encode($row->new_values, JSON_PRETTY_PRINT)) . "</code><br>
-                            </small>";
-                return $values;
-            }, "size" => "300px"],
-            "agent" => ["label" => "IP/User Agent", "sortable" => false, "handler" => function ($row) {
-                return Vstack::makeLinesHtmlAppend($row->ip_address, $row->user_agent);
-            }, "size" => "300px"],
-            "created_at" => ["label" => "Data", "sortable_index" => "created_at", "handler" => function ($row) {
-                return Vstack::makeLinesHtmlAppend($row->created_at->format("d/m/Y H:i:s"), $row->created_at->diffForHumans());
-            }],
-        ];
+        $parentResource = ResourcesHelpers::find(request()->resource_id);
+        return $parentResource->tableAudits();
     }
 
     public function filters()
