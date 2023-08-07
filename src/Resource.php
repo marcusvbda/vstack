@@ -840,7 +840,7 @@ class Resource
 
 	public function canViewAudits()
 	{
-		return is_callable($this?->model?->isAuditable) ?  $this->model->isAuditable() : false;
+		return method_exists($this->model, 'isAuditable') ? $this->model->isAuditable() : false;
 	}
 
 	public function canViewAuditsRow($row)
