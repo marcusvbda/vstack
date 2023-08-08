@@ -849,6 +849,11 @@ class Resource
 		return $this->canViewAudits();
 	}
 
+	public function tableRowClass($row)
+	{
+		return "resource-list-row";
+	}
+
 	public function tableAudits()
 	{
 		return [

@@ -4,7 +4,7 @@
             <tr
                 :key="i"
                 :id="`resource-body-${row.content.id}`"
-                class="border dark:border-none"
+                :class="`border dark:border-none ${row.row_class}`"
             >
                 <td
                     v-for="(col, y) in columns"
