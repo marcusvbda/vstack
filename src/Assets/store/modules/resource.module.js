@@ -121,7 +121,6 @@ const actions = {
         else {
             if(state.cursor) state.resource_list_payload.params.cursor = state.cursor
         }
-
         axios.get(route, state.resource_list_payload)
             .then(({ data }) => {
                 const top_template = data.top.join('');

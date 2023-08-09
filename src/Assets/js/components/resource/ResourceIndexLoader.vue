@@ -20,7 +20,13 @@ import VRuntimeTemplate from 'v-runtime-template';
 import { mapMutations, mapActions, mapGetters } from 'vuex';
 
 export default {
-    props: ['resource_id', 'report_mode', 'cursor'],
+    props: [
+        'resource_id',
+        'report_mode',
+        'cursor',
+        'only_table',
+        'extra_filters',
+    ],
     components: {
         VRuntimeTemplate,
     },
@@ -35,8 +41,18 @@ export default {
     },
     created() {
         const payload = {
-            params: this.query_params,
+            params: {
+                ...this.query_params,
+                list_type: this.only_table ? 'table' : 'full',
+            },
         };
+        if (this.extra_filters) {
+            payload.params = {
+                ...payload.params,
+                ...this.extra_filters,
+            };
+        }
+
         this.setCursor(this.cursor);
         this.setReportMode(this.report_mode);
         this.setResourceId(this.resource_id);

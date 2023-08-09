@@ -28,6 +28,7 @@ class ResourceController extends Controller
 
 	public function getListData($resource, $type, Request $request)
 	{
+		$list_type = @$request?->list_type ?? "full";
 		$resource = ResourcesHelpers::find($resource);
 		$report_mode = $type == "report";
 
@@ -83,14 +84,13 @@ class ResourceController extends Controller
 		if (@$_data["page_type"]) {
 			unset($_data['page_type']);
 		}
-
-		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode"))->render() . "</div>";
+		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "list_type"))->render() . "</div>";
 		$top = str_split(ResourcesHelpers::minify($top), 250);
 
 		$next_cursor = $data->hasMorePages() ? $data->nextCursor()->encode() : null;
 		$previous_cursor = $data->previousCursor() ? $data->previousCursor()->encode() : null;
 
-		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "next_cursor", "previous_cursor", "resource", "data", "report_mode"))->render() . "</div>";
+		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "next_cursor", "previous_cursor", "resource", "data", "report_mode", "list_type"))->render() . "</div>";
 		$table = str_split(ResourcesHelpers::minify($table), 250);
 
 		return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);

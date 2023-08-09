@@ -4,13 +4,15 @@
     $current_order_type = Arr::get($_data, 'order_type', 'desc');
     $order_type = $current_order_type == 'desc' ? 'asc' : 'desc';
 @endphp
-<vstack-cursor-pages class="flex justify-end my-4 flex-wrap" :appends='@json($_data)'
-    previous_cursor="{{ $previous_cursor }}" next_cursor="{{ $next_cursor }}">
-</vstack-cursor-pages>
+@if (@$list_type == 'full')
+    <vstack-cursor-pages class="flex justify-end my-4 flex-wrap" :appends='@json($_data)'
+        previous_cursor="{{ $previous_cursor }}" next_cursor="{{ $next_cursor }}">
+    </vstack-cursor-pages>
+@endif
 <vstack-resource-loading>
     <div ref="container"
         class="text-gray-700 border dark:border-none border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700"
-        style="margin-bottom: 200px">
+        @if (@$list_type == 'full') style="margin-bottom: 200px" @endif>
         <div class="p-1" style="min-height: 40px;">
             <div class="flex align-center flex-wrap">
                 @if ($resource->lenses())
@@ -20,28 +22,32 @@
         </div>
         <div class="p-0">
             @php
-                $has_actions = count($resource->actions()) > 0;
                 $show_right_actions_column = $resource->showRightActionsColumn();
             @endphp
-            @if ($has_actions)
+            @if (@$list_type == 'full')
                 @php
-                    $actions = array_map(function ($action) {
-                        return (object) [
-                            'id' => $action->id,
-                            'title' => @$action->title ? $action->title : $action->id,
-                        ];
-                        return $action;
-                    }, $resource->actions());
+                    $has_actions = count($resource->actions()) > 0;
                 @endphp
-                <action-process resource_id="{{ $resource->id }}" :ids='@json($data->pluck('id')->toArray())'
-                    :actions='@json($actions)'></action-process>
+                @if ($has_actions)
+                    @php
+                        $actions = array_map(function ($action) {
+                            return (object) [
+                                'id' => $action->id,
+                                'title' => @$action->title ? $action->title : $action->id,
+                            ];
+                            return $action;
+                        }, $resource->actions());
+                    @endphp
+                    <action-process resource_id="{{ $resource->id }}" :ids='@json($data->pluck('id')->toArray())'
+                        :actions='@json($actions)'></action-process>
+                @endif
             @endif
             <div class="table-responsive-sm bg-white">
                 <table class="w-full vstack-resource-list">
                     <thead id="resource-list-head">
                         <tr class="border dark:border-none">
                             <th width="1%;" class="dark:bg-gray-800"></th>
-                            @if ($has_actions)
+                            @if (@$list_type == 'full' && @$has_actions)
                                 <th width="1%;" id="resource-list-head-action" class="p-2 dark:bg-gray-800">
                                     <input type="checkbox" id="{{ $resource->id . '_action_select_all' }}" />
                                 </th>
@@ -57,7 +63,7 @@
                                 @endphp
                                 <th width="{{ $size }}" class="{{ $col_class }} p-2 dark:bg-gray-800"
                                     id="resource-list-head-{{ $sortable_index }}">
-                                    @if (@data_get($value, 'sortable') !== false)
+                                    @if (@$list_type == 'full' && @data_get($value, 'sortable') !== false)
                                         <a href="{{ ResourcesHelpers::sortLink($resource->route(), request()->all(), $sortable_index, $order_type) }}"
                                             class="flex gap-4 vstack-link">
                                             <div class="link">{{ data_get($value, 'label', $value) }}</div>
@@ -98,7 +104,7 @@
                         }
                     @endphp
                     <tbody is="resource-tablelist-allinone" :rows='@json($rows_data)'
-                        :table_keys='@json($table_keys)' :has_actions='@json($has_actions)'
+                        :table_keys='@json($table_keys)' :has_actions='@json(@$list_type == 'full' && @$has_actions)'
                         :show_right_actions_column='@json($show_right_actions_column)' resource_id="{{ $resource->id }}"
                         resource_route="{{ $resource->route() }}">
                     </tbody>
@@ -107,3 +113,9 @@
         </div>
     </div>
 </vstack-resource-loading>
+@if (@$list_type !== 'full')
+    <vstack-cursor-pages style="margin-bottom: 200px" class="flex justify-end my-4 flex-wrap"
+        :appends='@json($_data)' previous_cursor="{{ $previous_cursor }}"
+        next_cursor="{{ $next_cursor }}">
+    </vstack-cursor-pages>
+@endif
