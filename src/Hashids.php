@@ -25,9 +25,9 @@ class Hashids
     public static function getInstance()
     {
         $config = static::getConfigs();
-        $salt = data_geT($config, "salt");
-        $length = data_geT($config, "length");
-        $alphabet = data_geT($config, "alphabet");
+        $salt = data_get($config, "salt");
+        $length = data_get($config, "length");
+        $alphabet = data_get($config, "alphabet");
         return new Hids($salt, $length, $alphabet);
     }
 }

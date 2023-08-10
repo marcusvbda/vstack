@@ -1,5 +1,6 @@
 @php
     $breadcrumbs = $resource->breadcrumbLabels();
+    $hash = request()->has('hash') ? '#' . request()->hash : null;
     
     $prepend = config('vstack.prepend_breadcrumb', ['Dashboard' => '/admin']);
     
@@ -15,10 +16,25 @@
         }
     }
     
-    $bc[] = [
-        'title' => $breadcrumbs['list'],
-        'route' => @$resource->route(),
-    ];
+    if ($hash) {
+        $hashDecoded = json_decode(base64_decode(request()->hash), true);
+        $related_resource = ResourcesHelpers::find(data_get($hashDecoded, 'related_resource'));
+        $hasHcode = \marcusvbda\vstack\Hashids::encode(data_get($hashDecoded, 'related_resource_id'));
+        $bc[] = [
+            'title' => $related_resource->label(),
+            'route' => $related_resource->route(),
+        ];
+        $bc[] = [
+            'title' => "#$hasHcode",
+            'route' => data_get($hashDecoded, 'redirect_url'),
+        ];
+    } else {
+        $bc[] = [
+            'title' => $breadcrumbs['list'],
+            'route' => @$resource->route(),
+        ];
+    }
+    
     $bc = array_merge($prepend, $bc);
     if (@$report_mode) {
         $bc[] = [

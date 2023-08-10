@@ -618,7 +618,9 @@ class Resource
 			[$data, $redirect_hash] = $this->getRedirectHash($data);
 			$target = @$id ? $this->getModelInstance()->findOrFail($id) : $this->getModelInstance();
 			foreach (array_keys($data["data"]) as $key) {
-				$target->{$key} = $data["data"][$key];
+				if (!in_array($key, ["redirect_hash"])) {
+					$target->{$key} = $data["data"][$key];
+				}
 			}
 			$target->save();
 			$controller = new ResourceController;
