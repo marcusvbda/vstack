@@ -13,6 +13,7 @@
                     :auto-decimal-mode="true"
                     v-model="val"
                     :maxlength="maxlength"
+                    :disabled="disabled"
                     @blur="$emit('blur', val)"
                 />
             </template>
