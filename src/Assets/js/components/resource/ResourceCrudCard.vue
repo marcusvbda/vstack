@@ -7,14 +7,19 @@
                 :form="form"
                 :append_content="append_content"
             >
-                 <portal-target
+                <portal-target
                     :name="`portal-card-header-${label.toSlug()}`"
                     :id="`portal-card-header-${label.toSlug()}`"
                 />
             </CrudCardHeader>
             <div class="crud-card-body">
                 <div class="row">
-                    <div class="col-12">
+                    <div
+                        class="col-12"
+                        :style="{
+                            minHeight: mh ? mh : 'auto',
+                        }"
+                    >
                         <slot />
                     </div>
                 </div>
@@ -31,6 +36,7 @@ export default {
         'index',
         'append_content',
         'form',
+        'mh',
     ],
 };
 </script>

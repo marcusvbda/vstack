@@ -13,6 +13,7 @@ use marcusvbda\vstack\Fields\{Card, Text};
 use marcusvbda\vstack\Imports\GlobalImporter;
 use marcusvbda\vstack\Models\Migration;
 use marcusvbda\vstack\Services\Messages;
+use ResourcesHelpers;
 
 class Resource
 {
@@ -20,13 +21,11 @@ class Resource
 	public $model_string  = null;
 	public $debug = false;
 	public $id    = [];
-	public $parentResource    = [];
-	public $row    = [];
+	public $relationInfo    = [];
 
-	public function __construct($parentResource = null, $row = null)
+	public function __construct($relationInfo = [])
 	{
-		$this->parentResource = $parentResource;
-		$this->row = $row;
+		$this->relationInfo = $relationInfo;
 		$this->model_string = $this->model ? (is_object($this->model) ? $this->model->getMorphClass() : $this->model) : Migration::class;
 		$this->model = App::make($this->model_string);
 		$this->makeId();
@@ -150,7 +149,8 @@ class Resource
 
 	public function noResultsFoundText()
 	{
-		return "Nenhum resultado encontrado";
+		$singularLabel = $this->singularLabel();
+		return ucfirst(strtolower("Nenhum $singularLabel encontrado !"));
 	}
 
 	public function nothingStoredText()
@@ -160,6 +160,7 @@ class Resource
 
 	public function secondCrudBtn()
 	{
+		if (request()->has("hash")) return null;
 		if (!$this->canUpdate()) return null;
 		return [
 			"field" => "save",
@@ -527,6 +528,12 @@ class Resource
 		return view("vStack::resources.partials._default_index", $data);
 	}
 
+	public function labelSlug()
+	{
+		$label = $this->label();
+		return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $label));
+	}
+
 	public function viewBlade()
 	{
 		return "vStack::resources.partials._default_view";
@@ -572,10 +579,43 @@ class Resource
 		return false;
 	}
 
+	public function getRelationResource($id)
+	{
+		foreach ($this->relatedResources() as $_resource) {
+			if ($_resource->id == $id) return $_resource;
+		}
+		return null;
+	}
+
+	public function validHash()
+	{
+		if (!request("hash")) return;
+		$hash = request()->hash;
+		$decoded = json_decode(base64_decode($hash), true);
+		if (!$decoded) abort(404);
+		return $decoded;
+	}
+
+	public function getRedirectHash($data)
+	{
+		$redirect_hash = @$data["data"]["redirect_hash"];
+		if (!$redirect_hash) return [$data, null];
+		if (isset($data["data"]["redirect_hash"])) {
+			unset($data["data"]["redirect_hash"]);
+		}
+		$decoded = json_decode(base64_decode($redirect_hash), true);
+		if (!$redirect_hash) return [$data, null];
+		$related_resource = ResourcesHelpers::find(@$decoded["related_resource"]);
+		$fk = @$related_resource?->getRelationResource(@$decoded["resource_id"])?->relationInfo["relation_fk"];
+		$data["data"][$fk] = @$decoded["related_resource_id"];
+		return [$data, $decoded];
+	}
+
 	public function storeMethod($id, $data)
 	{
 		try {
 			DB::beginTransaction();
+			[$data, $redirect_hash] = $this->getRedirectHash($data);
 			$target = @$id ? $this->getModelInstance()->findOrFail($id) : $this->getModelInstance();
 			foreach (array_keys($data["data"]) as $key) {
 				$target->{$key} = $data["data"][$key];
@@ -584,17 +624,20 @@ class Resource
 			$controller = new ResourceController;
 			$controller->storeUploads($target, $data["upload"]);
 			DB::commit();
-			if (!request("input_origin")) {
-				Messages::send("success", "Registro salvo com sucesso !!");
+			Messages::send("success", "Registro salvo com sucesso !!");
+
+			if ($redirect_hash) {
+				$slugCard = (ResourcesHelpers::find(data_get($redirect_hash, "resource_id"))->label());
+				$slugCard = str_replace(" ", "-", $slugCard);
+				$route = data_get($redirect_hash, "redirect_url") . "#$slugCard";
+			} else {
 				if (request("clicked_btn") == "save") {
 					$route = route('resource.edit', ["resource" => $this->id, "code" => $target->code]);
 				} else {
 					$route = route('resource.index', ["resource" => $this->id]);
 				}
-				return ["success" => true, "route" => $route, "model" => $target];
-			} else {
-				return ["success" => true, 'model' => $target];
 			}
+			return ["success" => true, "route" => $route, "model" => $target];
 		} catch (\Exception $e) {
 			DB::rollBack();
 			Messages::send("error", "Erro ao salvar registro !!");
@@ -877,5 +920,15 @@ class Resource
 				return Vstack::makeLinesHtmlAppend($row->created_at->format("d/m/Y H:i:s"), $row->created_at->diffForHumans());
 			}],
 		];
+	}
+
+	public function relatedResources()
+	{
+		return [];
+	}
+
+	public  function isInRelatedResource()
+	{
+		return request()->has("related_resource");
 	}
 }

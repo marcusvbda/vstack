@@ -1,6 +1,7 @@
 @php
     use marcusvbda\vstack\Models\ResourceConfig;
     $user = Auth::user();
+    $hash = '';
 @endphp
 @if (!@$only_table)
     <div class="flex flex-col">
@@ -50,14 +51,40 @@
             {!! @$resource->beforeListSlot() !!}
         @endif
 @endif
+@if (@$related_resource)
+    @if ($resource->canCreate() && @$raw_type == 'edit')
+        @php
+            $related_resource_id = $related_resource_id;
+            $hash = base64_encode(
+                json_encode([
+                    'resource_id' => $resource->id,
+                    'related_resource_id' => $related_resource_id,
+                    'related_resource' => $related_resource,
+                    'redirect_url' => url()->current(),
+                ]),
+            );
+        @endphp
+        <portal to="portal-card-header-{{ $resource->labelSlug() }}">
+            <div class="w-full flex justify-end">
+                <resource-store-btn resource_id='{{ $resource->id }}' label="{{ $resource->storeButtonLabel() }}"
+                    route="{{ route('resource.create', ['resource' => $resource->id, 'hash' => $hash]) }}">
+                </resource-store-btn>
+            </div>
+        </portal>
+    @endif
+@endif
 
 @php
     $cursor = @request()?->cursor ? request()->cursor : '';
     $extra_filters = @$extra_filters ? $extra_filters : [];
+    $related_resource = @$related_resource ? $related_resource : '';
+    $related_resource_id = @$related_resource_id ? $related_resource_id : '';
 @endphp
 
-<resource-index-loader :only_table='@json(@$only_table ? true : false)' :report_mode='@json($report_mode)'
-    :extra_filters='@json($extra_filters)' resource_id='{{ $resource->id }}' cursor="{{ $cursor }}">
+<resource-index-loader hash="{{ $hash }}" raw_type="{{ @$raw_type ? $raw_type : 'list' }}"
+    :only_table='@json(@$only_table ? true : false)' :report_mode='@json($report_mode)'
+    :extra_filters='@json($extra_filters)' related_resource='{{ $related_resource }}'
+    related_resource_id='{{ $related_resource_id }}' resource_id='{{ $resource->id }}' cursor="{{ $cursor }}">
     <resource-list-items resource_id="{{ $resource->id }}" :request_data='@json(request()->all())'>
     </resource-list-items>
 </resource-index-loader>

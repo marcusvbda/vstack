@@ -36,6 +36,7 @@
                         resource_singular_label:
                             row.acl.resource_singular_label,
                         additional_extra_buttons: row.additional_extra_buttons,
+                        hash: hash,
                     }"
                 />
             </template>
@@ -43,10 +44,19 @@
         <template v-else>
             <template v-if="first_key">
                 <b>
-                    <template v-if="row.acl.can_view || row.acl.can_update">
+                    <template
+                        v-if="
+                            can_interact &&
+                            (row.acl.can_view || row.acl.can_update)
+                        "
+                    >
                         <template v-if="row.acl.can_view">
                             <a
-                                :href="`${resource_route}/${row.content.code}`"
+                                :href="
+                                    makeLink(
+                                        `${resource_route}/${row.content.code}`
+                                    )
+                                "
                                 class="vstack-link"
                             >
                                 <v-runtime-template
@@ -56,7 +66,11 @@
                         </template>
                         <template v-else>
                             <a
-                                :href="`${resource_route}/${row.content.code}/edit`"
+                                :href="
+                                    makeLink(
+                                        `${resource_route}/${row.content.code}/edit?hash=${hash}`
+                                    )
+                                "
                                 class="vstack-link"
                             >
                                 <v-runtime-template
@@ -85,12 +99,14 @@ import VRuntimeTemplate from 'v-runtime-template';
 
 export default {
     props: [
+        'can_interact',
         'col',
         'first_key',
         'row',
         'resource_id',
         'virtual_indexes',
         'resource_route',
+        'hash',
     ],
     components: {
         'v-runtime-template': VRuntimeTemplate,
@@ -107,6 +123,14 @@ export default {
             return Object.keys(this.virtual_indexes).map((key) => {
                 return this.virtual_indexes[key];
             });
+        },
+    },
+    methods: {
+        makeLink(url) {
+            if (this.hash) {
+                return `${url}?hash=${this.hash}`;
+            }
+            return url;
         },
     },
 };

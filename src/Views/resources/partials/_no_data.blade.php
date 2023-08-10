@@ -5,7 +5,7 @@
         @endif
         <h4 class="text-3xl flex flex-col items-center justify-center dark:text-neutral-200">
             {{ $resource->noResultsFoundText() }}
-            @if (@!$report_mode)
+            @if (@!$report_mode && @$list_type == 'full')
                 <small class="text-sm text-neutral-500">{!! $resource->nothingStoredSubText() !!}</small>
             @endif
         </h4>

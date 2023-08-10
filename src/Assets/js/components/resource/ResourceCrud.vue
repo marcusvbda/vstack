@@ -77,6 +77,7 @@ export default {
         'has_befores_store',
         'loading_message',
         'resource_id',
+        'hash',
     ],
     data() {
         return {
@@ -349,7 +350,11 @@ export default {
                 text: loading_text,
                 background: 'white',
             });
-            const payload = { ...this.form, clicked_btn };
+            const payload = {
+                ...this.form,
+                clicked_btn,
+                redirect_hash: this.hash,
+            };
             if (this.raw_type == 'action') {
                 payload.ids = this.ids;
             }

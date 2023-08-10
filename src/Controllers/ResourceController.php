@@ -29,9 +29,10 @@ class ResourceController extends Controller
 	public function getListData($resource, $type, Request $request)
 	{
 		$list_type = @$request?->list_type ?? "full";
+		$related_resource = @$request?->related_resource ?? "";
 		$resource = ResourcesHelpers::find($resource);
 		$report_mode = $type == "report";
-
+		$raw_type = $request->raw_type;
 		if ($report_mode) {
 			request()->merge(["page_type" => "report"]);
 		} else {
@@ -84,13 +85,16 @@ class ResourceController extends Controller
 		if (@$_data["page_type"]) {
 			unset($_data['page_type']);
 		}
-		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "list_type"))->render() . "</div>";
+
+		$hash = $request->has("hash") ? $request->hash : "";
+
+		$top = "<div>" . view("vStack::resources.loader.data_top", compact("filters", "_data", "resource", "data", "report_mode", "list_type", "related_resource"))->render() . "</div>";
 		$top = str_split(ResourcesHelpers::minify($top), 250);
 
 		$next_cursor = $data->hasMorePages() ? $data->nextCursor()->encode() : null;
 		$previous_cursor = $data->previousCursor() ? $data->previousCursor()->encode() : null;
 
-		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "next_cursor", "previous_cursor", "resource", "data", "report_mode", "list_type"))->render() . "</div>";
+		$table = "<div>" . view("vStack::resources.loader.data_table", compact("filters", "_data", "hash", "next_cursor", "raw_type", "previous_cursor", "related_resource", "resource", "data", "report_mode", "list_type"))->render() . "</div>";
 		$table = str_split(ResourcesHelpers::minify($table), 250);
 
 		return json_encode(['top' => $top, "table" => $table, "type" => "data"],  JSON_INVALID_UTF8_IGNORE);
@@ -209,6 +213,7 @@ class ResourceController extends Controller
 		}
 
 		$data = $request->all();
+
 		$orderBy = data_get($data, 'order_by',  'id');
 		$orderType = data_get($data, 'order_type',  'desc');
 		$query = $query ?: $resource->model->select($table . ".id")->where($table . ".id", ">", 0);
@@ -218,6 +223,17 @@ class ResourceController extends Controller
 		}
 
 		$search = $resource->search();
+		if (@$data["related_resource"]) {
+			$related_resource = ResourcesHelpers::find($data["related_resource"]);
+			$related_resource_found = $related_resource->getRelationResource($resource->id);
+			$relationFk = @$related_resource_found?->relationInfo["relation_handler"] ?? @$related_resource_found?->relationInfo["relation_fk"];
+			$related_resource_id = $data["related_resource_id"] ?? null;
+			$query = is_callable($relationFk) ? $fkHandler($query, $related_resource_id) : $query->where($relationFk, $related_resource_id);
+			$relatedOrderBy = @$related_resource_found?->relationInfo["order_by"] ?? null;
+			if ($relatedOrderBy) {
+				$query = $query->orderBy($relatedOrderBy[0], $relatedOrderBy[1]);
+			}
+		}
 
 		if (isset($data["_"])) {
 			$query = $query->where(function ($q) use ($search, $data, $table) {
@@ -278,6 +294,7 @@ class ResourceController extends Controller
 	{
 		request()->merge(["page_type" => "edit", "id" => @$code]);
 		$resource = ResourcesHelpers::find($resource);
+		$resource->validHash();
 		$content = $resource->model->findOrFail($code);
 		if (!$resource->canUpdateRow($content) || !$resource->canUpdate()) {
 			abort(403);
@@ -300,6 +317,7 @@ class ResourceController extends Controller
 		request()->merge(["page_type" => "create"]);
 		$params = @$request["params"] ? $request["params"] : [];
 		$resource = ResourcesHelpers::find($resource);
+		$resource->validHash();
 		if (!@$resource->canCreate()) abort(403);
 		$data = $this->getResourceCreateCrudContent($resource, $request);
 		return $resource->createMethod($params, $data);
@@ -755,6 +773,7 @@ class ResourceController extends Controller
 
 		$data = $request->except(["response_type", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content", "input_origin"]);
 		$data = $this->processStoreData($resource, $data);
+
 		return $resource->storeMethod($id, $data);
 	}
 

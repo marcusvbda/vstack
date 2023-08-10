@@ -53,7 +53,7 @@
                 effect="dark"
                 content="Clonar"
                 placement="top"
-                v-if="data.can_clone"
+                v-if="!data.hash && data.can_clone"
             >
                 <el-button
                     size="small"
@@ -152,6 +152,9 @@ export default {
             }
         },
         goToEdit() {
+            if (this.data.hash) {
+                return (window.location.href = `${this.data.route}/edit?hash=${this.data.hash}`);
+            }
             return (window.location.href = `${this.data.route}/edit`);
         },
         goToAudits() {
@@ -176,7 +179,7 @@ export default {
                         .delete(this.data.route + '/destroy', {})
                         .then(({ data }) => {
                             if (data.success) {
-                                return (window.location.href = data.route);
+                                return window.location.reload();
                             } else {
                                 if (data.message) {
                                     this.$message({

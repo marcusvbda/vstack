@@ -26,6 +26,10 @@ export default {
         'cursor',
         'only_table',
         'extra_filters',
+        'related_resource',
+        'related_resource_id',
+        'raw_type',
+        'hash',
     ],
     components: {
         VRuntimeTemplate,
@@ -44,6 +48,10 @@ export default {
             params: {
                 ...this.query_params,
                 list_type: this.only_table ? 'table' : 'full',
+                related_resource: this.related_resource,
+                related_resource_id: this.related_resource_id,
+                raw_type: this.raw_type,
+                hash: this.hash,
             },
         };
         if (this.extra_filters) {

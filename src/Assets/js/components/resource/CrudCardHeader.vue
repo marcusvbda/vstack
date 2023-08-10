@@ -1,7 +1,7 @@
 <template>
     <div class="card-header crud-card-header">
         <div class="row-responsive-table w-full">
-            <table class="table-crud">
+            <table class="table-crud w-full">
                 <tbody>
                     <tr>
                         <td>

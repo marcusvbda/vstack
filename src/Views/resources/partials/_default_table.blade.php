@@ -3,6 +3,7 @@
     $order_by = Arr::get($_data, 'order_by', 'id');
     $current_order_type = Arr::get($_data, 'order_type', 'desc');
     $order_type = $current_order_type == 'desc' ? 'asc' : 'desc';
+    $can_interact = in_array($raw_type, ['edit', 'list']);
 @endphp
 @if (@$list_type == 'full')
     <vstack-cursor-pages class="flex justify-end my-4 flex-wrap" :appends='@json($_data)'
@@ -22,7 +23,7 @@
         </div>
         <div class="p-0">
             @php
-                $show_right_actions_column = $resource->showRightActionsColumn();
+                $show_right_actions_column = $can_interact && $resource->showRightActionsColumn();
             @endphp
             @if (@$list_type == 'full')
                 @php
@@ -63,7 +64,7 @@
                                 @endphp
                                 <th width="{{ $size }}" class="{{ $col_class }} p-2 dark:bg-gray-800"
                                     id="resource-list-head-{{ $sortable_index }}">
-                                    @if (@$list_type == 'full' && @data_get($value, 'sortable') !== false)
+                                    @if ($can_interact && @$list_type == 'full' && @data_get($value, 'sortable') !== false)
                                         <a href="{{ ResourcesHelpers::sortLink($resource->route(), request()->all(), $sortable_index, $order_type) }}"
                                             class="flex gap-4 vstack-link">
                                             <div class="link">{{ data_get($value, 'label', $value) }}</div>
@@ -103,7 +104,8 @@
                             $rows_data[] = $row_data;
                         }
                     @endphp
-                    <tbody is="resource-tablelist-allinone" :rows='@json($rows_data)'
+                    <tbody hash="{{ $hash }}" :can_interact='@json($can_interact)'
+                        is="resource-tablelist-allinone" :rows='@json($rows_data)'
                         :table_keys='@json($table_keys)' :has_actions='@json(@$list_type == 'full' && @$has_actions)'
                         :show_right_actions_column='@json($show_right_actions_column)' resource_id="{{ $resource->id }}"
                         resource_route="{{ $resource->route() }}">
@@ -114,8 +116,8 @@
     </div>
 </vstack-resource-loading>
 @if (@$list_type !== 'full')
-    <vstack-cursor-pages style="margin-bottom: 200px" class="flex justify-end my-4 flex-wrap"
-        :appends='@json($_data)' previous_cursor="{{ $previous_cursor }}"
-        next_cursor="{{ $next_cursor }}">
+    <vstack-cursor-pages @if (!@$related_resource) style="margin-bottom: 200px" @endif
+        class="flex justify-end my-4 flex-wrap" :appends='@json($_data)'
+        previous_cursor="{{ $previous_cursor }}" next_cursor="{{ $next_cursor }}">
     </vstack-cursor-pages>
 @endif

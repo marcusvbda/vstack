@@ -13,12 +13,14 @@
                     class="p-2 dark:bg-gray-700 dark:text-neutral-100 dark:border-none"
                 >
                     <resource-tablelist-allinone-item
+                        :can_interact="can_interact"
                         :virtual_indexes="virtual_indexes"
                         :row="row"
                         :col="col"
                         :first_key="first_key == col"
                         :resource_id="resource_id"
                         :resource_route="resource_route"
+                        :hash="hash"
                     >
                         <template
                             v-slot:after_row="{ after_row, after_row_content }"
@@ -90,6 +92,8 @@ export default {
         'show_right_actions_column',
         'resource_id',
         'resource_route',
+        'can_interact',
+        'hash',
     ],
     data() {
         return {
