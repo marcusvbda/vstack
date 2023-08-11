@@ -228,7 +228,7 @@ class ResourceController extends Controller
 			$related_resource_found = $related_resource->getRelationResource($resource->id);
 			$relationFk = @$related_resource_found?->relationInfo["relation_handler"] ?? @$related_resource_found?->relationInfo["relation_fk"];
 			$related_resource_id = $data["related_resource_id"] ?? null;
-			$query = is_callable($relationFk) ? $fkHandler($query, $related_resource_id) : $query->where($relationFk, $related_resource_id);
+			$query = is_callable($relationFk) ? $relationFk($query, $related_resource_id) : $query->where($relationFk, $related_resource_id);
 			$relatedOrderBy = @$related_resource_found?->relationInfo["order_by"] ?? null;
 			if ($relatedOrderBy) {
 				$query = $query->orderBy($relatedOrderBy[0], $relatedOrderBy[1]);
