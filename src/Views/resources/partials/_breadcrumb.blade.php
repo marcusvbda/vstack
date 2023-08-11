@@ -16,8 +16,9 @@
         }
     }
     
-    if ($hash) {
-        $hashDecoded = json_decode(base64_decode(request()->hash), true);
+    $hashDecoded = $hash && json_decode(base64_decode(@request()->hash), true);
+    
+    if ($hashDecoded) {
         $related_resource = ResourcesHelpers::find(data_get($hashDecoded, 'related_resource'));
         $hasHcode = \marcusvbda\vstack\Hashids::encode(data_get($hashDecoded, 'related_resource_id'));
         $bc[] = [

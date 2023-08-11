@@ -140,6 +140,7 @@ class ResourceController extends Controller
 			$data = $data->select("*")->paginate($per_page);
 			return $data;
 		}
+
 		return view("vStack::resources.index", compact("resource", "report_mode"));
 	}
 

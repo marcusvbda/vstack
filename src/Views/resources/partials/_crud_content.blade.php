@@ -1,6 +1,6 @@
 @php
     $relatedResources = $resource->relatedResources();
-    $hasRelatedResources = count($relatedResources) > 0;
+    $hasRelatedResources = count($relatedResources) > 0 && $raw_type != 'create';
     $hash = request()?->hash ? request()->hash : '';
 @endphp
 <resource-crud class="mt-2" :data='@json($data)' :params='@json($params)'
@@ -35,7 +35,7 @@
                         'report_mode' => false,
                         'only_table' => true,
                         'related_resource' => $resource->id,
-                        'related_resource_id' => $content->id,
+                        'related_resource_id' => @$content->id,
                         'extra_filters' => [],
                         'raw_type' => $raw_type,
                     ]) !!}
