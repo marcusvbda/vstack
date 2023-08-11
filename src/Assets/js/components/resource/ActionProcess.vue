@@ -62,6 +62,7 @@
                     :content="{}"
                     :dialog="true"
                     ref="crud"
+                    class="action-dialog"
                 />
 
                 <div class="w-full flex justify-end mt-3">

@@ -244,3 +244,30 @@
         }
     }
 }
+
+.delete-btn {
+    z-index: 2;
+}
+
+.el-range-input {
+    @apply dark:bg-gray-900 dark:text-neutral-100 dark:border-none;
+}
+
+.action-dialog {
+    .vstack-crud-card {
+        .crud-card-header {
+            @apply bg-gray-50 text-neutral-800 dark:bg-gray-900;
+        }
+        @apply shadow-none;
+
+        tr {
+            @apply border-none #{!important};
+            td {
+                &.field-title {
+                    @apply bg-gray-50  dark:bg-gray-900 #{!important};
+                }
+                @apply border-none #{!important};
+            }
+        }
+    }
+}
