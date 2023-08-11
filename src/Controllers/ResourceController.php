@@ -893,8 +893,13 @@ class ResourceController extends Controller
 			}
 			$model = $model->orderBy(data_get($model_fields, "name", ""), "asc");
 			$field = $this->getFieldIndex($resource_id, $field_index);
-			$callback = $field->fetch_options_calllback;
-			return ["success" => true, "data" => $callback(new Request($form), $model)->get()];
+			$callback = @$field->fetch_options_calllback;
+			if (is_callable($callback)) {
+				$data = $callback(new Request($form), $model)->get();
+			} else {
+				$data = $model->get();
+			}
+			return ["success" => true, "data" => $data];
 		} catch (\Exception $e) {
 			return ["success" => false, "data" => [], "error" => $e->getMessage()];
 		}

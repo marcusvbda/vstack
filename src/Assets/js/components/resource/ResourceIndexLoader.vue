@@ -63,14 +63,14 @@ export default {
 
         this.setCursor(this.cursor);
         this.setReportMode(this.report_mode);
-        this.setResourceId(this.resource_id);
+        this.setResourceListId(this.resource_id);
         this.setResourceListPayload(payload);
         this.loadResourceData();
     },
     methods: {
         ...mapMutations('resource', [
             'setResourceListPayload',
-            'setResourceId',
+            'setResourceListId',
             'setReportMode',
             'setCursor',
         ]),

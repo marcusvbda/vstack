@@ -14,6 +14,7 @@ const state = {
     previous_loading:false,
     next_loading:false,
     resource_id : null,
+    resource_list_id:null,
     resource_total_text : 'Resultados encontrados : ',
     cursor : '',
     report_mode : false,
@@ -83,6 +84,9 @@ const mutations = {
     setResourceId: (state, payload) => {
         state.resource_id = payload;
     },
+    setResourceListId: (state, payload) => {
+        state.resource_list_id = payload;
+    },
     setReportMode: (state, payload) => {
         state.report_mode = payload;
     },
@@ -113,7 +117,7 @@ const actions = {
 
         const axios = VueApp.getAxiosClient();
 
-        const route = `/admin/${state.resource_id}/${
+        const route = `/admin/${state.resource_list_id}/${
             state.report_mode ? 'report' : 'list'
         }/get-list-data`;
 
@@ -137,7 +141,7 @@ const actions = {
             });
 
         if(!cursor){
-            const count_route = `/admin/${state.resource_id}/count/get-list-data`;
+            const count_route = `/admin/${state.resource_list_id}/count/get-list-data`;
             axios.get(count_route, state.resource_list_payload)
                 .then(({ data }) => {
                     commit("setResourceListTotal",data.count);

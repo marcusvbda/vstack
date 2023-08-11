@@ -16,7 +16,7 @@
         }
     }
     
-    $hashDecoded = $hash && json_decode(base64_decode(@request()->hash), true);
+    $hashDecoded = $hash ? json_decode(base64_decode(@request()->hash), true) : null;
     
     if ($hashDecoded) {
         $related_resource = ResourcesHelpers::find(data_get($hashDecoded, 'related_resource'));

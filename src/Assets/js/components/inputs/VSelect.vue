@@ -156,7 +156,7 @@ export default {
             val = val.map((x) => String(x));
         }
         this.value = val;
-        if (this.entity_parent && this.page_type === 'create') {
+        if (this.entity_parent && ['create', 'edit'].includes(this.page_type)) {
             this.$watch(`$parent.form.${this.entity_parent}`, () => {
                 this.loading = true;
                 this.value = this.multiple ? [] : null;
@@ -192,6 +192,7 @@ export default {
         canShowEntity() {
             if (
                 this.entity_parent &&
+                this.entity_parent_message &&
                 (!this.$parent.form[this.entity_parent] ||
                     !this.$parent.form[this.entity_parent]?.length)
             ) {
@@ -296,13 +297,16 @@ export default {
                     this.addFieldOptions(field_op);
 
                     let parentCondition = [];
-                    if (this.entity_parent) {
-                        parentCondition = [
-                            this.entity_parent,
-                            '=',
-                            this.$parent?.form?.[this.entity_parent],
-                        ];
+                    if (this.entity_parent && this.canShowEntity) {
+                        if (this.$parent?.form?.[this.entity_parent]) {
+                            parentCondition = [
+                                this.entity_parent,
+                                '=',
+                                this.$parent?.form?.[this.entity_parent],
+                            ];
+                        }
                     }
+
                     const payload = {
                         params: {
                             field_index: this.field_index,
