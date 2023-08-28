@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :title="label" :visible.sync="dialogVisible" width="60%" :close-on-press-escape="false" ref="el">
+    <el-dialog :title="label" :visible.sync="dialogVisible" width="60%" :close-on-press-escape="false" ref="el" :close-on-click-modal="false">
         <span>{{ description }}</span>
         <template v-if="!visible">
             <div class="flex flex-col justify-center items-center">
@@ -173,9 +173,7 @@ export default {
             }
         },
         cleanFilter() {
-            this.filters.forEach((filter) => {
-                this.filter[filter.index] = [];
-            });
+            this.initFilter();
         },
         confirmFilter() {
             this.visible = false;
