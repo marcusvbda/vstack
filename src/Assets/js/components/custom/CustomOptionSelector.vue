@@ -196,7 +196,12 @@ export default {
             this.dialogVisible = false;
         },
         confirm() {
-            this.$emit('confirm', this.value);
+               this.$emit(
+                "on-confirm",
+                this.options.filter((x) =>
+                    Array.isArray(this.value) ? this.value.includes(x.original.id) : x.original.id === this.value
+                )
+            );
             this.close();
         },
     },
