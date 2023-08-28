@@ -138,27 +138,32 @@ export default {
         remoteMethod(val) {
             this.loading = true;
             if (!val) return;
-            let where = [['name', 'like', `%${val}%`]];
+            
+            const payload = {
+                model: this.model,
+                filters: {
+                    where: [["name", "like", `%${val}%`]],
+                },
+            };
 
             if (Object.keys(this.groupedFilters).length > 0) {
-                let whereConcat = Object.keys(this.filter).map((f) => [f, 'in', this.filter[f]]);
-                whereConcat = whereConcat.filter((x) => x[2].length > 0);
-                where = where.concat(whereConcat);
+                let whereIn = Object.keys(this.filter).map((f) => [f, this.filter[f]]);
+                whereIn = whereIn.filter((x) => x[1].length > 0);
+                if (payload.filters.where_in) {
+                    payload.filters.where_in = [...payload.filters.where_in, ...whereIn];
+                } else {
+                    payload.filters.where_in = whereIn;
+                }
             }
 
-            this.$http
-                .post(`/vstack/json-api`, {
-                    model: this.model,
-                    filters: { where },
-                })
-                .then(({ data }) => {
-                    this.options = data.map((item) => ({
-                        label: item.name,
-                        value: item.id,
-                        original: item,
-                    }));
-                    this.loading = false;
-                });
+            this.$http.post(`/vstack/json-api`, payload).then(({ data }) => {
+                this.options = data.map((item) => ({
+                    label: item.name,
+                    value: item.id,
+                    original: item,
+                }));
+                this.loading = false;
+            });
         },
         toggleOption(option) {
             if (this.filter[option.index].includes(option.value)) {
