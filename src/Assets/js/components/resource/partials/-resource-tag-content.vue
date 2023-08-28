@@ -1,18 +1,18 @@
 <template>
     <div>
-        <div class="ml-2 shimmer primary" v-if="loading" :style="{height:16, width: 140}" />
-        <span class=" ml-2" v-else v-html="content" />
+        <div class="ml-2 shimmer primary" v-if="loading" :style="{ height: 16, width: 140 }" />
+        <span class="ml-2" v-else v-html="content" />
     </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters } from "vuex";
 export default {
     props: ["filter"],
     data() {
         return {
             loading: true,
-            content: this.filter.content
-        }
+            content: this.filter.content,
+        };
     },
     created() {
         this.init();
@@ -20,46 +20,45 @@ export default {
     computed: {
         ...mapGetters("resource", ["filter_options"]),
         option_model_index() {
-            return (this.filter.original?.model ? this.filter.original.model : this.filter.index).replaceAll("\\", "_").toLowerCase();
-        }
+            return (this.filter.original?.model ? this.filter.original.model : this.filter.index)
+                .replaceAll("\\", "_")
+                .toLowerCase();
+        },
     },
     methods: {
-        ...mapMutations("resource", ["addFilterOptions"]),
         processOptionData(data) {
             const values = this.filter.get_value.split(",");
             let payload = {};
             payload[this.option_model_index] = data;
-            this.addFilterOptions(payload);
 
-            const filtered = data.filter(x => {
+            const filtered = data.filter((x) => {
                 const value = x[this.filter.original.model_fields.value];
                 return values.includes(String(value)) || values.includes(value);
             });
 
-            this.content = filtered.map(x => x[this.filter.original.model_fields.label]).join(", ");
+            this.content = filtered.map((x) => x[this.filter.original.model_fields.label]).join(", ");
 
             this.loading = false;
         },
         init() {
             if (!this.filter.original.model && this.content) {
-                return this.loading = false;
+                return (this.loading = false);
             } else {
                 const results = this.filter_options[this.option_model_index] ?? [];
                 if (results.length) {
                     return this.processOptionData(results);
                 }
-
-                this.$http
-                    .post("/vstack/json-api", {
-                        model: this.filter.original.model,
-                    })
-                    .then(({ data }) => {
-                        this.processOptionData(data);
-                    });
+                let payload = {
+                    model: this.filter.original.model,
+                };
+                payload.filters = { where_in: [[this.filter.original.model_fields.value, this.filter.get_value.split(",")]] };
+                this.$http.post("/vstack/json-api", payload).then(({ data }) => {
+                    this.processOptionData(data);
+                });
             }
-        }
-    }
-}
+        },
+    },
+};
 </script>
 <style lang="scss">
 .shimmer.primary {
