@@ -136,33 +136,40 @@ class VstackController extends Controller
 
 	private function processApiFilters($filters, $query)
 	{
-		foreach ($filters as $filter_type => $filters) {
-			if ($filter_type == "where") $query = $query->where($filters);
+		foreach ($filters as $filter_type => $filter) {
+			if ($filter_type == "where") $query = $query->where($filter);
 			if ($filter_type == "or_where") {
-				$query = $query->where(function ($q) use ($filters) {
-					foreach ($filters as $filter) {
-						$q->orWhere([$filter]);
+				$query = $query->where(function ($q) use ($filter) {
+					foreach ($filter as $f) {
+						$q->orWhere([$f]);
 					}
 				});
 			}
 			if ($filter_type == "or_where_in") {
-				$query = $query->where(function ($q) use ($filters) {
-					foreach ($filters as $filter) {
+				$query = $query->where(function ($q) use ($filter) {
+					foreach ($filter as $f) {
 						$q->orWhereIn([$filter]);
 					}
 				});
 			}
+			if ($filter_type == "where_in") {
+				$query = $query->where(function ($q) use ($filter) {
+					foreach ($filter as $f) {
+						$q->whereIn($f[0], $f[1]);
+					}
+				});
+			}
 			if ($filter_type == "or_where_not_in") {
-				$query = $query->where(function ($q) use ($filters) {
-					foreach ($filters as $filter) {
-						$q->orWhereNotIn($filter[0], $filter[1]);
+				$query = $query->where(function ($q) use ($filter) {
+					foreach ($filter as $f) {
+						$q->orWhereNotIn($f[0], $f[1]);
 					}
 				});
 			}
 			if ($filter_type == "raw_where") {
-				$query = $query->where(function ($q) use ($filters) {
-					foreach ($filters as $filter) {
-						$q->whereRaw($filter);
+				$query = $query->where(function ($q) use ($filter) {
+					foreach ($filter as $f) {
+						$q->whereRaw($f);
 					}
 				});
 			}
