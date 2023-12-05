@@ -697,7 +697,7 @@ class ResourceController extends Controller
 							}
 							if (is_array($field_value)) {
 								$field_value = array_map(function ($row) {
-									return @$row->url;
+									return data_get($row, "url");
 								}, $field_value);
 							} else {
 								$values = [];
@@ -709,10 +709,13 @@ class ResourceController extends Controller
 							$input->options["value"] = @$field_value;
 						} else {
 							$value = @$content->{$input->options["field"]};
+
 							if (!is_array($value)) {
 								$value = [$value];
 							}
-							$input->options["value"] = $value ? $value : null;
+							$input->options["value"] = array_map(function ($q) {
+								return data_get($q, "url");
+							}, $value ? $value : []);
 						}
 						break;
 					case "html_editor":

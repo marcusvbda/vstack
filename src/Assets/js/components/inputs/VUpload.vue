@@ -1,89 +1,43 @@
 <template>
-    <CustomResourceComponent
-        :label="label"
-        :description="description"
-        custom_class="auto-overflow-x"
-    >
+    <CustomResourceComponent :label="label" :description="description" custom_class="auto-overflow-x">
         <div v-show="!(crop_image && showing_crop)">
-            <el-progress
-                v-if="loading"
-                :text-inside="true"
-                :stroke-width="18"
-                class="mb-3"
-                :percentage="progress"
-            />
+            <el-progress v-if="loading" :text-inside="true" :stroke-width="18" class="mb-3" :percentage="progress" />
             <slot name="prepend-slot" />
-            <div
-                v-show="loading"
-                class="shimmer resource-tree-item"
-                :style="{ width: '100%', height: 130 }"
-            />
+            <div v-show="loading" class="shimmer resource-tree-item" :style="{ width: '100%', height: 130 }" />
             <div v-show="!loading" class="my-4">
                 <div class="flex flex-col upload-resource-field input-group">
-                    <el-upload
-                        multiple
-                        :limit="!multiple ? 1 : limit"
-                        ref="uploader"
-                        :on-preview="handlePreview"
-                        :onProgress="onProgress"
-                        :disabled="disabled"
-                        v-bind:class="{
+                    <el-upload multiple :limit="!multiple ? 1 : limit" ref="uploader" :on-preview="handlePreview"
+                        :onProgress="onProgress" :disabled="disabled" v-bind:class="{
                             disabled: fileList.length >= limit_value,
                             'hide-input':
                                 loading || fileList.length >= limit_value,
                             'is-invalid': errors,
-                        }"
-                        :action="uploadroute"
-                        :list-type="`${is_image ? 'picture-card' : 'text'}`"
-                        :file-list="fileList"
-                        :on-success="handleAvatarSuccess"
-                        :before-upload="handleBeforeUpload"
-                        :on-remove="handleRemove"
-                        :before-remove="beforeRemove"
-                        :on-change="handleChange"
-                        :http-request="uploadMethod"
-                        :auto-upload="false"
-                        :headers="header"
-                        v-if="renderComponent"
-                        @input.native="handleInput"
-                    >
+                        }" :action="uploadroute" :list-type="`${is_image ? 'picture-card' : 'text'}`"
+                        :file-list="fileList" :on-success="handleAvatarSuccess" :before-upload="handleBeforeUpload"
+                        :on-remove="handleRemove" :before-remove="beforeRemove" :on-change="handleChange"
+                        :http-request="uploadMethod" :auto-upload="false" :headers="header" v-if="renderComponent"
+                        @input.native="handleInput">
                         <template v-if="!is_image">
-                            <el-button
-                                icon="el-icon-upload"
-                                type="primary"
-                                v-if="fileList.length < limit_value"
-                            >
+                            <el-button icon="el-icon-upload" type="primary" v-if="fileList.length < limit_value">
                                 Fazer Upload
                             </el-button>
                         </template>
                         <template v-else>
                             <div slot="file" slot-scope="{ file }">
                                 <div>
-                                    <img
-                                        class="el-upload-list__item-thumbnail"
-                                        :src="file.url"
-                                        alt=""
-                                    />
+                                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
                                     <div class="el-upload-list__item-actions">
-                                        <span
-                                            class="el-upload-list__item-preview"
-                                            v-if="preview != undefined"
-                                            @click="handlePreview(file)"
-                                        >
+                                        <span class="el-upload-list__item-preview" v-if="preview != undefined"
+                                            @click="handlePreview(file)">
                                             <i class="el-icon-zoom-in"></i>
                                         </span>
-                                        <span
-                                            class="el-upload-list__item-delete"
-                                            @click="handleRemove(file)"
-                                        >
+                                        <span class="el-upload-list__item-delete" @click="handleRemove(file)">
                                             <i class="el-icon-delete"></i>
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <div
-                                class="flex items-center justify-center h-full"
-                            >
+                            <div class="flex items-center justify-center h-full">
                                 <i class="el-icon-plus"></i>
                             </div>
                         </template>
@@ -91,8 +45,8 @@
                     <small class="mt-2 text-neutral-400 text-size-alert">
                         {{
                             multiple
-                                ? 'Os arquivos devem conter no máximo'
-                                : 'O arquivo deve conter no máximo'
+                            ? 'Os arquivos devem conter no máximo'
+                            : 'O arquivo deve conter no máximo'
                         }}
                         {{ $niceBytes(file_upload_limit_size) }}
                     </small>
@@ -105,16 +59,8 @@
             </div>
             <slot name="append-slot" />
         </div>
-        <el-dialog
-            :visible.sync="cropDialog"
-            :lock-scroll="true"
-            :close-on-click-modal="false"
-            :show-close="false"
-            :destroy-on-close="true"
-            :modal-append-to-body="true"
-            :close-on-press-escape="false"
-            custom-class="crop_dialog"
-        >
+        <el-dialog :visible.sync="cropDialog" :lock-scroll="true" :close-on-click-modal="false" :show-close="false"
+            :destroy-on-close="true" :modal-append-to-body="true" :close-on-press-escape="false" custom-class="crop_dialog">
             <div class="overflow-crop-loading" v-if="loading" />
             <img ref="croppel" :src="cropping_img" v-if="cropDialog" />
             <div class="flex flex-col">
@@ -122,23 +68,11 @@
                     <slot name="append-crop-slot" />
                 </div>
             </div>
-            <div
-                slot="footer"
-                class="dialog-footer mt-2 flex w-full justify-end items-center"
-            >
-                <button
-                    class="vstack-btn secondary"
-                    @click="handleCancelCrop"
-                    v-if="!loading"
-                >
+            <div slot="footer" class="dialog-footer mt-2 flex w-full justify-end items-center">
+                <button class="vstack-btn secondary" @click="handleCancelCrop" v-if="!loading">
                     Cancelar
                 </button>
-                <button
-                    class="vstack-btn primary"
-                    type="primary"
-                    @click="handleCrop"
-                    :loading="loading"
-                >
+                <button class="vstack-btn primary" type="primary" @click="handleCrop" :loading="loading">
                     Confirmar
                 </button>
             </div>
@@ -263,7 +197,7 @@ export default {
         },
         handlePreview(file) {
             if (this.preview) {
-                window.open(file.response.path, '_blank');
+                window.open(file.response?.path ? file.response?.path : file?.url, '_blank');
             }
         },
         beforeRemove() {
@@ -276,11 +210,11 @@ export default {
             let items = [];
             value
                 .filter((x) => x)
-                .forEach((item) => {
+                .forEach((item, k) => {
                     if (typeof item == 'string') {
                         items.push({
                             name: item,
-                            uid: new Date().getTime(),
+                            uid: new Date().getTime() + k,
                             response: {
                                 path: item,
                             },
@@ -290,6 +224,7 @@ export default {
                         items.push(item);
                     }
                 });
+            console.log(items);
             this.setInputFiles(items);
             this.initialized = true;
         },
