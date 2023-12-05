@@ -43,9 +43,11 @@ class BelongsTo extends Field
 		$option_template = @$this->options["option_template"] ? $this->options["option_template"] : "";
 		$entity_parent = @$this->options["entity_parent"] ? $this->options["entity_parent"] : "";
 		$entity_parent_message = @$this->options["entity_parent_message"] ? $this->options["entity_parent_message"] : "";
+		$group_by = @$this->options["group_by"] ? $this->options["group_by"] : "";
 		return $this->view = view("vStack::resources.field.belongsto", compact(
 			"field",
 			"option_template",
+			"group_by",
 			"model",
 			"label",
 			"disabled",

@@ -1,42 +1,22 @@
 <template>
-    <CustomResourceComponent
-        :label="label"
-        :description="description"
-        custom_class="display-revert"
-    >
+    <CustomResourceComponent :label="label" :description="description" custom_class="display-revert">
         <div class="flex flex-col">
             <slot name="prepend-slot" />
-            <div
-                class="input-group v-select"
-                v-bind:class="{ 'is-invalid': errors }"
-            >
+            <div class="input-group v-select" v-bind:class="{ 'is-invalid': errors }">
                 <template v-if="canShowEntity">
-                    <template
-                        v-if="multiple && !allow_create && type == 'radio'"
-                    >
+                    <template v-if="multiple && !allow_create && type == 'radio'">
                         <template v-if="loading">
                             <div class="shimmer select mb-3" />
                             <div class="shimmer select mb-3" />
                             <div class="shimmer select mb-3" />
                         </template>
                         <div class="flex" v-else>
-                            <el-checkbox-group
-                                class="vstack-hasmany"
-                                v-model="value"
-                            >
-                                <el-checkbox-button
-                                    v-for="(op, i) in options"
-                                    :label="op.id"
-                                    :key="i"
-                                >
+                            <el-checkbox-group class="vstack-hasmany" v-model="value">
+                                <el-checkbox-button v-for="(op, i) in options" :label="op.id" :key="i">
                                     {{ op.name }}
                                 </el-checkbox-button>
                             </el-checkbox-group>
-                            <a
-                                class="px-3 text-center f-12"
-                                @click.prevent="toggleMarked"
-                                href="#"
-                            >
+                            <a class="px-3 text-center f-12" @click.prevent="toggleMarked" href="#">
                                 {{ !marked ? 'Marcar' : 'Desmarcar' }} todas as
                                 opções
                             </a>
@@ -44,48 +24,23 @@
                     </template>
                     <template v-else>
                         <div class="shimmer select" v-if="loading" />
-                        <el-select
-                            :allow-create="allow_create"
-                            :disabled="disabled"
-                            v-else
-                            :size="size ? size : 'large'"
-                            :allow_create="allow_create"
-                            class="w-full"
-                            clearable
-                            v-model="value"
-                            filterable
-                            ref="select"
-                            :placeholder="placeholder"
-                            v-loading="loading"
-                            :loading="loading"
-                            @keyup.enter.native="selectCreate"
-                            loading-text="Carregando..."
-                            :multiple="multiple"
-                            :popper-append-to-body="false"
-                        >
-                            <el-option
-                                v-for="(item, i) in options"
-                                :key="i"
-                                :label="item.name"
-                                :value="String(item.id)"
-                                style="height: unset !important"
-                            >
-                                <VRuntimeTemplate
-                                    v-if="option_template"
-                                    :template-props="{
+                        <el-select :allow-create="allow_create" :disabled="disabled" v-else :size="size ? size : 'large'"
+                            :allow_create="allow_create" class="w-full" clearable v-model="value" filterable ref="select"
+                            :placeholder="placeholder" v-loading="loading" :loading="loading"
+                            @keyup.enter.native="selectCreate" loading-text="Carregando..." :multiple="multiple"
+                            :popper-append-to-body="false">
+                            <el-option-group v-for="group in groups" :key="group.label" :label="group.label">
+                                <el-option v-for="(item, i) in group.options" :key="i" :label="item.name"
+                                    :value="String(item.id)" style="height: unset !important;">
+                                    <VRuntimeTemplate v-if="option_template" :template-props="{
                                         index: i,
                                         item,
                                         value: value,
                                         options: options,
-                                    }"
-                                    :template="option_template"
-                                />
-                                <div
-                                    v-else
-                                    class="w-full flex"
-                                    v-html="item.name"
-                                ></div>
-                            </el-option>
+                                    }" :template="option_template" />
+                                    <div v-else class="w-full flex" v-html="item.name"></div>
+                                </el-option>
+                            </el-option-group>
                         </el-select>
                     </template>
                 </template>
@@ -114,6 +69,7 @@ export default {
         'disabled',
         'errors',
         'optionlist',
+        'group_by',
         'required',
         'size',
         'multiple',
@@ -148,8 +104,8 @@ export default {
         let val = this.$attrs.value
             ? this.$attrs.value
             : this.multiple
-            ? []
-            : null;
+                ? []
+                : null;
         if (!Array.isArray(val)) {
             val = val ? String(val) : null;
         } else {
@@ -184,6 +140,21 @@ export default {
     },
     computed: {
         ...mapGetters('resource', ['field_options', 'resource_id']),
+        groups() {
+            if (!this.group_by) return [{ label: '', options: this.options }]
+            let groups = [];
+            for (let i in this.options) {
+                const index = this.group_by + "_grouping";
+                let option = this.options[i];
+                let group = groups.find((x) => x.label == option[index]);
+                if (!group) {
+                    group = { label: option[index], options: [] };
+                    groups.push(group);
+                }
+                group.options.push(option);
+            }
+            return groups;
+        },
         option_model_index() {
             return (this.list_model ? this.list_model : '')
                 .replaceAll('\\', '_')
@@ -243,8 +214,8 @@ export default {
                 this.value = this.$attrs.value
                     ? this.$attrs.value
                     : this.multiple
-                    ? []
-                    : null;
+                        ? []
+                        : null;
                 if (Array.isArray(this.value)) {
                     this.value = this.value.map((x) => String(x));
                 }
@@ -307,6 +278,11 @@ export default {
                         }
                     }
 
+                    let model_fields = this.model_fields
+                    if (this.group_by) {
+                        model_fields[this.group_by + "_grouping"] = this.group_by
+                    }
+
                     const payload = {
                         params: {
                             field_index: this.field_index,
@@ -314,7 +290,7 @@ export default {
                             form: this.$parent?.form,
                             query: {
                                 model: this.list_model,
-                                model_fields: this.model_fields,
+                                model_fields,
                                 model_filter: {
                                     ...this.model_filter,
                                     ...{
