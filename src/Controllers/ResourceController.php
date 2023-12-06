@@ -867,8 +867,9 @@ class ResourceController extends Controller
 	public function option_list(Request $request)
 	{
 		$form = data_get($request, "params.form");
+		$filters = data_get($request, "params.model_filter", []);
 		$query = data_get($request, "params.query");
-		$filters = data_get($query, "model_filter", []);
+		$filters = data_get($query, "model_filter", $filters);
 		$field_index = data_get($request, "params.field_index");
 		$resource_id = data_get($request, "params.resource_id");
 
