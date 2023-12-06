@@ -5,10 +5,46 @@ namespace marcusvbda\vstack\Controllers;
 use App\Http\Controllers\Controller;
 use ResourcesHelpers;
 use Illuminate\Http\Request;
+use marcusvbda\vstack\Components;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class VstackController extends Controller
 {
+	public function minifyHtml($html)
+    {
+        $search = [
+            '/(\n|^)(\x20+|\t)/',
+            '/(\n|^)\/\/(.*?)(\n|$)/',
+            '/\n/',
+            '/\<\!--.*?-->/',
+            '/(\x20+|\t)/', # Delete multispace (Without \n)
+            '/\>\s+\</', # strip whitespaces between tags
+            '/(\"|\')\s+\>/', # strip whitespaces between quotation ("') and end tags
+            '/=\s+(\"|\')/',
+        ]; # strip whitespaces between = "'
+
+        $replace = [
+            "\n",
+            "\n",
+            " ",
+            "",
+            " ",
+            "><",
+            "$1>",
+            "=$1",
+        ];
+
+        $html = preg_replace($search, $replace, $html);
+        return $html;
+    }
+
+	public function LoadComponent(Request $request)
+	{
+		$comp = (new Components($request->callback,$request->payload));
+		$content =  $comp->render();
+		return response()->json(["content" => $this->minifyHtml($content)]);
+	}
+
 	public function getPartialContent($resource, Request $request)
 	{
 		$resource = ResourcesHelpers::find($resource);

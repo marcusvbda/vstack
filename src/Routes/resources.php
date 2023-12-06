@@ -7,6 +7,7 @@ use marcusvbda\vstack\Controllers\{
 
 Route::group(['prefix' => "vstack"], function () {
 	Route::group(['middleware' => ['web', 'auth']], function () {
+		Route::post('load-component', [VstackController::class, 'loadComponent']);
 		Route::get('grapes-editor', [VstackController::class, 'grapesEditor']);
 		Route::post('json-api', [VstackController::class, 'getJson']);
 		Route::get('json-api', [VstackController::class, 'getJson']);

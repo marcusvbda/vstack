@@ -26,7 +26,7 @@ class vStackServiceProvider extends ServiceProvider
 			__DIR__ . '/Migrations' => database_path("/migrations"),
 		]);
 		$router->aliasMiddleware('hashids',  HashIds::class);
-		Blade::component('vStack-component', Components::class);
+		Blade::component('vstack-component', Components::class);
 	}
 
 	public function register()
