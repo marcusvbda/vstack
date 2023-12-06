@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use marcusvbda\vstack\Commands\{createResource, createFilter, createAction, clearResourceExport};
 use marcusvbda\vstack\Middleware\HashIds;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Blade;
 use OwenIt\Auditing\AuditingServiceProvider;
 
 class vStackServiceProvider extends ServiceProvider
@@ -25,6 +26,7 @@ class vStackServiceProvider extends ServiceProvider
 			__DIR__ . '/Migrations' => database_path("/migrations"),
 		]);
 		$router->aliasMiddleware('hashids',  HashIds::class);
+		Blade::component('vStack-component', Components::class);
 	}
 
 	public function register()
