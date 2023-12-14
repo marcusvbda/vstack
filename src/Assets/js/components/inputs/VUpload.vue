@@ -224,7 +224,6 @@ export default {
                         items.push(item);
                     }
                 });
-            console.log(items);
             this.setInputFiles(items);
             this.initialized = true;
         },
