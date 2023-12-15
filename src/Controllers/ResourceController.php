@@ -224,7 +224,7 @@ class ResourceController extends Controller
 		}
 
 		$search = $resource->search();
-		if (@$data["related_resource"]) {
+		if (@$data["related_resource"] && @$data["related_resource"] != "null") {
 			$related_resource = ResourcesHelpers::find($data["related_resource"]);
 			$related_resource_found = $related_resource->getRelationResource($resource->id);
 			$relationFk = @$related_resource_found?->relationInfo["relation_handler"] ?? @$related_resource_found?->relationInfo["relation_fk"];
@@ -261,6 +261,8 @@ class ResourceController extends Controller
 				}
 			}
 		}
+
+
 
 		return $this->makeSorterHandler($resource, $resource->prepareQueryToList($query), $orderBy, $orderType);
 	}
