@@ -917,7 +917,7 @@ class ResourceController extends Controller
 		$cards = $resource->fields();
 		foreach ($cards as $card) {
 			foreach ($card->inputs as $field) {
-				if ($field->options["field"] == $index) {
+				if (@$field->options["field"] == $index) {
 					return $field;
 				}
 			}
