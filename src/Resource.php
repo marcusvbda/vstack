@@ -929,8 +929,13 @@ class Resource
 		return [];
 	}
 
-	public  function isInRelatedResource()
+	public function isInRelatedResource()
 	{
 		return request()->has("related_resource");
+	}
+
+	public function makeBreadCrumb($bc, $type)
+	{
+		return $bc;
 	}
 }

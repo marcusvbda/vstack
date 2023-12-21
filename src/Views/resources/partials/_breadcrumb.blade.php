@@ -1,9 +1,9 @@
 @php
     $breadcrumbs = $resource->breadcrumbLabels();
     $hash = request()->has('hash') ? '#' . request()->hash : null;
-    
+
     $prepend = config('vstack.prepend_breadcrumb', ['Dashboard' => '/admin']);
-    
+
     if ($resource->id === 'audits') {
         if (request()->has('resource_id') && request()->has('code')) {
             $parentResource = ResourcesHelpers::find(request()->resource_id);
@@ -15,9 +15,9 @@
             ]);
         }
     }
-    
+
     $hashDecoded = $hash ? json_decode(base64_decode(@request()->hash), true) : null;
-    
+
     if ($hashDecoded) {
         $related_resource = ResourcesHelpers::find(data_get($hashDecoded, 'related_resource'));
         $hasHcode = \marcusvbda\vstack\Hashids::encode(data_get($hashDecoded, 'related_resource_id'));
@@ -35,7 +35,7 @@
             'route' => @$resource->route(),
         ];
     }
-    
+
     $bc = array_merge($prepend, $bc);
     if (@$report_mode) {
         $bc[] = [
@@ -49,5 +49,6 @@
             'route' => @$resource->route($raw_type),
         ];
     }
+    $bc = $resource->makeBreadCrumb($bc, @$raw_type ?? 'list');
 @endphp
 <vstack-breadcrumb :items='@json($bc)'></vstack-breadcrumb>
