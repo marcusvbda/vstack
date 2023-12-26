@@ -11,36 +11,36 @@ use Spatie\QueryBuilder\QueryBuilder;
 class VstackController extends Controller
 {
 	public function minifyHtml($html)
-    {
-        $search = [
-            '/(\n|^)(\x20+|\t)/',
-            '/(\n|^)\/\/(.*?)(\n|$)/',
-            '/\n/',
-            '/\<\!--.*?-->/',
-            '/(\x20+|\t)/', # Delete multispace (Without \n)
-            '/\>\s+\</', # strip whitespaces between tags
-            '/(\"|\')\s+\>/', # strip whitespaces between quotation ("') and end tags
-            '/=\s+(\"|\')/',
-        ]; # strip whitespaces between = "'
+	{
+		$search = [
+			'/(\n|^)(\x20+|\t)/',
+			'/(\n|^)\/\/(.*?)(\n|$)/',
+			'/\n/',
+			'/\<\!--.*?-->/',
+			'/(\x20+|\t)/', # Delete multispace (Without \n)
+			'/\>\s+\</', # strip whitespaces between tags
+			'/(\"|\')\s+\>/', # strip whitespaces between quotation ("') and end tags
+			'/=\s+(\"|\')/',
+		]; # strip whitespaces between = "'
 
-        $replace = [
-            "\n",
-            "\n",
-            " ",
-            "",
-            " ",
-            "><",
-            "$1>",
-            "=$1",
-        ];
+		$replace = [
+			"\n",
+			"\n",
+			" ",
+			"",
+			" ",
+			"><",
+			"$1>",
+			"=$1",
+		];
 
-        $html = preg_replace($search, $replace, $html);
-        return $html;
-    }
+		$html = preg_replace($search, $replace, $html);
+		return $html;
+	}
 
 	public function LoadComponent(Request $request)
 	{
-		$comp = (new Components($request->callback,$request->payload));
+		$comp = (new Components($request->callback, $request->payload));
 		$content =  $comp->render();
 		return response()->json(["content" => $this->minifyHtml($content)]);
 	}
@@ -71,21 +71,7 @@ class VstackController extends Controller
 				$content["tags"] = $row->tags;
 			}
 			foreach ($resource->table() as $key => $value) {
-				if (!@$value["handler"]) {
-					if (strpos($key, "->") === false) {
-						$content[$key] = @$row->{$key} !== null ? $row->{$key} : " - ";
-					} else {
-						$value = $row;
-						$_runner = explode("->", $key);
-						foreach ($_runner as $idx) {
-							$value = @$value->{$idx};
-						}
-						$content[$key] = (@$value !== null ? $value : ' - ');
-					}
-				} else {
-					$result = @$value["handler"]($row);
-					$content[$key] = (@$result !== null ? $result : ' - ');
-				}
+				$content[$key] = $resource->tableRowContent($row, $key, $value);
 			}
 		}
 		$acl = [

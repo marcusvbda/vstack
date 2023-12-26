@@ -14,8 +14,11 @@
     <div ref="container"
         class="text-gray-700 border dark:border-none border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700"
         @if (@$list_type == 'full') style="margin-bottom: 200px" @endif>
-        <div class="p-1" style="min-height: 40px;">
-            <div class="flex align-center flex-wrap">
+        <div class="p-1" style="min-height: 40px;display:flex">
+            <div class="flex align-center flex-wrap" style="align-items: center">
+                @if ($resource->listLabel())
+                    {!! $resource->listLabel() !!}
+                @endif
                 @if ($resource->lenses())
                     @include('vStack::resources.partials._lenses')
                 @endif

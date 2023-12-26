@@ -938,4 +938,26 @@ class Resource
 	{
 		return $bc;
 	}
+
+	public function tableRowContent($row, $key, $value)
+	{
+		if (!@$value["handler"]) {
+			if (strpos($key, "->") === false) {
+				return @$row->{$key} !== null ? $row->{$key} : " - ";
+			}
+			$value = $row;
+			$_runner = explode("->", $key);
+			foreach ($_runner as $idx) {
+				$value = @$value->{$idx};
+			}
+			return (@$value !== null ? $value : ' - ');
+		}
+		$result = @$value["handler"]($row);
+		return (@$result !== null ? $result : ' - ');
+	}
+
+	public function listLabel()
+	{
+		return false;
+	}
 }
