@@ -111,37 +111,7 @@ class ResourceController extends Controller
 	protected function showIndexList($resource, Request $request, $report_mode = false)
 	{
 		$resource = ResourcesHelpers::find($resource);
-
-		if ($resource->id === 'audits') {
-			if (request()->has('resource_id') && request()->has('code')) {
-				$parentResource = ResourcesHelpers::find(request()->resource_id);
-				$parentRow = $parentResource->getModelInstance()->findByCode(request()->code);
-				if (!$parentRow) abort(404);
-				if (!$parentResource->canViewAudits() || !$parentResource->canViewAuditsRow($parentRow)) {
-					abort(403);
-				}
-			} else {
-				abort(404);
-			}
-		}
-
-		if ($report_mode) {
-			if (!$resource->canViewReport()) {
-				abort(403);
-			}
-		} else {
-			if (!$resource->canViewList()) {
-				abort(403);
-			}
-		}
-		if (request()->response_type == "json") {
-			$data = $this->getData($resource, $request);
-			$per_page = $this->getPerPage($resource);
-			$data = $data->select("*")->paginate($per_page);
-			return $data;
-		}
-
-		return view("vStack::resources.index", compact("resource", "report_mode"));
+		return $resource->indexMethod($request, $report_mode);
 	}
 
 	private function storeListType($resource, $type)
