@@ -72,10 +72,6 @@ class ResourceController extends Controller
 			$data->setPath(route('resource.index', ["resource" => $resource->id]));
 		}
 
-		if (@$request["list_type"]) {
-			$this->storeListType($resource, $request["list_type"]);
-		}
-
 		$filters = $resource->filters();
 		$_data =  request()->all();
 
@@ -142,22 +138,6 @@ class ResourceController extends Controller
 		}
 
 		return view("vStack::resources.index", compact("resource", "report_mode"));
-	}
-
-	private function storeListType($resource, $type)
-	{
-		if (Auth::check()) {
-			$user = Auth::user();
-			$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", 'list_type')->first();
-			$config = @$config->id ? $config : new ResourceConfig;
-			$_data = @$config->data ?? (object)[];
-			$_data->type = $type;
-			$_data->user_id = $user->id;
-			$config->data = $_data;
-			$config->resource = $resource->id;
-			$config->config = 'list_type';
-			$config->save();
-		}
 	}
 
 	public function createReportTemplate($resource, Request $request)
