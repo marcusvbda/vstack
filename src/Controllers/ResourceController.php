@@ -72,6 +72,10 @@ class ResourceController extends Controller
 			$data->setPath(route('resource.index', ["resource" => $resource->id]));
 		}
 
+		if (@$request["list_type"]) {
+			$this->storeListType($resource, $request["list_type"]);
+		}
+
 		$filters = $resource->filters();
 		$_data =  request()->all();
 
@@ -107,7 +111,53 @@ class ResourceController extends Controller
 	protected function showIndexList($resource, Request $request, $report_mode = false)
 	{
 		$resource = ResourcesHelpers::find($resource);
-		return $resource->indexMethod($request, $report_mode);
+
+		if ($resource->id === 'audits') {
+			if (request()->has('resource_id') && request()->has('code')) {
+				$parentResource = ResourcesHelpers::find(request()->resource_id);
+				$parentRow = $parentResource->getModelInstance()->findByCode(request()->code);
+				if (!$parentRow) abort(404);
+				if (!$parentResource->canViewAudits() || !$parentResource->canViewAuditsRow($parentRow)) {
+					abort(403);
+				}
+			} else {
+				abort(404);
+			}
+		}
+
+		if ($report_mode) {
+			if (!$resource->canViewReport()) {
+				abort(403);
+			}
+		} else {
+			if (!$resource->canViewList()) {
+				abort(403);
+			}
+		}
+		if (request()->response_type == "json") {
+			$data = $this->getData($resource, $request);
+			$per_page = $this->getPerPage($resource);
+			$data = $data->select("*")->paginate($per_page);
+			return $data;
+		}
+
+		return view("vStack::resources.index", compact("resource", "report_mode"));
+	}
+
+	private function storeListType($resource, $type)
+	{
+		if (Auth::check()) {
+			$user = Auth::user();
+			$config = ResourceConfig::whereJsonContains("data->user_id", $user->id)->where("resource", $resource->id)->where("config", 'list_type')->first();
+			$config = @$config->id ? $config : new ResourceConfig;
+			$_data = @$config->data ?? (object)[];
+			$_data->type = $type;
+			$_data->user_id = $user->id;
+			$config->data = $_data;
+			$config->resource = $resource->id;
+			$config->config = 'list_type';
+			$config->save();
+		}
 	}
 
 	public function createReportTemplate($resource, Request $request)
@@ -120,7 +170,7 @@ class ResourceController extends Controller
 			abort(403);
 		}
 		$user = Auth::user();
-		$config = ResourceConfig::where("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "report_templates")->first();
+		$config = ResourceConfig::whereJsonContains("data->user_id", $user->id)->where("resource", $resource->id)->where("config", "report_templates")->first();
 		$config = @$config->id ? $config : new ResourceConfig;
 
 		$config->resource = $resource->id;

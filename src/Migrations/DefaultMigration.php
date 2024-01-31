@@ -22,7 +22,7 @@ class DefaultMigration extends Migration
     {
         Schema::create('resource_configs', function (Blueprint $table) {
             $table = $this->initializeTable($table);
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('resource');
             $table->string('config');
             $table->jsonb('data');
