@@ -960,4 +960,40 @@ class Resource
 	{
 		return false;
 	}
+
+	public function indexMethod($request, $report_mode)
+	{
+		if ($this->id === 'audits') {
+			if (request()->has('resource_id') && request()->has('code')) {
+				$parentResource = ResourcesHelpers::find(request()->resource_id);
+				$parentRow = $parentResource->getModelInstance()->findByCode(request()->code);
+				if (!$parentRow) abort(404);
+				if (!$parentResource->canViewAudits() || !$parentResource->canViewAuditsRow($parentRow)) {
+					abort(403);
+				}
+			} else {
+				abort(404);
+			}
+		}
+
+		if ($report_mode) {
+			if (!$this->canViewReport()) {
+				abort(403);
+			}
+		} else {
+			if (!$this->canViewList()) {
+				abort(403);
+			}
+		}
+		if (request()->response_type == "json") {
+			$data = $this->getData($this, $request);
+			$per_page = $this->getPerPage($this);
+			$data = $data->select("*")->paginate($per_page);
+			return $data;
+		}
+
+		$resource = $this;
+
+		return view("vStack::resources.index", compact("resource", "report_mode"));
+	}
 }
