@@ -14,6 +14,7 @@ use marcusvbda\vstack\Imports\GlobalImporter;
 use marcusvbda\vstack\Models\Migration;
 use marcusvbda\vstack\Services\Messages;
 use ResourcesHelpers;
+use Auth;
 
 class Resource
 {
@@ -323,6 +324,18 @@ class Resource
 		return [];
 	}
 
+	public function afterDestroy($data)
+	{
+		$this->getCachedQty(true); //refresh cache
+		return $data;
+	}
+
+	public function afterStore($data)
+	{
+		$this->getCachedQty(true); //refresh cache
+		return $data;
+	}
+
 	public function destroyMethod($content)
 	{
 		if ($content->delete()) {
@@ -611,15 +624,35 @@ class Resource
 		return [$data, $decoded];
 	}
 
+	public function getOnlyFields()
+	{
+		return array_merge(...array_map(fn ($x) => data_get($x, "inputs"), $this->fields()));
+	}
+
+	public function getField($index)
+	{
+		$fields = $this->getOnlyFields();
+		return current(array_filter($fields, function ($x) use ($index) {
+			return @$x->options["field"] == $index;
+		}));
+	}
+
 	public function storeMethod($id, $data)
 	{
 		try {
 			DB::beginTransaction();
+			$manual_saving = [];
 			[$data, $redirect_hash] = $this->getRedirectHash($data);
 			$target = @$id ? $this->getModelInstance()->findOrFail($id) : $this->getModelInstance();
 			foreach (array_keys($data["data"]) as $key) {
 				if (!in_array($key, ["redirect_hash"])) {
-					$target->{$key} = $data["data"][$key];
+					$field = $this->getField($key);
+					$fieldValue =  $data["data"][$key];
+					if (data_get(@$field->options ?? [], 'manual_saving')) {
+						$manual_saving[$key] = $fieldValue;
+					} else {
+						$target->{$key} = $fieldValue;
+					}
 				}
 			}
 			$target->save();
@@ -639,7 +672,7 @@ class Resource
 					$route = route('resource.index', ["resource" => $this->id]);
 				}
 			}
-			return ["success" => true, "route" => $route, "model" => $target];
+			return ["success" => true, "route" => $route, "model" => $target, "manual_saving" => $manual_saving];
 		} catch (\Exception $e) {
 			DB::rollBack();
 			Messages::send("error", "Erro ao salvar registro !!");
@@ -995,5 +1028,17 @@ class Resource
 		$resource = $this;
 
 		return view("vStack::resources.index", compact("resource", "report_mode"));
+	}
+
+	public function getCachedQty($refreshCache = false)
+	{
+		$cacheKey = 'qty:' . $this->id . "->" . @Auth::user()->tenant_id;
+		$cacheTime = 60 * 24;
+		if ($refreshCache) {
+			cache()->forget($cacheKey);
+		}
+		return cache()->remember($cacheKey, $cacheTime, function () {
+			return $this->getModelInstance()->count();
+		});
 	}
 }

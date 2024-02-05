@@ -642,7 +642,7 @@ class ResourceController extends Controller
 			abort(403);
 		}
 		$result = $resource->destroyMethod($content);
-		return $result;
+		return $resource->afterDestroy($result);
 	}
 
 	public function destroyField($resource, $code)
@@ -780,7 +780,8 @@ class ResourceController extends Controller
 		$data = $request->except(["response_type", "resource_id", "id", "redirect_back", "clicked_btn", "page_type", "content", "input_origin"]);
 		$data = $this->processStoreData($resource, $data);
 
-		return $resource->storeMethod($id, $data);
+		$result = $resource->storeMethod($id, $data);
+		return $resource->afterStore($result);
 	}
 
 

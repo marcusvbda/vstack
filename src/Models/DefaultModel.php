@@ -40,6 +40,7 @@ class DefaultModel extends Model implements AuditableContract
 			parent::disableAuditing();
 		}
 	}
+
 	public function scopeWithoutAppends($query)
 	{
 		self::$withoutAppends = true;
