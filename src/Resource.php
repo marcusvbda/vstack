@@ -641,17 +641,19 @@ class Resource
 	{
 		try {
 			DB::beginTransaction();
-			$manual_saving = [];
+			$fields_ignored = [];
 			[$data, $redirect_hash] = $this->getRedirectHash($data);
 			$target = @$id ? $this->getModelInstance()->findOrFail($id) : $this->getModelInstance();
 			foreach (array_keys($data["data"]) as $key) {
 				if (!in_array($key, ["redirect_hash"])) {
 					$field = $this->getField($key);
-					$fieldValue =  $data["data"][$key];
-					if (data_get(@$field->options ?? [], 'manual_saving')) {
-						$manual_saving[$key] = $fieldValue;
+					$field_value =  $data["data"][$key];
+					$field_options = @$field->options ?? [];
+					$ignore_field = data_get($field_options, 'ignore', false);
+					if ($ignore_field) {
+						$fields_ignored[$key] = $field_value;
 					} else {
-						$target->{$key} = $fieldValue;
+						$target->{$key} = $field_value;
 					}
 				}
 			}
@@ -672,7 +674,7 @@ class Resource
 					$route = route('resource.index', ["resource" => $this->id]);
 				}
 			}
-			return ["success" => true, "route" => $route, "model" => $target, "manual_saving" => $manual_saving];
+			return ["success" => true, "route" => $route, "model" => $target, 'fields_ignored' => $fields_ignored];
 		} catch (\Exception $e) {
 			DB::rollBack();
 			Messages::send("error", "Erro ao salvar registro !!");
